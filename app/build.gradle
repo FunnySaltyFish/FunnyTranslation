@@ -1,13 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.0"
-
+    compileSdkVersion 28
+		configurations.all {
+        	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            	def requested = details.requested
+            	if (requested.group == 'com.android.support') {
+                	if (!requested.name.startsWith("multidex")) {
+                    	details.useVersion '28.0.0'
+                	}
+            	}
+        	}
+	}
     defaultConfig {
         applicationId "com.funny.translation"
-        minSdkVersion 14
-        targetSdkVersion 21
+        minSdkVersion 19
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -16,9 +24,20 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+		debug {
+			minifyEnabled false
+		}
+		
     }
 }
 
 dependencies {
+	implementation 'com.android.support:appcompat-v7:28.0.0'
+  	implementation 'com.android.support:recyclerview-v7:28.0.0'
+  	implementation 'com.android.support:cardview-v7:28.0.0'
+    //implementation 'com.android.support:preference-v7:28.0.0'
+	//implementation 'com.android.support:design:28.0.0'
+	implementation 'com.qw:soulpermission:1.2.2'
+	implementation 'com.billy.android:smart-swipe:1.1.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

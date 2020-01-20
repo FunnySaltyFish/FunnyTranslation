@@ -1,11 +1,28 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
+<?xml version="1.0" encoding="utf-8"?>
+<com.billy.android.swipe.SmartSwipeWrapper
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/main_swipe_wrapper"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+	<include
+		layout="@layout/main_include"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 
-</LinearLayout>
+	<LinearLayout
+		app:swipe_gravity="right|left"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="文本"/>
+
+	</LinearLayout>
+
+</com.billy.android.swipe.SmartSwipeWrapper>
+

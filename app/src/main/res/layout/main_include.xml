@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/widget_main_toolbar"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:background="?attr/colorPrimary"
+		android:theme="@style/MyToolbarTheme"
+		app:title="FunnyTranslation"
+		app:titleTextColor="#ffffff"/>
+
+	<EditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/bg_edittext"
+		android:layout_margin="8dp"
+		android:hint="译你所忆……"
+		android:layout_below="@id/widget_main_toolbar"
+		android:id="@+id/widget_main_inputtext"
+		android:maxLines="8"
+		android:ems="8"
+		android:lineSpacingMultiplier="1"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Button"
+		android:layout_below="@id/widget_main_inputtext"
+		android:id="@+id/widget_main_translate"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Button"
+		android:layout_toRightOf="@id/widget_main_translate"
+		android:layout_below="@id/widget_main_inputtext"
+		android:id="@+id/mainButton2"/>
+
+	<android.support.v7.widget.RecyclerView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/widget_main_translate"
+		android:id="@+id/widget_main_recycler_view"/>
+
+</RelativeLayout>
+
