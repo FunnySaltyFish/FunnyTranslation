@@ -27,19 +27,15 @@
 		android:lineSpacingMultiplier="1"/>
 
 	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Button"
+		android:layout_width="36dp"
+		android:layout_height="36dp"
 		android:layout_below="@id/widget_main_inputtext"
-		android:id="@+id/widget_main_translate"/>
-
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Button"
-		android:layout_toRightOf="@id/widget_main_translate"
-		android:layout_below="@id/widget_main_inputtext"
-		android:id="@+id/mainButton2"/>
+		android:id="@+id/widget_main_translate"
+		android:background="@drawable/bg_round_button"
+		android:layout_centerHorizontal="true"
+		android:text="译"
+		android:textColor="#ffffff"
+		android:textSize="18sp"/>
 
 	<android.support.v7.widget.RecyclerView
 		android:layout_width="match_parent"
