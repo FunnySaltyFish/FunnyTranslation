@@ -51,29 +51,51 @@ public class TranslationTask
 			case Consts.ENGINE_YOUDAO_NORMAL:
 				this.resultString=translateYouDaoNormal(sourceString);
 				break;
+			case Consts.ENGINE_BAIDU_NORMAL:
+				this.resultString=translateBaiduNormal(sourceString);
+				break;
 		}
 		//System.out.println(resultString);
 	}
 
-	public String formatResult(String str){
+	public String formatResultYoudao(String str){
 		try
 		{
+			StringBuilder sb=new StringBuilder();
 			JSONObject all=new JSONObject(str);
-			JSONArray translationResult=all.getJSONArray("translateResult").getJSONArray(0);
-			JSONObject resultObject=translationResult.getJSONObject(0);
-			String resultString=resultObject.getString("tgt");
-			listener.onSuccess(this.sourceString,resultString);
-			return (resultString);
+			if(all.has("errorCode")){//出错
+				switch(all.getInt("errorCode")){
+					case 40:
+						return Consts.ERROR_UNSUPPORT_LANGUAGE;
+					case 50:
+						return Consts.ERROR_DATED_ENGINE;
+				}
+			}
+			JSONArray translationResult=all.getJSONArray("translateResult");
+			for (int i=0;i < translationResult.length();i++)
+			{
+				JSONArray eachResult=translationResult.getJSONArray(i);
+				for (int j=0;j<eachResult.length();j++)
+				{
+					JSONObject resultObject=eachResult.getJSONObject(j);
+					String resultString=resultObject.getString("tgt");
+					sb.append(resultString);
+					sb.append("\n");
+				}
+			}
+			sb.deleteCharAt(sb.length()-1);
+			listener.onSuccess(this.sourceString,sb.toString());
+			return (sb.toString());
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
-			listener.onFail(Consts.UNKNOWN_ERROR);
-			return Consts.JSON_ERROR;
+			listener.onFail(Consts.ERROR_JSON);
+			return Consts.ERROR_JSON;
 		}
 		catch(Exception e){
-			listener.onFail(Consts.UNKNOWN_ERROR);
-			return Consts.UNKNOWN_ERROR;
+			listener.onFail(Consts.ERROR_UNKNOWN);
+			return Consts.ERROR_UNKNOWN;
 		}
 	}
 
@@ -126,7 +148,7 @@ public class TranslationTask
 				result=ex.getMessage();
 			}
 		}
-		result=formatResult(result);
+		result=formatResultYoudao(result);
 		//System.out.println("post推送结果："+result);
 		return result;
 	}
@@ -148,7 +170,7 @@ public class TranslationTask
 			conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0");
 			conn.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
 			conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
-			conn.setRequestProperty("Accept-Encoding","gzip, deflate");
+			//conn.setRequestProperty("Accept-Encoding","gzip, deflate");
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			conn.setRequestProperty("X-Requested-With","XMLHttpRequest");
 			//conn.setRequestProperty("Content-Length","262");
@@ -182,15 +204,15 @@ public class TranslationTask
 			out.flush();
 			// 定义BufferedReader输入流来读取URL的响应
 			//返回数据为gzip类型，解压缩
-			InputStream stream = new GZIPInputStream(conn.getInputStream());  
+			InputStream stream = conn.getInputStream();
 			in = new BufferedReader(new InputStreamReader(stream,"utf-8"));  
 			String line;
 			while ((line = in.readLine()) != null) {
 				result += line;
 			}
-			//System.out.println(result);
+			//System.out.println("翻译后直接获得的result"+result);
 			//result=new String(result.getBytes("utf-8"),"UTF-8");
-			result=formatResult(result);
+			result=formatResultYoudao(result);
 		} catch (Exception e) {
 			System.out.println("发送 POST 请求出现异常！"+e);
 			e.printStackTrace();
@@ -214,6 +236,46 @@ public class TranslationTask
 		return result;
 	}
 	
+	public String translateBaiduNormal(String sourceString){
+		/*基于百度官方代码示例，最为稳定！*/
+		BaiduTransApi api=new BaiduTransApi(Consts.BAIDU_APP_ID,Consts.BAIDU_SECURITY_KEY);
+		String from=Consts.LANGUAGES[sourceLanguage][engineKind];
+		String to=Consts.LANGUAGES[targetLanguage][engineKind];
+		String result=api.getTransResult(sourceString,from,to);
+		//System.out.println("翻译后直接获得的result"+result);
+		return formatResultBaidu(result);
+	}
+	
+	public String formatResultBaidu(String str){
+		try
+		{
+			StringBuilder sb=new StringBuilder();
+			JSONObject all=new JSONObject(str);
+			JSONArray trans_result=all.getJSONArray("trans_result");
+			for(int i=0;i<trans_result.length();i++){
+				JSONObject resultObj=trans_result.getJSONObject(i);
+				String str1=resultObj.getString("dst");
+				if(StringUtil.isUnicode(str1)){
+					str1=StringUtil.unicodeToString(str1);
+				}
+				sb.append(str1);
+				sb.append("\n");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			listener.onSuccess(this.sourceString,sb.toString());
+			return sb.toString();
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			listener.onFail(Consts.ERROR_JSON);
+			return Consts.ERROR_JSON;
+		}
+		catch(Exception e){
+			listener.onFail(Consts.ERROR_UNKNOWN);
+			return Consts.ERROR_UNKNOWN;
+		}
+	}
 
 	public void setLisener(OnTranslateListener lisener)
 	{

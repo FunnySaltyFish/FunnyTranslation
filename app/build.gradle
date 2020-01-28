@@ -35,9 +35,12 @@ dependencies {
 	implementation 'com.android.support:appcompat-v7:28.0.0'
   	implementation 'com.android.support:recyclerview-v7:28.0.0'
   	implementation 'com.android.support:cardview-v7:28.0.0'
+	//implementation 'com.github.gminibird:CheckHelper:1.1',{
+	//	exclude group: 'com.android.support'
+	//}
     //implementation 'com.android.support:preference-v7:28.0.0'
 	//implementation 'com.android.support:design:28.0.0'
-	implementation 'com.qw:soulpermission:1.2.2'
+	//implementation 'com.qw:soulpermission:1.2.2'
 	implementation 'com.billy.android:smart-swipe:1.1.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

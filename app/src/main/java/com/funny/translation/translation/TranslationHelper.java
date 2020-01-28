@@ -62,21 +62,14 @@ public class TranslationHelper extends Thread
 		this.tasks=tasks;
 	}
 	
-	public void initTasks(ArrayList<Map<Short,String>> list){
-		this.tasks.clear();
-		
-		int i=0;
-	
-	}
-	
-	public void startTasks(){
-		if(this.tasks==null||this.tasks.isEmpty()){return;}
-		TranslationTask task;
-		for(int i=0;i<this.tasks.size();i++){
-			task=this.tasks.get(i);
-			task.translate();
-		}
-	}
+//	public void startTasks(){
+//		if(this.tasks==null||this.tasks.isEmpty()){return;}
+//		TranslationTask task;
+//		for(int i=0;i<this.tasks.size();i++){
+//			task=this.tasks.get(i);
+//			task.translate();
+//		}
+//	}
 	
 	public int getProcess(){
 		return this.failureTimes+this.successTimes;
@@ -90,7 +83,8 @@ public class TranslationHelper extends Thread
 		while(flag>0){
 			if(flag==FLAG_TRANSLATING){
 				if(this.tasks==null||this.tasks.isEmpty()){return;}
-				this.tasks.get(curI++).translate();
+				TranslationTask task=this.tasks.get(curI++);
+				task.translate();
 				try
 				{
 					Message msg=new Message();
@@ -98,7 +92,11 @@ public class TranslationHelper extends Thread
 					msg.obj=1;
 					handler.sendMessage(msg);
 					//System.out.println("我是线程，我在执行translating");
-					sleep(50);
+					if(task.engineKind==Consts.ENGINE_BAIDU_NORMAL){
+						sleep(800);
+					}else{
+						sleep(50);
+					}
 				}
 				catch (InterruptedException e)
 				{
@@ -118,19 +116,19 @@ public class TranslationHelper extends Thread
 		}
 	}
 	
-	public String[][] getResult(){
-		if(this.tasks==null||this.tasks.isEmpty()){return null;}
-		String[][] resultStrs=new String[this.tasks.size()][2];
-		TranslationTask task;
-		for(int i=0;i<this.tasks.size();i++){
-			task=this.tasks.get(i);
-			System.out.println("resultStrs:"+resultStrs.toString()+"  length:"+resultStrs.length);
-			resultStrs[i][0]=task.resultString;
-			resultStrs[i][1]=Consts.ENGINE_NAMES[task.engineKind];
-		}
-		return resultStrs;
-	}
-	
+//	public String[][] getResult(){
+//		if(this.tasks==null||this.tasks.isEmpty()){return null;}
+//		String[][] resultStrs=new String[this.tasks.size()][2];
+//		TranslationTask task;
+//		for(int i=0;i<this.tasks.size();i++){
+//			task=this.tasks.get(i);
+//			System.out.println("resultStrs:"+resultStrs.toString()+"  length:"+resultStrs.length);
+//			resultStrs[i][0]=task.resultString;
+//			resultStrs[i][1]=Consts.ENGINE_NAMES[task.engineKind];
+//		}
+//		return resultStrs;
+//	}
+//	
 	public void reStart(){
 		this.flag = FLAG_TRANSLATING;
 		this.curI = 0;
