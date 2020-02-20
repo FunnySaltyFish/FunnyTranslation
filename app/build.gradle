@@ -16,8 +16,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 5
+        versionName "1.2.0-bug修复版"
     }
     buildTypes {
         release {
@@ -42,5 +42,11 @@ dependencies {
 	//implementation 'com.android.support:design:28.0.0'
 	//implementation 'com.qw:soulpermission:1.2.2'
 	implementation 'com.billy.android:smart-swipe:1.1.2'
+	implementation 'com.github.lzyzsd:circleprogress:1.2.1'
+	//compile project(':videocache:2.7.1')
+	//implementation 'com.danikula:videocache:2.7.1',{
+		//exclude group: 'org.slf4j'
+	//}
+	//implementation 'com.optimus:editTextField:0.2.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

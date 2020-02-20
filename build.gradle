@@ -15,13 +15,16 @@ buildscript {
 allprojects {
     repositories {
 		mavenLocal()
-        //jcenter()
-		//maven { url 'https://jitpack.io' }
-        //mavenCentral()
-		maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
+		//maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+		//maven{ url 'http://maven.net.cn/content/groups/public/'}
+		//maven{ url 'https://maven-central.storage.googleapis.com'}
+		//maven{ url 'http://repo1.maven.org/maven2/'}
+		jcenter()
+		maven { url 'https://jitpack.io' }
+        mavenCentral()
+        //maven {
+            //url 'https://maven.google.com/'
+            //name 'Google'
+        //}
     }
 }

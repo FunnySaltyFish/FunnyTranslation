@@ -10,7 +10,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:padding="8dp">
-		
+
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -18,7 +18,8 @@
 			android:text="@string/language_source"
 			android:textColor="#FF448AFF"/>
 
-		<android.support.v7.widget.RecyclerView
+		<com.funny.translation.widget.LanguageRecyclerView
+			app:check_kind="0"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_below="@id/main_slide_right_source_tv"
@@ -32,7 +33,8 @@
 			android:id="@+id/mainheaderTextView1"
 			android:textColor="#FF448AFF"/>
 
-		<android.support.v7.widget.RecyclerView
+		<com.funny.translation.widget.LanguageRecyclerView
+			app:check_kind="1"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_below="@id/mainheaderTextView1"
@@ -46,11 +48,37 @@
 			android:id="@+id/mainheaderTextView2"
 			android:textColor="#FF448AFF"/>
 
-		<android.support.v7.widget.RecyclerView
+		<com.funny.translation.widget.LanguageRecyclerView
+			app:check_kind="1"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_below="@id/mainheaderTextView2"
 			android:id="@+id/main_slide_right_engine_rv"/>
+		
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/tts"
+			android:layout_below="@id/main_slide_right_engine_rv"
+			android:id="@+id/mainheaderTextView3"
+			android:textColor="#FF448AFF"/>
+
+		<com.funny.translation.widget.LanguageRecyclerView
+			app:check_kind="0"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/mainheaderTextView3"
+			android:id="@+id/main_slide_right_tts_rv"/>
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Copyright@FunnySaltyFish\n2020\nAll Rights Reserved"
+			android:layout_below="@id/main_slide_right_tts_rv"
+			android:gravity="center"
+			android:layout_marginTop="8dp"
+			android:textColor="#36000000"
+			android:textSize="12sp"/>
 
 	</RelativeLayout>
 

@@ -48,6 +48,12 @@ public class BitmapUtil
 		Bitmap b=BitmapFactory.decodeResource(re,id);
 		return b;
 	}
+	
+	public static Bitmap getBitmapFromResources(Resources re,int id,int targetWidth,int targetHeight){
+		Bitmap b=getScaledBitmap(BitmapFactory.decodeResource(re,id),targetWidth,targetHeight);
+		return b;
+	}
+	
 
 	public static Bitmap getScaledBitmap(Bitmap bitmap,int targetWidth,int targetHeight){
 		int width = bitmap.getWidth();

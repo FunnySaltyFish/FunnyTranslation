@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import com.funny.translation.R;
 import android.view.View;
 import android.widget.TextView;
+import java.io.InputStream;
+import java.io.IOException;
+import android.content.SharedPreferences;
 public class ApplicationUtil
 {
 	public static Toast toast=null;
@@ -38,4 +41,68 @@ public class ApplicationUtil
 		}
 		toast.show();
 	}
+	
+	public static String getTextFromAssets(Context ctx,String fileName){
+		InputStream is=null;
+		String msg="";
+		try
+		{
+			is = ctx.getAssets().open(fileName);
+			byte[] bytes=new byte[is.available()];
+			is.read(bytes);
+			msg=new String(bytes);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return "";
+		}finally{
+			if(is!=null){
+				try
+				{
+					is.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		return msg;
+	}
+	
+	public static int getVersionCode(Context ctx){
+		int versionCode=0;
+		try{
+			versionCode=ctx.getPackageManager().getPackageInfo(ctx.getPackageName(),0).versionCode;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return versionCode;
+	}
+	
+	public static boolean isFirstOpen(Context ctx){//是否是第一次打开应用
+		int newVersionCode=getVersionCode(ctx);
+		SharedPreferences sp=ctx.getSharedPreferences("welcomeInfo",Context.MODE_PRIVATE);
+		int oldVersionCode=sp.getInt("versionCode",0);
+		if(newVersionCode>oldVersionCode){
+			SharedPreferences.Editor editor=sp.edit();
+			editor.putInt("versionCode",newVersionCode);
+			editor.commit();
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public static int dp2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static int sp2px(Context context, float spValue) {
+        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
 }
