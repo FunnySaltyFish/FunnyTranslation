@@ -2,12 +2,18 @@
 <resources>
 	<string-array name="languages">
 		<item name="language_auto">自动选择</item>
-		<item name="language_chinese">中文（简体）</item>
+		<item name="language_chinese">中文(简体)</item>
 		<item name="language_english">英语</item>
 		<item name="language_japanese">日本语</item>
 		<item name="language_korean">韩语</item>
 		<item name="language_french">法语</item>
 		<item name="language_russian">俄语</item>
 		<item name="language_germany">德语</item>
+		<item name="language_wenyanwen">文言文(仅百度)</item>
+	</string-array>
+	
+	<string-array name="tts_engines">
+		<item name="tts_local">本地</item>
+		<item name="tts_baidu">百度(女声版)</item>
 	</string-array>
 </resources>

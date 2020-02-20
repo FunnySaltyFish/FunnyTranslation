@@ -21,7 +21,7 @@ public class TranslationHelper extends Thread
 	public String sourceString;
 	public String resultString;
 	public short engineKind=0;
-	public ArrayList<TranslationTask> tasks;
+	public ArrayList<TranslationTask> tasks,finishTasks;
 	
 	public int successTimes=0,failureTimes=0;
 	public int totalTimes=0;
@@ -50,10 +50,11 @@ public class TranslationHelper extends Thread
 			public void onFail(String reason)
 			{
 				// TODO: Implement this method
-				System.out.printf("失败！原因是：%s",reason);
+				System.out.printf("失败！原因是：\n%s",reason);
 				failureTimes++;
 			}
 		};
+		finishTasks=new ArrayList<TranslationTask>();
 	}
 
 	public void setTasks(ArrayList<TranslationTask> tasks)
@@ -72,7 +73,8 @@ public class TranslationHelper extends Thread
 //	}
 	
 	public int getProcess(){
-		return this.failureTimes+this.successTimes;
+		int progress=Math.round((float)(this.failureTimes+this.successTimes)/(float)this.totalTimes*100);
+		return progress;
 	}
 	
 	@Override
@@ -87,6 +89,7 @@ public class TranslationHelper extends Thread
 				task.translate();
 				try
 				{
+					finishTasks.add(task);
 					Message msg=new Message();
 					msg.what=0x001;
 					msg.obj=1;
@@ -132,6 +135,7 @@ public class TranslationHelper extends Thread
 	public void reStart(){
 		this.flag = FLAG_TRANSLATING;
 		this.curI = 0;
+		//finishTasks.clear();
 	}
 	
 

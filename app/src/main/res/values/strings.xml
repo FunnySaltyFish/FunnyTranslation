@@ -6,15 +6,17 @@
 	
 	<string name="engine">翻译引擎</string>
 	<string name="engine_baidu">百度翻译</string>
-	<string name="engine_youdao_easy">有道翻译（简版）</string>
+	<string name="engine_youdao_easy">有道翻译(简版)</string>
 	<string name="engine_youdao_normal">有道翻译（标准版）</string>
 	
 	<string name="language_source">源语言</string>
 	<string name="language_target">目标语言</string>
 	<string name="language_auto">自动选择</string>
-	<string name="language_chinese">中文（简体）</string>
+	<string name="language_chinese">中文(简体)</string>
 	<string name="language_english">英语</string>
 	<string name="language_japanese">日本语</string>
+	
+	<string name="tts">语音朗读引擎</string>
 	
 
 </resources>

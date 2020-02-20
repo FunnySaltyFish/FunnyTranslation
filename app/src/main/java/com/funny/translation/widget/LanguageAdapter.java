@@ -14,6 +14,7 @@ import com.funny.translation.bean.Consts;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 import android.graphics.Color;
+import android.widget.Space;
 public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 	Context ctx;
@@ -115,6 +116,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	{
 		// TODO: Implement this method
 		return list==null?0:list.size();
+		//加一用于防止最后一个控件显示不全
 	}
 	
 	private class LanguageViewHolder extends RecyclerView.ViewHolder{
@@ -123,8 +125,8 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 			super(view);
 			tv=view.findViewById(R.id.view_language_tv);
 		}
-		
 	}
+	
 	
 	public interface OnClickItemListener{
 		public void onClick(int position)

@@ -118,7 +118,7 @@ public class TranslationTask
 			out = new PrintWriter(conn.getOutputStream());
 			String from=Consts.LANGUAGES[sourceLanguage][engineKind];
 			String to=Consts.LANGUAGES[targetLanguage][engineKind];
-			String param="doctype=json&from="+from+"&to="+to+"&i="+URLEncoder.encode(sourceString,"UTF-8");
+			String param="doctype=json&type="+from+"2"+to+"&i="+URLEncoder.encode(sourceString,"UTF-8");
 			out.print(param);
 			// flush输出流的缓冲
 			out.flush();
@@ -277,6 +277,22 @@ public class TranslationTask
 		}
 	}
 
+	public void translateGoogleEasy(){
+		//"http://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&ie=UTF-8&sl=auto&tl=zh_TW&q=calculate";
+		/*复杂版本
+		 translate.google.cn/translate_a/single?client=webapp&sl=en&tl=zh-CN&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=510384.97655&q=hello
+		*/
+		/*多行
+		translate.google.cn/translate_a/single?client=webapp&sl=en&tl=zh-CN&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ssel=5&tsel=5&kc=1&tk=936052.588979&q=public%20static%20String%20replacePunctuation%20(String%20sourceString)%20%7B%0APattern%20p%20%3D%20Pattern.compile%20(%22%5B.%3F%3A%2C%22%20%22!%20%3C%3E%5D%22)%3B%0AMatcher%20m%20%3D%20p.matcher%20(sourceString)%3B%0AString%20result%20%3D%20null%3B%0Aif%20(m.find%20())%20%7B%0Aresult%20%3D%20m.replaceFirst%20(%22%22)%3B%0A%7D%0Areturn%20result%20%3D%3D%20null%3F%20sourceString%3A%20result%3B%0A%7D
+		*/
+		/*百度tts
+		https://fanyi.baidu.com/gettts?lan=fra&text=Ha%20ha%20ha%20ha%20ha%20ha&spd=3&source=wise
+		*/
+		/*谷歌tts
+		https://translate.google.cn/translate_tts?ie=UTF-8&q=Hello%20there%20Azure%20is%20waiting%20for%20the%20smoke%20and%20rain%2C%20and%20I%20am%20waiting%20for%20you.&tl=en&total=1&idx=0&textlen=78&tk=91195.512248&client=webapp
+		*/
+	}
+	
 	public void setLisener(OnTranslateListener lisener)
 	{
 		this.listener = lisener;

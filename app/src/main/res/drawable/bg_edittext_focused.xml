@@ -14,7 +14,7 @@
     <!--设置边框粗细和颜色-->
     <stroke
         android:width="2px"
-        android:color="#536dfe" />
+        android:color="#FF9f9f9f" />
 
     <!--<solid android:color="#838B8B" />-->
 
