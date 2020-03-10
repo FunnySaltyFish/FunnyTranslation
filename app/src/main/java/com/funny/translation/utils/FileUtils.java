@@ -10,6 +10,6 @@ public class FileUtils
      * @return
      */
     public static File getAudioCacheDir(Context context) {
-        return new File(context.getExternalFilesDir("music"), "audio-cache");
+        return new File(context.getCacheDir(), "audio-cache");
     }
 }

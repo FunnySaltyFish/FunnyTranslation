@@ -1,0 +1,100 @@
+package com.funny.translation.translation;
+public class TranslationResult
+{
+//	public final static short DETAIL_NONE=0;//非常简单的结果，没有详细信息
+//	public final static short DETAIL_MANY_RESULTS=1;//有多个返回结果
+//	public final static short 
+
+	public final static short TRANSLATE_STATU_SUCCESS=0;
+	public final static short TRANSLATE_STATU_FAIL=1;
+	
+	private short engineKind;
+	private String basicResult;//最简单的翻译结果，只有结果
+	private String[][] resultTexts;//额外的详细翻译结果，可能有多个结果
+	private short statue;
+	//你好——Hello!你好，喂
+	/*
+		{
+			{Hello}{你好}{喂},
+			{Hi}{...}{...}
+		}
+	*/
+	private String phoneticNotation;//注音
+	private String sourceString;
+	private String partOfSpeech;//词性
+	
+
+	public TranslationResult(short engineKind)
+	{
+		this.engineKind = engineKind;
+	}
+
+	public TranslationResult(short engineKind, String basicResult, String[][] resultTexts)
+	{
+		this.engineKind = engineKind;
+		this.basicResult = basicResult;
+		this.resultTexts = resultTexts;
+	}
+
+	public TranslationResult(short engineKind, String basicResult)
+	{
+		this.engineKind = engineKind;
+		this.basicResult = basicResult;
+	}
+	
+	//Setters and getters
+
+	public void setStatue(short statue)
+	{
+		this.statue = statue;
+	}
+
+	public short getStatue()
+	{
+		return statue;
+	}
+
+	public void setPartOfSpeech(String partOfSpeech)
+	{
+		this.partOfSpeech = partOfSpeech;
+	}
+
+	public String getPartOfSpeech()
+	{
+		return partOfSpeech;
+	}
+
+	public void setBasicResult(String basicResult)
+	{
+		this.basicResult = basicResult;
+	}
+
+	public String getBasicResult()
+	{
+		return basicResult;
+	}
+
+	public void setResultTexts(String[][] resultTexts)
+	{
+		this.resultTexts = resultTexts;
+	}
+
+	public String[][] getResultTexts()
+	{
+		return resultTexts;
+	}
+
+	public void setPhoneticNotation(String phoneticNotation)
+	{
+		this.phoneticNotation = phoneticNotation;
+	}
+
+	public String getPhoneticNotation()
+	{
+		return phoneticNotation;
+	}
+	
+	
+	
+	
+}

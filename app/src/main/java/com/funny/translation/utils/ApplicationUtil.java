@@ -38,6 +38,22 @@ public class ApplicationUtil
 			toast.setView(v);
 		}else{
 			toastTV.setText(str);
+			toast.setDuration(Toast.LENGTH_SHORT);
+		}
+		toast.show();
+	}
+	
+	public static void print(Context ctx,String str,boolean isLong){
+		if(toast==null){//单例模式，加快展示速度
+			toast=new Toast(ctx);
+			View v=LayoutInflater.from(ctx).inflate(R.layout.view_toast,null);
+			toast.setDuration(Toast.LENGTH_SHORT);
+			toastTV=v.findViewById(R.id.view_toast_tv);
+			toastTV.setText(str);
+			toast.setView(v);
+		}else{
+			toastTV.setText(str);
+			toast.setDuration(Toast.LENGTH_LONG);
 		}
 		toast.show();
 	}

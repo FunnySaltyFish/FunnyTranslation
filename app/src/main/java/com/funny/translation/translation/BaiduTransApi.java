@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class BaiduTransApi {
     private static final String TRANS_API_HOST = "http://api.fanyi.baidu.com/api/trans/vip/translate";
-
+	private static BaiduTransApi api;
     private String appid;
     private String securityKey;
 
@@ -37,5 +37,12 @@ public class BaiduTransApi {
 
         return params;
     }
+	
+	public static BaiduTransApi getBaiduTransApi(String appid, String securityKey){
+		if(api==null){
+			api=new BaiduTransApi(appid,securityKey);
+		}
+		return api;
+	}
 
 }

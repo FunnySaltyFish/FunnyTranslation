@@ -11,6 +11,7 @@ public class Consts
 	public final static short ENGINE_YOUDAO_EASY=0;
 	public final static short ENGINE_YOUDAO_NORMAL=1;
 	public final static short ENGINE_BAIDU_NORMAL=2;
+	public final static short ENGINE_GOOGLE=3;
 	
 	public final static short TTS_LOCAL=0;
 	public final static short TTS_BAIDU=1;
@@ -27,25 +28,23 @@ public class Consts
 	
 	public static String[][] LANGUAGES={
 		//有道翻译 简/标准 百度翻译 标准
-		{"auto","auto","auto"},
-		{"ZH_CN","cn","zh"},
-		{"EN","en","en"},
-		{"JA","ja","jp"},
-		{"KR","ko","kor"},
-		{"FR","fr","fra"},
-		{"RU","ru","ru"},
-		{"DE","de","de"},
-		{"ZH_CN","cn","wyw"}
+		{"auto","auto","auto","auto"},
+		{"ZH_CN","cn","zh","zh-CN"},
+		{"EN","en","en","en"},
+		{"JA","ja","jp","ja"},
+		{"KR","ko","kor","ko"},
+		{"FR","fr","fra","fr"},
+		{"RU","ru","ru","ru"},
+		{"DE","de","de","de"},
+		{"ZH_CN","cn","wyw","zh-CN"}
 	};
 	
 	public final static short CHECK_SINGLE=0;
 	public final static short CHECK_MULTI=1;
 	
-	public static String[] LANGUAGE_NAMES={};
+	public static String[] LANGUAGE_NAMES;
 	
-	public static String[] ENGINE_NAMES={
-		"有道翻译(简版)","有道翻译(标准版)","百度翻译(标准版)"
-	};
+	public static String[] ENGINE_NAMES;
 	
 	public static String[] TTS_NAMES;
 	
