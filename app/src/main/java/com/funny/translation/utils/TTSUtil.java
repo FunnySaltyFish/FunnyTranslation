@@ -11,6 +11,7 @@ import java.io.File;
 import com.funny.translation.FunnyApplication;
 import android.support.v7.app.AppCompatActivity;
 import com.danikula.videocache.HttpProxyCacheServer;
+import java.io.FileNotFoundException;
 
 public class TTSUtil
 {
@@ -66,6 +67,10 @@ public class TTSUtil
 			if(internetTTS!=null&&internetTTS.isPlaying()){
 				internetTTS.stop();
 			}
+			if(!HttpUtil.isAvailable(url)){
+				ApplicationUtil.print(ctx,"请检查您的当前翻译结果是否与目标语言相同！\n朗读时请不要使用自动选择的翻译结果！",true);
+				return;
+			}
 			internetTTS.reset();
 			//File f=HttpUtil.downloadFile("url","/data/media/");
 			//internetTTS.setDataSource(f);
@@ -93,10 +98,11 @@ public class TTSUtil
 				{
 					//文言文处理为中文
 					String lANGUAGE =(language==Consts.LANGUAGE_WENYANWEN?Consts.LANGUAGES[Consts.LANGUAGE_CHINESE][Consts.ENGINE_BAIDU_NORMAL]:Consts.LANGUAGES[language][Consts.ENGINE_BAIDU_NORMAL]);
-					url =// "http://tts.baidu.com/text2audio?lan="+Consts.LANGUAGES[language][Consts.ENGINE_BAIDU_NORMAL]+"&ie=UTF-8&text=" + URLEncoder.encode(text, "utf-8");
-						"https://tts.baidu.com/text2audio?tex=" + URLEncoder.encode(text, "utf-8") + "&cuid=baike&ctp=1&pdt=301&vol=9&rate=32&per=0&lan=" + lANGUAGE;
+					//url =// "http://tts.baidu.com/text2audio?lan="+Consts.LANGUAGES[language][Consts.ENGINE_BAIDU_NORMAL]+"&ie=UTF-8&text=" + URLEncoder.encode(text, "utf-8");
+					//	"https://tts.baidu.com/text2audio?tex=" + URLEncoder.encode(text, "utf-8") + "&cuid=baike&ctp=1&pdt=301&vol=9&rate=32&per=0&lan=" + lANGUAGE;
+					url=String.format("https://fanyi.baidu.com/gettts?lan=%s&text=%s&spd=3&source=wise",lANGUAGE,android.net.Uri.encode(text));//将 转为%20而不是加号
 					//url="https://sq-sycdn.kuwo.cn/dadfabca52e99d6c72c1669ac14c52dd/5e401c6e/resource/a2/64/96/3621236540.aac";
-					//System.out.println("url"+url);
+					System.out.println("url"+url);
 				}
 				catch(Exception e)
 				//catch (UnsupportedEncodingException e)

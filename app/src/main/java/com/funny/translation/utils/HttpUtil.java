@@ -132,6 +132,27 @@ public class HttpUtil{
         return result;
     }
 	
+	public static boolean isAvailable(final String url){
+		boolean is=true;
+		new Thread(new Runnable(){
+				@Override
+				public void run()
+				{
+					// TODO: Implement this method
+					try
+					{
+						URLConnection connection=new URL(url).openConnection();
+						connection.connect();
+					}
+					catch (IOException e)
+					{
+						
+					}
+				}
+		}).start();
+		return is;
+	}
+	
 	public static File downloadFile(String urlPath, String downloadDir) {
         File file = null;
         HttpURLConnection httpURLConnection = null;

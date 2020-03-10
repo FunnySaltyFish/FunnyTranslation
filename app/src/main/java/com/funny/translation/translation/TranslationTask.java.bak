@@ -54,9 +54,6 @@ public class TranslationTask
 			case Consts.ENGINE_BAIDU_NORMAL:
 				this.resultString=translateBaiduNormal(sourceString);
 				break;
-			case Consts.ENGINE_GOOGLE:
-				this.resultString=translateGoogleEasy(sourceString);
-				break;
 		}
 		//System.out.println(resultString);
 	}
@@ -191,7 +188,7 @@ public class TranslationTask
 			long salt=System.currentTimeMillis()+(long)(Math.random()*9+1);
 			String bv=StringUtil.md5("5.0 (Windows)");
 			//System.out.println(bv);
-			String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"Nw(nmmbP%A-r6U3EUn]Aj"/*"n%A-rKaT5fb[Gy?;N5@Tj"*/);
+			String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"n%A-rKaT5fb[Gy?;N5@Tj");
 			//System.out.println("fanyideskweb"+sourceString+salt+"n%A-rKaT5fb[Gy?;N5@Tj");
 			//System.out.println(sign);
 			String param="doctype=json&from="+from+"&to="+to+"&i="+URLEncoder.encode(sourceString,"UTF-8")+"&client=fanyideskweb&smartresult=dict"+
@@ -241,7 +238,7 @@ public class TranslationTask
 	
 	public String translateBaiduNormal(String sourceString){
 		/*基于百度官方代码示例，最为稳定！*/
-		BaiduTransApi api=BaiduTransApi.getBaiduTransApi(Consts.BAIDU_APP_ID,Consts.BAIDU_SECURITY_KEY);
+		BaiduTransApi api=new BaiduTransApi(Consts.BAIDU_APP_ID,Consts.BAIDU_SECURITY_KEY);
 		String from=Consts.LANGUAGES[sourceLanguage][engineKind];
 		String to=Consts.LANGUAGES[targetLanguage][engineKind];
 		String result=api.getTransResult(sourceString,from,to);
@@ -279,69 +276,6 @@ public class TranslationTask
 			return Consts.ERROR_UNKNOWN;
 		}
 	}
-	
-	public String translateGoogleEasy(String sourceString){
-			PrintWriter out = null;
-			BufferedReader in = null;
-			String result = "";
-			try {
-				String from=Consts.LANGUAGES[sourceLanguage][engineKind];
-				String to=Consts.LANGUAGES[targetLanguage][engineKind];
-				URL realUrl = new URL(String.format("https://translate.google.cn/translate_a/single?client=webapp&sl=%s&tl=%s&hl=%s&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=%s&q=%s",from,to,to,FunnyGoogleApi.tk(sourceString,"439500.3343569631"),sourceString));
-				// 打开和URL之间的连接
-				URLConnection conn = realUrl.openConnection();
-				// 设置通用的请求属性
-				conn.setRequestProperty("accept", "*/*");
-				conn.setRequestProperty("connection", "Keep-Alive");
-				conn.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-
-				// 发送POST请求必须设置如下两行
-				conn.setDoOutput(true);
-				conn.setDoInput(true);
-				//1.获取URLConnection对象对应的输出流
-				out = new PrintWriter(conn.getOutputStream());
-				//2.中文有乱码的需要将PrintWriter改为如下
-				//out=new OutputStreamWriter(conn.getOutputStream(),"UTF-8")
-				// 发送请求参数
-				String param="";
-				out.print(param);
-				// flush输出流的缓冲
-				out.flush();
-				// 定义BufferedReader输入流来读取URL的响应
-				in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				String line;
-				while ((line = in.readLine()) != null) {
-					result += line;
-				}
-				System.out.println("result:"+result);
-				result=FunnyGoogleApi.formatResultGoogleComplex(result).getBasicResult();
-			} catch (Exception e) {
-				System.out.println("发送 POST 请求出现异常！"+e);
-				e.printStackTrace();
-				result=("发送 POST 请求出现异常！"+e);
-			}
-			//使用finally块来关闭输出流、输入流
-			finally{
-				try{
-					if(out!=null){
-						out.close();
-					}
-					if(in!=null){
-						in.close();
-					}
-				}
-				catch(IOException ex){
-					ex.printStackTrace();
-					result=ex.getMessage();
-				}
-			}
-			//result=formatResult(result);
-			System.out.println(result);
-			//System.out.println("post推送结果："+result);
-			return result;
-		}
-		
-
 
 	public void translateGoogleEasy(){
 		//"http://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&ie=UTF-8&sl=auto&tl=zh_TW&q=calculate";
@@ -355,10 +289,9 @@ public class TranslationTask
 		https://fanyi.baidu.com/gettts?lan=fra&text=Ha%20ha%20ha%20ha%20ha%20ha&spd=3&source=wise
 		*/
 		/*谷歌tts
-		https://translate.google.cn/translate_tts?ie=UTF-8&q=%s&tl=en&total=1&idx=0&textlen=78&tk=91195.512248&client=webapp
+		https://translate.google.cn/translate_tts?ie=UTF-8&q=Hello%20there%20Azure%20is%20waiting%20for%20the%20smoke%20and%20rain%2C%20and%20I%20am%20waiting%20for%20you.&tl=en&total=1&idx=0&textlen=78&tk=91195.512248&client=webapp
 		*/
 	}
-	
 	
 	public void setLisener(OnTranslateListener lisener)
 	{

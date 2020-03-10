@@ -5,6 +5,9 @@ import android.content.Context;
 import com.danikula.videocache.file.FileNameGenerator;
 import android.net.Uri;
 import com.funny.translation.utils.FileUtils;
+import com.funny.translation.translation.MD5;
+import com.danikula.videocache.CacheListener;
+import java.io.File;
 //import com.qw.soul.permission.SoulPermission;
 
 public class FunnyApplication extends Application
@@ -17,10 +20,13 @@ public class FunnyApplication extends Application
     }
 
     private HttpProxyCacheServer newProxy() {
-        return new HttpProxyCacheServer.Builder(this).cacheDirectory(FileUtils.getAudioCacheDir(this))
+        HttpProxyCacheServer server= new HttpProxyCacheServer.Builder(this)
+			.cacheDirectory(FileUtils.getAudioCacheDir(this))
 			.fileNameGenerator(new FunnyFileNameGenerator())
 			.maxCacheSize(10*1024*1024)
-			.build();
+			.build()
+			;
+		return server;
     }
 
     public class FunnyFileNameGenerator implements FileNameGenerator {//缓存的命名规则
@@ -28,8 +34,10 @@ public class FunnyApplication extends Application
             //Uri uri = Uri.parse(url);
             //String audioId = uri.getQueryParameter("guid");
 			//System.out.println("id:"+audioId);
-			long audioId=System.currentTimeMillis();
-            return audioId + ".mp3";
+			//long audioId=System.currentTimeMillis();
+			String md5=MD5.md5(url);
+			//System.out.println("md5:"+md5);
+            return md5 + ".mp3";
         }
     }
 	

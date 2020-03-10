@@ -96,7 +96,7 @@ public class TranslationHelper extends Thread
 					handler.sendMessage(msg);
 					//System.out.println("我是线程，我在执行translating");
 					if(task.engineKind==Consts.ENGINE_BAIDU_NORMAL){
-						sleep(800);
+						sleep(400);
 					}else{
 						sleep(50);
 					}

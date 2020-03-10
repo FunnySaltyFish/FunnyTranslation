@@ -173,6 +173,7 @@ public class MainActivity extends BaseActivity
 	
 	private void initConsts(){
 		Consts.LANGUAGE_NAMES=re.getStringArray(R.array.languages);
+		Consts.ENGINE_NAMES=re.getStringArray(R.array.engines);
 		Consts.TTS_NAMES=re.getStringArray(R.array.tts_engines);
 	}
 
@@ -597,6 +598,7 @@ public class MainActivity extends BaseActivity
 		super.onDestroy();
 		isBackground=true;
 		TTSUtil.destroyTTS();
+		FunnyApplication.getProxy(this).shutdown();
 	}
 //	private void getInternetPermission(){
 //		SoulPermission.getInstance().checkAndRequestPermission(Manifest.permission.ACCESS_NETWORK_STATE, new CheckRequestPermissionListener(){
