@@ -53,7 +53,7 @@ public class ApplicationUtil
 			toast.setView(v);
 		}else{
 			toastTV.setText(str);
-			toast.setDuration(Toast.LENGTH_LONG);
+			toast.setDuration(isLong?Toast.LENGTH_LONG:Toast.LENGTH_SHORT);
 		}
 		toast.show();
 	}

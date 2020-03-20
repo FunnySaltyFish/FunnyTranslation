@@ -16,11 +16,11 @@
 		<item>有道翻译(简版)</item>
 		<item>有道翻译(标准版)</item>
 		<item>百度翻译(标准版)</item>
-		<item>谷歌翻译(标准版)</item>
+		<item>谷歌翻译(短译)</item>
 	</string-array>
 	
 	<string-array name="tts_engines">
 		<item name="tts_local">本地</item>
-		<item name="tts_baidu">百度(女声版)</item>
+		<item name="tts_baidu">百度翻译</item>
 	</string-array>
 </resources>
