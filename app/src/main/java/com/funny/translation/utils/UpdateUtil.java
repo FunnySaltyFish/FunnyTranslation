@@ -12,7 +12,7 @@ public class UpdateUtil
 {
 	public static JSONObject updateDescription;
 	public static String updateLog;
-	
+	public static boolean isUpdate=true;
 	public static JSONObject getUpdateDescription(){
 		String str=HttpUtil.sendGet("https://raw.githubusercontent.com/FunnySaltyFish/FunnyTranslationDownload/master/description.json","");
 		JSONObject obj=null;
@@ -38,6 +38,7 @@ public class UpdateUtil
 			int newVersionCode=updateDescription.getInt("versionCode");
 			System.out.printf("newVersion:%d    curVersion:%d",newVersionCode,curVersionCode);
 			if(newVersionCode>curVersionCode){
+				isUpdate=getIsUpdate();
 				return true;
 			}
 		}
@@ -75,6 +76,22 @@ public class UpdateUtil
 			return null;
 		}
 		return url;
+	}
+	
+	public static boolean getIsUpdate(){
+		if(updateDescription==null)return true;
+		boolean result=true;
+		try
+		{
+			if(updateDescription.has("isUpdate"))
+				result=updateDescription.getBoolean("isUpdate");
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		System.out.println("IsUpdate:"+result);
+		return result;
 	}
 	
 	public static void startUpdateByBrowse(Context ctx,String url){

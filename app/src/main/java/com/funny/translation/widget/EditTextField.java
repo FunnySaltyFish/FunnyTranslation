@@ -159,8 +159,6 @@ public class EditTextField extends EditText {
 		return isShow;
 	}
 
-
-
     /**
      * 取得显示按钮与不显示按钮时的Rect
      * @param isShow  是否显示按钮
@@ -183,16 +181,10 @@ public class EditTextField extends EditText {
 			}
 			bottom  = top + mClearButton.getHeight();
 		}
-
-
         //更新输入框内边距
         //setPadding(isShow);
-
-
         return new Rect(left, top, right, bottom);
     }
-
-
 
     /**
      * 绘制按钮图片
@@ -218,7 +210,6 @@ public class EditTextField extends EditText {
 			//return (x>=mButtonRect.left&&x<=mButtonRect.right&&y<=bottom&&y>=bottom-mClearButton.getHeight());
 		}
 	}
-
 
     @Override
     protected void onDraw(Canvas canvas) {

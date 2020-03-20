@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--结果展示的时候主要的文本颜色-->
+	<attr name="attr_result_adapter_text_color_main" format="color|reference"/>
+	<!--结果展示的时候语种形式 引擎名称的文本颜色-->
+	<attr name="attr_result_adapter_text_color_language" format="color|reference"/>
+	<!--结果展示的时候额外的翻译的文本颜色-->
+	<attr name="attr_result_adapter_text_color_detail" format="color|reference"/>
+	<!--结果展示的时候注音的文本颜色-->
+	<attr name="attr_result_adapter_text_color_punctuation" format="color|reference"/>
+
+	<!--选择语种的时候主要的背景颜色-->
+	<attr name="attr_language_adapter_bg_color_checked" format="color|reference"/>
+	<!--选择语种的时候主要的文字颜色（选中）-->
+	<attr name="attr_language_adapter_text_color_checked" format="color|reference"/>
+	<!--选择语种的时候主要的文字颜色-->
+	<attr name="attr_language_adapter_text_color" format="color|reference"/>
+</resources>

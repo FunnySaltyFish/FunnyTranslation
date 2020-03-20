@@ -62,6 +62,7 @@ import com.funny.translation.widget.EditTextField;
 import com.funny.translation.utils.TTSUtil;
 import com.funny.translation.utils.StringUtil;
 import com.github.lzyzsd.circleprogress.CircleProgress;
+import com.funny.translation.utils.NetworkUtil;
 
 public class MainActivity extends BaseActivity 
 {
@@ -166,9 +167,16 @@ public class MainActivity extends BaseActivity
 						//ArrayList<TranslationTask> task
 						//outputText.setText(helper.tasks.get(0).resultString);
 						break;
+					case 0x101:
+						ApplicationUtil.print(MainActivity.this,msg.obj.toString(),msg.arg1==1);
+						break;
 				}
 			}
 		};
+	}
+	
+	public Handler getHandler(){
+		return handler;
 	}
 	
 	private void initConsts(){
@@ -249,6 +257,10 @@ public class MainActivity extends BaseActivity
 //						rightSourceRv.updateData();
 //						ApplicationUtil.print(MainActivity.this,"检测到您当前输入的语言为【英语】\n已自动为您切换");
 //					}
+					if(!NetworkUtil.isNetworkConnected(MainActivity.this)){
+						ApplicationUtil.print(MainActivity.this,"当前似乎没有网络连接呢~");
+						return;
+					}
 					
 					//根据选择翻译
 					helper = new TranslationHelper(MainActivity.this.handler);
@@ -434,11 +446,11 @@ public class MainActivity extends BaseActivity
 	}
 	
 	private void createDialogs(){
-		View view=LayoutInflater.from(this).inflate(R.layout.dialog_translating,null);
+		/*View view=LayoutInflater.from(this).inflate(R.layout.dialog_translating,null);
 		dialogTranslatingContentTV=view.findViewById(R.id.dialog_translating_content_tv);
 		dialogTranslatingProgressbar=view.findViewById(R.id.dialog_translating_progressbar);
-		
-		translatingProgressDialog=new AlertDialog.Builder(this)
+		*/
+		/*translatingProgressDialog=new AlertDialog.Builder(this)
 			.setTitle("翻译中……")
 			.setView(view)
 			.setPositiveButton("停止", new DialogInterface.OnClickListener(){
@@ -460,7 +472,7 @@ public class MainActivity extends BaseActivity
 					ApplicationUtil.print(MainActivity.this,"任务已转至后台，完成前请不要开始新任务！");
 				}
 			})
-			.create();
+			.create();*/
 			
 		if(ApplicationUtil.isFirstOpen(this)){
 			tipDialog=new AlertDialog.Builder(this)
@@ -489,30 +501,46 @@ public class MainActivity extends BaseActivity
 	}
 	
 	public void showUpdateDialog(){
-			AlertDialog updateDialog=new AlertDialog.Builder(this)
-				.setTitle("有新版！")
-				.setMessage(UpdateUtil.getUpdateLog())
-				.setPositiveButton("立即更新", new DialogInterface.OnClickListener(){
-					@Override
-					public void onClick(DialogInterface p1, int p2)
-					{
-						// TODO: Implement this method
-						UpdateUtil.startUpdateByBrowse(MainActivity.this,UpdateUtil.getApkUrl());
-						ApplicationUtil.print(MainActivity.this,"正在为您跳转……");
-					}
-				})
-				.setNegativeButton("稍后再说", new DialogInterface.OnClickListener(){
-					@Override
-					public void onClick(DialogInterface p1, int p2)
-					{
-						// TODO: Implement this method
-						ApplicationUtil.copyToClipboard(MainActivity.this,UpdateUtil.getApkUrl());
-						ApplicationUtil.print(MainActivity.this,"已为您复制Apk链接，您可以稍后自行下载！");
-					}
-				})
-				.setCancelable(false)
-				.create();
-			updateDialog.show();
+			if(UpdateUtil.isUpdate){
+				AlertDialog updateDialog=new AlertDialog.Builder(this)
+					.setTitle("有新版！")
+					.setMessage(UpdateUtil.getUpdateLog())
+					.setPositiveButton("立即更新", new DialogInterface.OnClickListener(){
+						@Override
+						public void onClick(DialogInterface p1, int p2)
+						{
+							// TODO: Implement this method
+							UpdateUtil.startUpdateByBrowse(MainActivity.this,UpdateUtil.getApkUrl());
+							ApplicationUtil.print(MainActivity.this,"正在为您跳转……");
+						}
+					})
+					.setNegativeButton("稍后再说", new DialogInterface.OnClickListener(){
+						@Override
+						public void onClick(DialogInterface p1, int p2)
+						{
+							// TODO: Implement this method
+							ApplicationUtil.copyToClipboard(MainActivity.this,UpdateUtil.getApkUrl());
+							ApplicationUtil.print(MainActivity.this,"已为您复制Apk链接，您可以稍后自行下载！");
+						}
+					})
+					.setCancelable(false)
+					.create();
+				updateDialog.show();
+			}else{
+				AlertDialog updateDialog=new AlertDialog.Builder(this)
+					.setTitle("公告！")
+					.setMessage(UpdateUtil.getUpdateLog())
+					.setPositiveButton("我知道了", new DialogInterface.OnClickListener(){
+						@Override
+						public void onClick(DialogInterface p1, int p2)
+						{
+							// TODO: Implement this method
+						}
+					})
+					.setCancelable(false)
+					.create();
+				updateDialog.show();
+			}
 			//不执行后面的
 	}
 	

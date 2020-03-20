@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2196f3</color>
+	<color name="colorPrimary">#2196f3</color>
     <color name="colorPrimaryDark">#3f51b5</color>
     <color name="colorAccent">#673ab7</color>
+	
+    <color name="colorPrimaryBlue">#2196f3</color>
+    <color name="colorPrimaryDarkBlue">#3f51b5</color>
+    <color name="colorAccentBlue">#673ab7</color>
+	
+	<color name="colorPrimaryGreen">#2196f3</color>
+    <color name="colorPrimaryDarkGreen">#3f51b5</color>
+    <color name="colorAccentGreen">#673ab7</color>
+	
+	<color name="colorPrimaryBlack">#2196f3</color>
+    <color name="colorPrimaryDarkBlack">#3f51b5</color>
+    <color name="colorAccentBlack">#673ab7</color>
     <!--七夕-->
     <color name="colorPrimaryDS">#FFF06573</color>
     <color name="colorPrimaryDarkDS">#FFE5436A</color>
     <color name="colorAccentDS">#FFFE0100</color>
+	
+	
 </resources>

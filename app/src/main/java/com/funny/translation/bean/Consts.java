@@ -3,6 +3,10 @@ import android.graphics.drawable.Drawable;
 
 public class Consts
 {
+	//抽象话词库
+	//https://github.com/gaowanliang/NMSL/blob/master/src/data/emoji.json
+	public static String AUTHOR="FunnySaltyFish";
+	
 	public static String ERROR_UNKNOWN="未知错误！翻译失败！";
 	public static String ERROR_JSON="Json数据解析错误！";
 	public static String ERROR_UNSUPPORT_LANGUAGE="暂不支持的语言翻译形式";
@@ -15,6 +19,7 @@ public class Consts
 	
 	public final static short TTS_LOCAL=0;
 	public final static short TTS_BAIDU=1;
+	public final static short TTS_GOOGLE=2;
 	
 	public final static short LANGUAGE_AUTO=0;
 	public final static short LANGUAGE_CHINESE=1;
@@ -27,7 +32,7 @@ public class Consts
 	public final static short LANGUAGE_WENYANWEN=8;
 	
 	public static String[][] LANGUAGES={
-		//有道翻译 简/标准 百度翻译 标准
+		//有道翻译 简/标准 百度翻译 标准 谷歌(短)
 		{"auto","auto","auto","auto"},
 		{"ZH_CN","cn","zh","zh-CN"},
 		{"EN","en","en","en"},
@@ -57,4 +62,8 @@ public class Consts
 	public static Drawable IC_SINGLE_CHECK;
 	public static Drawable IC_SINGLE_CHECK_CHECKED;
 	public static Drawable IC_MENU_RIGHT_ARROW;
+	
+	public final static short SKIN_BLUE=0;
+	public final static short SKIN_GREEN=1;
+	public final static short SKIN_BLACK=2;
 }

@@ -12,6 +12,10 @@ import com.funny.translation.FunnyApplication;
 import android.support.v7.app.AppCompatActivity;
 import com.danikula.videocache.HttpProxyCacheServer;
 import java.io.FileNotFoundException;
+import com.funny.translation.thread.InternetTTSThread;
+import android.os.Handler;
+import com.funny.translation.MainActivity;
+import com.funny.translation.translation.FunnyGoogleApi;
 
 public class TTSUtil
 {
@@ -19,6 +23,7 @@ public class TTSUtil
 	
 	public static TextToSpeech localTTS=null;
 	public static MediaPlayer internetTTS=null;
+	public static InternetTTSThread internetTTSThread;
 	public static void initLocal(Context ctx){
 		localTTS = new TextToSpeech(ctx, new TextToSpeech.OnInitListener(){
 				@Override
@@ -32,66 +37,35 @@ public class TTSUtil
 		});
 	}
 	
-	public static void initInternet(final Context ctx){
-		if(internetTTS==null){
-			AppCompatActivity activity=(AppCompatActivity)ctx;
-			FunnyApplication application=(FunnyApplication)activity.getApplication();
-			proxy=application.getProxy(ctx);
-			internetTTS=new MediaPlayer();
-			internetTTS.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
-					@Override
-					public void onPrepared(MediaPlayer player)
-					{
-						// TODO: Implement this method
-						player.seekTo(0);
-						player.start();
-					}
-			});
-			internetTTS.setOnErrorListener(new MediaPlayer.OnErrorListener(){
-					@Override
-					public boolean onError(MediaPlayer p1, int p2, int p3)
-					{
-						// TODO: Implement this method
-						//System.out.printf("出错了！p2:%d p3:%d\n",p2,p3);
-						if(p2==1&&p3==-2147483648){
-							ApplicationUtil.print(ctx,"当前调用的TTS引擎可能暂不支持此语种！");
-						}
-						return false;
-					}
-			});
-		}
+	public static void initInternet(final Context ctx,Handler handler){
+		internetTTSThread=new InternetTTSThread(ctx,handler);
+		internetTTSThread.setName("InternetTTSThread");
+		internetTTSThread.start();
 	}
 	
 	public static void rePlayInternet(Context ctx,String url){
 		try{
-			if(internetTTS!=null&&internetTTS.isPlaying()){
-				internetTTS.stop();
+			if(internetTTSThread!=null&&internetTTSThread.isAlive()){
+				internetTTSThread.setAddUrl(url);
 			}
-			if(!HttpUtil.isAvailable(url)){
-				ApplicationUtil.print(ctx,"请检查您的当前翻译结果是否与目标语言相同！\n朗读时请不要使用自动选择的翻译结果！",true);
-				return;
-			}
-			internetTTS.reset();
-			//File f=HttpUtil.downloadFile("url","/data/media/");
-			//internetTTS.setDataSource(f);
-			internetTTS.setDataSource(proxy.getProxyUrl(url));
-			internetTTS.prepareAsync();
-		}catch(IOException e){
-			ApplicationUtil.print(ctx,"IO流错误！");
+		}catch(Exception e){
+			ApplicationUtil.print(ctx,"朗读发生错误！");
 			e.printStackTrace();
 		}
 	}
 	
 	public static void playOrPauseInternet(){
-		if(internetTTS.isPlaying()){
-			internetTTS.pause();
-		}else{
-			internetTTS.start();
+		if(internetTTSThread!=null&&internetTTSThread.isAlive()){
+			internetTTSThread.playOrPause();
 		}
 	}
 	
 	public static String getInternetUrl(short TTSEngine,String text,short language){
 		String url=null;
+		if(text.equals("0c1be36a95")){
+			url=String.format("funny://egg_1_4");
+			return url;
+		}
 		switch(TTSEngine){
 			case Consts.TTS_BAIDU:
 				try
@@ -102,10 +76,23 @@ public class TTSUtil
 					//	"https://tts.baidu.com/text2audio?tex=" + URLEncoder.encode(text, "utf-8") + "&cuid=baike&ctp=1&pdt=301&vol=9&rate=32&per=0&lan=" + lANGUAGE;
 					url=String.format("https://fanyi.baidu.com/gettts?lan=%s&text=%s&spd=3&source=wise",lANGUAGE,android.net.Uri.encode(text));//将 转为%20而不是加号
 					//url="https://sq-sycdn.kuwo.cn/dadfabca52e99d6c72c1669ac14c52dd/5e401c6e/resource/a2/64/96/3621236540.aac";
-					System.out.println("url"+url);
+					//System.out.println("url"+url);
 				}
 				catch(Exception e)
 				//catch (UnsupportedEncodingException e)
+				{
+					e.printStackTrace();
+				}
+				break;
+			case Consts.TTS_GOOGLE:
+				try
+				{
+					//文言文处理为中文
+					String lANGUAGE =(language==Consts.LANGUAGE_WENYANWEN?Consts.LANGUAGES[Consts.LANGUAGE_CHINESE][Consts.ENGINE_GOOGLE]:Consts.LANGUAGES[language][Consts.ENGINE_GOOGLE]);
+					url=String.format("https://translate.google.cn/translate_tts?ie=UTF-8&q=%s&tl=%s&total=1&idx=0&textlen=%d&tk=%s&client=webapp",android.net.Uri.encode(text),lANGUAGE,text.length(),FunnyGoogleApi.tk(text,"439500.3343569631"));//将 转为%20而不是加号
+					//System.out.println("url"+url);
+				}
+				catch(Exception e)
 				{
 					e.printStackTrace();
 				}
@@ -132,8 +119,9 @@ public class TTSUtil
 			}
 			localTTS.speak(text, TextToSpeech.QUEUE_ADD, null);
 		}else{//网络
-			if(internetTTS==null){
-				initInternet(ctx);
+			if(internetTTSThread==null){
+				MainActivity activity=(MainActivity)ctx;
+				initInternet(ctx,activity.getHandler());
 				ApplicationUtil.print(ctx,"正在初始化网络朗读引擎……\n如需朗读请稍等再次点击");
 				return;
 			}
@@ -176,10 +164,8 @@ public class TTSUtil
 		if(localTTS!=null){
 			localTTS.shutdown();
 		}
-		if(internetTTS!=null){
-			if(internetTTS.isPlaying())internetTTS.stop();
-			internetTTS.release();
-			internetTTS=null;
+		if(internetTTSThread!=null){
+			internetTTSThread.destroyTTS();
 		}
 	}
 }

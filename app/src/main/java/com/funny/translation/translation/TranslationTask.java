@@ -10,12 +10,11 @@ import java.net.URLConnection;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.URLEncoder;
-
-import static com.funny.translation.bean.Consts.*;
 import com.funny.translation.utils.StringUtil;
 import java.io.OutputStreamWriter;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
+import com.funny.translation.utils.EggUtil;
 public class TranslationTask
 {
 	public short engineKind;//调用的基本web接口
@@ -39,11 +38,15 @@ public class TranslationTask
 	{
 		this.engineKind=engineKind;
 		this.sourceString = sourceString;
-		this.sourceLanguage=LANGUAGE_AUTO;
-		this.targetLanguage=LANGUAGE_AUTO;
+		this.sourceLanguage=Consts.LANGUAGE_AUTO;
+		this.targetLanguage=Consts.LANGUAGE_AUTO;
 	}
 
 	public void translate(){
+		if(sourceString.equals(Consts.AUTHOR)){
+			this.resultString=EggUtil.getAuthor();
+			return;
+		}
 		switch(engineKind){
 			case Consts.ENGINE_YOUDAO_EASY:
 				this.resultString=translateYouDaoEasy(sourceString);
@@ -59,6 +62,19 @@ public class TranslationTask
 				break;
 		}
 		//System.out.println(resultString);
+	}
+	
+	public String translateEgg(){
+		String result="";
+		try{
+			result=EggUtil.getAuthor();
+			listener.onSuccess(this.sourceString,result);
+		}catch(Exception e){
+			e.printStackTrace();
+			listener.onFail(Consts.ERROR_UNKNOWN);
+			result=Consts.ERROR_UNKNOWN;
+		}
+		return result;
 	}
 
 	public String formatResultYoudao(String str){
@@ -287,7 +303,7 @@ public class TranslationTask
 			try {
 				String from=Consts.LANGUAGES[sourceLanguage][engineKind];
 				String to=Consts.LANGUAGES[targetLanguage][engineKind];
-				URL realUrl = new URL(String.format("https://translate.google.cn/translate_a/single?client=webapp&sl=%s&tl=%s&hl=%s&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=%s&q=%s",from,to,to,FunnyGoogleApi.tk(sourceString,"439500.3343569631"),sourceString));
+				URL realUrl = new URL(String.format("https://translate.google.cn/translate_a/single?client=webapp&sl=%s&tl=%s&hl=%s&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=%s&q=%s",from,to,to,FunnyGoogleApi.tk(sourceString,"439500.3343569631"),android.net.Uri.encode(sourceString)));
 				// 打开和URL之间的连接
 				URLConnection conn = realUrl.openConnection();
 				// 设置通用的请求属性
@@ -340,7 +356,95 @@ public class TranslationTask
 			//System.out.println("post推送结果："+result);
 			return result;
 		}
-		
+	
+	public TranslationResult formatResultGoogleComplex(String json)
+	{
+		TranslationResult result=new TranslationResult(Consts.ENGINE_GOOGLE);
+		try
+		{
+			//用jsonArray解析js数组
+
+			JSONArray all=new JSONArray(json);
+			//JSONArray mainResultObj=all.getJSONArray(0);
+			String basicResult=all.getJSONArray(0).getJSONArray(0).getString(0);
+			System.out.println("bR:" + basicResult);
+			result.setBasicResult(basicResult);
+
+			if(all.getJSONArray(0).length()>1){//有注音
+				JSONArray phoneticNotationArr=all.getJSONArray(0).getJSONArray(1);
+				String phoneticNotation=phoneticNotationArr.getString(phoneticNotationArr.length()-1);//all.getJSONArray(1).getString(3);
+				System.out.println("pN:" + phoneticNotation);
+				result.setPhoneticNotation(phoneticNotation);
+			}
+			Object detail=all.get(1);
+			System.out.println("detail:"+detail.getClass());
+			if (detail.toString().equals("null"))
+			{
+				System.out.println("detail is null");
+
+				JSONArray detailArr=all.getJSONArray(5).getJSONArray(0).getJSONArray(2);
+				int length;
+				String[][] detailTexts = new String[detailArr.length()][];
+				for (int i=0;i <(length = detailArr.length());i++)
+				{
+					JSONArray eachDetail=detailArr.getJSONArray(i); //5 i
+					System.out.println("eachDetail:"+eachDetail);
+
+					if (eachDetail instanceof JSONArray)
+					{
+						String text=eachDetail.getString(0);
+						detailTexts[i]=new String[1];
+						detailTexts[i][0]=text;
+						//System.out.println(text);
+					}
+				}
+				FunnyGoogleApi.showArray(detailTexts);
+			}
+			else if (detail instanceof JSONArray)
+			{
+				JSONArray detailArr=all.getJSONArray(1).getJSONArray(0).getJSONArray(2);
+				System.out.println("detailArr:" + detailArr);
+
+				int length;
+				String[][] detailTexts=new String[detailArr.length()][];
+				for (int i=0;i < (length = detailArr.length());i++)
+				{
+					JSONArray eachDetail=detailArr.getJSONArray(i);
+					System.out.println("eachDetail:" + eachDetail);
+
+					if (eachDetail instanceof JSONArray)
+					{
+						String text=eachDetail.getString(0);
+						JSONArray explaination=eachDetail.getJSONArray(1);
+						//detailTexts=new String[explaination.length()+1][];
+						System.out.println("explanation:" + explaination);
+
+						if (explaination instanceof JSONArray)
+						{
+							detailTexts[i] = new String[explaination.length() + 1];//多一个，第一个放文字
+							detailTexts[i][0] = text;
+							for (int j=0;j < explaination.length();j++)
+							{
+								detailTexts[i][j + 1] = explaination.getString(j);
+							}
+						}
+					}
+					//showArray(detailTexts);
+				}
+				result.setResultTexts(detailTexts);
+				listener.onSuccess(sourceString,basicResult);
+				FunnyGoogleApi.showArray(detailTexts);
+			}
+
+			//System.out.println(obj);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			listener.onFail(Consts.ERROR_JSON);
+		}
+		return result;
+	}
 
 
 	public void translateGoogleEasy(){

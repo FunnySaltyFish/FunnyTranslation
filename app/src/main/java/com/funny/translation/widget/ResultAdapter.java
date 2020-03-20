@@ -17,6 +17,7 @@ import android.support.v7.widget.AppCompatButton;
 import com.funny.translation.utils.TTSUtil;
 import com.funny.translation.MainActivity;
 import android.widget.Space;
+import android.widget.ImageButton;
 public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 	String[][] results;
@@ -137,7 +138,7 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 	
 	class ResultContentHolder extends RecyclerView.ViewHolder{
 		TextView text,engine;
-		Button copyButton,ttsButton;
+		ImageButton copyButton,ttsButton;
 		public ResultContentHolder(View itemView){
 			super(itemView);
 			text=itemView.findViewById(R.id.view_result_content_text);

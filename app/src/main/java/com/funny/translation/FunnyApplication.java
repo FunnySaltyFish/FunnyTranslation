@@ -4,10 +4,10 @@ import com.danikula.videocache.HttpProxyCacheServer;
 import android.content.Context;
 import com.danikula.videocache.file.FileNameGenerator;
 import android.net.Uri;
-import com.funny.translation.utils.FileUtils;
-import com.funny.translation.translation.MD5;
+import com.funny.translation.utils.FileUtil;
 import com.danikula.videocache.CacheListener;
 import java.io.File;
+import com.funny.translation.utils.StringUtil;
 //import com.qw.soul.permission.SoulPermission;
 
 public class FunnyApplication extends Application
@@ -21,7 +21,7 @@ public class FunnyApplication extends Application
 
     private HttpProxyCacheServer newProxy() {
         HttpProxyCacheServer server= new HttpProxyCacheServer.Builder(this)
-			.cacheDirectory(FileUtils.getAudioCacheDir(this))
+			.cacheDirectory(FileUtil.getAudioCacheDir(this))
 			.fileNameGenerator(new FunnyFileNameGenerator())
 			.maxCacheSize(10*1024*1024)
 			.build()
@@ -31,11 +31,15 @@ public class FunnyApplication extends Application
 
     public class FunnyFileNameGenerator implements FileNameGenerator {//缓存的命名规则
         public String generate(String url) {
-            //Uri uri = Uri.parse(url);
-            //String audioId = uri.getQueryParameter("guid");
-			//System.out.println("id:"+audioId);
-			//long audioId=System.currentTimeMillis();
-			String md5=MD5.md5(url);
+			String md5="";
+            try
+			{
+				md5=StringUtil.md5(url);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 			//System.out.println("md5:"+md5);
             return md5 + ".mp3";
         }

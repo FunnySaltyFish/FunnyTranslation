@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+	xmlns:funny="http://schemas.android.com/apk/res-auto"
+	>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+		<item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
+        <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="android:windowContentTransitions">false</item>
 
         <!-- specify enter and exit transitions -->
@@ -15,6 +19,33 @@
         <item name="android:windowAllowReturnTransitionOverlap">false</item>
     </style>
 
+	
+	<style name="AppTheme.Blue" parent="@style/AppTheme">
+		<item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="colorAccent">@color/colorAccentGreen</item>
+		<!--结果展示的时候主要的文本颜色-->
+		<item name="attr_result_adapter_text_color_main">@color/color_blue_result_adapter_text_color_main</item>
+		<!--结果展示的时候语种形式 引擎名称的文本颜色-->
+		<item name="attr_result_adapter_text_color_language">@color/color_blue_result_adapter_text_color_language</item>
+		<!--结果展示的时候额外的翻译的文本颜色-->
+		<item name="attr_result_adapter_text_color_detail">@color/color_blue_result_adapter_text_color_detail</item>
+		<!--结果展示的时候注音的文本颜色-->
+		<item name="attr_result_adapter_text_color_punctuation">@color/color_blue_result_adapter_text_color_punctuation</item>
+		<!--选择语种的时候主要的背景颜色-->
+		<item name="attr_language_adapter_bg_color_checked" >@color/color_blue_language_adapter_bg_color_checked</item>
+		<!--选择语种的时候主要的文字颜色（选中）-->
+		<item name="attr_language_adapter_text_color_checked" >@color/color_blue_language_adapter_text_color_checked</item>
+		<!--选择语种的时候主要的文字颜色-->
+		<item name="attr_language_adapter_text_color">@color/color_blue_language_adapter_text_color</item>
+	</style>
+	
+	<style name="AppTheme.Green" parent="@style/AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="colorAccent">@color/colorAccentGreen</item>
+    </style>
+	
     <style name="AppTheme.DoubleSeven" parent="@style/AppTheme">
         <item name="colorPrimary">@color/colorPrimaryDS</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDS</item>
@@ -84,6 +115,12 @@
 	<style name="MySpinnerItemStyle" parent="@android:style/Widget.TextView.SpinnerItem">
 		<item name="android:textColor">@android:color/white</item>
 		<item name="android:textSize">14sp</item>
+	</style>
+	
+	<!--圆形波纹按钮-->
+	<style name="MyButtonRippleWhite">
+		<item name="android:colorControlHighlight">#81d4fa</item>
+		<item name="android:radius">18dp</item>
 	</style>
 
 	
