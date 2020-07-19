@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="drawer_width">100dp</dimen>
+    <dimen name="drawer_header_height">160dp</dimen>
+    <dimen name="drawer_header_icon_size">72dp</dimen>
+    <dimen name="drawer_item_icon_size">20dp</dimen>
+    <dimen name="drawer_item_height">56dp</dimen>
+    <dimen name="drawer_item_icon_left_margin">16dp</dimen>
+    <dimen name="drawer_item_text_left_margin">16dp</dimen>
+
+    <dimen name="text_micro">12sp</dimen>
+    <dimen name="text_normal">14sp</dimen>
+    <dimen name="text_small_title">16sp</dimen>
+    <dimen name="text_appbar">20sp</dimen>
+    <dimen name="text_big_title">24sp</dimen>
+    <dimen name="text_big_title_2">34sp</dimen>
+    <dimen name="text_big_title_3">45sp</dimen>
+    <dimen name="text_big_title_4">56sp</dimen>
+
+</resources>

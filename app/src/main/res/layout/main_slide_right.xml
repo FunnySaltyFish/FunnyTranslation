@@ -73,7 +73,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="Copyright@FunnySaltyFish\n2020\nAll Rights Reserved"
+			android:text="@string/copyright"
 			android:layout_below="@id/main_slide_right_tts_rv"
 			android:gravity="center"
 			android:layout_marginTop="8dp"

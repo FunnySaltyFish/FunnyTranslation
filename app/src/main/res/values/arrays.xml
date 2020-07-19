@@ -23,4 +23,17 @@
 		<item name="tts_local">本地</item>
 		<item name="tts_baidu">百度翻译</item>
 	</string-array>
+
+	<string-array name="entry_value_languages">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+
+	</string-array>
 </resources>

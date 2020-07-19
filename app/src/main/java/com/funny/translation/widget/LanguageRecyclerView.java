@@ -1,4 +1,6 @@
 package com.funny.translation.widget;
+import android.annotation.SuppressLint;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -21,14 +23,14 @@ public class LanguageRecyclerView extends RecyclerView
 	public LanguageRecyclerView(Context ctx,AttributeSet attr){
 		super(ctx,attr);
 		this.ctx=ctx;
-		TypedArray arr=ctx.obtainStyledAttributes(attr,R.styleable.LanguageRV);
+		@SuppressLint("CustomViewStyleable") TypedArray arr=ctx.obtainStyledAttributes(attr,R.styleable.LanguageRV);
 		checkKind=(short)arr.getInteger(R.styleable.LanguageRV_check_kind,0);
 		arr.recycle();
 	}
 	
-	public void initData(ArrayList<LanguageBean> list){
+	public void initData(ArrayList<LanguageBean> list,int[] mapping){
 		this.list=list;
-		adapter=new LanguageAdapter(ctx,list,checkKind,this);
+		adapter=new LanguageAdapter(ctx,list,checkKind,this,mapping);
 		LinearLayoutManager linearLM=new LinearLayoutManager(ctx,LinearLayoutManager.VERTICAL,false);
 		setAdapter(adapter);
 		setClickable(true);
@@ -39,7 +41,13 @@ public class LanguageRecyclerView extends RecyclerView
 		setHasFixedSize(true);
 		setNestedScrollingEnabled(false);
 	}
-	
+
+	@Nullable
+	@Override
+	public LanguageAdapter getAdapter() {
+		return adapter;
+	}
+
 	public void updateData(){
 		adapter.notifyDataSetChanged();
 	}

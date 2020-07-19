@@ -3,10 +3,7 @@ import android.app.Application;
 import com.danikula.videocache.HttpProxyCacheServer;
 import android.content.Context;
 import com.danikula.videocache.file.FileNameGenerator;
-import android.net.Uri;
 import com.funny.translation.utils.FileUtil;
-import com.danikula.videocache.CacheListener;
-import java.io.File;
 import com.funny.translation.utils.StringUtil;
 //import com.qw.soul.permission.SoulPermission;
 
@@ -14,10 +11,19 @@ public class FunnyApplication extends Application
 {
 	private HttpProxyCacheServer proxy;
 
+	public static Context context;
+	public FunnyApplication(){
+		super();
+
+	}
     public static HttpProxyCacheServer getProxy(Context context) {
         FunnyApplication myApplication = (FunnyApplication) context.getApplicationContext();
         return myApplication.proxy == null ? (myApplication.proxy = myApplication.newProxy()) : myApplication.proxy;
     }
+
+	public static Context getFunnyContext() {
+		return context;
+	}
 
     private HttpProxyCacheServer newProxy() {
         HttpProxyCacheServer server= new HttpProxyCacheServer.Builder(this)
@@ -52,6 +58,7 @@ public class FunnyApplication extends Application
 	{
 		// TODO: Implement this method
 		super.onCreate();
+		context=getApplicationContext();
 		//SoulPermission.init(this);
 	}
 	

@@ -118,6 +118,10 @@ public class TranslationHelper extends Thread
 			}
 		}
 	}
+
+	public boolean isTranslating(){
+		return flag==FLAG_TRANSLATING;
+	}
 	
 //	public String[][] getResult(){
 //		if(this.tasks==null||this.tasks.isEmpty()){return null;}
