@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.funny.translation",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "properties": [],
+      "versionCode": 7,
+      "versionName": "1.5.0",
+      "enabled": true,
+      "outputFile": "app-debug.apk"
+    }
+  ]
+}

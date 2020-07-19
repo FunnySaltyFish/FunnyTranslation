@@ -1,20 +1,24 @@
 package com.funny.translation.widget;
-import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
-import com.funny.translation.R;
-import com.funny.translation.bean.LanguageBean;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
-import java.util.ArrayList;
-import com.funny.translation.bean.Consts;
-import android.view.View.OnClickListener;
-import android.widget.Toast;
 import android.graphics.Color;
-import android.widget.Space;
+import android.graphics.drawable.Drawable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.funny.translation.R;
+import com.funny.translation.bean.Consts;
+import com.funny.translation.bean.DoubleMap;
+import com.funny.translation.bean.LanguageBean;
+
+import java.util.ArrayList;
+
 public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 	Context ctx;
@@ -23,12 +27,20 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	public short kind;
 	private OnClickItemListener listener;
 	private RecyclerView rv;
-	public LanguageAdapter(Context ctx,final ArrayList<LanguageBean> list,short kind,RecyclerView rv)
+
+
+	//private DoubleMap doubleMap;
+	private int[] mapping;//通过映射关系完成自定义顺序
+
+	String TAG = "LanguageAdapter";
+	public LanguageAdapter(Context ctx, ArrayList list, short kind, RecyclerView rv,int[] mapping)
 	{
 		this.ctx = ctx;
 		this.list = list;
 		this.kind=kind;
 		this.rv=rv;
+		this.mapping = mapping;
+		//doubleMap = new DoubleMap(mapping);
 	}
 	
 	public void setOnClickItemListener(OnClickItemListener listener){
@@ -56,13 +68,15 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	}
 
 	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder p1,final int i)
+	public void onBindViewHolder(RecyclerView.ViewHolder p1, @SuppressLint("RecyclerView") final int i)
 	{
 		// TODO: Implement this method
 		Drawable drawable;
 		if(p1 instanceof LanguageViewHolder){
 			LanguageViewHolder holder=(LanguageViewHolder)p1;
-			LanguageBean bean=list.get(i);
+			LanguageBean bean = list.get(mapping[i]);
+			//LanguageBean bean=list.get(doubleMap.getByKey(i));
+			//Log.i(TAG,String.format("i is %d , adn getByKey returns %d",i,doubleMap.getByKey(i)));
 			holder.tv.setText(bean.text);
 			holder.tv.setClickable(true);
 			holder.tv.setOnClickListener(new OnClickListener(){
@@ -74,7 +88,9 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 						//Toast.makeText(ctx,"点击",Toast.LENGTH_SHORT).show();
 						switch(kind){
 							case Consts.CHECK_MULTI:
-								LanguageBean bean=list.get(i);
+								int actualIndex = getMappingIndex(i);
+								LanguageBean bean=list.get(actualIndex);
+								Log.i(TAG,String.format("i is %d , adn getByValue returns %d",i,getMappingIndex(i)));
 								bean.setIsSelected(!bean.isSelected());
 								if(isNoneChecked()){//都没选，不执行
 									bean.setIsSelected(true);
@@ -86,7 +102,9 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 								for(LanguageBean curBean:list){
 									curBean.setIsSelected(false);
 								}
-								LanguageBean bean2=list.get(i);
+								Log.i(TAG,String.format("i is %d , adn getByValue returns %d",i,getMappingIndex(i)));
+								int  actualIndex2 = getMappingIndex(i);
+								LanguageBean bean2=list.get(actualIndex2);
 								bean2.setIsSelected(!bean2.isSelected());
 								break;
 						}
@@ -118,7 +136,11 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		return list==null?0:list.size();
 		//加一用于防止最后一个控件显示不全
 	}
-	
+
+//	public void setMapping(int[] ints) {
+//		doubleMap.set(ints);
+//	}
+
 	private class LanguageViewHolder extends RecyclerView.ViewHolder{
 		TextView tv;
 		public LanguageViewHolder(View view){
@@ -127,8 +149,11 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		}
 	}
 	
-	
-	public interface OnClickItemListener{
-		public void onClick(int position)
+	private int getMappingIndex(int number){
+		//return doubleMap.getByKey(number);
+		return mapping[number];
+	}
+	public interface OnClickItemListener {
+		public void onClick(int position);
 	}
 }

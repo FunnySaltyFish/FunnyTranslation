@@ -110,6 +110,7 @@ public class ApplicationUtil
 			return false;
 		}
 	}
+
 	
 	public static int dp2px(Context context, float dpValue) {
         float scale = context.getResources().getDisplayMetrics().density;

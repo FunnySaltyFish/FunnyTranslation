@@ -207,7 +207,9 @@ public class TranslationTask
 			long salt=System.currentTimeMillis()+(long)(Math.random()*9+1);
 			String bv=StringUtil.md5("5.0 (Windows)");
 			//System.out.println(bv);
-			String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"Nw(nmmbP%A-r6U3EUn]Aj"/*"n%A-rKaT5fb[Gy?;N5@Tj"*/);
+			String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"Nw(nmmbP%A-r6U3EUn]Aj");
+			//"mmbP%A-r6U3Nw(n]BjuEU"); 2020/7/15失败
+			///*"n%A-rKaT5fb[Gy?;N5@Tj"*/);
 			//System.out.println("fanyideskweb"+sourceString+salt+"n%A-rKaT5fb[Gy?;N5@Tj");
 			//System.out.println(sign);
 			String param="doctype=json&from="+from+"&to="+to+"&i="+URLEncoder.encode(sourceString,"UTF-8")+"&client=fanyideskweb&smartresult=dict"+

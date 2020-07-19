@@ -1,51 +1,62 @@
 package com.funny.translation;
 
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.widget.EditText;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.view.View.OnClickListener;
 import android.view.View;
+
+import com.billy.android.swipe.SmartSwipeWrapper;
+import com.billy.android.swipe.consumer.SlidingConsumer;
+import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.translation.TranslationTask;
 import com.funny.translation.bean.Consts;
 import android.support.v7.app.AlertDialog;
 //import com.qw.soul.permission.SoulPermission;
-import android.Manifest;
 //import com.qw.soul.permission.callbcak.CheckRequestPermissionListener;
 //import com.qw.soul.permission.bean.Permission;
-import android.widget.Toast;
 import android.os.Handler;
 import android.os.Message;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.widget.ProgressBar;
-import com.billy.android.swipe.SmartSwipeWrapper;
+
 import com.billy.android.swipe.SmartSwipe;
 import com.billy.android.swipe.consumer.DrawerConsumer;
 import android.support.v7.widget.RecyclerView;
+
+import com.funny.translation.utils.ClipBoardUtil;
+import com.funny.translation.utils.DataUtil;
+import com.funny.translation.utils.SharedPreferenceUtil;
+import com.funny.translation.utils.StringUtil;
+import com.funny.translation.widget.DrawerAdapter;
 import com.funny.translation.widget.ResultAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import com.funny.translation.widget.ResultItemDecoration;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.funny.translation.bean.Consts.*;
 import android.view.ViewGroup;
 import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.SwipeConsumer;
 //import com.luwei.checkhelper.MultiCheckHelper;
 //import com.luwei.checkhelper.CheckHelper;
-import com.funny.translation.widget.LanguageAdapter;
 import com.funny.translation.bean.LanguageBean;
 import android.content.res.Resources;
 import com.funny.translation.utils.BitmapUtil;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.BitmapDrawable;
-import com.funny.translation.widget.LanguageAdapter.OnClickItemListener;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.Color;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.text.TextWatcher;
 import android.text.Editable;
@@ -55,12 +66,10 @@ import com.funny.translation.utils.UpdateUtil;
 import com.funny.translation.thread.UpdateThread;
 import android.os.Looper;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.funny.translation.widget.LanguageRecyclerView;
 import com.funny.translation.widget.EditTextField;
 import com.funny.translation.utils.TTSUtil;
-import com.funny.translation.utils.StringUtil;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 import com.funny.translation.utils.NetworkUtil;
 
@@ -76,28 +85,26 @@ public class MainActivity extends BaseActivity
 	Button translateButton;
 	CircleProgress translateProgress;
 	
-	LanguageRecyclerView rightSourceRv,rightTargetRv;
+	LanguageRecyclerView rightSourceRv,rightTargetRv,rightEngineRv,rightTTSRv;
 	
 	ArrayList<LanguageBean> sourceList,targetList,engineList,ttsList;
-	
-	SmartSwipeWrapper swipeWrapper;
+
 	DrawerConsumer rightDrawerConsumer;//右侧侧滑
-	
-	String[][] translationResult;
+	SlidingConsumer leftSlidingConsumer;
+	SimpleSwipeListener swipeListener;
+
 	ArrayList<TranslationTask> tasks;
 	ResultAdapter adapter;
 	TranslationHelper helper;
 	
 	Handler handler;
 	long curBackTime=0,firstBackTime=0;
-	
-	AlertDialog webPermissionDialog=null;
+
 	AlertDialog translatingProgressDialog=null;
 	AlertDialog tipDialog=null;
 	TextView dialogTranslatingContentTV;
 	ProgressBar dialogTranslatingProgressbar;
-	
-	boolean checkdNewVersion=false;//是否检测过更新
+
 	boolean isBackground=false;//Activity是否处于后台
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -118,7 +125,10 @@ public class MainActivity extends BaseActivity
 				}
 		}).start();
 		initMainView();
-		createSlideView();
+		createRightSlideView();
+		createLeftSlideView();
+		initSwipeListener();
+		initPreferenceData();
 		createDialogs();
 		initHandler();
 		
@@ -257,34 +267,91 @@ public class MainActivity extends BaseActivity
 //						rightSourceRv.updateData();
 //						ApplicationUtil.print(MainActivity.this,"检测到您当前输入的语言为【英语】\n已自动为您切换");
 //					}
-					if(!NetworkUtil.isNetworkConnected(MainActivity.this)){
-						ApplicationUtil.print(MainActivity.this,"当前似乎没有网络连接呢~");
-						return;
-					}
-					
-					//根据选择翻译
-					helper = new TranslationHelper(MainActivity.this.handler);
-					initTasks();
-					helper.setTasks(tasks);
-					helper.totalTimes = tasks.size();
-					helper.start();
-					
-					translateProgress.setMax(100);
-					translateProgress.setProgress(0);
-					
-					translateButton.setVisibility(View.INVISIBLE);
-					translateProgress.setVisibility(View.VISIBLE);
+					startTranslate(inputText.getText().toString());
 					//dialogTranslatingProgressbar.setMax(tasks.size());
 					//dialogTranslatingProgressbar.setProgress(0);
 					//showTranslatingDialog();
 				}
 			});
-			
+		View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View view) {
+				if (StringUtil.isValidContent(inputText.getText().toString())){
+					return true;
+				}
+				String content = ClipBoardUtil.get(MainActivity.this);
+				inputText.setText(content);
+				startTranslate(content);
+				//ApplicationUtil.print(MainActivity.this,"已翻译剪切板内容！");
+				return false;
+			}
+		};
+		inputText.setOnLongClickListener(onLongClickListener);
 			translateProgress=findViewById(R.id.widget_main_translate_progress);
 			translateProgress.setVisibility(View.GONE);
 	}
-	
-	private void createSlideView(){
+
+	private void startTranslate(String content) {
+		if (!StringUtil.isValidContent(content)){
+			return;
+		}
+		if(!NetworkUtil.isNetworkConnected(MainActivity.this)){
+			ApplicationUtil.print(MainActivity.this,"当前似乎没有网络连接呢~");
+			return;
+		}
+		if(helper!=null&&helper.isTranslating()){
+			ApplicationUtil.print(MainActivity.this,"当前翻译正在进行中，请耐心等待~");
+			return;
+		}
+		//根据选择翻译
+		helper = new TranslationHelper(MainActivity.this.handler);
+		initTasks(content);
+		helper.setTasks(tasks);
+		helper.totalTimes = tasks.size();
+		helper.start();
+
+		translateProgress.setMax(100);
+		translateProgress.setProgress(0);
+
+		translateButton.setVisibility(View.INVISIBLE);
+		translateProgress.setVisibility(View.VISIBLE);
+	}
+
+	private void createLeftSlideView(){
+    	final View leftSlideView=LayoutInflater.from(this).inflate(R.layout.main_slide_left,null);
+    	SmartSwipe.wrap(leftSlideView).addConsumer(new SlidingConsumer().enableVertical());
+
+		RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(SmartSwipe.dp2px((int) re.getDimension(R.dimen.drawer_width),this), ViewGroup.LayoutParams.MATCH_PARENT);
+		//params.setMargins(4,getStatusBarHeight()+100,4,4);
+		leftSlideView.setLayoutParams(params);
+
+
+
+		RecyclerView rv = leftSlideView.findViewById(R.id.main_slide_left_rv);
+		DrawerAdapter da = new DrawerAdapter(this);
+		da.setOnItemClickListener(new DrawerAdapter.OnItemClickListener() {
+			@Override
+			public void itemClick(DrawerAdapter.DrawerItemNormal drawerItemNormal) {
+				switch (drawerItemNormal.titleRes){
+					case R.string.setting:
+						leftSlidingConsumer.close();
+						moveToActivity(SettingActivity.class);
+						break;
+				}
+			}
+		});
+		rv.setLayoutManager(new LinearLayoutManager(this));
+		rv.setAdapter(da);
+
+		leftSlidingConsumer=new SlidingConsumer();
+		leftSlidingConsumer.setDrawerView(SwipeConsumer.DIRECTION_LEFT,leftSlideView);
+		leftSlidingConsumer.setEdgeSize(SmartSwipe.dp2px(40,this));
+		leftSlidingConsumer.setShadowColor(Color.parseColor("#9e9e9e"));
+		leftSlidingConsumer.setShadowSize(SmartSwipe.dp2px(8,this));
+		SmartSwipe.wrap(this).addConsumer(leftSlidingConsumer);
+	}
+
+	private void createRightSlideView(){
 //		View leftSlideView=LayoutInflater.from(this).inflate(R.layout.main_slide_right,null);
 //		leftSlideView.setLayoutParams(new ViewGroup.LayoutParams(SmartSwipe.dp2px(280,this), ViewGroup.LayoutParams.MATCH_PARENT));
 //		//SmartSwipeWrapper leftMenuWrapper = SmartSwipe.wrap(leftSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
@@ -314,8 +381,8 @@ public class MainActivity extends BaseActivity
 			bean.setText(LANGUAGE_NAMES[i]);
 			sourceList.add(bean);
 		}
-		
-		
+
+
 		rightTargetRv=rightSlideView.findViewById(R.id.main_slide_right_target_rv);
 		targetList=new ArrayList<LanguageBean>();
 		for(short i=0;i<Consts.LANGUAGE_NAMES.length;i++){
@@ -328,7 +395,7 @@ public class MainActivity extends BaseActivity
 		}
 		
 		
-		LanguageRecyclerView rightEngineRv=rightSlideView.findViewById(R.id.main_slide_right_engine_rv);
+		rightEngineRv=rightSlideView.findViewById(R.id.main_slide_right_engine_rv);
 		engineList=new ArrayList<LanguageBean>();
 		for(short i=0;i<Consts.ENGINE_NAMES.length;i++){
 			LanguageBean bean=new LanguageBean();
@@ -340,7 +407,7 @@ public class MainActivity extends BaseActivity
 		}
 		
 		
-		LanguageRecyclerView rightTTSRv=rightSlideView.findViewById(R.id.main_slide_right_tts_rv);
+		rightTTSRv=rightSlideView.findViewById(R.id.main_slide_right_tts_rv);
 		ttsList=new ArrayList<LanguageBean>();
 		for(short i=0;i<Consts.TTS_NAMES.length;i++){
 			LanguageBean bean=new LanguageBean();
@@ -352,17 +419,14 @@ public class MainActivity extends BaseActivity
 		}
 		
 		//默认勾选
-		sourceList.get(Consts.LANGUAGE_CHINESE).setIsSelected(true);
-		targetList.get(Consts.LANGUAGE_ENGLISH).setIsSelected(true);
+//		sourceList.get(Consts.LANGUAGE_CHINESE).setIsSelected(true);
+//		targetList.get(Consts.LANGUAGE_ENGLISH).setIsSelected(true);
 		engineList.get(Consts.ENGINE_YOUDAO_NORMAL).setIsSelected(true);
 		engineList.get(Consts.ENGINE_BAIDU_NORMAL).setIsSelected(true);
 		ttsList.get(Consts.TTS_BAIDU).setIsSelected(true);
 		
-		rightSourceRv.initData(sourceList);
-		rightTargetRv.initData(targetList);
-		rightEngineRv.initData(engineList);
-		rightTTSRv.initData(ttsList);
-		
+
+
 		//SmartSwipeWrapper rightMenuWrapper = SmartSwipe.wrap(rightSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
 		rightDrawerConsumer=new DrawerConsumer().setDrawerView(SwipeConsumer.DIRECTION_RIGHT,rightSlideView);
 		rightDrawerConsumer.setEdgeSize(SmartSwipe.dp2px(40,this));
@@ -371,8 +435,86 @@ public class MainActivity extends BaseActivity
 		SmartSwipe.wrap(this).addConsumer(rightDrawerConsumer);
 		
 	}
+
+	private void initPreferenceData(){
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		int checkedSourceLanguage =Integer.parseInt(sp.getString("preference_language_source_default","1"));
+		sourceList.get(checkedSourceLanguage).setIsSelected(true);
+
+		String[] checkedTargetLanguages=sp.getStringSet("preference_language_source_target",new HashSet<String>()).toArray(new String[0]);
+		if (checkedTargetLanguages.length!=0){
+			for (int i = 0; i < checkedTargetLanguages.length; i++) {
+				targetList.get(Integer.parseInt(checkedTargetLanguages[i])).setIsSelected(true);
+			}
+		}else{
+			targetList.get(2).setIsSelected(true);
+		}
+
+		String pre_language_mapping_string = SharedPreferenceUtil.getInstance().getString("pre_language_mapping_string","");
+		int[] languageMapping;
+		if (pre_language_mapping_string.equals("")){
+			languageMapping=new int[LANGUAGES.length];
+			DataUtil.setDefaultMapping(languageMapping);
+		}
+		else{
+			languageMapping = DataUtil.coverStringToIntArray(pre_language_mapping_string);
+		}
+		rightSourceRv.initData(sourceList,languageMapping);
+		rightTargetRv.initData(targetList,languageMapping);
+
+		int[] engineMapping=new int[ENGINE_NAMES.length];
+		DataUtil.setDefaultMapping(engineMapping);
+		rightEngineRv.initData(engineList,engineMapping);
+
+		int[] ttsMapping=new int[TTS_NAMES.length];
+		DataUtil.setDefaultMapping(ttsMapping);
+		rightTTSRv.initData(ttsList,ttsMapping);
+	}
+
+	private void initSwipeListener(){
+    	swipeListener=new SimpleSwipeListener(){
+			@Override
+			public void onSwipeOpened(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
+				if(consumer.getClass() == rightDrawerConsumer.getClass()){
+					//如果打开的是右边的
+					if (leftSlidingConsumer.isOpened()){
+						leftSlidingConsumer.smoothClose();
+					}
+				}
+				else if (consumer.getClass()==leftSlidingConsumer.getClass()){
+					if (rightDrawerConsumer.isOpened()){
+						rightDrawerConsumer.smoothClose();
+					}
+				}
+				super.onSwipeOpened(wrapper, consumer, direction);
+			}
+
+			@Override
+			public void onSwipeProcess(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction, boolean settling, float progress) {
+				if(consumer.getClass() == rightDrawerConsumer.getClass()){
+					//如果打开的是右边的
+					if (leftSlidingConsumer.isOpened()){
+						leftSlidingConsumer.close();
+					}
+				}
+				else if (consumer.getClass()==leftSlidingConsumer.getClass()){
+					if (rightDrawerConsumer.isOpened()){
+						rightDrawerConsumer.smoothClose();
+					}
+				}
+				super.onSwipeProcess(wrapper, consumer, direction, settling, progress);
+			}
+
+			@Override
+			public void onSwipeClosed(SmartSwipeWrapper wrapper, SwipeConsumer consumer, int direction) {
+				super.onSwipeClosed(wrapper, consumer, direction);
+			}
+		};
+    	leftSlidingConsumer.addListener(swipeListener);
+    	rightDrawerConsumer.addListener(swipeListener);
+	}
 	
-	private void initTasks(){
+	private void initTasks(String content){
 		if(tasks==null){
 			tasks=new ArrayList<TranslationTask>();
 		}else{
@@ -383,7 +525,7 @@ public class MainActivity extends BaseActivity
 		int i=0;
 		for(LanguageBean target:getCheckedList(targetList)){
 			for(LanguageBean engine:getCheckedList(engineList)){
-				TranslationTask task=new TranslationTask(engine.getUserData(),source,target.getUserData(),inputText.getText().toString());
+				TranslationTask task=new TranslationTask(engine.getUserData(),source,target.getUserData(),content);
 				task.setId(i++);
 				task.setLisener(helper.defaultListener);
 				tasks.add(task);
@@ -426,7 +568,8 @@ public class MainActivity extends BaseActivity
 		return (Drawable)b;
 	};
 	
-	private Drawable getIcon(int id,int targetWidth,int targetHeight,int color){
+	@NonNull
+	private Drawable getIcon(int id, int targetWidth, int targetHeight, int color){
 		Bitmap bitmap=BitmapUtil.getBigBitmapFromResources(re,id,targetWidth,targetHeight);
 		BitmapDrawable b=new BitmapDrawable(bitmap);
 		b.setColorFilter(color,PorterDuff.Mode.SRC_IN);
@@ -491,7 +634,7 @@ public class MainActivity extends BaseActivity
 					public void onClick(DialogInterface p1, int p2)
 					{
 						// TODO: Implement this method
-						ApplicationUtil.copyToClipboard(MainActivity.this,"https://pic-cdn.sukiu.net/2020/01/28/mm_reward_qrcode_1572702328060_comps.md.jpg");
+						ApplicationUtil.copyToClipboard(MainActivity.this,"https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png");
 						ApplicationUtil.print(MainActivity.this,"网址已保存在剪贴板里喽！");
 					}
 				})
@@ -567,10 +710,14 @@ public class MainActivity extends BaseActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
-		// TODO: Implement this metho
+		// TODO: Implement this method
 		if(keyCode==KeyEvent.KEYCODE_BACK&&event.getAction()==KeyEvent.ACTION_DOWN){
 			if(!rightDrawerConsumer.isClosed()){//如果打开了右侧侧滑，就先关闭
 				rightDrawerConsumer.smoothClose();
+				return true;
+			}
+			if (leftSlidingConsumer.isOpened()){
+				leftSlidingConsumer.smoothClose();
 				return true;
 			}
 			curBackTime = System.currentTimeMillis();
@@ -623,10 +770,10 @@ public class MainActivity extends BaseActivity
 	
 	@Override
 	protected void onDestroy(){
-		super.onDestroy();
 		isBackground=true;
 		TTSUtil.destroyTTS();
 		FunnyApplication.getProxy(this).shutdown();
+		super.onDestroy();
 	}
 //	private void getInternetPermission(){
 //		SoulPermission.getInstance().checkAndRequestPermission(Manifest.permission.ACCESS_NETWORK_STATE, new CheckRequestPermissionListener(){
