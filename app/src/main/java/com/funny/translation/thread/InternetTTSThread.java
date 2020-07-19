@@ -1,22 +1,24 @@
 package com.funny.translation.thread;
-import com.danikula.videocache.HttpProxyCacheServer;
-import android.media.MediaPlayer;
-import com.funny.translation.FunnyApplication;
-import android.support.v7.app.AppCompatActivity;
+
 import android.content.Context;
-import com.funny.translation.utils.ApplicationUtil;
-import java.util.ArrayList;
-import java.io.IOException;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AppCompatActivity;
+
+import com.danikula.videocache.HttpProxyCacheServer;
+import com.funny.translation.FunnyApplication;
+import com.funny.translation.utils.FileUtil;
+import com.funny.translation.utils.NetworkUtil;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import android.net.http.Connection;
-import java.io.InputStream;
-import com.funny.translation.utils.NetworkUtil;
-import com.funny.translation.utils.FileUtil;
-import android.content.res.AssetFileDescriptor;
 public class InternetTTSThread extends Thread
 {
 	public final static short FLAG_LOADING=1;
@@ -44,6 +46,7 @@ public class InternetTTSThread extends Thread
 		flag=FLAG_LOADING;
 	}
 
+	@RequiresApi(api = Build.VERSION_CODES.N)
 	@Override
 	public void run()
 	{
@@ -179,6 +182,7 @@ public class InternetTTSThread extends Thread
 		}
 	}
 	
+	@RequiresApi(api = Build.VERSION_CODES.N)
 	public void replay(){
 		try{
 			if(internetTTS!=null&&internetTTS.isPlaying()){

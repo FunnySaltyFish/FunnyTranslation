@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "applicationId": "com.funny.translation",
+  "variantType": "BASE_APK",
+  "elements": [
+    {
+      "outputType": {
+        "type": "SHRUNK_PROCESSED_RES"
+      },
+      "apkData": {
+        "type": "MAIN",
+        "splits": [],
+        "versionCode": 7,
+        "versionName": "1.5.0",
+        "outputFile": "app-release.apk",
+        "fullName": "release",
+        "baseName": "release",
+        "dirName": ""
+      },
+      "path": "resources-release-stripped.ap_",
+      "properties": {}
+    }
+  ]
+}

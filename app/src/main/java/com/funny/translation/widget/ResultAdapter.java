@@ -1,4 +1,5 @@
 package com.funny.translation.widget;
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import com.funny.translation.translation.TranslationTask;
@@ -66,7 +67,7 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 	}
 
 	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder holder, final int i)
+	public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int i)
 	{
 		// TODO: Implement this method
 		if(holder instanceof ResultContentHolder){

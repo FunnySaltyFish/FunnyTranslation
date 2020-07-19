@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="设置">
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="右侧侧滑菜单"
+        >
+
+        <android.support.v7.preference.Preference
+            android:key="preference_language_sort"
+            android:summary="对右侧侧滑菜单中的翻译语言进行排序"
+            android:title="翻译语言排序"
+            android:icon="@drawable/ic_sort"
+            />
+
+        <android.support.v7.preference.ListPreference
+            android:key="preference_language_source_default"
+            android:summary="选择默认状况下的源语言"
+            android:title="默认源语言"
+            android:entries="@array/languages"
+            android:entryValues="@array/entry_value_languages"
+            android:icon="@drawable/ic_single_check_checked"
+            android:defaultValue="1"
+            />
+
+        <android.support.v14.preference.MultiSelectListPreference
+            android:key="preference_language_source_target"
+            android:summary="选择默认状况下的目标语言"
+            android:title="默认目标语言"
+            android:entries="@array/languages"
+            android:entryValues="@array/entry_value_languages"
+            android:icon="@drawable/ic_multi_check_checked"
+            />
+
+
+    </android.support.v7.preference.PreferenceCategory>
+
+
+
+</android.support.v7.preference.PreferenceScreen>

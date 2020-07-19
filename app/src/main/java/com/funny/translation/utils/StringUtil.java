@@ -92,7 +92,17 @@ public class StringUtil
 	    Matcher matcher = pattern.matcher(str);
 		return matcher.matches();
 	}
-	
+
+	public static boolean isValidContent(String text){
+		if(text == null || text.isEmpty()){
+			return false;
+		}
+		if (text.replaceAll("[\\s]","").equals("")){
+			return false;
+		}
+		return true;
+	}
+
 	public static short getLanguage(String str){
 		int cnTimes=0,enTimes=0;//中文/英文出现次数
 		int punctuationTimes=0;

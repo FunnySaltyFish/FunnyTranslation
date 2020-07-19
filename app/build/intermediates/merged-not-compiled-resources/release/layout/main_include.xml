@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/widget_main_toolbar"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:background="?attr/colorPrimary"
+		android:theme="@style/MyToolbarTheme"
+		app:title="FunnyTranslation"
+		app:titleTextColor="#ffffff"/>
+
+	<com.funny.translation.widget.EditTextField
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@drawable/bg_edittext"
+		android:layout_margin="8dp"
+		android:hint="译你所忆……"
+		android:layout_below="@id/widget_main_toolbar"
+		android:id="@+id/widget_main_inputtext"
+		android:maxLines="8"
+		android:ems="8"
+		android:lineSpacingMultiplier="1"
+		app:clearButtonMode="whileEditing"
+		app:clearButtonDrawable="@drawable/ic_clear_button"
+		/>
+
+	<Button
+		android:layout_width="36dp"
+		android:layout_height="36dp"
+		android:layout_below="@id/widget_main_inputtext"
+		android:id="@+id/widget_main_translate"
+		android:background="@drawable/bg_round_button"
+		android:layout_centerHorizontal="true"
+		android:text="译"
+		android:textColor="#ffffff"
+		android:textSize="18sp"/>
+	
+	<com.github.lzyzsd.circleprogress.CircleProgress
+		android:layout_width="36dp"
+		android:layout_height="36dp"
+		android:layout_below="@id/widget_main_inputtext"
+		android:id="@+id/widget_main_translate_progress"
+		android:layout_centerHorizontal="true"
+		app:circle_text_size="14sp"
+		/>
+
+	<android.support.v7.widget.RecyclerView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/widget_main_translate"
+		android:id="@+id/widget_main_recycler_view"
+		/>
+
+</RelativeLayout>
+
