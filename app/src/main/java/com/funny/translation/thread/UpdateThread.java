@@ -8,8 +8,10 @@ public class UpdateThread extends Thread
 
 	MainActivity ctx;
 	boolean isShowResult;
-
 	boolean haveNewVersion=false;
+	boolean hasError = false;//联网获取翻译时是否错误
+	String ErrorMessage = "";
+
 	public UpdateThread(MainActivity ctx)
 	{
 		this.ctx = ctx;
@@ -26,8 +28,14 @@ public class UpdateThread extends Thread
 				public void run()
 				{
 					// TODO: Implement this method
-					UpdateUtil.updateDescription=UpdateUtil.getUpdateDescription();
-					
+					try {
+						UpdateUtil.updateDescription=UpdateUtil.getUpdateDescription();
+					} catch (Exception e) {
+						e.printStackTrace();
+						hasError = true;
+						haveNewVersion = false;
+						ErrorMessage = e.getMessage();
+					}
 				}
 			});
 		t.start();
@@ -54,7 +62,11 @@ public class UpdateThread extends Thread
 							if(haveNewVersion){
 								ctx.showUpdateDialog();
 							}else{
-								ApplicationUtil.print(ctx,"自动更新检测完毕，当前已是最新版本！");
+								if (hasError){
+									ApplicationUtil.print(ctx,"出错!原因是："+ErrorMessage);
+								}else {
+									ApplicationUtil.print(ctx, "自动更新检测完毕，当前已是最新版本！");
+								}
 							}
 						}
 				});

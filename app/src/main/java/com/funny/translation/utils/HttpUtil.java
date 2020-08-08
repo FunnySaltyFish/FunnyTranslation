@@ -27,7 +27,7 @@ public class HttpUtil{
      *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return URL 所代表远程资源的响应结果
      */
-    public static String sendGet(String url, String param) {
+    public static String sendGet(String url, String param) throws Exception {
         StringBuilder result = new StringBuilder();
         BufferedReader in = null;
         try {
@@ -61,6 +61,7 @@ public class HttpUtil{
         } catch (Exception e) {
             System.out.println("发送GET请求出现异常！" + e);
             e.printStackTrace();
+            throw new Exception("发送Get请求出现异常!请检查您的网络连接！");
         }
         // 使用finally块来关闭输入流
         finally {
@@ -70,6 +71,7 @@ public class HttpUtil{
                 }
             } catch (Exception e2) {
                 e2.printStackTrace();
+                throw new Exception("IO流关闭异常!");
             }
         }
         return result.toString();

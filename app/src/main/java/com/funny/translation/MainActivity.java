@@ -1,11 +1,18 @@
 package com.funny.translation;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
-import android.widget.ImageView;
+import android.util.Log;
+import android.view.ActionMode;
+import android.view.MenuInflater;
 import android.widget.TextView;
 import android.widget.Button;
 import android.view.View.OnClickListener;
@@ -14,8 +21,11 @@ import android.view.View;
 import com.billy.android.swipe.SmartSwipeWrapper;
 import com.billy.android.swipe.consumer.SlidingConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
+import com.funny.translation.translation.BasicTranslationTask;
+import com.funny.translation.translation.TranslationBV2AV;
+import com.funny.translation.translation.TranslationBaiduNormal;
+import com.funny.translation.translation.TranslationGoogleNormal;
 import com.funny.translation.translation.TranslationHelper;
-import com.funny.translation.translation.TranslationTask;
 import com.funny.translation.bean.Consts;
 import android.support.v7.app.AlertDialog;
 //import com.qw.soul.permission.SoulPermission;
@@ -31,6 +41,8 @@ import com.billy.android.swipe.SmartSwipe;
 import com.billy.android.swipe.consumer.DrawerConsumer;
 import android.support.v7.widget.RecyclerView;
 
+import com.funny.translation.translation.TranslationYouDaoEasy;
+import com.funny.translation.translation.TranslationYouDaoNormal;
 import com.funny.translation.utils.ClipBoardUtil;
 import com.funny.translation.utils.DataUtil;
 import com.funny.translation.utils.SharedPreferenceUtil;
@@ -41,7 +53,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import com.funny.translation.widget.ResultItemDecoration;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Objects;
 
 import static com.funny.translation.bean.Consts.*;
 import android.view.ViewGroup;
@@ -85,15 +97,15 @@ public class MainActivity extends BaseActivity
 	Button translateButton;
 	CircleProgress translateProgress;
 	
-	LanguageRecyclerView rightSourceRv,rightTargetRv,rightEngineRv,rightTTSRv;
+	LanguageRecyclerView rightSourceRv,rightTargetRv,rightEngineRv,rightTTSRv,rightModeRv;
 	
-	ArrayList<LanguageBean> sourceList,targetList,engineList,ttsList;
+	ArrayList<LanguageBean> sourceList,targetList,engineList,ttsList,modeList;
 
 	DrawerConsumer rightDrawerConsumer;//右侧侧滑
 	SlidingConsumer leftSlidingConsumer;
 	SimpleSwipeListener swipeListener;
 
-	ArrayList<TranslationTask> tasks;
+	ArrayList<BasicTranslationTask> tasks;
 	ResultAdapter adapter;
 	TranslationHelper helper;
 	
@@ -106,6 +118,8 @@ public class MainActivity extends BaseActivity
 	ProgressBar dialogTranslatingProgressbar;
 
 	boolean isBackground=false;//Activity是否处于后台
+
+	String TAG="MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -128,12 +142,24 @@ public class MainActivity extends BaseActivity
 		createRightSlideView();
 		createLeftSlideView();
 		initSwipeListener();
-		initPreferenceData();
+		initPreferenceDataRightRv();
+		initPreferenceDataDiyBaidu();
 		createDialogs();
 		initHandler();
-		
+		initIntentData();//用户选择后选择用该软件翻译的
 		new UpdateThread(this).start();
     }
+
+    private void initIntentData(){
+    	Intent intent = getIntent();
+    	if (intent.hasExtra("checked_text")) {//选择的
+			String checkedText = intent.getStringExtra("checked_text");
+			startTranslate(checkedText);
+		}else if (intent.hasExtra("shared_text")){//分享的
+    		String sharedText = intent.getStringExtra("shared_text");
+    		startTranslate(sharedText);
+		}
+	}
 
 	private void initHandler()
 	{
@@ -160,7 +186,7 @@ public class MainActivity extends BaseActivity
 						{
 							//translationResult=(String[][])obj2;
 							//adapter.updata(translationResult);
-							tasks = (ArrayList<TranslationTask>)obj2;
+							tasks = (ArrayList<BasicTranslationTask>)obj2;
 							adapter.updata(tasks);
 							itemDecoration.setTasks(tasks);
 							outputRecyclerView.invalidateItemDecorations();
@@ -193,6 +219,7 @@ public class MainActivity extends BaseActivity
 		Consts.LANGUAGE_NAMES=re.getStringArray(R.array.languages);
 		Consts.ENGINE_NAMES=re.getStringArray(R.array.engines);
 		Consts.TTS_NAMES=re.getStringArray(R.array.tts_engines);
+		MODE_NAMES=re.getStringArray(R.array.modes);
 	}
 
 	private void initMainView()
@@ -225,7 +252,13 @@ public class MainActivity extends BaseActivity
 					// TODO: Implement this method
 				}
 		});
+
+		inputText.setClickable(true);
+		inputText.setFocusable(true);
+
+
 		outputRecyclerView = findViewById(R.id.widget_main_recycler_view);
+
 
 		adapter = new ResultAdapter(this, null);
 		itemDecoration = new ResultItemDecoration(this, tasks);
@@ -268,9 +301,6 @@ public class MainActivity extends BaseActivity
 //						ApplicationUtil.print(MainActivity.this,"检测到您当前输入的语言为【英语】\n已自动为您切换");
 //					}
 					startTranslate(inputText.getText().toString());
-					//dialogTranslatingProgressbar.setMax(tasks.size());
-					//dialogTranslatingProgressbar.setProgress(0);
-					//showTranslatingDialog();
 				}
 			});
 		View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
@@ -286,12 +316,17 @@ public class MainActivity extends BaseActivity
 				return false;
 			}
 		};
+
 		inputText.setOnLongClickListener(onLongClickListener);
-			translateProgress=findViewById(R.id.widget_main_translate_progress);
-			translateProgress.setVisibility(View.GONE);
+		translateProgress=findViewById(R.id.widget_main_translate_progress);
+		translateProgress.setVisibility(View.GONE);
 	}
 
 	private void startTranslate(String content) {
+    	if (getCheckedList(targetList).size()==0){
+    		ApplicationUtil.print(this,"您必须选择目标语言后再开始翻译！");
+    		return;
+		}
 		if (!StringUtil.isValidContent(content)){
 			return;
 		}
@@ -303,8 +338,14 @@ public class MainActivity extends BaseActivity
 			ApplicationUtil.print(MainActivity.this,"当前翻译正在进行中，请耐心等待~");
 			return;
 		}
+		if (inputText.getText().length()==0){//空内容
+			inputText.setText(content);
+		}
 		//根据选择翻译
 		helper = new TranslationHelper(MainActivity.this.handler);
+		short mode = getCheckedList(modeList).get(0).getUserData();
+		helper.setMode(mode);
+		//Log.i(TAG,"正在使用的翻译模式是："+MODE_NAMES[mode]);
 		initTasks(content);
 		helper.setTasks(tasks);
 		helper.totalTimes = tasks.size();
@@ -335,7 +376,12 @@ public class MainActivity extends BaseActivity
 				switch (drawerItemNormal.titleRes){
 					case R.string.setting:
 						leftSlidingConsumer.close();
-						moveToActivity(SettingActivity.class);
+						Intent intent = new Intent();
+						moveToActivityForResult(SettingActivity.class,intent,ACTIVITY_MAIN);
+						break;
+					case R.string.feedback:
+						leftSlidingConsumer.close();
+						moveToActivity(FeedbackActivity.class);
 						break;
 				}
 			}
@@ -417,15 +463,17 @@ public class MainActivity extends BaseActivity
 			bean.setText(TTS_NAMES[i]);
 			ttsList.add(bean);
 		}
-		
-		//默认勾选
-//		sourceList.get(Consts.LANGUAGE_CHINESE).setIsSelected(true);
-//		targetList.get(Consts.LANGUAGE_ENGLISH).setIsSelected(true);
-		engineList.get(Consts.ENGINE_YOUDAO_NORMAL).setIsSelected(true);
-		engineList.get(Consts.ENGINE_BAIDU_NORMAL).setIsSelected(true);
-		ttsList.get(Consts.TTS_BAIDU).setIsSelected(true);
-		
 
+		rightModeRv=rightSlideView.findViewById(R.id.main_slide_right_mode_rv);
+		modeList=new ArrayList<LanguageBean>();
+		for(short i = 0; i< MODE_NAMES.length; i++){
+			LanguageBean bean=new LanguageBean();
+			bean.setIsSelected(false);
+			bean.setUserData(i);
+			bean.setCheckKind(Consts.CHECK_SINGLE);
+			bean.setText(MODE_NAMES[i]);
+			modeList.add(bean);
+		}
 
 		//SmartSwipeWrapper rightMenuWrapper = SmartSwipe.wrap(rightSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
 		rightDrawerConsumer=new DrawerConsumer().setDrawerView(SwipeConsumer.DIRECTION_RIGHT,rightSlideView);
@@ -436,15 +484,29 @@ public class MainActivity extends BaseActivity
 		
 	}
 
-	private void initPreferenceData(){
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		int checkedSourceLanguage =Integer.parseInt(sp.getString("preference_language_source_default","1"));
-		sourceList.get(checkedSourceLanguage).setIsSelected(true);
+	private void disSelectList(@NonNull ArrayList<LanguageBean> list){
+    	for (LanguageBean item:list){
+    		item.setIsSelected(false);
+		}
+	}
 
-		String[] checkedTargetLanguages=sp.getStringSet("preference_language_source_target",new HashSet<String>()).toArray(new String[0]);
+	private void initPreferenceDataRightRv(){
+    	disSelectList(sourceList);
+    	disSelectList(targetList);
+    	disSelectList(engineList);
+    	disSelectList(ttsList);
+    	disSelectList(modeList);
+
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		int checkedSourceLanguage =Integer.parseInt(Objects.requireNonNull(sp.getString("preference_language_source_default", "1")));
+		sourceList.get(checkedSourceLanguage).setIsSelected(true);
+		//Log.i(TAG,"____获取到的checkedSourceL is "+checkedSourceLanguage);
+
+		String[] checkedTargetLanguages=sp.getStringSet("preference_language_target_default",new HashSet<String>()).toArray(new String[0]);
 		if (checkedTargetLanguages.length!=0){
 			for (int i = 0; i < checkedTargetLanguages.length; i++) {
 				targetList.get(Integer.parseInt(checkedTargetLanguages[i])).setIsSelected(true);
+				//Log.i(TAG,"____获取到的checkedTargetL 包括 "+checkedTargetLanguages[i]);
 			}
 		}else{
 			targetList.get(2).setIsSelected(true);
@@ -469,6 +531,31 @@ public class MainActivity extends BaseActivity
 		int[] ttsMapping=new int[TTS_NAMES.length];
 		DataUtil.setDefaultMapping(ttsMapping);
 		rightTTSRv.initData(ttsList,ttsMapping);
+
+		int[] modeMapping=new int[MODE_NAMES.length];
+		DataUtil.setDefaultMapping(modeMapping);
+		rightModeRv.initData(modeList,modeMapping);
+
+		engineList.get(ENGINE_GOOGLE).setIsSelected(true);
+		engineList.get(ENGINE_BAIDU_NORMAL).setIsSelected(true);
+		ttsList.get(TTS_BAIDU).setIsSelected(true);
+		modeList.get(MODE_NORMAL).setIsSelected(true);
+	}
+
+
+	private void initPreferenceDataDiyBaidu(){
+		//百度翻译 自定义
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		Log.i(TAG,"是否使用自定义百度？"+sp.getBoolean("preference_baidu_is_diy_api",false));
+		if (sp.getBoolean("preference_baidu_is_diy_api",false)) {
+			BAIDU_APP_ID = sp.getString("preference_baidu_diy_appid",DEFAULT_BAIDU_APP_ID);
+			BAIDU_SECURITY_KEY = sp.getString("preference_baidu_diy_key",DEFAULT_BAIDU_SECURITY_KEY);
+			BAIDU_SLEEP_TIME = Long.parseLong(Objects.requireNonNull(sp.getString("preference_baidu_diy_sleep_time", String.valueOf(DEFAULT_BAIDU_SLEEP_TIME))));
+		}else{
+			BAIDU_APP_ID = DEFAULT_BAIDU_APP_ID;
+			BAIDU_SECURITY_KEY = DEFAULT_BAIDU_SECURITY_KEY;
+			BAIDU_SLEEP_TIME = DEFAULT_BAIDU_SLEEP_TIME;
+		}
 	}
 
 	private void initSwipeListener(){
@@ -516,7 +603,7 @@ public class MainActivity extends BaseActivity
 	
 	private void initTasks(String content){
 		if(tasks==null){
-			tasks=new ArrayList<TranslationTask>();
+			tasks=new ArrayList<BasicTranslationTask>();
 		}else{
 			tasks.clear();
 			helper.finishTasks.clear();
@@ -525,9 +612,28 @@ public class MainActivity extends BaseActivity
 		int i=0;
 		for(LanguageBean target:getCheckedList(targetList)){
 			for(LanguageBean engine:getCheckedList(engineList)){
-				TranslationTask task=new TranslationTask(engine.getUserData(),source,target.getUserData(),content);
-				task.setId(i++);
-				task.setLisener(helper.defaultListener);
+				BasicTranslationTask task;
+				switch (engine.getUserData()){
+					case ENGINE_YOUDAO_EASY:
+						task = new TranslationYouDaoEasy(helper,content,source,target.getUserData(),ENGINE_YOUDAO_EASY);
+						break;
+					case ENGINE_YOUDAO_NORMAL:
+						task = new TranslationYouDaoNormal(helper,content,source,target.getUserData(),ENGINE_YOUDAO_NORMAL);
+						break;
+					case ENGINE_BAIDU_NORMAL:
+						task = new TranslationBaiduNormal(helper,content,source,target.getUserData(),ENGINE_BAIDU_NORMAL);
+						break;
+					case ENGINE_GOOGLE:
+						task = new TranslationGoogleNormal(helper,content,source,target.getUserData(),ENGINE_GOOGLE);
+						break;
+					case ENGINE_BV_TO_AV:
+						task = new TranslationBV2AV(helper,content,source,target.getUserData(),ENGINE_BV_TO_AV);
+						break;
+					default:
+						throw new IllegalStateException("没有这个引擎: " + engine.getUserData());
+				}
+				//task.setId(i++);
+				//task.setLisener(helper.defaultListener);
 				tasks.add(task);
 			}
 		}
@@ -589,34 +695,6 @@ public class MainActivity extends BaseActivity
 	}
 	
 	private void createDialogs(){
-		/*View view=LayoutInflater.from(this).inflate(R.layout.dialog_translating,null);
-		dialogTranslatingContentTV=view.findViewById(R.id.dialog_translating_content_tv);
-		dialogTranslatingProgressbar=view.findViewById(R.id.dialog_translating_progressbar);
-		*/
-		/*translatingProgressDialog=new AlertDialog.Builder(this)
-			.setTitle("翻译中……")
-			.setView(view)
-			.setPositiveButton("停止", new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface p1, int p2)
-				{
-					// TODO: Implement this method
-					helper.flag=0;
-					ApplicationUtil.print(MainActivity.this,"已停止");
-					adapter.notifyDataSetChanged();
-				}
-			})
-			.setNegativeButton("后台", new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface p1, int p2)
-				{
-					// TODO: Implement this method
-					translateButton.setEnabled(false);
-					ApplicationUtil.print(MainActivity.this,"任务已转至后台，完成前请不要开始新任务！");
-				}
-			})
-			.create();*/
-			
 		if(ApplicationUtil.isFirstOpen(this)){
 			tipDialog=new AlertDialog.Builder(this)
 				.setTitle("Welcome")
@@ -686,14 +764,7 @@ public class MainActivity extends BaseActivity
 			}
 			//不执行后面的
 	}
-	
-	
-	public void showTranslatingDialog(){
-		if(translatingProgressDialog!=null){
-			translatingProgressDialog.show();
-		}
-	}
-	
+
 	public boolean isFree(){//判断本软件是否处于空闲状态
 		if(translatingProgressDialog!=null&&translatingProgressDialog.isShowing()){
 			return false;
@@ -775,7 +846,23 @@ public class MainActivity extends BaseActivity
 		FunnyApplication.getProxy(this).shutdown();
 		super.onDestroy();
 	}
-//	private void getInternetPermission(){
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//Log.i(TAG,"onActivityResult。收到的requestCode:"+requestCode+"  resultCode is"+resultCode);
+		if (requestCode==ACTIVITY_MAIN&&resultCode==ACTIVITY_SETTING){
+			boolean isRvChange=data.getBooleanExtra("isRvChange",false);//targetList、sourceList内容是否改变
+			boolean isDiyBaiduChange = data.getBooleanExtra("isDiyBaiduChange",false);//是否自定义百度
+			//Log.i(TAG,"_____获取到传回的isRvChange额为:"+isRvChange);
+			if (isRvChange) initPreferenceDataRightRv();
+			if (isDiyBaiduChange)initPreferenceDataDiyBaidu();
+		}
+	}
+
+
+
+	//	private void getInternetPermission(){
 //		SoulPermission.getInstance().checkAndRequestPermission(Manifest.permission.ACCESS_NETWORK_STATE, new CheckRequestPermissionListener(){
 //				@Override
 //				public void onPermissionOk(Permission p)

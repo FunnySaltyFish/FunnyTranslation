@@ -5,9 +5,9 @@ public class TranslationResult
 //	public final static short DETAIL_MANY_RESULTS=1;//有多个返回结果
 //	public final static short 
 
-	public final static short TRANSLATE_STATU_SUCCESS=0;
-	public final static short TRANSLATE_STATU_FAIL=1;
-	
+	public final static short TRANSLATE_STATUE_SUCCESS =0;
+	public final static short TRANSLATE_STATUE_FAIL=1;
+
 	private short engineKind;
 	private String basicResult;//最简单的翻译结果，只有结果
 	private String[][] resultTexts;//额外的详细翻译结果，可能有多个结果
@@ -20,9 +20,14 @@ public class TranslationResult
 		}
 	*/
 	private String phoneticNotation;//注音
+
 	private String sourceString;
 	private String partOfSpeech;//词性
-	
+
+	public TranslationResult(short engineKind,String sourceString) {
+		this.engineKind = engineKind;
+		this.sourceString = sourceString;
+	}
 
 	public TranslationResult(short engineKind)
 	{
@@ -34,12 +39,6 @@ public class TranslationResult
 		this.engineKind = engineKind;
 		this.basicResult = basicResult;
 		this.resultTexts = resultTexts;
-	}
-
-	public TranslationResult(short engineKind, String basicResult)
-	{
-		this.engineKind = engineKind;
-		this.basicResult = basicResult;
 	}
 	
 	//Setters and getters
@@ -71,7 +70,7 @@ public class TranslationResult
 
 	public String getBasicResult()
 	{
-		return basicResult;
+		return basicResult==null?"":basicResult;
 	}
 
 	public void setResultTexts(String[][] resultTexts)
@@ -93,8 +92,14 @@ public class TranslationResult
 	{
 		return phoneticNotation;
 	}
-	
-	
+
+	public String getSourceString() {
+		return sourceString;
+	}
+
+	public void setSourceString(String sourceString) {
+		this.sourceString = sourceString;
+	}
 	
 	
 }

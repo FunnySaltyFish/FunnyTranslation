@@ -1,5 +1,7 @@
 package com.funny.translation.translation;
 
+import com.funny.translation.bean.Consts;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,7 +27,7 @@ class BaiduHttpGet {
     protected static final int SOCKET_TIMEOUT = 10000; // 10S
     protected static final String GET = "GET";
 
-    public static String get(String host, Map<String, String> params) {
+    public static String get(String host, Map<String, String> params) throws TranslationException{
         try {
             // 设置SSLContext
             SSLContext sslcontext = SSLContext.getInstance("TLS");
@@ -64,13 +66,12 @@ class BaiduHttpGet {
             conn.disconnect(); // 断开连接
 
             return text;
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
+            throw new TranslationException(Consts.ERROR_ILLEGAL_DATA);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 

@@ -18,17 +18,15 @@ import java.util.List;
 
 public class TranslationHelper extends Thread
 {
-	public String sourceString;
-	public String resultString;
-	public short engineKind=0;
-	public ArrayList<TranslationTask> tasks,finishTasks;
+	public ArrayList<BasicTranslationTask> tasks,finishTasks;
 	
 	public int successTimes=0,failureTimes=0;
 	public int totalTimes=0;
 	
 	public int flag=0;
 	private int curI=0;//当前翻译的是第几个
-	
+	private short mode=0;//翻译模式
+
 	private Handler handler;
 	
 	public final static short FLAG_TRANSLATING=1;
@@ -39,42 +37,32 @@ public class TranslationHelper extends Thread
 		this.handler=handler;
 		this.defaultListener=new OnTranslateListener(){
 			@Override
-			public void onSuccess(String source,String result)
-			{
-				// TODO: Implement this method
-				System.out.printf("成功！%s的翻译结果是：%s\n",source,result);
+			public void onSuccess(TranslationHelper helper, TranslationResult result) {
+				System.out.printf("成功！%s的翻译结果是：%s\n",result.getSourceString(),result.getBasicResult());
 				successTimes++;
 			}
 
 			@Override
-			public void onFail(String reason)
-			{
-				// TODO: Implement this method
-				System.out.printf("失败！原因是：\n%s",reason);
+			public void onFail(TranslationHelper helper, TranslationResult result) {
+				System.out.printf("失败！原因是：\n%s",result.getBasicResult());
 				failureTimes++;
 			}
 		};
-		finishTasks=new ArrayList<TranslationTask>();
+		finishTasks= new ArrayList<>();
 	}
 
-	public void setTasks(ArrayList<TranslationTask> tasks)
+	public void setTasks(ArrayList<BasicTranslationTask> tasks)
 	{
 		// TODO: Implement this method
 		this.tasks=tasks;
 	}
-	
-//	public void startTasks(){
-//		if(this.tasks==null||this.tasks.isEmpty()){return;}
-//		TranslationTask task;
-//		for(int i=0;i<this.tasks.size();i++){
-//			task=this.tasks.get(i);
-//			task.translate();
-//		}
-//	}
-	
+
 	public int getProcess(){
-		int progress=Math.round((float)(this.failureTimes+this.successTimes)/(float)this.totalTimes*100);
-		return progress;
+		return Math.round((float)(this.failureTimes+ this.successTimes)/(float) this.totalTimes*100);
+	}
+
+	public void setMode(short mode){
+		this.mode=mode;
 	}
 	
 	@Override
@@ -85,8 +73,8 @@ public class TranslationHelper extends Thread
 		while(flag>0){
 			if(flag==FLAG_TRANSLATING){
 				if(this.tasks==null||this.tasks.isEmpty()){return;}
-				TranslationTask task=this.tasks.get(curI++);
-				task.translate();
+				BasicTranslationTask task=this.tasks.get(curI++);
+				task.translate(mode);
 				try
 				{
 					finishTasks.add(task);
@@ -94,11 +82,13 @@ public class TranslationHelper extends Thread
 					msg.what=0x001;
 					msg.obj=1;
 					handler.sendMessage(msg);
-					//System.out.println("我是线程，我在执行translating");
-					if(task.engineKind==Consts.ENGINE_BAIDU_NORMAL){
-						sleep(400);
-					}else{
-						sleep(50);
+					if (!task.isOffline()) {//离线翻译不休眠
+						//System.out.println("我是线程，我在执行translating");
+						if (task.engineKind == Consts.ENGINE_BAIDU_NORMAL) {
+							sleep(Consts.BAIDU_SLEEP_TIME);
+						} else {
+							sleep(50);
+						}
 					}
 				}
 				catch (InterruptedException e)
@@ -122,20 +112,7 @@ public class TranslationHelper extends Thread
 	public boolean isTranslating(){
 		return flag==FLAG_TRANSLATING;
 	}
-	
-//	public String[][] getResult(){
-//		if(this.tasks==null||this.tasks.isEmpty()){return null;}
-//		String[][] resultStrs=new String[this.tasks.size()][2];
-//		TranslationTask task;
-//		for(int i=0;i<this.tasks.size();i++){
-//			task=this.tasks.get(i);
-//			System.out.println("resultStrs:"+resultStrs.toString()+"  length:"+resultStrs.length);
-//			resultStrs[i][0]=task.resultString;
-//			resultStrs[i][1]=Consts.ENGINE_NAMES[task.engineKind];
-//		}
-//		return resultStrs;
-//	}
-//	
+
 	public void reStart(){
 		this.flag = FLAG_TRANSLATING;
 		this.curI = 0;
