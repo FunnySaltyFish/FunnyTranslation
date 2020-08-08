@@ -5,7 +5,9 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
-import com.funny.translation.translation.TranslationTask;
+
+import com.funny.translation.translation.BasicTranslationTask;
+
 import java.util.ArrayList;
 
 public class ResultItemDecoration extends RecyclerView.ItemDecoration
@@ -14,7 +16,7 @@ public class ResultItemDecoration extends RecyclerView.ItemDecoration
 	 参考
 	 https://blog.csdn.net/zxt0601/article/details/52355199
 	 */
-	private ArrayList<TranslationTask> mTasks;
+	private ArrayList<BasicTranslationTask> mTasks;
 	private Paint mPaint;
 	private Rect mBounds;//用于存放测量文字Rect
 	
@@ -22,7 +24,7 @@ public class ResultItemDecoration extends RecyclerView.ItemDecoration
 	private int mContentLeftMargin;
 
 	private Context context;
-	public ResultItemDecoration(Context ctx,ArrayList<TranslationTask> tasks){
+	public ResultItemDecoration(Context ctx,ArrayList<BasicTranslationTask> tasks){
 		this.context=ctx;
 		this.mTasks = tasks;
 		mPaint = new Paint();
@@ -31,7 +33,7 @@ public class ResultItemDecoration extends RecyclerView.ItemDecoration
 		mContentLeftMargin=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
 	}
 
-	public void setTasks(ArrayList<TranslationTask> tasks){
+	public void setTasks(ArrayList<BasicTranslationTask> tasks){
 		this.mTasks=tasks;
 	}
 

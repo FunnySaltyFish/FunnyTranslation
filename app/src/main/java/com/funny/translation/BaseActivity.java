@@ -20,5 +20,10 @@ public class BaseActivity extends AppCompatActivity
 		intent.setClass(this,activity);
 		startActivity(intent);
 	}
+
+	public void moveToActivityForResult(Class activity,Intent intent,int startCode){
+		intent.setClass(this,activity);
+		startActivityForResult(intent,startCode);
+	}
 	
 }

@@ -92,10 +92,10 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 								LanguageBean bean=list.get(actualIndex);
 								Log.i(TAG,String.format("i is %d , adn getByValue returns %d",i,getMappingIndex(i)));
 								bean.setIsSelected(!bean.isSelected());
-								if(isNoneChecked()){//都没选，不执行
+								/*if(isNoneChecked()){//都没选，不执行
 									bean.setIsSelected(true);
 									return;
-								}
+								}*/
 								//print("isSelected:"+bean.isSelected());
 								break;
 							case Consts.CHECK_SINGLE:

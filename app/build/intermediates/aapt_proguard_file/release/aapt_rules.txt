@@ -1,6 +1,8 @@
 -keep class android.support.v4.app.CoreComponentFactory { <init>(); }
+-keep class com.funny.translation.FeedbackActivity { <init>(); }
 -keep class com.funny.translation.FunnyApplication { <init>(); }
 -keep class com.funny.translation.MainActivity { <init>(); }
+-keep class com.funny.translation.ProcessTextActivity { <init>(); }
 -keep class com.funny.translation.SettingActivity { <init>(); }
 -keep class android.support.v14.preference.MultiSelectListPreference { <init>(...); }
 
@@ -10,6 +12,8 @@
 
 -keep class android.support.v7.internal.widget.PreferenceImageView { <init>(android.content.Context, android.util.AttributeSet); }
 
+-keep class android.support.v7.preference.EditTextPreference { <init>(...); }
+
 -keep class android.support.v7.preference.ListPreference { <init>(...); }
 
 -keep class android.support.v7.preference.Preference { <init>(...); }
@@ -17,6 +21,8 @@
 -keep class android.support.v7.preference.PreferenceCategory { <init>(...); }
 
 -keep class android.support.v7.preference.PreferenceScreen { <init>(...); }
+
+-keep class android.support.v7.preference.SwitchPreferenceCompat { <init>(...); }
 
 -keep class android.support.v7.preference.UnPressableLinearLayout { <init>(android.content.Context, android.util.AttributeSet); }
 

@@ -1,5 +1,6 @@
 package com.funny.translation.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -22,7 +23,7 @@ import com.funny.translation.utils.ApplicationUtil;
 /**
  * Created by opprime on 16-7-21.
  */
-public class EditTextField extends EditText {
+public class EditTextField extends android.support.v7.widget.AppCompatEditText {
     private Context mContext;
     private Bitmap mClearButton;
     private Paint mPaint;
@@ -230,6 +231,7 @@ public class EditTextField extends EditText {
 		setPadding(getIsShow());
 	}
 	
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {

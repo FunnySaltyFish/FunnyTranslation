@@ -13,16 +13,21 @@ public class UpdateUtil
 	public static JSONObject updateDescription;
 	public static String updateLog;
 	public static boolean isUpdate=true;
-	public static JSONObject getUpdateDescription(){
-		String str=HttpUtil.sendGet("https://raw.githubusercontent.com/FunnySaltyFish/FunnyTranslationDownload/master/description.json","");
+	public static JSONObject getUpdateDescription() throws Exception{
 		JSONObject obj=null;
 		try
 		{
+			String str=HttpUtil.sendGet("https://gitee.com/funnysaltyfish/FunnyTranslationDownload/raw/master/description.json","");
 			obj= new JSONObject(str);
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+			throw new JSONException("自动更新失败！JSON解析错误！");
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			throw e;
 		}
 		return obj;
 	}

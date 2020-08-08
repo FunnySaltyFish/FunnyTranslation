@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
 MERGED from [com.android.support:preference-v14:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\6cf296403335acfa64c7889fa2ef47ee\preference-v14-28.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:preference-v7:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\8ebe752e09c79b168e93c1e166d9d152\preference-v7-28.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:appcompat-v7:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\02a0b5591867b269bf90099dda756d74\appcompat-v7-28.0.0\AndroidManifest.xml:17:1-22:12
@@ -36,33 +36,35 @@ MERGED from [com.android.support:interpolator:28.0.0] C:\Users\Shen\.gradle\cach
 MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\92e18467eefd23a76627e1fe83bf1e05\livedata-1.1.1\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\7f446c61d119859cc910274a8162160c\livedata-core-1.1.1\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\8ce8513e0c0ed0e577ea55f824679bf4\runtime-1.1.1\AndroidManifest.xml:17:1-22:12
-INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
-INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
+INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
 	package
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:4:2-33
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:5:2-33
 		INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
 		INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
 		INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:4:2-48
 	android:versionCode
 		INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-26:12
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:2:1-45:12
 		INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:3:2-60
 uses-permission#android.permission.INTERNET
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:5:2-63
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:6:2-63
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:5:19-61
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:6:19-61
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:6:2-75
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:7:2-75
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:6:19-73
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:7:19-73
 application
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:7:2-25:16
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:8:2-44:16
 MERGED from [com.android.support:support-compat:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\00567bd0de14b33d1bf8a440dc72bff8\support-compat-28.0.0\AndroidManifest.xml:22:5-94
 MERGED from [com.android.support:support-compat:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\00567bd0de14b33d1bf8a440dc72bff8\support-compat-28.0.0\AndroidManifest.xml:22:5-94
 MERGED from [com.android.support:versionedparcelable:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\33c175469499d369484821985d0455bd\versionedparcelable-28.0.0\AndroidManifest.xml:22:5-23:19
@@ -70,45 +72,85 @@ MERGED from [com.android.support:versionedparcelable:28.0.0] C:\Users\Shen\.grad
 	android:appComponentFactory
 		ADDED from [com.android.support:support-compat:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\00567bd0de14b33d1bf8a440dc72bff8\support-compat-28.0.0\AndroidManifest.xml:22:18-91
 	android:supportsRtl
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:13:3-29
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:14:3-29
 	android:label
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:11:3-35
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:12:3-35
 	android:resizeableActivity
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:15:3-36
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:16:3-36
+	tools:targetApi
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:17:3-22
 	android:icon
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:10:3-39
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:11:3-39
 	android:allowBackup
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:9:3-29
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:10:3-29
 	android:theme
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:12:3-34
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:13:3-34
 	android:networkSecurityConfig
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:14:3-63
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:15:3-63
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:8:3-35
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:9:3-35
 activity#com.funny.translation.MainActivity
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:16:3-23:14
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:18:3-25:14
 	android:label
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:18:4-36
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:20:4-36
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:17:4-32
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:19:4-32
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:19:4-22:20
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:21:4-24:20
 action#android.intent.action.MAIN
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:20:5-56
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:22:5-56
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:20:13-54
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:22:13-54
 category#android.intent.category.LAUNCHER
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:21:5-64
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:23:5-64
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:21:15-62
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:23:15-62
 activity#com.funny.translation.SettingActivity
-ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:3-110
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:26:3-110
 	android:label
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:45-76
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:26:45-76
 	android:theme
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:77-108
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:26:77-108
 	android:name
-		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:13-44
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:26:13-44
+activity#com.funny.translation.FeedbackActivity
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:3-112
+	android:label
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:46-78
+	android:theme
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:79-110
+	android:name
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:13-45
+activity#com.funny.translation.ProcessTextActivity
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:3-43:14
+	android:label
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:4-40
+	android:exported
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:31:4-27
+	android:theme
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:30:4-42
+	android:name
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:13-48
+intent-filter#action:name:android.intent.action.PROCESS_TEXT+category:name:android.intent.category.DEFAULT+data:mimeType:text/plain
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:33:4-37:20
+action#android.intent.action.PROCESS_TEXT
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:34:5-64
+	android:name
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:34:13-62
+category#android.intent.category.DEFAULT
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:35:5-63
+	android:name
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:35:15-61
+data
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:36:5-42
+	android:mimeType
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:36:11-40
+intent-filter#action:name:android.intent.action.SEND+category:name:android.intent.category.DEFAULT+data:mimeType:text/plain
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:4-42:20
+action#android.intent.action.SEND
+ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:39:5-56
+	android:name
+		ADDED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:39:13-54
 uses-sdk
 INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml

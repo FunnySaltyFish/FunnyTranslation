@@ -4,7 +4,8 @@
 		<item>有道翻译(简版)</item>
 		<item>有道翻译(标准版)</item>
 		<item>百度翻译(标准版)</item>
-		<item>谷歌翻译(短译)</item>
+		<item>谷歌翻译(标准版)</item>
+		<item>Bv2Av</item>
 	</string-array>
     <string-array name="entry_value_languages">
 		<item>0</item>
@@ -28,6 +29,11 @@
 		<item name="language_russian">俄语</item>
 		<item name="language_germany">德语</item>
 		<item name="language_wenyanwen">文言文(仅百度)</item>
+	</string-array>
+    <string-array name="modes">
+		<item>普通翻译模式</item>
+		<item>逐行翻译模式</item>
+		<item>逐字翻译(仅中文)</item>
 	</string-array>
     <string-array name="tts_engines">
 		<item name="tts_local">本地</item>
@@ -354,6 +360,7 @@
     <string name="engine_youdao_easy">有道翻译(简版)</string>
     <string name="engine_youdao_normal">有道翻译（标准版）</string>
     <string name="expand_button_title">Advanced</string>
+    <string name="feedback">反馈</string>
     <string name="hello_world">Author:FunnySaltyFish 未经允许，请勿私自反编译二次发布！</string>
     <string name="language_auto">自动选择</string>
     <string name="language_chinese">中文(简体)</string>
@@ -361,6 +368,8 @@
     <string name="language_japanese">日本语</string>
     <string name="language_source">源语言</string>
     <string name="language_target">目标语言</string>
+    <string name="mode">翻译模式</string>
+    <string name="process_text">FunnyTranslation</string>
     <string name="search_menu_title">Search</string>
     <string name="setting">设置</string>
     <string name="ssr_footer_failed">Load Failed</string>
@@ -410,6 +419,13 @@
 		<!--选择语种的时候主要的文字颜色-->
 		<item name="attr_language_adapter_text_color">@color/color_blue_language_adapter_text_color</item>
 	</style>
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
     <style name="AppTheme.DoubleSeven" parent="@style/AppTheme">
         <item name="colorPrimary">@color/colorPrimaryDS</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkDS</item>

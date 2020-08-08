@@ -27,14 +27,11 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.DrawerView
     public DrawerAdapter(Context ctx){
         this.ctx = ctx;
     }
+
     private List<DrawerItem> dataList = Arrays.asList(
             new DrawerItemHeader(),
             new DrawerItemNormal(R.drawable.ic_setting,R.string.setting),
-//            new DrawerItemNormal(R.mipmap.icon_drawerlayout_home, R.string.drawer_menu_home),
-//            new DrawerItemNormal(R.mipmap.icon_drawerlayout_rank, R.string.drawer_menu_rank),
-//            new DrawerItemNormal(R.mipmap.icon_drawerlayout_column, R.string.drawer_menu_column),
-//            new DrawerItemNormal(R.mipmap.icon_drawerlayout_search, R.string.drawer_menu_search),
-//            new DrawerItemNormal(R.mipmap.icon_drawerlayout_setting, R.string.drawer_menu_setting),
+            new DrawerItemNormal(R.drawable.ic_feedback,R.string.feedback),
             new DrawerItemDivider()
 //            new DrawerItemNormal(R.mipmap.icon_drawerlayout_night, R.string.drawer_menu_night),
 //            new DrawerItemNormal(R.mipmap.icon_drawerlayout_offline, R.string.drawer_menu_offline)

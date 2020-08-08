@@ -2,17 +2,18 @@ package com.funny.translation;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -23,7 +24,6 @@ import com.funny.translation.utils.SharedPreferenceUtil;
 import com.funny.translation.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.funny.translation.bean.Consts.LANGUAGES;
@@ -31,6 +31,11 @@ import static com.funny.translation.bean.Consts.LANGUAGES;
 public class SettingActivity extends BaseActivity
 {
     Context ctx;
+    public boolean isRvChange=false;
+    public boolean isDiyBaiduChange=false;
+    Intent backIntent=new Intent();
+
+    String TAG = "SettingActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -43,20 +48,35 @@ public class SettingActivity extends BaseActivity
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG,"onBackPressed");
+        backIntent.putExtra("isRvChange",isRvChange);
+        backIntent.putExtra("isDiyBaiduChange",isDiyBaiduChange);
+        setResult(Consts.ACTIVITY_SETTING,backIntent);
+        super.onBackPressed();
+    }
+
     public static class SettingFragment extends PreferenceFragmentCompat
     {
-        Preference pre_language_sort;
-        Preference.OnPreferenceClickListener listener;
+        Preference pre_language_sort,pre_source_language,pre_target_language,pre_is_diy_baidu;
+        Preference.OnPreferenceClickListener preferenceClickListener;
+        Preference.OnPreferenceChangeListener preferenceChangeListener;
         Resources res;
         ArrayList mSortedList;
-        Context ctx;
+        SettingActivity ctx;
+        private String TAG="SettingFragment";
+
         @Override
         public void onCreatePreferences(Bundle p1, String p2){
             addPreferencesFromResource(R.xml.preference_setting);
             res=getContext().getResources();
-            ctx=getContext();
+            ctx= (SettingActivity) getActivity();
             pre_language_sort=getPreferenceManager().findPreference("preference_language_sort");
-            listener=new Preference.OnPreferenceClickListener(){
+            pre_source_language=getPreferenceManager().findPreference("preference_language_source_default");
+            pre_target_language=getPreferenceManager().findPreference("preference_language_target_default");
+            pre_is_diy_baidu = getPreferenceManager().findPreference("preference_baidu_is_diy_api");
+            preferenceClickListener =new Preference.OnPreferenceClickListener(){
                 @Override
                 public boolean onPreferenceClick(Preference p){
                     switch(p.getKey()){
@@ -67,7 +87,26 @@ public class SettingActivity extends BaseActivity
                     return false;
                 }
             };
-            if(pre_language_sort!=null){pre_language_sort.setOnPreferenceClickListener(listener);}
+            preferenceChangeListener=new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    switch (preference.getKey()){
+                        case "preference_language_source_default":
+                        case "preference_language_target_default":
+                            ctx.isRvChange=true;
+                            return true;
+                        case "preference_baidu_is_diy_api":
+                            //Log.i(TAG,"____prechange，已设置。");
+                            ctx.isDiyBaiduChange=true;
+                            return true;
+                    }
+                    return true;
+                }
+            };
+            if(pre_language_sort!=null){pre_language_sort.setOnPreferenceClickListener(preferenceClickListener);}
+            pre_target_language.setOnPreferenceChangeListener(preferenceChangeListener);
+            pre_source_language.setOnPreferenceChangeListener(preferenceChangeListener);
+            pre_is_diy_baidu.setOnPreferenceChangeListener(preferenceChangeListener);
         }
 
         @Override
@@ -151,7 +190,8 @@ public class SettingActivity extends BaseActivity
                                 mapping[j] = DataUtil.findStringIndex(Consts.LANGUAGE_NAMES,mSortedList.get(j).toString());
                             }
                             SharedPreferenceUtil.getInstance().putString("pre_language_mapping_string",DataUtil.coverIntArrayToString(mapping));
-                            ApplicationUtil.print(ctx,"已保存！将在下次重启App时生效！");
+                            ApplicationUtil.print(ctx,"已保存！即刻生效！");
+                            ctx.isRvChange=true;
                         }
                     })
                     .create();
