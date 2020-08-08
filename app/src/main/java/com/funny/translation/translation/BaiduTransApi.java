@@ -14,7 +14,7 @@ public class BaiduTransApi {
         this.securityKey = securityKey;
     }
 
-    public String getTransResult(String query, String from, String to) {
+    public String getTransResult(String query, String from, String to) throws TranslationException {
         Map<String, String> params = buildParams(query, from, to);
         return BaiduHttpGet.get(TRANS_API_HOST, params);
     }

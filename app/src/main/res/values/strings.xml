@@ -20,6 +20,9 @@
     <string name="copyright">Copyright@FunnySaltyFish\n2020\nAll Rights Reserved</string>
     <string name="setting">设置</string>
     <string name="description_drawer_header_image">左侧侧滑顶部图片，下方是侧滑菜单列表</string>
+    <string name="mode">翻译模式</string>
+    <string name="process_text">FunnyTranslation</string>
+    <string name="feedback">反馈</string>
 
 
 </resources>

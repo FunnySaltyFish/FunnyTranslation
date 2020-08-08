@@ -54,6 +54,7 @@ public class InternetTTSThread extends Thread
 		while(flag>0){
 			switch(flag){
 				case FLAG_LOADING:
+				case FLAG_FINISH_ONE:
 					try{
 						sleep(100);
 					}catch(Exception e){
@@ -63,15 +64,8 @@ public class InternetTTSThread extends Thread
 				case FLAG_PLAYING:
 					replay();
 					break;
-				case FLAG_FINISH_ONE:
-					//System.out.println("播完一个");
-					try{
-						sleep(100);
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-					break;
 				case FLAG_NO_FILE:
+					flag=FLAG_FINISH_ONE;
 					break;
 				case FLAG_ADD_URL:
 					addUrl();
@@ -152,9 +146,10 @@ public class InternetTTSThread extends Thread
 			HttpURLConnection con=(HttpURLConnection)new URL(needAddUrl).openConnection();
 			ins=con.getInputStream();
 			int length=ins.available();
-			//if(length==0){
-				//throw new FileNotFoundException();
-			//}else{
+			/*if(length==0){
+				throw new FileNotFoundException();
+			}*/
+			// else{
 				/*synchronized(lock){
 					urls.add(needAddUrl);
 				}*/
@@ -167,6 +162,7 @@ public class InternetTTSThread extends Thread
 			e.printStackTrace();
 		}catch(IOException e){
 			flag=FLAG_NO_FILE;
+			print("IO流错误!");
 			e.printStackTrace();
 		}finally{
 			if(ins!=null){
@@ -191,14 +187,8 @@ public class InternetTTSThread extends Thread
 			if(curUrl==null){
 				return;
 			}
-			/*if(!HttpUtil.isAvailable(url)){
-			 ApplicationUtil.print(ctx,"请检查您的当前翻译结果是否与目标语言相同！\n朗读时请不要使用自动选择的翻译结果！",true);
-			 return;
-			 }*/
 			//curUrl=urls.get(curUrlId);
 			internetTTS.reset();
-			//File f=HttpUtil.downloadFile("url","/data/media/");
-			//internetTTS.setDataSource(f);
 			if(curUrl.startsWith("funny://")){
 				AssetFileDescriptor fd=ctx.getAssets().openFd("egg1_4.mp3");
 				print("恭喜你触发了彩蛋！请认真听哦~");

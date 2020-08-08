@@ -218,13 +218,6 @@ android.support.v7.preference.CollapsiblePreferenceGroupController:
 android.support.v4.app.ShareCompat
 android.support.swiperefreshlayout.R
 android.support.drawerlayout.R$integer
-com.funny.translation.translation.TranslationTask:
-    public void <init>(short,java.lang.String)
-    public java.lang.String translateEgg()
-    public com.funny.translation.translation.TranslationResult formatResultGoogleComplex(java.lang.String)
-    public void translateGoogleEasy()
-    public com.funny.translation.translation.OnTranslateListener getLisener()
-    public int getId()
 com.danikula.videocache.sourcestorage.DatabaseSourceInfoStorage:
     private static final java.lang.String TABLE
     private static final java.lang.String COLUMN_ID
@@ -360,7 +353,7 @@ android.support.graphics.drawable.Animatable2Compat$AnimationCallback$1
 com.funny.translation.translation.FunnyGoogleApi:
     public void <init>()
     public static char charAt(java.lang.Object,int)
-    public static com.funny.translation.translation.TranslationResult formatGoogleSimple(java.lang.String)
+    public static void showArray(java.lang.String[][])
 android.support.drawerlayout.R
 android.support.v7.preference.Preference:
     public void setFragment(java.lang.String)
@@ -383,7 +376,6 @@ android.support.v7.preference.Preference:
     public boolean isSingleLineTitle()
     public void setIconSpaceReserved(boolean)
     public boolean isIconSpaceReserved()
-    public void setOnPreferenceChangeListener(android.support.v7.preference.Preference$OnPreferenceChangeListener)
     public android.support.v7.preference.Preference$OnPreferenceChangeListener getOnPreferenceChangeListener()
     public android.support.v7.preference.Preference$OnPreferenceClickListener getOnPreferenceClickListener()
     public final boolean wasDetached()
@@ -537,6 +529,7 @@ android.support.annotation.StyleRes
 android.support.v13.view.inputmethod.InputContentInfoCompat$InputContentInfoCompatImpl
 android.support.slidingpanelayout.R
 com.funny.translation.widget.LanguageAdapter:
+    private boolean isNoneChecked()
     public void setOnClickItemListener(com.funny.translation.widget.LanguageAdapter$OnClickItemListener)
     private com.funny.translation.widget.LanguageAdapter$OnClickItemListener listener
 android.support.v4.app.NotificationCompat$NotificationVisibility
@@ -1134,8 +1127,6 @@ android.support.v4.app.FragmentActivity:
     static final int MAX_NUM_PENDING_FRAGMENT_ACTIVITY_RESULTS
     static final int MSG_RESUME_PENDING
 android.support.graphics.drawable.R
-android.support.v7.preference.EditTextPreference:
-    public void <init>(android.content.Context)
 android.support.v4.content.ModernAsyncTask$AsyncTaskResult
 android.support.v7.recyclerview.R$integer
 com.danikula.videocache.file.UnlimitedDiskUsage
@@ -1269,7 +1260,6 @@ android.support.customview.R$layout
 android.support.v7.util.DiffUtil$ItemCallback
 android.support.v4.math.MathUtils
 android.support.v7.preference.TwoStatePreference:
-    public void <init>(android.content.Context)
     public void setSummaryOn(int)
     public java.lang.CharSequence getSummaryOn()
     public void setSummaryOff(int)
@@ -1519,13 +1509,7 @@ android.support.v4.view.ViewConfigurationCompat:
     public static boolean hasPermanentMenuKey(android.view.ViewConfiguration)
     private void <init>()
     private static final java.lang.String TAG
-com.funny.translation.utils.RC4:
-    public void <init>()
-    public static java.lang.String decry_RC4(byte[],java.lang.String)
-    public static byte[] encry_RC4_byte(java.lang.String,java.lang.String)
-    public static java.lang.String encry_RC4_string(java.lang.String,java.lang.String)
-    private static java.lang.String asString(byte[])
-    private static java.lang.String toHexString(java.lang.String)
+com.funny.translation.utils.RC4
 android.support.v4.os.LocaleListCompat$LocaleListCompatApi24Impl
 com.funny.translation.translation.BaiduTransApi:
     private static final java.lang.String TRANS_API_HOST
@@ -1647,6 +1631,8 @@ android.support.annotation.RestrictTo
 android.support.v4.hardware.fingerprint.FingerprintManagerCompat$AuthenticationCallback
 android.support.v7.preference.R$style:
     private void <init>()
+com.funny.translation.translation.TranslationYouDaoEasy:
+    private static final java.lang.String TAG
 android.support.v4.widget.ViewDragHelper:
     public float getMinVelocity()
     public int getActivePointerId()
@@ -2700,8 +2686,7 @@ android.support.v4.content.res.GrowingArrayUtils:
     public static boolean[] insert(boolean[],int,int,boolean)
 android.support.v4.view.accessibility.AccessibilityManagerCompat$AccessibilityStateChangeListenerCompat
 android.support.v4.widget.SimpleCursorAdapter
-com.funny.translation.utils.EggUtil:
-    public void <init>()
+com.funny.translation.utils.EggUtil
 android.support.v4.widget.ViewGroupUtils:
     private void <init>()
 android.support.v4.view.GestureDetectorCompat$GestureDetectorCompatImpl:
@@ -2968,6 +2953,8 @@ android.support.v7.appcompat.R$style:
     private void <init>()
 android.support.coordinatorlayout.R$integer
 android.support.v7.widget.PopupMenu$OnDismissListener
+com.funny.translation.utils.FunnyBvToAv:
+    public void <init>()
 android.support.v4.widget.FocusStrategy
 android.support.compat.R$drawable
 android.support.annotation.FontRes
@@ -3379,10 +3366,23 @@ android.support.v4.graphics.drawable.DrawableCompat:
 android.support.v7.util.AsyncListUtil$2
 com.funny.translation.bean.Consts:
     public void <init>()
+    public static final int ACTIVITY_MAIN
+    public static final int ACTIVITY_SETTING
+    public static final int ACTIVITY_FEEDBACK
+    public static final java.lang.String ERROR_UNKNOWN
+    public static final java.lang.String ERROR_JSON
+    public static final java.lang.String ERROR_UNSUPPORT_LANGUAGE
+    public static final java.lang.String ERROR_DATED_ENGINE
+    public static final java.lang.String ERROR_POST
+    public static final java.lang.String ERROR_IO
+    public static final java.lang.String ERROR_ILLEGAL_DATA
+    public static final java.lang.String ERROR_ONLY_CHINESE_SUPPORT
+    public static final java.lang.String ERROR_NO_BV_OR_AV
     public static final short ENGINE_YOUDAO_EASY
     public static final short ENGINE_YOUDAO_NORMAL
     public static final short ENGINE_BAIDU_NORMAL
     public static final short ENGINE_GOOGLE
+    public static final short ENGINE_BV_TO_AV
     public static final short TTS_LOCAL
     public static final short TTS_BAIDU
     public static final short TTS_GOOGLE
@@ -3395,10 +3395,11 @@ com.funny.translation.bean.Consts:
     public static final short LANGUAGE_RUSSIAN
     public static final short LANGUAGE_GERMANY
     public static final short LANGUAGE_WENYANWEN
+    public static final short MODE_NORMAL
+    public static final short MODE_EACH_LINE
+    public static final short MODE_EACH_TEXT
     public static final short CHECK_SINGLE
     public static final short CHECK_MULTI
-    public static final java.lang.String BAIDU_APP_ID
-    public static final java.lang.String BAIDU_SECURITY_KEY
     public static final short SKIN_BLUE
     public static final short SKIN_GREEN
     public static final short SKIN_BLACK
@@ -3815,19 +3816,20 @@ android.support.v4.view.GestureDetectorCompat:
     public void setIsLongpressEnabled(boolean)
     public void setOnDoubleTapListener(android.view.GestureDetector$OnDoubleTapListener)
 com.funny.translation.translation.TranslationResult:
-    public void <init>(short,java.lang.String,java.lang.String[][])
     public void <init>(short,java.lang.String)
-    public void setStatue(short)
+    public void <init>(short,java.lang.String,java.lang.String[][])
     public short getStatue()
     public void setPartOfSpeech(java.lang.String)
     public java.lang.String getPartOfSpeech()
+    public void setResultTexts(java.lang.String[][])
     public java.lang.String[][] getResultTexts()
+    public void setPhoneticNotation(java.lang.String)
     public java.lang.String getPhoneticNotation()
-    private short statue
-    private java.lang.String sourceString
+    private java.lang.String[][] resultTexts
+    private java.lang.String phoneticNotation
     private java.lang.String partOfSpeech
-    public static final short TRANSLATE_STATU_SUCCESS
-    public static final short TRANSLATE_STATU_FAIL
+    public static final short TRANSLATE_STATUE_SUCCESS
+    public static final short TRANSLATE_STATUE_FAIL
 android.support.annotation.RestrictTo$Scope
 android.support.swiperefreshlayout.R$drawable
 android.support.v7.viewpager.R
@@ -4263,6 +4265,8 @@ android.arch.lifecycle.MutableLiveData:
     public void postValue(java.lang.Object)
 android.support.v7.cardview.R$dimen:
     private void <init>()
+com.funny.translation.translation.BasicTranslationTask:
+    private static final java.lang.String TAG
 android.support.v4.text.HtmlCompat
 android.support.v4.widget.TextViewCompat$AutoSizeTextType
 android.support.v4.app.ListFragment$2
@@ -4911,8 +4915,6 @@ android.support.v4.widget.AutoSizeableTextView:
 android.support.v7.widget.OrientationHelper$1:
     public void offsetChild(android.view.View,int)
 com.funny.translation.translation.TranslationHelper:
-    public java.lang.String sourceString
-    public java.lang.String resultString
     public static final short FLAG_TRANSLATING
     public static final short FLAG_FINISHED
 android.support.v4.app.AlarmManagerCompat
@@ -4962,7 +4964,6 @@ android.support.v7.app.AppCompatDialog:
     protected void <init>(android.content.Context,boolean,android.content.DialogInterface$OnCancelListener)
     public android.support.v7.app.ActionBar getSupportActionBar()
 com.funny.translation.MainActivity:
-    public void showTranslatingDialog()
     android.widget.TextView dialogTranslatingContentTV
     android.widget.ProgressBar dialogTranslatingProgressbar
 android.support.v7.graphics.drawable.DrawerArrowDrawable$ArrowDirection
@@ -5050,7 +5051,6 @@ android.support.v14.preference.MultiSelectListPreference:
     public int findIndexOfValue(java.lang.String)
     protected boolean[] getSelectedItems()
 android.support.v7.preference.SwitchPreferenceCompat:
-    public void <init>(android.content.Context)
     public void setSwitchTextOn(int)
     public void setSwitchTextOff(int)
     public java.lang.CharSequence getSwitchTextOn()
@@ -5074,8 +5074,8 @@ android.support.v7.graphics.drawable.DrawableContainer:
     private int mLastIndex
 com.funny.translation.SettingActivity:
     android.content.Context ctx
-com.funny.translation.translation.TranslationTask:
-    private int id
+com.funny.translation.ProcessTextActivity:
+    static final synthetic boolean $assertionsDisabled
 android.support.v7.preference.PreferenceGroup:
     private final android.os.Handler mHandler
     private final java.lang.Runnable mClearRecycleCacheRunnable
@@ -5103,6 +5103,8 @@ org.slf4j.helpers.FormattingTuple:
 com.funny.translation.widget.LanguageAdapter:
     public java.util.ArrayList selectedList
     private android.support.v7.widget.RecyclerView rv
+com.funny.translation.SettingActivity$SettingFragment:
+    private java.lang.String TAG
 android.support.v7.preference.PreferenceGroupAdapter$2:
     final synthetic android.support.v7.preference.PreferenceGroupAdapter this$0
 com.funny.translation.widget.DrawerAdapter$DividerViewHolder:
@@ -5146,8 +5148,6 @@ com.billy.android.swipe.SwipeConsumer:
     protected volatile boolean mSwiping
 android.support.v4.view.ViewPropertyAnimatorCompat$2:
     final synthetic android.support.v4.view.ViewPropertyAnimatorCompat this$0
-com.funny.translation.thread.UpdateThread$1:
-    final synthetic com.funny.translation.thread.UpdateThread this$0
 org.slf4j.LoggerFactory:
     static boolean DETECT_LOGGER_NAME_MISMATCH
 com.funny.translation.utils.TTSUtil:
@@ -5281,6 +5281,8 @@ android.support.v4.app.FragmentTransitionImpl$1:
     final synthetic android.support.v4.app.FragmentTransitionImpl this$0
 android.support.v4.app.SupportActivity:
     private android.support.v4.util.SimpleArrayMap mExtraDataMap
+com.funny.translation.bean.Consts:
+    public static java.lang.String AUTHOR
 com.funny.translation.widget.SimpleAdapter$SimpleHolder:
     final synthetic com.funny.translation.widget.SimpleAdapter this$0
 android.arch.lifecycle.MethodCallsLogger:
@@ -5297,6 +5299,8 @@ android.support.v4.view.accessibility.AccessibilityNodeInfoCompat:
 android.support.v4.text.PrecomputedTextCompat:
     private static final java.lang.Object sLock
     private static java.util.concurrent.Executor sExecutor
+com.funny.translation.translation.TranslationBaiduNormal:
+    java.lang.String TAG
 android.support.v4.graphics.TypefaceCompatBaseImpl$2:
     final synthetic android.support.v4.graphics.TypefaceCompatBaseImpl this$0
 android.support.v7.widget.ActionBarContextView$1:
@@ -5315,8 +5319,7 @@ android.support.v7.widget.ActivityChooserView$ActivityChooserViewAdapter:
     public void setShowDefaultActivity(boolean,boolean)
 com.funny.translation.translation.TranslationResult:
     private short engineKind
-    private java.lang.String[][] resultTexts
-    private java.lang.String phoneticNotation
+    private short statue
 android.support.v4.app.FragmentManagerImpl:
     static final android.view.animation.Interpolator ACCELERATE_QUINT
     static final android.view.animation.Interpolator ACCELERATE_CUBIC
@@ -5358,8 +5361,6 @@ com.funny.translation.widget.ResultItemDecoration:
     private java.util.ArrayList mTasks
     private android.graphics.Paint mPaint
     private android.graphics.Rect mBounds
-com.funny.translation.translation.TranslationHelper:
-    public short engineKind
 android.support.graphics.drawable.VectorDrawableCompat:
     private android.graphics.drawable.Drawable$ConstantState mCachedConstantStateDelegate
 android.support.v7.widget.ActionMenuPresenter$OverflowMenuButton$1:

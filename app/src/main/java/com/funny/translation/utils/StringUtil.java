@@ -1,4 +1,6 @@
 package com.funny.translation.utils;
+import android.support.annotation.NonNull;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
@@ -119,7 +121,7 @@ public class StringUtil
 			enTimes++;
 		}
 		//标点符号 空白符号
-		Pattern punctuation=Pattern.compile("[\\s\\p{Zs}`~!@#$%^&*()-_+={[}]|\\:;\"',.>/?·！@#￥%……&*（）——+【】；：’‘“”，《。》、？]");
+		Pattern punctuation=Pattern.compile("[\\s\\p{Zs}`~!@#$%^&*()-_+={[}]|:;\"',.>/?·！￥…（）—【】；：’‘“”，《。》、？]");
 		Matcher pMatcher=punctuation.matcher(str);
 		while(pMatcher.find()){
 			punctuationTimes++;
@@ -141,6 +143,53 @@ public class StringUtil
 		}
 		
 	}
-	
+
+	@NonNull
+	public static String extraChinese(String sourceText){
+		StringBuilder sb =new StringBuilder();
+		Pattern cn=Pattern.compile("[\\u4E00-\\u9FA5]+");
+		Matcher enMatcher=cn.matcher(sourceText);
+		while(enMatcher.find()){
+			sb.append(enMatcher.group(0));
+		}
+		return sb.toString();
+	}
+
+	public static String insertJuhao(@NonNull String text){
+		char[] sourceChars = text.toCharArray();
+		char[] result = new char[text.length()*2];
+		for (int i = 0; i < text.length(); i++) {
+			result[i*2] = sourceChars[i];
+			result[i*2+1] = '。';
+		}
+		return String.valueOf(result);
+	}
+
+	public static boolean isNumber(String str){
+		Pattern p=Pattern.compile("^\\d+$");
+		Matcher m=p.matcher(str);
+		if(m.find()){
+			return true;
+		}
+		return false;
+	}
+
+	public static long findAv(String str){//返回数字
+		Pattern p=Pattern.compile("av(\\d+)",Pattern.CASE_INSENSITIVE);
+		Matcher m=p.matcher(str);
+		if(m.find()){
+			return Long.valueOf(m.group(1));
+		}
+		return -1;
+	}
+
+	public static String findBv(String str){//返回 bv...
+		Pattern p=Pattern.compile("bv\\w+",Pattern.CASE_INSENSITIVE);
+		Matcher m=p.matcher(str);
+		if(m.find()){
+			return (m.group(0));
+		}
+		return "";
+	}
 	
 }

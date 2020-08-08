@@ -2,19 +2,20 @@ package com.funny.translation.widget;
 import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
-import com.funny.translation.translation.TranslationTask;
+
+import com.funny.translation.translation.BasicTranslationTask;
+
 import java.util.ArrayList;
-import java.util.List;
+
 import android.view.View;
 import android.widget.TextView;
 import com.funny.translation.R;
 import android.view.LayoutInflater;
-import android.content.Context;
+
 import com.funny.translation.bean.Consts;
-import android.widget.Button;
+
 import android.view.View.OnClickListener;
 import com.funny.translation.utils.ApplicationUtil;
-import android.support.v7.widget.AppCompatButton;
 import com.funny.translation.utils.TTSUtil;
 import com.funny.translation.MainActivity;
 import android.widget.Space;
@@ -22,25 +23,25 @@ import android.widget.ImageButton;
 public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 	String[][] results;
-	ArrayList<TranslationTask> tasks;
+	ArrayList<BasicTranslationTask> tasks;
 	MainActivity ctx;
-	
-	TranslationTask task;
+
+	BasicTranslationTask task;
 	StringBuilder sb=new StringBuilder();
 	
 	int curPosition=0;
-	public ResultAdapter(MainActivity ctx,ArrayList<TranslationTask> tasks)
+	public ResultAdapter(MainActivity ctx,ArrayList<BasicTranslationTask> tasks)
 	{
 		this.tasks = tasks;
 		this.ctx = ctx;
 	}
 	
-	public void updata(ArrayList<TranslationTask> tasks){
+	public void updata(ArrayList<BasicTranslationTask> tasks){
 		this.tasks=tasks;
 		notifyDataSetChanged();
 	}
 	
-	public void insert(ArrayList<TranslationTask> tasks){
+	public void insert(ArrayList<BasicTranslationTask> tasks){
 		this.tasks=tasks;
 		if(tasks.size()==0){
 			return;
@@ -80,7 +81,7 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 			sb.append("->");
 			sb.append(Consts.LANGUAGE_NAMES[task.targetLanguage]);
 			rcHolder.engine.setText(sb.toString());
-			rcHolder.text.setText(task.resultString);
+			rcHolder.text.setText(task.getResult().getBasicResult());
 			//System.out.println("resultString:"+task.resultString);
 			rcHolder.copyButton.setClickable(true);
 			rcHolder.copyButton.setOnClickListener(new OnClickListener(){
@@ -109,8 +110,8 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //							TTSUtil.initInternet(ctx);
 //						}
 						//System.out.println("id:"+rcHolder.getId());
-						TranslationTask curTask=tasks.get(i);
-						TTSUtil.speak(ctx,curTask.resultString,curTask.targetLanguage,TTSEngine);
+						BasicTranslationTask curTask=tasks.get(i);
+						TTSUtil.speak(ctx,curTask.getResult().getBasicResult(),curTask.targetLanguage,TTSEngine);
 					}
 			});
 			//rcHolder.engine.setText(results[i][1]);

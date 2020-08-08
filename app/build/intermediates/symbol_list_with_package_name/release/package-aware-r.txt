@@ -15,6 +15,7 @@ anim anim_none
 array engines
 array entry_value_languages
 array languages
+array modes
 array tts_engines
 attr actionBarDivider
 attr actionBarItemBackground
@@ -776,9 +777,12 @@ drawable bg_round_button
 drawable bg_round_button_onpress
 drawable bg_round_button_unclickable
 drawable bg_round_button_unpress
+drawable ic_appid
 drawable ic_arrow_down_24dp
 drawable ic_clear_button
 drawable ic_copy
+drawable ic_feedback
+drawable ic_key
 drawable ic_launcher
 drawable ic_menu_down_arrow
 drawable ic_menu_right_arrow
@@ -789,6 +793,7 @@ drawable ic_single_check
 drawable ic_single_check_checked
 drawable ic_sort
 drawable ic_speak
+drawable ic_time
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -807,6 +812,8 @@ drawable tooltip_frame_light
 id ALT
 id CTRL
 id FUNCTION
+id Informal22
+id Informal33
 id META
 id SHIFT
 id SYM
@@ -884,6 +891,7 @@ id listMode
 id list_item
 id main_slide_left_rv
 id main_slide_right_engine_rv
+id main_slide_right_mode_rv
 id main_slide_right_source_rv
 id main_slide_right_source_tv
 id main_slide_right_target_rv
@@ -891,6 +899,7 @@ id main_slide_right_tts_rv
 id mainheaderTextView1
 id mainheaderTextView2
 id mainheaderTextView3
+id mainheaderTextView4
 id menu_main_right_arrow
 id message
 id middle
@@ -976,6 +985,7 @@ id view_result_space_space
 id view_simple_adapter_item_tv
 id view_toast_tv
 id whileEditing
+id widget_feedback_webview
 id widget_main_inputtext
 id widget_main_recycler_view
 id widget_main_toolbar
@@ -1016,6 +1026,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_feedback
 layout activity_setting
 layout dialog_translating
 layout expand_button
@@ -1062,6 +1073,7 @@ layout view_simple_adapter_item
 layout view_slide_left_item
 layout view_toast
 menu menu_main
+menu selection_action_menu
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description
@@ -1109,6 +1121,7 @@ string engine_baidu
 string engine_youdao_easy
 string engine_youdao_normal
 string expand_button_title
+string feedback
 string hello_world
 string language_auto
 string language_chinese
@@ -1116,6 +1129,8 @@ string language_english
 string language_japanese
 string language_source
 string language_target
+string mode
+string process_text
 string search_menu_title
 string setting
 string ssr_footer_failed
@@ -1142,6 +1157,7 @@ style Animation_AppCompat_Tooltip
 style AppTheme
 style AppTheme_AppBarOverlay
 style AppTheme_Blue
+style AppTheme_Dialog
 style AppTheme_DoubleSeven
 style AppTheme_Green
 style AppTheme_NoActionBar

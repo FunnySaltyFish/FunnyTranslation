@@ -20,6 +20,10 @@
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable-xhdpi-v4\\abc_menu_hardkey_panel_mtrl_mult.9.png"
     },
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_ic_appid.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_appid.png"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4_abc_list_longpressed_holo.9.png.flat",
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable-hdpi-v4\\abc_list_longpressed_holo.9.png"
     },
@@ -66,6 +70,10 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable-xxhdpi-v4_abc_menu_hardkey_panel_mtrl_mult.9.png.flat",
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable-xxhdpi-v4\\abc_menu_hardkey_panel_mtrl_mult.9.png"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\menu_selection_action_menu.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\menu\\selection_action_menu.xml"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable-xhdpi-v4_abc_textfield_default_mtrl_alpha.9.png.flat",
@@ -192,6 +200,10 @@
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable-xxhdpi-v4\\abc_textfield_search_activated_mtrl_alpha.9.png"
     },
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\layout_activity_feedback.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\activity_feedback.xml"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_abc_cab_background_top_material.xml.flat",
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable\\abc_cab_background_top_material.xml"
     },
@@ -286,6 +298,10 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_abc_seekbar_track_material.xml.flat",
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable\\abc_seekbar_track_material.xml"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_ic_feedback.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_feedback.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable-v21_abc_action_bar_item_background_material.xml.flat",
@@ -1672,6 +1688,10 @@
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable-xhdpi-v4\\abc_ic_menu_cut_mtrl_alpha.png"
     },
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_ic_time.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_time.png"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_abc_spinner_textfield_background_material.xml.flat",
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable\\abc_spinner_textfield_background_material.xml"
     },
@@ -1754,6 +1774,10 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable-ldrtl-xxhdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\02a0b5591867b269bf90099dda756d74\\appcompat-v7-28.0.0\\res\\drawable-ldrtl-xxhdpi-v17\\abc_spinner_mtrl_am_alpha.9.png"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable_ic_key.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_key.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\release\\drawable-hdpi-v4_notification_bg_low_normal.9.png.flat",

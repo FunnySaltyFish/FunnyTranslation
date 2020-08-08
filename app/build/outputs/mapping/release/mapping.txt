@@ -1,7 +1,7 @@
 # compiler: R8
 # compiler_version: 2.0.88
 # min_api: 19
-# pg_map_id: 6efd856
+# pg_map_id: 5eae37d
 # common_typos_disable
 android.arch.core.executor.ArchTaskExecutor -> a.a.a.a.a:
     android.arch.core.executor.ArchTaskExecutor sInstance -> c
@@ -594,10 +594,10 @@ android.support.v14.preference.MultiSelectListPreference -> android.support.v14.
     java.util.Set mValues -> V
     java.lang.CharSequence[] mEntries -> T
     java.lang.CharSequence[] mEntryValues -> U
-    java.lang.CharSequence[] getEntries() -> E0
-    java.lang.CharSequence[] getEntryValues() -> F0
-    java.util.Set getValues() -> G0
-    void setValues(java.util.Set) -> H0
+    java.lang.CharSequence[] getEntries() -> F0
+    java.lang.CharSequence[] getEntryValues() -> G0
+    java.util.Set getValues() -> H0
+    void setValues(java.util.Set) -> I0
     java.lang.Object onGetDefaultValue(android.content.res.TypedArray,int) -> R
     void onRestoreInstanceState(android.os.Parcelable) -> U
     android.os.Parcelable onSaveInstanceState() -> V
@@ -611,10 +611,10 @@ android.support.v14.preference.SwitchPreference -> android.support.v14.preferenc
     java.lang.CharSequence mSwitchOn -> T
     java.lang.CharSequence mSwitchOff -> U
     android.support.v14.preference.SwitchPreference$Listener mListener -> S
-    void setSwitchTextOff(java.lang.CharSequence) -> F0
-    void setSwitchTextOn(java.lang.CharSequence) -> G0
-    void syncSwitchView(android.view.View) -> H0
-    void syncViewIfAccessibilityEnabled(android.view.View) -> I0
+    void setSwitchTextOff(java.lang.CharSequence) -> G0
+    void setSwitchTextOn(java.lang.CharSequence) -> H0
+    void syncSwitchView(android.view.View) -> I0
+    void syncViewIfAccessibilityEnabled(android.view.View) -> J0
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
     void performClick(android.view.View) -> Z
 android.support.v14.preference.SwitchPreference$Listener -> android.support.v14.preference.SwitchPreference$a:
@@ -4359,8 +4359,8 @@ android.support.v7.internal.widget.PreferenceImageView -> android.support.v7.int
     int mMaxHeight -> c
 android.support.v7.preference.CheckBoxPreference -> android.support.v7.preference.CheckBoxPreference:
     android.support.v7.preference.CheckBoxPreference$Listener mListener -> S
-    void syncCheckboxView(android.view.View) -> F0
-    void syncViewIfAccessibilityEnabled(android.view.View) -> G0
+    void syncCheckboxView(android.view.View) -> G0
+    void syncViewIfAccessibilityEnabled(android.view.View) -> H0
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
     void performClick(android.view.View) -> Z
 android.support.v7.preference.CheckBoxPreference$Listener -> android.support.v7.preference.CheckBoxPreference$a:
@@ -4378,10 +4378,10 @@ android.support.v7.preference.CollapsiblePreferenceGroupController$1 -> android.
     boolean onPreferenceClick(android.support.v7.preference.Preference) -> a
 android.support.v7.preference.CollapsiblePreferenceGroupController$ExpandButton -> android.support.v7.preference.a$b:
     long mId -> N
+    void setSummary(java.util.List) -> A0
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
     long getId() -> m
-    void initLayout() -> y0
-    void setSummary(java.util.List) -> z0
+    void initLayout() -> z0
 android.support.v7.preference.DialogPreference -> android.support.v7.preference.DialogPreference:
     java.lang.CharSequence mDialogTitle -> N
     java.lang.CharSequence mDialogMessage -> O
@@ -4389,13 +4389,13 @@ android.support.v7.preference.DialogPreference -> android.support.v7.preference.
     java.lang.CharSequence mNegativeButtonText -> R
     android.graphics.drawable.Drawable mDialogIcon -> P
     int mDialogLayoutResId -> S
-    java.lang.CharSequence getDialogMessage() -> A0
-    java.lang.CharSequence getDialogTitle() -> B0
-    java.lang.CharSequence getNegativeButtonText() -> C0
-    java.lang.CharSequence getPositiveButtonText() -> D0
+    int getDialogLayoutResource() -> A0
+    java.lang.CharSequence getDialogMessage() -> B0
+    java.lang.CharSequence getDialogTitle() -> C0
+    java.lang.CharSequence getNegativeButtonText() -> D0
+    java.lang.CharSequence getPositiveButtonText() -> E0
     void onClick() -> O
-    android.graphics.drawable.Drawable getDialogIcon() -> y0
-    int getDialogLayoutResource() -> z0
+    android.graphics.drawable.Drawable getDialogIcon() -> z0
 android.support.v7.preference.DialogPreference$TargetFragment -> android.support.v7.preference.DialogPreference$a:
     android.support.v7.preference.Preference findPreference(java.lang.CharSequence) -> b
 android.support.v7.preference.DropDownPreference -> android.support.v7.preference.DropDownPreference:
@@ -4404,22 +4404,22 @@ android.support.v7.preference.DropDownPreference -> android.support.v7.preferenc
     android.widget.Spinner mSpinner -> a0
     android.widget.AdapterView$OnItemSelectedListener mItemSelectedListener -> b0
     void notifyChanged() -> H
-    android.widget.ArrayAdapter createAdapter() -> L0
-    int findSpinnerIndexOfValue(java.lang.String) -> M0
+    android.widget.ArrayAdapter createAdapter() -> M0
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
-    void updateEntries() -> N0
+    int findSpinnerIndexOfValue(java.lang.String) -> N0
     void onClick() -> O
+    void updateEntries() -> O0
 android.support.v7.preference.DropDownPreference$1 -> android.support.v7.preference.DropDownPreference$a:
     android.support.v7.preference.DropDownPreference this$0 -> b
 android.support.v7.preference.EditTextPreference -> android.support.v7.preference.EditTextPreference:
     java.lang.String mText -> T
-    java.lang.String getText() -> E0
-    void setText(java.lang.String) -> F0
+    java.lang.String getText() -> F0
+    void setText(java.lang.String) -> G0
     java.lang.Object onGetDefaultValue(android.content.res.TypedArray,int) -> R
     void onRestoreInstanceState(android.os.Parcelable) -> U
     android.os.Parcelable onSaveInstanceState() -> V
     void onSetInitialValue(java.lang.Object) -> W
-    boolean shouldDisableDependents() -> t0
+    boolean shouldDisableDependents() -> u0
 android.support.v7.preference.EditTextPreference$SavedState -> android.support.v7.preference.EditTextPreference$a:
     java.lang.String text -> b
 android.support.v7.preference.EditTextPreference$SavedState$1 -> android.support.v7.preference.EditTextPreference$a$a:
@@ -4441,18 +4441,18 @@ android.support.v7.preference.ListPreference -> android.support.v7.preference.Li
     java.lang.CharSequence[] mEntries -> T
     java.lang.CharSequence[] mEntryValues -> U
     boolean mValueSet -> X
-    int findIndexOfValue(java.lang.String) -> E0
-    java.lang.CharSequence[] getEntries() -> F0
-    java.lang.CharSequence getEntry() -> G0
-    java.lang.CharSequence[] getEntryValues() -> H0
-    java.lang.String getValue() -> I0
-    int getValueIndex() -> J0
-    void setValue(java.lang.String) -> K0
+    int findIndexOfValue(java.lang.String) -> F0
+    java.lang.CharSequence[] getEntries() -> G0
+    java.lang.CharSequence getEntry() -> H0
+    java.lang.CharSequence[] getEntryValues() -> I0
+    java.lang.String getValue() -> J0
+    int getValueIndex() -> K0
+    void setValue(java.lang.String) -> L0
     java.lang.Object onGetDefaultValue(android.content.res.TypedArray,int) -> R
     void onRestoreInstanceState(android.os.Parcelable) -> U
     android.os.Parcelable onSaveInstanceState() -> V
     void onSetInitialValue(java.lang.Object) -> W
-    void setSummary(java.lang.CharSequence) -> q0
+    void setSummary(java.lang.CharSequence) -> r0
     java.lang.CharSequence getSummary() -> z
 android.support.v7.preference.ListPreference$SavedState -> android.support.v7.preference.ListPreference$a:
     java.lang.String value -> b
@@ -4578,26 +4578,27 @@ android.support.v7.preference.Preference -> android.support.v7.preference.Prefer
     android.content.Intent getIntent() -> n
     void setOnPreferenceChangeInternalListener(android.support.v7.preference.Preference$OnPreferenceChangeInternalListener) -> n0
     java.lang.String getKey() -> o
-    void setOnPreferenceClickListener(android.support.v7.preference.Preference$OnPreferenceClickListener) -> o0
+    void setOnPreferenceChangeListener(android.support.v7.preference.Preference$OnPreferenceChangeListener) -> o0
     int getLayoutResource() -> p
-    void setOrder(int) -> p0
+    void setOnPreferenceClickListener(android.support.v7.preference.Preference$OnPreferenceClickListener) -> p0
     int getOrder() -> q
-    void setSummary(java.lang.CharSequence) -> q0
+    void setOrder(int) -> q0
     android.support.v7.preference.PreferenceGroup getParent() -> r
-    void setTitle(int) -> r0
+    void setSummary(java.lang.CharSequence) -> r0
     boolean getPersistedBoolean(boolean) -> s
-    void setTitle(java.lang.CharSequence) -> s0
+    void setTitle(int) -> s0
     int getPersistedInt(int) -> t
-    boolean shouldDisableDependents() -> t0
+    void setTitle(java.lang.CharSequence) -> t0
     java.lang.String getPersistedString(java.lang.String) -> u
-    boolean shouldPersist() -> u0
+    boolean shouldDisableDependents() -> u0
     java.util.Set getPersistedStringSet(java.util.Set) -> v
-    void tryCommit(android.content.SharedPreferences$Editor) -> v0
+    boolean shouldPersist() -> v0
     android.support.v7.preference.PreferenceDataStore getPreferenceDataStore() -> w
-    void unregisterDependency() -> w0
+    void tryCommit(android.content.SharedPreferences$Editor) -> w0
     android.support.v7.preference.PreferenceManager getPreferenceManager() -> x
-    void unregisterDependent(android.support.v7.preference.Preference) -> x0
+    void unregisterDependency() -> x0
     android.content.SharedPreferences getSharedPreferences() -> y
+    void unregisterDependent(android.support.v7.preference.Preference) -> y0
     java.lang.CharSequence getSummary() -> z
 android.support.v7.preference.Preference$1 -> android.support.v7.preference.Preference$a:
     android.support.v7.preference.Preference this$0 -> b
@@ -4616,7 +4617,7 @@ android.support.v7.preference.PreferenceCategory -> android.support.v7.preferenc
     boolean isEnabled() -> D
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
     void onInitializeAccessibilityNodeInfo(android.support.v4.view.accessibility.AccessibilityNodeInfoCompat) -> S
-    boolean shouldDisableDependents() -> t0
+    boolean shouldDisableDependents() -> u0
 android.support.v7.preference.PreferenceDataStore -> android.support.v7.preference.e:
     boolean getBoolean(java.lang.String,boolean) -> a
     int getInt(java.lang.String,int) -> b
@@ -4714,25 +4715,25 @@ android.support.v7.preference.PreferenceGroup -> android.support.v7.preference.P
     int mInitialExpandedChildrenCount -> R
     int mCurrentPreferenceOrder -> P
     android.support.v7.preference.PreferenceGroup$OnExpandButtonClickListener mOnExpandButtonClickListener -> S
-    android.support.v7.preference.Preference findPreference(java.lang.CharSequence) -> A0
-    int getInitialExpandedChildrenCount() -> B0
-    android.support.v7.preference.PreferenceGroup$OnExpandButtonClickListener getOnExpandButtonClickListener() -> C0
-    android.support.v7.preference.Preference getPreference(int) -> D0
-    int getPreferenceCount() -> E0
-    boolean isOnSameScreenAsChildren() -> F0
-    boolean onPrepareAddPreference(android.support.v7.preference.Preference) -> G0
-    void setInitialExpandedChildrenCount(int) -> H0
+    boolean addPreference(android.support.v7.preference.Preference) -> A0
+    android.support.v7.preference.Preference findPreference(java.lang.CharSequence) -> B0
+    int getInitialExpandedChildrenCount() -> C0
+    android.support.v7.preference.PreferenceGroup$OnExpandButtonClickListener getOnExpandButtonClickListener() -> D0
+    android.support.v7.preference.Preference getPreference(int) -> E0
+    int getPreferenceCount() -> F0
+    boolean isOnSameScreenAsChildren() -> G0
+    boolean onPrepareAddPreference(android.support.v7.preference.Preference) -> H0
     void notifyDependencyChange(boolean) -> I
-    void setOrderingAsAdded(boolean) -> I0
-    void sortPreferences() -> J0
+    void setInitialExpandedChildrenCount(int) -> I0
+    void setOrderingAsAdded(boolean) -> J0
     void onAttached() -> K
+    void sortPreferences() -> K0
     void onDetached() -> Q
     void onRestoreInstanceState(android.os.Parcelable) -> U
     android.os.Parcelable onSaveInstanceState() -> V
     void dispatchRestoreInstanceState(android.os.Bundle) -> e
     void dispatchSaveInstanceState(android.os.Bundle) -> f
-    void addItemFromInflater(android.support.v7.preference.Preference) -> y0
-    boolean addPreference(android.support.v7.preference.Preference) -> z0
+    void addItemFromInflater(android.support.v7.preference.Preference) -> z0
 android.support.v7.preference.PreferenceGroup$OnExpandButtonClickListener -> android.support.v7.preference.PreferenceGroup$a:
     void onExpandButtonClick() -> a
 android.support.v7.preference.PreferenceGroup$SavedState -> android.support.v7.preference.PreferenceGroup$b:
@@ -4851,8 +4852,8 @@ android.support.v7.preference.PreferenceRecyclerViewAccessibilityDelegate$1 -> a
     boolean performAccessibilityAction(android.view.View,int,android.os.Bundle) -> h
 android.support.v7.preference.PreferenceScreen -> android.support.v7.preference.PreferenceScreen:
     boolean mShouldUseGeneratedIds -> U
-    boolean isOnSameScreenAsChildren() -> F0
-    boolean shouldUseGeneratedIds() -> K0
+    boolean isOnSameScreenAsChildren() -> G0
+    boolean shouldUseGeneratedIds() -> L0
     void onClick() -> O
 android.support.v7.preference.PreferenceViewHolder -> android.support.v7.preference.l:
     android.util.SparseArray mCachedViews -> t
@@ -4882,16 +4883,16 @@ android.support.v7.preference.SeekBarPreference -> android.support.v7.preference
     android.widget.SeekBar$OnSeekBarChangeListener mSeekBarChangeListener -> W
     int mMax -> P
     int mSeekBarIncrement -> Q
-    void setValue(int) -> A0
-    void setValueInternal(int,boolean) -> B0
-    void syncValueInternal(android.widget.SeekBar) -> C0
+    void setSeekBarIncrement(int) -> A0
+    void setValue(int) -> B0
+    void setValueInternal(int,boolean) -> C0
+    void syncValueInternal(android.widget.SeekBar) -> D0
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
     java.lang.Object onGetDefaultValue(android.content.res.TypedArray,int) -> R
     void onRestoreInstanceState(android.os.Parcelable) -> U
     android.os.Parcelable onSaveInstanceState() -> V
     void onSetInitialValue(java.lang.Object) -> W
-    void setMax(int) -> y0
-    void setSeekBarIncrement(int) -> z0
+    void setMax(int) -> z0
 android.support.v7.preference.SeekBarPreference$1 -> android.support.v7.preference.SeekBarPreference$a:
     android.support.v7.preference.SeekBarPreference this$0 -> a
 android.support.v7.preference.SeekBarPreference$2 -> android.support.v7.preference.SeekBarPreference$b:
@@ -4907,10 +4908,10 @@ android.support.v7.preference.SwitchPreferenceCompat -> android.support.v7.prefe
     java.lang.CharSequence mSwitchOn -> T
     java.lang.CharSequence mSwitchOff -> U
     android.support.v7.preference.SwitchPreferenceCompat$Listener mListener -> S
-    void setSwitchTextOff(java.lang.CharSequence) -> F0
-    void setSwitchTextOn(java.lang.CharSequence) -> G0
-    void syncSwitchView(android.view.View) -> H0
-    void syncViewIfAccessibilityEnabled(android.view.View) -> I0
+    void setSwitchTextOff(java.lang.CharSequence) -> G0
+    void setSwitchTextOn(java.lang.CharSequence) -> H0
+    void syncSwitchView(android.view.View) -> I0
+    void syncViewIfAccessibilityEnabled(android.view.View) -> J0
     void onBindViewHolder(android.support.v7.preference.PreferenceViewHolder) -> N
     void performClick(android.view.View) -> Z
 android.support.v7.preference.SwitchPreferenceCompat$Listener -> android.support.v7.preference.SwitchPreferenceCompat$a:
@@ -4921,29 +4922,29 @@ android.support.v7.preference.TwoStatePreference -> android.support.v7.preferenc
     boolean mChecked -> P
     boolean mCheckedSet -> Q
     boolean mDisableDependentsState -> R
-    void setDisableDependentsState(boolean) -> A0
-    void setSummaryOff(java.lang.CharSequence) -> B0
-    void setSummaryOn(java.lang.CharSequence) -> C0
-    void syncSummaryView(android.support.v7.preference.PreferenceViewHolder) -> D0
-    void syncSummaryView(android.view.View) -> E0
+    void setChecked(boolean) -> A0
+    void setDisableDependentsState(boolean) -> B0
+    void setSummaryOff(java.lang.CharSequence) -> C0
+    void setSummaryOn(java.lang.CharSequence) -> D0
+    void syncSummaryView(android.support.v7.preference.PreferenceViewHolder) -> E0
+    void syncSummaryView(android.view.View) -> F0
     void onClick() -> O
     java.lang.Object onGetDefaultValue(android.content.res.TypedArray,int) -> R
     void onRestoreInstanceState(android.os.Parcelable) -> U
     android.os.Parcelable onSaveInstanceState() -> V
     void onSetInitialValue(java.lang.Object) -> W
-    boolean shouldDisableDependents() -> t0
-    boolean isChecked() -> y0
-    void setChecked(boolean) -> z0
+    boolean shouldDisableDependents() -> u0
+    boolean isChecked() -> z0
 android.support.v7.preference.TwoStatePreference$SavedState -> android.support.v7.preference.TwoStatePreference$a:
     boolean checked -> b
 android.support.v7.preference.TwoStatePreference$SavedState$1 -> android.support.v7.preference.TwoStatePreference$a$a:
     android.support.v7.preference.TwoStatePreference$SavedState createFromParcel(android.os.Parcel) -> a
     android.support.v7.preference.TwoStatePreference$SavedState[] newArray(int) -> b
 android.support.v7.preference.internal.AbstractMultiSelectListPreference -> android.support.v7.preference.internal.AbstractMultiSelectListPreference:
-    java.lang.CharSequence[] getEntries() -> E0
-    java.lang.CharSequence[] getEntryValues() -> F0
-    java.util.Set getValues() -> G0
-    void setValues(java.util.Set) -> H0
+    java.lang.CharSequence[] getEntries() -> F0
+    java.lang.CharSequence[] getEntryValues() -> G0
+    java.util.Set getValues() -> H0
+    void setValues(java.util.Set) -> I0
 android.support.v7.recyclerview.R$dimen -> a.b.e.e.a:
 android.support.v7.recyclerview.R$id -> a.b.e.e.b:
 android.support.v7.recyclerview.R$styleable -> a.b.e.e.c:
@@ -9736,6 +9737,9 @@ com.danikula.videocache.sourcestorage.SourceInfoStorageFactory -> b.a.a.u.d:
     com.danikula.videocache.sourcestorage.SourceInfoStorage newSourceInfoStorage(android.content.Context) -> b
 com.funny.translation.BaseActivity -> com.funny.translation.a:
     void moveToActivity(java.lang.Class) -> B
+    void moveToActivityForResult(java.lang.Class,android.content.Intent,int) -> C
+com.funny.translation.FeedbackActivity -> com.funny.translation.FeedbackActivity:
+    android.webkit.WebView webView -> p
 com.funny.translation.FunnyApplication -> com.funny.translation.FunnyApplication:
     android.content.Context context -> c
     com.danikula.videocache.HttpProxyCacheServer proxy -> b
@@ -9745,56 +9749,62 @@ com.funny.translation.FunnyApplication -> com.funny.translation.FunnyApplication
 com.funny.translation.FunnyApplication$FunnyFileNameGenerator -> com.funny.translation.FunnyApplication$a:
     java.lang.String generate(java.lang.String) -> a
 com.funny.translation.MainActivity -> com.funny.translation.MainActivity:
-    android.support.v7.app.AlertDialog tipDialog -> P
-    java.util.ArrayList engineList -> D
+    java.util.ArrayList ttsList -> F
+    java.util.ArrayList targetList -> D
     android.support.v7.widget.RecyclerView$LayoutManager layoutManager -> t
-    java.util.ArrayList sourceList -> B
+    android.support.v7.app.AlertDialog tipDialog -> R
+    com.funny.translation.widget.LanguageRecyclerView rightModeRv -> B
     com.github.lzyzsd.circleprogress.CircleProgress translateProgress -> w
+    android.os.Handler handler -> N
     android.support.v7.widget.Toolbar toolbar -> q
     com.funny.translation.widget.LanguageRecyclerView rightEngineRv -> z
-    android.os.Handler handler -> L
-    long firstBackTime -> N
+    com.billy.android.swipe.consumer.SlidingConsumer leftSlidingConsumer -> I
+    long firstBackTime -> P
     com.funny.translation.widget.EditTextField inputText -> r
-    android.support.v7.app.AlertDialog translatingProgressDialog -> O
     android.support.v7.widget.RecyclerView outputRecyclerView -> s
     android.widget.Button translateButton -> v
-    com.billy.android.swipe.consumer.SlidingConsumer leftSlidingConsumer -> G
     com.funny.translation.widget.LanguageRecyclerView rightSourceRv -> x
-    com.billy.android.swipe.consumer.DrawerConsumer rightDrawerConsumer -> F
-    java.util.ArrayList ttsList -> E
+    java.util.ArrayList modeList -> G
+    java.util.ArrayList engineList -> E
     com.funny.translation.widget.ResultItemDecoration itemDecoration -> u
-    java.util.ArrayList targetList -> C
-    boolean isBackground -> Q
+    java.util.ArrayList sourceList -> C
+    android.support.v7.app.AlertDialog translatingProgressDialog -> Q
     android.content.res.Resources re -> p
+    com.billy.android.swipe.consumer.DrawerConsumer rightDrawerConsumer -> H
+    boolean isBackground -> S
+    java.lang.String TAG -> T
     com.funny.translation.widget.LanguageRecyclerView rightTTSRv -> A
-    java.util.ArrayList tasks -> I
-    com.billy.android.swipe.listener.SimpleSwipeListener swipeListener -> H
-    com.funny.translation.translation.TranslationHelper helper -> K
+    java.util.ArrayList tasks -> K
+    com.funny.translation.translation.TranslationHelper helper -> M
+    com.billy.android.swipe.listener.SimpleSwipeListener swipeListener -> J
+    com.funny.translation.widget.ResultAdapter adapter -> L
     com.funny.translation.widget.LanguageRecyclerView rightTargetRv -> y
-    long curBackTime -> M
-    com.funny.translation.widget.ResultAdapter adapter -> J
-    void access$000(com.funny.translation.MainActivity) -> C
-    void access$100(com.funny.translation.MainActivity) -> D
-    void access$200(com.funny.translation.MainActivity,java.lang.String) -> E
-    void createDialogs() -> F
-    void createLeftSlideView() -> G
-    void createRightSlideView() -> H
-    java.util.ArrayList getCheckedList(java.util.ArrayList) -> I
-    short getCheckedTTSEngine() -> J
-    android.os.Handler getHandler() -> K
-    android.graphics.drawable.Drawable getIcon(int,int) -> L
-    android.graphics.drawable.Drawable getIcon(int,int,int,int) -> M
-    int getStatusBarHeight() -> N
-    void initBitmaps() -> O
-    void initConsts() -> P
-    void initHandler() -> Q
-    void initMainView() -> R
-    void initPreferenceData() -> S
-    void initSwipeListener() -> T
-    void initTasks(java.lang.String) -> U
-    boolean isFree() -> V
-    void showUpdateDialog() -> W
-    void startTranslate(java.lang.String) -> X
+    long curBackTime -> O
+    void access$000(com.funny.translation.MainActivity) -> D
+    void access$100(com.funny.translation.MainActivity) -> E
+    void access$200(com.funny.translation.MainActivity,java.lang.String) -> F
+    void createDialogs() -> G
+    void createLeftSlideView() -> H
+    void createRightSlideView() -> I
+    void disSelectList(java.util.ArrayList) -> J
+    java.util.ArrayList getCheckedList(java.util.ArrayList) -> K
+    short getCheckedTTSEngine() -> L
+    android.os.Handler getHandler() -> M
+    android.graphics.drawable.Drawable getIcon(int,int) -> N
+    android.graphics.drawable.Drawable getIcon(int,int,int,int) -> O
+    int getStatusBarHeight() -> P
+    void initBitmaps() -> Q
+    void initConsts() -> R
+    void initHandler() -> S
+    void initIntentData() -> T
+    void initMainView() -> U
+    void initPreferenceDataDiyBaidu() -> V
+    void initPreferenceDataRightRv() -> W
+    void initSwipeListener() -> X
+    void initTasks(java.lang.String) -> Y
+    boolean isFree() -> Z
+    void showUpdateDialog() -> a0
+    void startTranslate(java.lang.String) -> b0
 com.funny.translation.MainActivity$1 -> com.funny.translation.MainActivity$d:
     com.funny.translation.MainActivity this$0 -> b
 com.funny.translation.MainActivity$10 -> com.funny.translation.MainActivity$a:
@@ -9822,13 +9832,25 @@ com.funny.translation.MainActivity$8 -> com.funny.translation.MainActivity$k:
     com.funny.translation.MainActivity this$0 -> b
 com.funny.translation.MainActivity$9 -> com.funny.translation.MainActivity$l:
     com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.ProcessTextActivity -> com.funny.translation.ProcessTextActivity:
+    java.lang.String getCheckedText(android.content.Intent) -> D
+    java.lang.String getSharedText(android.content.Intent) -> E
 com.funny.translation.R$styleable -> com.funny.translation.b:
+com.funny.translation.SettingActivity -> com.funny.translation.SettingActivity:
+    boolean isRvChange -> p
+    android.content.Intent backIntent -> r
+    boolean isDiyBaiduChange -> q
+    java.lang.String TAG -> s
 com.funny.translation.SettingActivity$SettingFragment -> com.funny.translation.SettingActivity$a:
-    android.content.res.Resources res -> l0
-    android.support.v7.preference.Preference$OnPreferenceClickListener listener -> k0
-    android.content.Context ctx -> n0
+    java.util.ArrayList mSortedList -> q0
+    android.support.v7.preference.Preference$OnPreferenceClickListener preferenceClickListener -> n0
     android.support.v7.preference.Preference pre_language_sort -> j0
-    java.util.ArrayList mSortedList -> m0
+    android.support.v7.preference.Preference pre_source_language -> k0
+    android.support.v7.preference.Preference pre_target_language -> l0
+    com.funny.translation.SettingActivity ctx -> r0
+    android.support.v7.preference.Preference pre_is_diy_baidu -> m0
+    android.support.v7.preference.Preference$OnPreferenceChangeListener preferenceChangeListener -> o0
+    android.content.res.Resources res -> p0
     void access$000(com.funny.translation.SettingActivity$SettingFragment) -> B1
     void showSortDialog() -> C1
     void onCreate(android.os.Bundle) -> Z
@@ -9837,6 +9859,9 @@ com.funny.translation.SettingActivity$SettingFragment$1 -> com.funny.translation
     com.funny.translation.SettingActivity$SettingFragment this$0 -> a
     boolean onPreferenceClick(android.support.v7.preference.Preference) -> a
 com.funny.translation.SettingActivity$SettingFragment$2 -> com.funny.translation.SettingActivity$a$b:
+    com.funny.translation.SettingActivity$SettingFragment this$0 -> a
+    boolean onPreferenceChange(android.support.v7.preference.Preference,java.lang.Object) -> a
+com.funny.translation.SettingActivity$SettingFragment$3 -> com.funny.translation.SettingActivity$a$c:
     com.funny.translation.SettingActivity$SettingFragment this$0 -> e
     com.funny.translation.widget.SimpleAdapter val$mAdapter -> d
     void onSelectedChanged(android.support.v7.widget.RecyclerView$ViewHolder,int) -> A
@@ -9844,23 +9869,25 @@ com.funny.translation.SettingActivity$SettingFragment$2 -> com.funny.translation
     void clearView(android.support.v7.widget.RecyclerView,android.support.v7.widget.RecyclerView$ViewHolder) -> c
     int getMovementFlags(android.support.v7.widget.RecyclerView,android.support.v7.widget.RecyclerView$ViewHolder) -> k
     boolean onMove(android.support.v7.widget.RecyclerView,android.support.v7.widget.RecyclerView$ViewHolder,android.support.v7.widget.RecyclerView$ViewHolder) -> y
-com.funny.translation.SettingActivity$SettingFragment$3 -> com.funny.translation.SettingActivity$a$c:
+com.funny.translation.SettingActivity$SettingFragment$4 -> com.funny.translation.SettingActivity$a$d:
     com.funny.translation.SettingActivity$SettingFragment this$0 -> b
 com.funny.translation.bean.Consts -> com.funny.translation.c.a:
-    android.graphics.drawable.Drawable IC_MULTI_CHECK -> j
-    java.lang.String[] LANGUAGE_NAMES -> g
-    java.lang.String[][] LANGUAGES -> f
-    java.lang.String[] TTS_NAMES -> i
-    java.lang.String[] ENGINE_NAMES -> h
-    android.graphics.drawable.Drawable IC_MULTI_CHECK_CHECKED -> k
-    android.graphics.drawable.Drawable IC_SINGLE_CHECK -> l
-    java.lang.String AUTHOR -> a
-    android.graphics.drawable.Drawable IC_SINGLE_CHECK_CHECKED -> m
-    android.graphics.drawable.Drawable IC_MENU_RIGHT_ARROW -> n
-    java.lang.String ERROR_JSON -> c
-    java.lang.String ERROR_UNKNOWN -> b
-    java.lang.String ERROR_DATED_ENGINE -> e
-    java.lang.String ERROR_UNSUPPORT_LANGUAGE -> d
+    java.lang.String DEFAULT_BAIDU_SECURITY_KEY -> g
+    java.lang.Long BAIDU_SLEEP_TIME -> k
+    java.lang.String DEFAULT_BAIDU_APP_ID -> f
+    java.lang.String BAIDU_APP_ID -> i
+    java.lang.String[][] LANGUAGES -> a
+    java.lang.String BAIDU_SECURITY_KEY -> j
+    java.lang.String[] MODE_NAMES -> e
+    java.lang.String[] TTS_NAMES -> d
+    java.lang.Long DEFAULT_BAIDU_SLEEP_TIME -> h
+    java.lang.String[] ENGINE_NAMES -> c
+    java.lang.String[] LANGUAGE_NAMES -> b
+    android.graphics.drawable.Drawable IC_MULTI_CHECK -> l
+    android.graphics.drawable.Drawable IC_MULTI_CHECK_CHECKED -> m
+    android.graphics.drawable.Drawable IC_SINGLE_CHECK -> n
+    android.graphics.drawable.Drawable IC_SINGLE_CHECK_CHECKED -> o
+    android.graphics.drawable.Drawable IC_MENU_RIGHT_ARROW -> p
 com.funny.translation.bean.LanguageBean -> com.funny.translation.c.b:
     boolean isSelected -> a
     java.lang.String text -> c
@@ -9896,9 +9923,12 @@ com.funny.translation.thread.InternetTTSThread$3 -> com.funny.translation.d.a$c:
     com.funny.translation.thread.InternetTTSThread this$0 -> a
 com.funny.translation.thread.UpdateThread -> com.funny.translation.d.b:
     com.funny.translation.MainActivity ctx -> b
+    java.lang.String ErrorMessage -> f
+    boolean hasError -> e
     boolean isShowResult -> c
     boolean haveNewVersion -> d
 com.funny.translation.thread.UpdateThread$1 -> com.funny.translation.d.b$a:
+    com.funny.translation.thread.UpdateThread this$0 -> b
 com.funny.translation.thread.UpdateThread$2 -> com.funny.translation.d.b$b:
     com.funny.translation.thread.UpdateThread this$0 -> b
 com.funny.translation.translation.BaiduHttpGet -> com.funny.translation.e.a:
@@ -9915,59 +9945,91 @@ com.funny.translation.translation.BaiduTransApi -> com.funny.translation.e.b:
     java.util.Map buildParams(java.lang.String,java.lang.String,java.lang.String) -> a
     com.funny.translation.translation.BaiduTransApi getBaiduTransApi(java.lang.String,java.lang.String) -> b
     java.lang.String getTransResult(java.lang.String,java.lang.String,java.lang.String) -> c
-com.funny.translation.translation.FunnyGoogleApi -> com.funny.translation.e.c:
+com.funny.translation.translation.BasicTranslationTask -> com.funny.translation.e.c:
+    short engineKind -> e
+    com.funny.translation.translation.TranslationHelper helper -> a
+    com.funny.translation.translation.TranslationResult result -> f
+    short sourceLanguage -> c
+    java.lang.String sourceString -> b
+    short targetLanguage -> d
+    void onFail(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> a
+    void onSuccess(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> b
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    java.lang.String getProcessedString(java.lang.String,short) -> e
+    com.funny.translation.translation.TranslationResult getResult() -> f
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
+    void reFormatBasicText(com.funny.translation.translation.TranslationResult,short) -> i
+    void translate(short) -> j
+com.funny.translation.translation.FunnyGoogleApi -> com.funny.translation.e.d:
     int Number(java.lang.Object) -> a
     int charCodeAt(java.lang.Object,int) -> c
-    com.funny.translation.translation.TranslationResult formatResultGoogleComplex(java.lang.String) -> d
-    void showArray(java.lang.String[][]) -> e
-    java.lang.String tk(java.lang.String,java.lang.String) -> f
-com.funny.translation.translation.MD5 -> com.funny.translation.e.d:
+    java.lang.String tk(java.lang.String,java.lang.String) -> d
+com.funny.translation.translation.MD5 -> com.funny.translation.e.e:
     char[] hexDigits -> a
     java.lang.String byteArrayToHex(byte[]) -> a
     java.lang.String md5(java.lang.String) -> b
-com.funny.translation.translation.OnTranslateListener -> com.funny.translation.e.e:
-    void onFail(java.lang.String) -> a
-    void onSuccess(java.lang.String,java.lang.String) -> b
-com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.f:
+com.funny.translation.translation.OnTranslateListener -> com.funny.translation.e.f:
+    void onFail(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> a
+    void onSuccess(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> b
+com.funny.translation.translation.TranslationBV2AV -> com.funny.translation.e.g:
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
+com.funny.translation.translation.TranslationBaiduNormal -> com.funny.translation.e.h:
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
+com.funny.translation.translation.TranslationException -> com.funny.translation.e.i:
+    java.lang.String errorMessage -> b
+    java.lang.String getErrorMessage() -> a
+com.funny.translation.translation.TranslationGoogleNormal -> com.funny.translation.e.j:
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
+    void showArray(java.lang.String[][]) -> k
+com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.k:
+    com.funny.translation.translation.OnTranslateListener defaultListener -> k
     int curI -> h
-    com.funny.translation.translation.OnTranslateListener defaultListener -> j
+    short mode -> i
     int totalTimes -> f
     int flag -> g
     int successTimes -> d
     int failureTimes -> e
     java.util.ArrayList finishTasks -> c
     java.util.ArrayList tasks -> b
-    android.os.Handler handler -> i
+    android.os.Handler handler -> j
     int getProcess() -> a
     boolean isTranslating() -> b
     void reStart() -> c
-    void setTasks(java.util.ArrayList) -> d
-com.funny.translation.translation.TranslationHelper$1 -> com.funny.translation.e.f$a:
+    void setMode(short) -> d
+    void setTasks(java.util.ArrayList) -> e
+com.funny.translation.translation.TranslationHelper$1 -> com.funny.translation.e.k$a:
     com.funny.translation.translation.TranslationHelper this$0 -> a
-    void onFail(java.lang.String) -> a
-    void onSuccess(java.lang.String,java.lang.String) -> b
-com.funny.translation.translation.TranslationResult -> com.funny.translation.e.g:
+    void onFail(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> a
+    void onSuccess(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> b
+com.funny.translation.translation.TranslationResult -> com.funny.translation.e.l:
     java.lang.String basicResult -> a
-    java.lang.String getBasicResult() -> a
-    void setBasicResult(java.lang.String) -> b
-    void setPhoneticNotation(java.lang.String) -> c
-    void setResultTexts(java.lang.String[][]) -> d
-com.funny.translation.translation.TranslationTask -> com.funny.translation.e.h:
-    short targetLanguage -> e
-    com.funny.translation.translation.OnTranslateListener listener -> f
-    java.lang.String resultString -> c
     java.lang.String sourceString -> b
-    short sourceLanguage -> d
-    short engineKind -> a
-    java.lang.String formatResultBaidu(java.lang.String) -> a
-    java.lang.String formatResultYoudao(java.lang.String) -> b
-    void setId(int) -> c
-    void setLisener(com.funny.translation.translation.OnTranslateListener) -> d
-    void translate() -> e
-    java.lang.String translateBaiduNormal(java.lang.String) -> f
-    java.lang.String translateGoogleEasy(java.lang.String) -> g
-    java.lang.String translateYouDaoEasy(java.lang.String) -> h
-    java.lang.String translateYouDaoNormal(java.lang.String) -> i
+    java.lang.String getBasicResult() -> a
+    java.lang.String getSourceString() -> b
+    void setBasicResult(java.lang.String) -> c
+    void setSourceString(java.lang.String) -> d
+    void setStatue(short) -> e
+com.funny.translation.translation.TranslationYouDaoEasy -> com.funny.translation.e.m:
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
+com.funny.translation.translation.TranslationYouDaoNormal -> com.funny.translation.e.n:
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
 com.funny.translation.utils.ApplicationUtil -> com.funny.translation.f.a:
     android.widget.Toast toast -> a
     android.widget.TextView toastTV -> b
@@ -9990,23 +10052,22 @@ com.funny.translation.utils.DataUtil -> com.funny.translation.f.d:
     int[] coverStringToIntArray(java.lang.String) -> b
     int findStringIndex(java.lang.String[],java.lang.String) -> c
     void setDefaultMapping(int[]) -> d
-com.funny.translation.utils.EggUtil -> com.funny.translation.f.e:
-    java.lang.String getAuthor() -> a
-com.funny.translation.utils.FileUtil -> com.funny.translation.f.f:
+com.funny.translation.utils.FileUtil -> com.funny.translation.f.e:
     java.io.File getAudioCacheDir(android.content.Context) -> a
     boolean isCached(android.content.Context,java.lang.String) -> b
+com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.f.f:
+    long[] tr -> e
+    int[] s -> c
+    long add -> b
+    long xorn -> a
+    java.lang.String TABLE -> d
+    java.lang.String dec(java.lang.String) -> a
+    java.lang.String enc(long) -> b
 com.funny.translation.utils.HttpUtil -> com.funny.translation.f.g:
     java.lang.String sendGet(java.lang.String,java.lang.String) -> a
 com.funny.translation.utils.NetworkUtil -> com.funny.translation.f.h:
     boolean isNetworkConnected(android.content.Context) -> a
-com.funny.translation.utils.RC4 -> com.funny.translation.f.i:
-    java.lang.String CHARSET -> a
-    byte[] HexString2Bytes(java.lang.String) -> a
-    byte[] RC4Base(byte[],java.lang.String) -> b
-    java.lang.String decry_RC4(java.lang.String,java.lang.String) -> c
-    byte[] initKey(java.lang.String) -> d
-    byte uniteBytes(byte,byte) -> e
-com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.j:
+com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.i:
     android.content.SharedPreferences$Editor editor -> b
     android.content.SharedPreferences share -> a
     com.funny.translation.utils.SharedPreferenceUtil instance -> d
@@ -10014,12 +10075,17 @@ com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.j:
     com.funny.translation.utils.SharedPreferenceUtil getInstance() -> a
     java.lang.String getString(java.lang.String,java.lang.String) -> b
     void putString(java.lang.String,java.lang.String) -> c
-com.funny.translation.utils.StringUtil -> com.funny.translation.f.k:
-    boolean isUnicode(java.lang.String) -> a
-    boolean isValidContent(java.lang.String) -> b
-    java.lang.String md5(java.lang.String) -> c
-    java.lang.String unicodeToString(java.lang.String) -> d
-com.funny.translation.utils.TTSUtil -> com.funny.translation.f.l:
+com.funny.translation.utils.StringUtil -> com.funny.translation.f.j:
+    java.lang.String extraChinese(java.lang.String) -> a
+    long findAv(java.lang.String) -> b
+    java.lang.String findBv(java.lang.String) -> c
+    java.lang.String insertJuhao(java.lang.String) -> d
+    boolean isNumber(java.lang.String) -> e
+    boolean isUnicode(java.lang.String) -> f
+    boolean isValidContent(java.lang.String) -> g
+    java.lang.String md5(java.lang.String) -> h
+    java.lang.String unicodeToString(java.lang.String) -> i
+com.funny.translation.utils.TTSUtil -> com.funny.translation.f.k:
     android.speech.tts.TextToSpeech localTTS -> a
     com.funny.translation.thread.InternetTTSThread internetTTSThread -> b
     void destroyTTS() -> a
@@ -10029,8 +10095,8 @@ com.funny.translation.utils.TTSUtil -> com.funny.translation.f.l:
     void initLocal(android.content.Context) -> e
     void rePlayInternet(android.content.Context,java.lang.String) -> f
     void speak(android.content.Context,java.lang.String,short,short) -> g
-com.funny.translation.utils.TTSUtil$1 -> com.funny.translation.f.l$a:
-com.funny.translation.utils.UpdateUtil -> com.funny.translation.f.m:
+com.funny.translation.utils.TTSUtil$1 -> com.funny.translation.f.k$a:
+com.funny.translation.utils.UpdateUtil -> com.funny.translation.f.l:
     org.json.JSONObject updateDescription -> a
     java.lang.String updateLog -> b
     boolean isUpdate -> c
@@ -10072,13 +10138,13 @@ com.funny.translation.widget.DrawerAdapter$NormalViewHolder -> com.funny.transla
 com.funny.translation.widget.DrawerAdapter$OnItemClickListener -> com.funny.translation.widget.a$j:
     void itemClick(com.funny.translation.widget.DrawerAdapter$DrawerItemNormal) -> a
 com.funny.translation.widget.EditTextField -> com.funny.translation.widget.EditTextField:
-    android.graphics.Bitmap mClearButton -> b
-    int viewWidth -> h
-    android.graphics.Paint mPaint -> c
-    int mButtonPadding -> f
-    android.graphics.Rect mButtonRect -> g
-    com.funny.translation.widget.EditTextField$ClearButtonMode mClearButtonMode -> d
-    int mInitPaddingRight -> e
+    int viewWidth -> j
+    android.graphics.Paint mPaint -> e
+    com.funny.translation.widget.EditTextField$ClearButtonMode mClearButtonMode -> f
+    int mButtonPadding -> h
+    android.graphics.Rect mButtonRect -> i
+    int mInitPaddingRight -> g
+    android.graphics.Bitmap mClearButton -> d
     void buttonManager(android.graphics.Canvas) -> a
     int dp2px(float) -> b
     void drawBitmap(android.graphics.Canvas,android.graphics.Rect) -> c
@@ -10100,9 +10166,7 @@ com.funny.translation.widget.LanguageAdapter -> com.funny.translation.widget.b:
     short kind -> e
     java.util.ArrayList list -> d
     int access$000(com.funny.translation.widget.LanguageAdapter,int) -> C
-    boolean access$100(com.funny.translation.widget.LanguageAdapter) -> D
-    int getMappingIndex(int) -> E
-    boolean isNoneChecked() -> F
+    int getMappingIndex(int) -> D
     int getItemCount() -> e
     void onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder,int) -> r
     android.support.v7.widget.RecyclerView$ViewHolder onCreateViewHolder(android.view.ViewGroup,int) -> t
@@ -10118,9 +10182,9 @@ com.funny.translation.widget.LanguageRecyclerView -> com.funny.translation.widge
     void initData(java.util.ArrayList,int[]) -> w1
 com.funny.translation.widget.ResultAdapter -> com.funny.translation.widget.c:
     com.funny.translation.MainActivity ctx -> d
+    com.funny.translation.translation.BasicTranslationTask task -> e
     java.util.ArrayList tasks -> c
     java.lang.StringBuilder sb -> f
-    com.funny.translation.translation.TranslationTask task -> e
     void insert(java.util.ArrayList) -> C
     void updata(java.util.ArrayList) -> D
     int getItemCount() -> e
