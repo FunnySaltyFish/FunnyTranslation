@@ -2,6 +2,8 @@ package com.funny.translation.utils;
 import android.content.ClipboardManager;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.widget.Toast;
 import android.view.LayoutInflater;
 import com.funny.translation.R;
@@ -9,6 +11,9 @@ import android.view.View;
 import android.widget.TextView;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import android.content.SharedPreferences;
 public class ApplicationUtil
 {
@@ -111,6 +116,20 @@ public class ApplicationUtil
 		}
 	}
 
+	/*获取错误信息*/
+	public static String getErrorMessage(Throwable t){
+		StringWriter stringWriter=new StringWriter();
+		t.printStackTrace(new PrintWriter(stringWriter,true));
+		return stringWriter.getBuffer().toString();
+	}
+
+	public static void startWebBrowse(Context ctx, String url) {
+		Intent intent = new Intent();
+		Uri uri = Uri.parse(url);
+		intent.setAction(Intent.ACTION_VIEW);
+		intent.setData(uri);
+		ctx.startActivity(intent);
+	}
 	
 	public static int dp2px(Context context, float dpValue) {
         float scale = context.getResources().getDisplayMetrics().density;

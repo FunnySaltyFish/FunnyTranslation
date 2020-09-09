@@ -24,6 +24,7 @@ import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationBV2AV;
 import com.funny.translation.translation.TranslationBaiduNormal;
+import com.funny.translation.translation.TranslationBiggerText;
 import com.funny.translation.translation.TranslationGoogleNormal;
 import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.bean.Consts;
@@ -323,16 +324,32 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void startTranslate(String content) {
+//    	String[] arr = null;
+//    	System.out.println(arr.length);
     	if (getCheckedList(targetList).size()==0){
     		ApplicationUtil.print(this,"您必须选择目标语言后再开始翻译！");
+    		return;
+		}
+    	if (getCheckedList(engineList).size()==0){
+    		ApplicationUtil.print(this,"您必须选择翻译引擎再翻译！");
     		return;
 		}
 		if (!StringUtil.isValidContent(content)){
 			return;
 		}
 		if(!NetworkUtil.isNetworkConnected(MainActivity.this)){
-			ApplicationUtil.print(MainActivity.this,"当前似乎没有网络连接呢~");
-			return;
+			ArrayList<LanguageBean> engines = getCheckedList(engineList);
+			boolean onlyHasOfflineEngine = true;
+			for (LanguageBean bean : engines){
+				short engine = bean.getUserData();
+				if (engine==ENGINE_BAIDU_NORMAL||engine==ENGINE_GOOGLE||engine==ENGINE_YOUDAO_EASY||engine==ENGINE_YOUDAO_NORMAL){
+					onlyHasOfflineEngine = false;
+				}
+			}
+			if(!onlyHasOfflineEngine) {
+				ApplicationUtil.print(MainActivity.this, "当前似乎没有网络连接呢~");
+				return;
+			}
 		}
 		if(helper!=null&&helper.isTranslating()){
 			ApplicationUtil.print(MainActivity.this,"当前翻译正在进行中，请耐心等待~");
@@ -359,14 +376,15 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void createLeftSlideView(){
+//    	getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//    	getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_rotate_narrow);
+
     	final View leftSlideView=LayoutInflater.from(this).inflate(R.layout.main_slide_left,null);
     	SmartSwipe.wrap(leftSlideView).addConsumer(new SlidingConsumer().enableVertical());
 
 		RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(SmartSwipe.dp2px((int) re.getDimension(R.dimen.drawer_width),this), ViewGroup.LayoutParams.MATCH_PARENT);
 		//params.setMargins(4,getStatusBarHeight()+100,4,4);
 		leftSlideView.setLayoutParams(params);
-
-
 
 		RecyclerView rv = leftSlideView.findViewById(R.id.main_slide_left_rv);
 		DrawerAdapter da = new DrawerAdapter(this);
@@ -629,6 +647,9 @@ public class MainActivity extends BaseActivity
 					case ENGINE_BV_TO_AV:
 						task = new TranslationBV2AV(helper,content,source,target.getUserData(),ENGINE_BV_TO_AV);
 						break;
+					case ENGINE_BIGGER_TEXT:
+						task = new TranslationBiggerText(helper,content,source,target.getUserData(),ENGINE_BIGGER_TEXT);
+						break;
 					default:
 						throw new IllegalStateException("没有这个引擎: " + engine.getUserData());
 				}
@@ -671,7 +692,7 @@ public class MainActivity extends BaseActivity
 		Bitmap bitmap=BitmapUtil.getBitmapFromResources(re,id);
 		BitmapDrawable b=new BitmapDrawable(bitmap);
 		b.setColorFilter(color,PorterDuff.Mode.SRC_IN);
-		return (Drawable)b;
+		return b;
 	};
 	
 	@NonNull
@@ -822,6 +843,15 @@ public class MainActivity extends BaseActivity
 					rightDrawerConsumer.smoothClose();
 				}
                 return true;
+			case android.R.id.home:
+				if (leftSlidingConsumer.isOpened()){
+					leftSlidingConsumer.smoothClose();
+					//item.setIcon(R.drawable.ic_menu);
+				}else{
+					leftSlidingConsumer.smoothLeftOpen();
+					//item.setIcon(R.drawable.ic_menu_narrow_left);
+				}
+				return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

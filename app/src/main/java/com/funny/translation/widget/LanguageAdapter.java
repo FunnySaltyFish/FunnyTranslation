@@ -102,7 +102,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 								for(LanguageBean curBean:list){
 									curBean.setIsSelected(false);
 								}
-								Log.i(TAG,String.format("i is %d , adn getByValue returns %d",i,getMappingIndex(i)));
+								//Log.i(TAG,String.format("i is %d , adn getByValue returns %d",i,getMappingIndex(i)));
 								int  actualIndex2 = getMappingIndex(i);
 								LanguageBean bean2=list.get(actualIndex2);
 								bean2.setIsSelected(!bean2.isSelected());

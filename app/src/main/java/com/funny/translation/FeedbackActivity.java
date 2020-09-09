@@ -2,6 +2,7 @@ package com.funny.translation;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.webkit.WebView;
 
 public class FeedbackActivity extends BaseActivity {
@@ -9,6 +10,10 @@ public class FeedbackActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
+        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
+
         setContentView(R.layout.activity_feedback);
         webView=findViewById(R.id.widget_feedback_webview);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -28,5 +33,16 @@ public class FeedbackActivity extends BaseActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

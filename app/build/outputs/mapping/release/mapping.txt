@@ -1,7 +1,7 @@
 # compiler: R8
 # compiler_version: 2.0.88
 # min_api: 19
-# pg_map_id: 5eae37d
+# pg_map_id: 8536195
 # common_typos_disable
 android.arch.core.executor.ArchTaskExecutor -> a.a.a.a.a:
     android.arch.core.executor.ArchTaskExecutor sInstance -> c
@@ -3499,9 +3499,11 @@ android.support.v7.app.ActionBar -> android.support.v7.app.a:
     boolean onMenuKeyEvent(android.view.KeyEvent) -> p
     boolean openOptionsMenu() -> q
     void setDefaultDisplayHomeAsUpEnabled(boolean) -> r
-    void setShowHideAnimationEnabled(boolean) -> s
-    void setWindowTitle(java.lang.CharSequence) -> t
-    android.support.v7.view.ActionMode startActionMode(android.support.v7.view.ActionMode$Callback) -> u
+    void setDisplayHomeAsUpEnabled(boolean) -> s
+    void setHomeButtonEnabled(boolean) -> t
+    void setShowHideAnimationEnabled(boolean) -> u
+    void setWindowTitle(java.lang.CharSequence) -> v
+    android.support.v7.view.ActionMode startActionMode(android.support.v7.view.ActionMode$Callback) -> w
 android.support.v7.app.ActionBar$LayoutParams -> android.support.v7.app.a$a:
     int gravity -> a
 android.support.v7.app.ActionBar$OnMenuVisibilityListener -> android.support.v7.app.a$b:
@@ -4009,6 +4011,7 @@ android.support.v7.app.ToolbarActionBar -> android.support.v7.app.i:
     android.view.Window$Callback mWindowCallback -> c
     boolean mToolbarMenuPrepared -> b
     boolean mMenuCallbackSet -> d
+    void setDisplayOptions(int,int) -> A
     boolean closeOptionsMenu() -> g
     boolean collapseActionView() -> h
     void dispatchMenuVisibilityChanged(boolean) -> i
@@ -4021,11 +4024,13 @@ android.support.v7.app.ToolbarActionBar -> android.support.v7.app.i:
     boolean onMenuKeyEvent(android.view.KeyEvent) -> p
     boolean openOptionsMenu() -> q
     void setDefaultDisplayHomeAsUpEnabled(boolean) -> r
-    void setShowHideAnimationEnabled(boolean) -> s
-    void setWindowTitle(java.lang.CharSequence) -> t
-    android.view.Menu getMenu() -> v
-    android.view.Window$Callback getWrappedWindowCallback() -> w
-    void populateOptionsMenu() -> x
+    void setDisplayHomeAsUpEnabled(boolean) -> s
+    void setHomeButtonEnabled(boolean) -> t
+    void setShowHideAnimationEnabled(boolean) -> u
+    void setWindowTitle(java.lang.CharSequence) -> v
+    android.view.Menu getMenu() -> x
+    android.view.Window$Callback getWrappedWindowCallback() -> y
+    void populateOptionsMenu() -> z
 android.support.v7.app.ToolbarActionBar$1 -> android.support.v7.app.i$a:
     android.support.v7.app.ToolbarActionBar this$0 -> b
 android.support.v7.app.ToolbarActionBar$2 -> android.support.v7.app.i$b:
@@ -4096,16 +4101,16 @@ android.support.v7.app.WindowDecorActionBar -> android.support.v7.app.l:
     android.support.v7.widget.DecorToolbar mDecorToolbar -> e
     android.support.v7.view.ActionMode mDeferredDestroyActionMode -> k
     int mCurWindowVisibility -> p
-    android.support.v7.widget.DecorToolbar getDecorToolbar(android.view.View) -> A
-    int getNavigationMode() -> B
-    void hideForActionMode() -> C
-    void init(android.view.View) -> D
-    void setDisplayHomeAsUpEnabled(boolean) -> E
-    void setDisplayOptions(int,int) -> F
-    void setElevation(float) -> G
-    void setHasEmbeddedTabs(boolean) -> H
-    void setHideOnContentScrollEnabled(boolean) -> I
-    void setHomeButtonEnabled(boolean) -> J
+    void doHide(boolean) -> A
+    void doShow(boolean) -> B
+    android.support.v7.widget.DecorToolbar getDecorToolbar(android.view.View) -> C
+    int getNavigationMode() -> D
+    void hideForActionMode() -> E
+    void init(android.view.View) -> F
+    void setDisplayOptions(int,int) -> G
+    void setElevation(float) -> H
+    void setHasEmbeddedTabs(boolean) -> I
+    void setHideOnContentScrollEnabled(boolean) -> J
     boolean shouldAnimateContextView() -> K
     void showForActionMode() -> L
     void updateVisibility(boolean) -> M
@@ -4122,14 +4127,14 @@ android.support.v7.app.WindowDecorActionBar -> android.support.v7.app.l:
     void onConfigurationChanged(android.content.res.Configuration) -> m
     boolean onKeyShortcut(int,android.view.KeyEvent) -> o
     void setDefaultDisplayHomeAsUpEnabled(boolean) -> r
-    void setShowHideAnimationEnabled(boolean) -> s
-    void setWindowTitle(java.lang.CharSequence) -> t
-    android.support.v7.view.ActionMode startActionMode(android.support.v7.view.ActionMode$Callback) -> u
-    void animateToMode(boolean) -> v
-    boolean checkShowingFlags(boolean,boolean,boolean) -> w
-    void completeDeferredDestroyActionMode() -> x
-    void doHide(boolean) -> y
-    void doShow(boolean) -> z
+    void setDisplayHomeAsUpEnabled(boolean) -> s
+    void setHomeButtonEnabled(boolean) -> t
+    void setShowHideAnimationEnabled(boolean) -> u
+    void setWindowTitle(java.lang.CharSequence) -> v
+    android.support.v7.view.ActionMode startActionMode(android.support.v7.view.ActionMode$Callback) -> w
+    void animateToMode(boolean) -> x
+    boolean checkShowingFlags(boolean,boolean,boolean) -> y
+    void completeDeferredDestroyActionMode() -> z
 android.support.v7.app.WindowDecorActionBar$1 -> android.support.v7.app.l$a:
     android.support.v7.app.WindowDecorActionBar this$0 -> a
     void onAnimationEnd(android.view.View) -> a
@@ -9273,22 +9278,23 @@ com.billy.android.swipe.SwipeConsumer -> com.billy.android.swipe.f:
     android.view.animation.Interpolator getInterpolator() -> q
     com.billy.android.swipe.SwipeConsumer smoothClose() -> q0
     int getOpenDistance() -> r
-    void smoothOpenOrClose(float,float) -> r0
+    com.billy.android.swipe.SwipeConsumer smoothLeftOpen() -> r0
     float getOverSwipeFactor() -> s
-    com.billy.android.swipe.SwipeConsumer smoothRightOpen() -> s0
+    void smoothOpenOrClose(float,float) -> s0
     float getProgress() -> t
-    com.billy.android.swipe.SwipeConsumer smoothSlideTo(float) -> t0
+    com.billy.android.swipe.SwipeConsumer smoothRightOpen() -> t0
     float getSensitivity() -> u
-    void smoothSlideTo(int,int) -> u0
+    com.billy.android.swipe.SwipeConsumer smoothSlideTo(float) -> u0
     com.billy.android.swipe.internal.SwipeHelper getSwipeHelper() -> v
-    void smoothSlideTo(int,int,int,int) -> v0
+    void smoothSlideTo(int,int) -> v0
     int getSwipeOpenDistance() -> w
-    boolean tryAcceptMoving(int,float,float,float,float) -> w0
+    void smoothSlideTo(int,int,int,int) -> w0
     int getVerticalRange(float,float) -> x
-    boolean tryAcceptSettling(int,float,float) -> x0
+    boolean tryAcceptMoving(int,float,float,float,float) -> x0
     void initChildrenFormXml() -> y
-    com.billy.android.swipe.SwipeConsumer unlockDirection(int) -> y0
+    boolean tryAcceptSettling(int,float,float) -> y0
     boolean isAutoCloseOnWrapperDetachedFromWindow() -> z
+    com.billy.android.swipe.SwipeConsumer unlockDirection(int) -> z0
 com.billy.android.swipe.SwipeConsumer$1 -> com.billy.android.swipe.f$a:
     com.billy.android.swipe.SwipeConsumer this$0 -> b
     int val$curDirection -> a
@@ -9312,23 +9318,24 @@ com.billy.android.swipe.consumer.DrawerConsumer -> com.billy.android.swipe.h.a:
     int t -> I
     boolean mShowScrimAndShadowOutsideContentView -> Q
     android.view.View mCurDrawerView -> G
-    void calculateDrawerDirectionInitPosition(int,int,int) -> A0
-    void changeDrawerViewVisibility(int) -> B0
-    android.view.View getDrawerView(int) -> C0
-    void initScrimView() -> D0
-    void layoutChildren() -> E0
-    void layoutContentView(android.view.View) -> F0
-    void layoutDrawerView() -> G0
-    void layoutScrimView() -> H0
-    void orderChildren() -> I0
-    com.billy.android.swipe.consumer.DrawerConsumer setBottomDrawerView(android.view.View) -> J0
-    com.billy.android.swipe.consumer.DrawerConsumer setDrawerView(int,android.view.View) -> K0
-    com.billy.android.swipe.consumer.DrawerConsumer setLeftDrawerView(android.view.View) -> L0
-    void setOrUpdateDrawerView(int,android.view.View) -> M0
-    com.billy.android.swipe.consumer.DrawerConsumer setRightDrawerView(android.view.View) -> N0
-    com.billy.android.swipe.consumer.DrawerConsumer setShadowColor(int) -> O0
-    com.billy.android.swipe.consumer.DrawerConsumer setShadowSize(int) -> P0
-    com.billy.android.swipe.consumer.DrawerConsumer setTopDrawerView(android.view.View) -> Q0
+    void attachDrawerView(int) -> A0
+    void calculateDrawerDirectionInitPosition(int,int,int) -> B0
+    void changeDrawerViewVisibility(int) -> C0
+    android.view.View getDrawerView(int) -> D0
+    void initScrimView() -> E0
+    void layoutChildren() -> F0
+    void layoutContentView(android.view.View) -> G0
+    void layoutDrawerView() -> H0
+    void layoutScrimView() -> I0
+    void orderChildren() -> J0
+    com.billy.android.swipe.consumer.DrawerConsumer setBottomDrawerView(android.view.View) -> K0
+    com.billy.android.swipe.consumer.DrawerConsumer setDrawerView(int,android.view.View) -> L0
+    com.billy.android.swipe.consumer.DrawerConsumer setLeftDrawerView(android.view.View) -> M0
+    void setOrUpdateDrawerView(int,android.view.View) -> N0
+    com.billy.android.swipe.consumer.DrawerConsumer setRightDrawerView(android.view.View) -> O0
+    com.billy.android.swipe.consumer.DrawerConsumer setShadowColor(int) -> P0
+    com.billy.android.swipe.consumer.DrawerConsumer setShadowSize(int) -> Q0
+    com.billy.android.swipe.consumer.DrawerConsumer setTopDrawerView(android.view.View) -> R0
     void notifySwipeProgress(boolean) -> U
     void notifySwipeRelease(float,float) -> V
     void notifySwipeStart() -> W
@@ -9341,19 +9348,18 @@ com.billy.android.swipe.consumer.DrawerConsumer -> com.billy.android.swipe.h.a:
     void onOpened() -> f0
     void onSwipeAccepted(int,boolean,float,float) -> h0
     int getOpenDistance() -> r
-    boolean tryAcceptMoving(int,float,float,float,float) -> w0
+    boolean tryAcceptMoving(int,float,float,float,float) -> x0
     void initChildrenFormXml() -> y
-    void attachDrawerView(int) -> z0
 com.billy.android.swipe.consumer.SlidingConsumer -> com.billy.android.swipe.h.b:
     int mDrawerH -> V
     float mRelativeMoveFactor -> R
     int mDrawerW -> U
     boolean mEdgeAffinity -> S
     boolean mDrawerExpandable -> T
-    void calculateDrawerDirectionInitPosition(int,int,int) -> A0
-    void layoutContentView(android.view.View) -> F0
-    void layoutDrawerView() -> G0
-    void orderChildren() -> I0
+    void calculateDrawerDirectionInitPosition(int,int,int) -> B0
+    void layoutContentView(android.view.View) -> G0
+    void layoutDrawerView() -> H0
+    void orderChildren() -> J0
     void onDetachFromWrapper() -> a0
     void onDisplayDistanceChanged(int,int,int,int) -> b0
 com.billy.android.swipe.consumer.StretchConsumer -> com.billy.android.swipe.h.c:
@@ -9738,14 +9744,25 @@ com.danikula.videocache.sourcestorage.SourceInfoStorageFactory -> b.a.a.u.d:
 com.funny.translation.BaseActivity -> com.funny.translation.a:
     void moveToActivity(java.lang.Class) -> B
     void moveToActivityForResult(java.lang.Class,android.content.Intent,int) -> C
+com.funny.translation.ErrorDialogActivity -> com.funny.translation.ErrorDialogActivity:
+    void access$000(com.funny.translation.ErrorDialogActivity) -> D
+    void destroy() -> E
+com.funny.translation.ErrorDialogActivity$1 -> com.funny.translation.ErrorDialogActivity$a:
+    com.funny.translation.ErrorDialogActivity this$0 -> b
+com.funny.translation.ErrorDialogActivity$2 -> com.funny.translation.ErrorDialogActivity$b:
+    com.funny.translation.ErrorDialogActivity this$0 -> c
+    java.lang.String val$crashMessage -> b
 com.funny.translation.FeedbackActivity -> com.funny.translation.FeedbackActivity:
     android.webkit.WebView webView -> p
 com.funny.translation.FunnyApplication -> com.funny.translation.FunnyApplication:
-    android.content.Context context -> c
+    com.funny.translation.FunnyApplication funnyApplication -> c
     com.danikula.videocache.HttpProxyCacheServer proxy -> b
+    android.content.Context context -> d
     android.content.Context getFunnyContext() -> a
-    com.danikula.videocache.HttpProxyCacheServer getProxy(android.content.Context) -> b
-    com.danikula.videocache.HttpProxyCacheServer newProxy() -> c
+    com.funny.translation.FunnyApplication getInstance() -> b
+    android.content.pm.PackageInfo getLocalPackageInfo() -> c
+    com.danikula.videocache.HttpProxyCacheServer getProxy(android.content.Context) -> d
+    com.danikula.videocache.HttpProxyCacheServer newProxy() -> e
 com.funny.translation.FunnyApplication$FunnyFileNameGenerator -> com.funny.translation.FunnyApplication$a:
     java.lang.String generate(java.lang.String) -> a
 com.funny.translation.MainActivity -> com.funny.translation.MainActivity:
@@ -9888,7 +9905,17 @@ com.funny.translation.bean.Consts -> com.funny.translation.c.a:
     android.graphics.drawable.Drawable IC_SINGLE_CHECK -> n
     android.graphics.drawable.Drawable IC_SINGLE_CHECK_CHECKED -> o
     android.graphics.drawable.Drawable IC_MENU_RIGHT_ARROW -> p
-com.funny.translation.bean.LanguageBean -> com.funny.translation.c.b:
+com.funny.translation.bean.FunnyUncaughtExceptionHandler -> com.funny.translation.c.b:
+    android.content.Context applicationContext -> a
+    java.lang.Thread$UncaughtExceptionHandler mDefaultHandler -> c
+    com.funny.translation.bean.FunnyUncaughtExceptionHandler mHandler -> d
+    boolean crashing -> b
+    void destroy() -> a
+    java.lang.String getCrashReport(java.lang.Throwable) -> b
+    com.funny.translation.bean.FunnyUncaughtExceptionHandler getInstance() -> c
+    boolean handleCrashByMe(java.lang.Throwable) -> d
+    void init(android.content.Context) -> e
+com.funny.translation.bean.LanguageBean -> com.funny.translation.c.c:
     boolean isSelected -> a
     java.lang.String text -> c
     short userData -> d
@@ -9983,16 +10010,21 @@ com.funny.translation.translation.TranslationBaiduNormal -> com.funny.translatio
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationException -> com.funny.translation.e.i:
+com.funny.translation.translation.TranslationBiggerText -> com.funny.translation.e.i:
+    java.lang.String getBasicText(java.lang.String) -> c
+    com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
+    boolean isOffline() -> g
+    java.lang.String madeURL() -> h
+com.funny.translation.translation.TranslationException -> com.funny.translation.e.j:
     java.lang.String errorMessage -> b
     java.lang.String getErrorMessage() -> a
-com.funny.translation.translation.TranslationGoogleNormal -> com.funny.translation.e.j:
+com.funny.translation.translation.TranslationGoogleNormal -> com.funny.translation.e.k:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
     void showArray(java.lang.String[][]) -> k
-com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.k:
+com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.l:
     com.funny.translation.translation.OnTranslateListener defaultListener -> k
     int curI -> h
     short mode -> i
@@ -10008,11 +10040,11 @@ com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.k
     void reStart() -> c
     void setMode(short) -> d
     void setTasks(java.util.ArrayList) -> e
-com.funny.translation.translation.TranslationHelper$1 -> com.funny.translation.e.k$a:
+com.funny.translation.translation.TranslationHelper$1 -> com.funny.translation.e.l$a:
     com.funny.translation.translation.TranslationHelper this$0 -> a
     void onFail(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> a
     void onSuccess(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> b
-com.funny.translation.translation.TranslationResult -> com.funny.translation.e.l:
+com.funny.translation.translation.TranslationResult -> com.funny.translation.e.m:
     java.lang.String basicResult -> a
     java.lang.String sourceString -> b
     java.lang.String getBasicResult() -> a
@@ -10020,12 +10052,12 @@ com.funny.translation.translation.TranslationResult -> com.funny.translation.e.l
     void setBasicResult(java.lang.String) -> c
     void setSourceString(java.lang.String) -> d
     void setStatue(short) -> e
-com.funny.translation.translation.TranslationYouDaoEasy -> com.funny.translation.e.m:
+com.funny.translation.translation.TranslationYouDaoEasy -> com.funny.translation.e.n:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationYouDaoNormal -> com.funny.translation.e.n:
+com.funny.translation.translation.TranslationYouDaoNormal -> com.funny.translation.e.o:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
@@ -10039,6 +10071,7 @@ com.funny.translation.utils.ApplicationUtil -> com.funny.translation.f.a:
     boolean isFirstOpen(android.content.Context) -> d
     void print(android.content.Context,java.lang.String) -> e
     void print(android.content.Context,java.lang.String,boolean) -> f
+    void startWebBrowse(android.content.Context,java.lang.String) -> g
 com.funny.translation.utils.BitmapUtil -> com.funny.translation.f.b:
     android.graphics.Bitmap getBigBitmapFromResources(android.content.res.Resources,int,int,int) -> a
     android.graphics.Bitmap getBitmapFromResources(android.content.res.Resources,int) -> b
@@ -10046,7 +10079,8 @@ com.funny.translation.utils.BitmapUtil -> com.funny.translation.f.b:
     android.graphics.Bitmap getCircleBitmap(android.graphics.Bitmap) -> d
     android.graphics.Bitmap getScaledBitmap(android.graphics.Bitmap,int,int) -> e
 com.funny.translation.utils.ClipBoardUtil -> com.funny.translation.f.c:
-    java.lang.String get(android.content.Context) -> a
+    void copy(android.content.Context,java.lang.String) -> a
+    java.lang.String get(android.content.Context) -> b
 com.funny.translation.utils.DataUtil -> com.funny.translation.f.d:
     java.lang.String coverIntArrayToString(int[]) -> a
     int[] coverStringToIntArray(java.lang.String) -> b
@@ -10055,7 +10089,16 @@ com.funny.translation.utils.DataUtil -> com.funny.translation.f.d:
 com.funny.translation.utils.FileUtil -> com.funny.translation.f.e:
     java.io.File getAudioCacheDir(android.content.Context) -> a
     boolean isCached(android.content.Context,java.lang.String) -> b
-com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.f.f:
+com.funny.translation.utils.FunnyBiggerText -> com.funny.translation.f.f:
+    android.content.Context context -> a
+    boolean[][] arr -> b
+    int all_2_4 -> d
+    int all_32_128 -> e
+    int all_16_32 -> c
+    java.lang.String drawString(android.content.Context,java.lang.String) -> a
+    int[] getByteCode(java.lang.String) -> b
+    byte[] read(int,int) -> c
+com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.f.g:
     long[] tr -> e
     int[] s -> c
     long add -> b
@@ -10063,11 +10106,18 @@ com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.f.f:
     java.lang.String TABLE -> d
     java.lang.String dec(java.lang.String) -> a
     java.lang.String enc(long) -> b
-com.funny.translation.utils.HttpUtil -> com.funny.translation.f.g:
+com.funny.translation.utils.HttpUtil -> com.funny.translation.f.h:
     java.lang.String sendGet(java.lang.String,java.lang.String) -> a
-com.funny.translation.utils.NetworkUtil -> com.funny.translation.f.h:
+com.funny.translation.utils.NetworkUtil -> com.funny.translation.f.i:
     boolean isNetworkConnected(android.content.Context) -> a
-com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.i:
+com.funny.translation.utils.RC4 -> com.funny.translation.f.j:
+    java.lang.String CHARSET -> a
+    byte[] HexString2Bytes(java.lang.String) -> a
+    byte[] RC4Base(byte[],java.lang.String) -> b
+    java.lang.String decry_RC4(java.lang.String,java.lang.String) -> c
+    byte[] initKey(java.lang.String) -> d
+    byte uniteBytes(byte,byte) -> e
+com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.k:
     android.content.SharedPreferences$Editor editor -> b
     android.content.SharedPreferences share -> a
     com.funny.translation.utils.SharedPreferenceUtil instance -> d
@@ -10075,7 +10125,7 @@ com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.i:
     com.funny.translation.utils.SharedPreferenceUtil getInstance() -> a
     java.lang.String getString(java.lang.String,java.lang.String) -> b
     void putString(java.lang.String,java.lang.String) -> c
-com.funny.translation.utils.StringUtil -> com.funny.translation.f.j:
+com.funny.translation.utils.StringUtil -> com.funny.translation.f.l:
     java.lang.String extraChinese(java.lang.String) -> a
     long findAv(java.lang.String) -> b
     java.lang.String findBv(java.lang.String) -> c
@@ -10085,7 +10135,7 @@ com.funny.translation.utils.StringUtil -> com.funny.translation.f.j:
     boolean isValidContent(java.lang.String) -> g
     java.lang.String md5(java.lang.String) -> h
     java.lang.String unicodeToString(java.lang.String) -> i
-com.funny.translation.utils.TTSUtil -> com.funny.translation.f.k:
+com.funny.translation.utils.TTSUtil -> com.funny.translation.f.m:
     android.speech.tts.TextToSpeech localTTS -> a
     com.funny.translation.thread.InternetTTSThread internetTTSThread -> b
     void destroyTTS() -> a
@@ -10095,8 +10145,8 @@ com.funny.translation.utils.TTSUtil -> com.funny.translation.f.k:
     void initLocal(android.content.Context) -> e
     void rePlayInternet(android.content.Context,java.lang.String) -> f
     void speak(android.content.Context,java.lang.String,short,short) -> g
-com.funny.translation.utils.TTSUtil$1 -> com.funny.translation.f.k$a:
-com.funny.translation.utils.UpdateUtil -> com.funny.translation.f.l:
+com.funny.translation.utils.TTSUtil$1 -> com.funny.translation.f.m$a:
+com.funny.translation.utils.UpdateUtil -> com.funny.translation.f.n:
     org.json.JSONObject updateDescription -> a
     java.lang.String updateLog -> b
     boolean isUpdate -> c

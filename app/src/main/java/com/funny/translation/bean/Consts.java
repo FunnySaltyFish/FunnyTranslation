@@ -1,10 +1,10 @@
 package com.funny.translation.bean;
 import android.graphics.drawable.Drawable;
 
+import com.funny.translation.utils.RC4;
+
 public class Consts
 {
-
-
 
 	//抽象话词库
 	//https://github.com/gaowanliang/NMSL/blob/master/src/data/emoji.json
@@ -29,6 +29,7 @@ public class Consts
 	public final static short ENGINE_BAIDU_NORMAL=2;
 	public final static short ENGINE_GOOGLE=3;
 	public static final short ENGINE_BV_TO_AV=4;//Bv，Av互转
+	public static final short ENGINE_BIGGER_TEXT = 5;//字符放大
 	
 	public final static short TTS_LOCAL=0;
 	public final static short TTS_BAIDU=1;
@@ -73,8 +74,8 @@ public class Consts
 
 	public static String[] MODE_NAMES;
 	//百度翻译常量
-	public static String DEFAULT_BAIDU_APP_ID = "20200127000378153";
-	public static String DEFAULT_BAIDU_SECURITY_KEY = "DXWRr6JKdNPlhl5M63GX";
+	public static String DEFAULT_BAIDU_APP_ID = RC4.decry_RC4("785ebf34dc6aa09ffc4f5726d7bcb14f3f","27420");
+	public static String DEFAULT_BAIDU_SECURITY_KEY = RC4.decry_RC4("0e36da569e6dd8e3a831377988e8b5373ab87173","27420");
 	public static Long DEFAULT_BAIDU_SLEEP_TIME = 800L;
 
 	public static String BAIDU_APP_ID = "";

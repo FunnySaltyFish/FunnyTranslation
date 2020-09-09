@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.funny.translation"
-    android:versionCode="10"
-    android:versionName="1.21.0" >
+    android:versionCode="11"
+    android:versionName="1.34.0" >
 
     <uses-sdk
         android:minSdkVersion="19"
-        android:targetSdkVersion="28" />
+        android:targetSdkVersion="30" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name="com.funny.translation.FunnyApplication"
@@ -37,6 +38,10 @@
         <activity
             android:name="com.funny.translation.FeedbackActivity"
             android:label="@string/feedback"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.funny.translation.ErrorDialogActivity"
+            android:label="@string/crash"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.funny.translation.ProcessTextActivity"

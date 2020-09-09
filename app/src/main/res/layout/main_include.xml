@@ -12,6 +12,7 @@
 		android:background="?attr/colorPrimary"
 		android:theme="@style/MyToolbarTheme"
 		app:title="FunnyTranslation"
+		app:navigationIcon="@drawable/ic_menu"
 		app:titleTextColor="#ffffff"/>
 
 	<com.funny.translation.widget.EditTextField

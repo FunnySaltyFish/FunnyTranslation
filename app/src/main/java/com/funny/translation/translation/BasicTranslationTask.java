@@ -38,6 +38,9 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
             if (mode==Consts.MODE_EACH_TEXT&&sourceLanguage!=Consts.LANGUAGE_CHINESE){
                 throw new TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT);
             }
+            if(engineKind==Consts.ENGINE_BIGGER_TEXT&&!StringUtil.isValidContent(StringUtil.extraChinese(sourceString))){
+                throw new TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT);
+            }
             processedString = getProcessedString(sourceString,mode);
             //Log.i(TAG,"获取到的processedString是"+processedString);
             result.setSourceString(processedString);

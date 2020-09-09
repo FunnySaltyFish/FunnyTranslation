@@ -1,4 +1,5 @@
 -keep class android.support.v4.app.CoreComponentFactory { <init>(); }
+-keep class com.funny.translation.ErrorDialogActivity { <init>(); }
 -keep class com.funny.translation.FeedbackActivity { <init>(); }
 -keep class com.funny.translation.FunnyApplication { <init>(); }
 -keep class com.funny.translation.MainActivity { <init>(); }

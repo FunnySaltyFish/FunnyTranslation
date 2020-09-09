@@ -1,0 +1,4 @@
+#Wed Sep 09 23:25:35 CST 2020
+base.0=D\:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

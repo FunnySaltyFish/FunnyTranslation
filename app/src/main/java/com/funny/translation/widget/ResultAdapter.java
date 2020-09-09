@@ -81,6 +81,12 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 			sb.append("->");
 			sb.append(Consts.LANGUAGE_NAMES[task.targetLanguage]);
 			rcHolder.engine.setText(sb.toString());
+
+			if (task.engineKind==Consts.ENGINE_BIGGER_TEXT){//缩小字符
+				rcHolder.text.setTextSize(8);
+			}else{
+				rcHolder.text.setTextSize(16);
+			}
 			rcHolder.text.setText(task.getResult().getBasicResult());
 			//System.out.println("resultString:"+task.resultString);
 			rcHolder.copyButton.setClickable(true);
@@ -102,16 +108,19 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 					public void onClick(View p1)
 					{
 						// TODO: Implement this method
+						BasicTranslationTask curTask=tasks.get(i);
+						short engineKind = curTask.engineKind;
+						if(engineKind==Consts.ENGINE_BV_TO_AV||engineKind==Consts.ENGINE_BIGGER_TEXT){
+							ApplicationUtil.print(ctx,"当前引擎的翻译结果不支持朗读哦~");
+							return;
+						}
 						short TTSEngine=ctx.getCheckedTTSEngine();
 						System.out.println("TTSEngine:"+TTSEngine);
-//						if(TTSEngine==Consts.TTS_LOCAL&&TTSUtil.localTTS==null){
-//							TTSUtil.initLocal(ctx);
-//						}else{
-//							TTSUtil.initInternet(ctx);
-//						}
-						//System.out.println("id:"+rcHolder.getId());
-						BasicTranslationTask curTask=tasks.get(i);
-						TTSUtil.speak(ctx,curTask.getResult().getBasicResult(),curTask.targetLanguage,TTSEngine);
+						short targetLanguage = curTask.targetLanguage;
+						if (targetLanguage == Consts.LANGUAGE_WENYANWEN){
+							targetLanguage = Consts.LANGUAGE_CHINESE;
+						}
+						TTSUtil.speak(ctx,curTask.getResult().getBasicResult(),targetLanguage,TTSEngine);
 					}
 			});
 			//rcHolder.engine.setText(results[i][1]);
