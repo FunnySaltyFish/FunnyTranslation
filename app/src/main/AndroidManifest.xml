@@ -5,6 +5,7 @@
 	package="com.funny.translation">
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<application
 		android:name=".FunnyApplication"
 		android:allowBackup="true"
@@ -25,6 +26,7 @@
 		</activity>
 		<activity android:name=".SettingActivity" android:label="@string/setting" android:theme="@style/AppTheme"/>
 		<activity android:name=".FeedbackActivity" android:label="@string/feedback" android:theme="@style/AppTheme"/>
+		<activity android:name=".ErrorDialogActivity" android:label="@string/crash" android:theme="@style/AppTheme"/>
 		<activity android:name=".ProcessTextActivity"
 			android:label="@string/process_text"
 			android:theme="@style/AppTheme.Dialog"

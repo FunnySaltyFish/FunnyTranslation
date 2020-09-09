@@ -18,6 +18,7 @@
 		<item>百度翻译(标准版)</item>
 		<item>谷歌翻译(标准版)</item>
 		<item>Bv2Av</item>
+		<item>字符放大</item>
 	</string-array>
 	
 	<string-array name="tts_engines">

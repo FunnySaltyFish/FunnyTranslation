@@ -20,6 +20,7 @@ public class NetworkUtil{
     public static final int NETWORK_TYPE_2G = 2;
     public static final int NETWORK_TYPE_3G = 3;
     public static final int NETWORK_TYPE_4G = 4;
+    public static final int NETWORK_TYPE_5G = 5;
 
     /**
      * 判断当前是否有网络连接
@@ -145,7 +146,10 @@ public class NetworkUtil{
             int nSubType = networkInfo.getSubtype();
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             //3G   联通的3G为UMTS或HSDPA 电信的3G为EVDO
-            if (nSubType == TelephonyManager.NETWORK_TYPE_LTE
+            if (nSubType == TelephonyManager.NETWORK_TYPE_NR&&!telephonyManager.isNetworkRoaming()){
+                netType = NETWORK_TYPE_5G;
+            }
+            else if (nSubType == TelephonyManager.NETWORK_TYPE_LTE
 				&& !telephonyManager.isNetworkRoaming()) {
                 netType = NETWORK_TYPE_4G;
             } else if (nSubType == TelephonyManager.NETWORK_TYPE_UMTS

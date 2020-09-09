@@ -23,6 +23,7 @@
     <string name="mode">翻译模式</string>
     <string name="process_text">FunnyTranslation</string>
     <string name="feedback">反馈</string>
+    <string name="crash">崩溃</string>
 
 
 </resources>

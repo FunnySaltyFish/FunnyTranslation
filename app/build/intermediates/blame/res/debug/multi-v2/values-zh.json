@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-zh\\values-zh.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Shen\\.gradle\\caches\\transforms-2\\files-2.1\\f8ef5b1d460e752c6d7a421503174906\\smart-swipe-1.1.2\\res\\values-zh\\values-zh.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,106,157,217,269,325,377,428,479,531,587",
+                        "endColumns": "50,50,59,51,55,51,50,50,51,55,51",
+                        "endOffsets": "101,152,212,264,320,372,423,474,526,582,634"
+                    }
+                }
+            ]
+        }
+    ]
+}

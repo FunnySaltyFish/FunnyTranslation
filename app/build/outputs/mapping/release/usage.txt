@@ -6,7 +6,6 @@ android.support.v7.recyclerview.R$color
 android.support.v4.app.FragmentManager$BackStackEntry
 com.funny.translation.utils.ClipBoardUtil:
     public void <init>()
-    public static void copy(android.content.Context,java.lang.String)
     public static void clear(android.content.Context)
 com.billy.android.swipe.SmartSwipeBack$5
 android.support.v4.app.SupportActivity$ExtraData
@@ -1024,7 +1023,6 @@ android.support.v7.app.ToolbarActionBar:
     public void setLogo(android.graphics.drawable.Drawable)
     public void setStackedBackgroundDrawable(android.graphics.drawable.Drawable)
     public void setSplitBackgroundDrawable(android.graphics.drawable.Drawable)
-    public void setHomeButtonEnabled(boolean)
     public void setElevation(float)
     public float getElevation()
     public boolean isTitleTruncated()
@@ -1042,10 +1040,8 @@ android.support.v7.app.ToolbarActionBar:
     public void setSubtitle(java.lang.CharSequence)
     public void setSubtitle(int)
     public void setDisplayOptions(int)
-    public void setDisplayOptions(int,int)
     public void setDisplayUseLogoEnabled(boolean)
     public void setDisplayShowHomeEnabled(boolean)
-    public void setDisplayHomeAsUpEnabled(boolean)
     public void setDisplayShowTitleEnabled(boolean)
     public void setDisplayShowCustomEnabled(boolean)
     public void setBackgroundDrawable(android.graphics.drawable.Drawable)
@@ -1332,7 +1328,6 @@ com.billy.android.swipe.SwipeConsumer:
     public com.billy.android.swipe.SwipeConsumer setRightOpen()
     public com.billy.android.swipe.SwipeConsumer setTopOpen()
     public com.billy.android.swipe.SwipeConsumer setBottomOpen()
-    public com.billy.android.swipe.SwipeConsumer smoothLeftOpen()
     public com.billy.android.swipe.SwipeConsumer smoothTopOpen()
     public com.billy.android.swipe.SwipeConsumer smoothBottomOpen()
     public com.billy.android.swipe.SwipeConsumer addToExclusiveGroup(com.billy.android.swipe.SwipeConsumerExclusiveGroup)
@@ -1509,7 +1504,13 @@ android.support.v4.view.ViewConfigurationCompat:
     public static boolean hasPermanentMenuKey(android.view.ViewConfiguration)
     private void <init>()
     private static final java.lang.String TAG
-com.funny.translation.utils.RC4
+com.funny.translation.utils.RC4:
+    public void <init>()
+    public static java.lang.String decry_RC4(byte[],java.lang.String)
+    public static byte[] encry_RC4_byte(java.lang.String,java.lang.String)
+    public static java.lang.String encry_RC4_string(java.lang.String,java.lang.String)
+    private static java.lang.String asString(byte[])
+    private static java.lang.String toHexString(java.lang.String)
 android.support.v4.os.LocaleListCompat$LocaleListCompatApi24Impl
 com.funny.translation.translation.BaiduTransApi:
     private static final java.lang.String TRANS_API_HOST
@@ -2448,6 +2449,7 @@ com.billy.android.swipe.consumer.ActivityDoorBackConsumer
 android.support.v4.view.accessibility.AccessibilityManagerCompat$TouchExplorationStateChangeListenerWrapper
 com.funny.translation.utils.ApplicationUtil:
     public void <init>()
+    public static java.lang.String getErrorMessage(java.lang.Throwable)
     public static int dp2px(android.content.Context,float)
     public static int sp2px(android.content.Context,float)
 android.support.v4.net.TrafficStatsCompat
@@ -2556,6 +2558,7 @@ com.funny.translation.utils.NetworkUtil:
     public static final int NETWORK_TYPE_2G
     public static final int NETWORK_TYPE_3G
     public static final int NETWORK_TYPE_4G
+    public static final int NETWORK_TYPE_5G
 android.support.swiperefreshlayout.R$styleable
 android.support.slidingpanelayout.R$dimen
 android.support.v7.widget.VectorEnabledTintResources:
@@ -3383,6 +3386,7 @@ com.funny.translation.bean.Consts:
     public static final short ENGINE_BAIDU_NORMAL
     public static final short ENGINE_GOOGLE
     public static final short ENGINE_BV_TO_AV
+    public static final short ENGINE_BIGGER_TEXT
     public static final short TTS_LOCAL
     public static final short TTS_BAIDU
     public static final short TTS_GOOGLE
@@ -3716,6 +3720,10 @@ android.support.v7.widget.ScrollingTabContainerView$VisibilityAnimListener:
     public android.support.v7.widget.ScrollingTabContainerView$VisibilityAnimListener withFinalVisibility(android.view.ViewPropertyAnimator,int)
 android.support.v4.view.LayoutInflaterCompat$Factory2Wrapper
 android.support.v4.view.ViewCompat$ScrollIndicators
+com.funny.translation.utils.FunnyBiggerText:
+    public void <init>()
+    private static final java.lang.String ENCODE
+    private static final java.lang.String ZK16
 com.github.lzyzsd.circleprogress.R$attr
 android.support.annotation.ColorRes
 android.support.v7.preference.PreferenceDataStore:
@@ -3817,7 +3825,6 @@ android.support.v4.view.GestureDetectorCompat:
     public void setOnDoubleTapListener(android.view.GestureDetector$OnDoubleTapListener)
 com.funny.translation.translation.TranslationResult:
     public void <init>(short,java.lang.String)
-    public void <init>(short,java.lang.String,java.lang.String[][])
     public short getStatue()
     public void setPartOfSpeech(java.lang.String)
     public java.lang.String getPartOfSpeech()
@@ -3825,7 +3832,6 @@ com.funny.translation.translation.TranslationResult:
     public java.lang.String[][] getResultTexts()
     public void setPhoneticNotation(java.lang.String)
     public java.lang.String getPhoneticNotation()
-    private java.lang.String[][] resultTexts
     private java.lang.String phoneticNotation
     private java.lang.String partOfSpeech
     public static final short TRANSLATE_STATUE_SUCCESS
@@ -4372,7 +4378,6 @@ android.support.v7.app.ActionBar:
     public abstract void setDisplayOptions(int,int)
     public abstract void setDisplayUseLogoEnabled(boolean)
     public abstract void setDisplayShowHomeEnabled(boolean)
-    public abstract void setDisplayHomeAsUpEnabled(boolean)
     public abstract void setDisplayShowTitleEnabled(boolean)
     public abstract void setDisplayShowCustomEnabled(boolean)
     public abstract void setBackgroundDrawable(android.graphics.drawable.Drawable)
@@ -4401,7 +4406,6 @@ android.support.v7.app.ActionBar:
     public abstract boolean isShowing()
     public abstract void addOnMenuVisibilityListener(android.support.v7.app.ActionBar$OnMenuVisibilityListener)
     public abstract void removeOnMenuVisibilityListener(android.support.v7.app.ActionBar$OnMenuVisibilityListener)
-    public void setHomeButtonEnabled(boolean)
     public boolean isTitleTruncated()
     public void setHomeAsUpIndicator(android.graphics.drawable.Drawable)
     public void setHomeAsUpIndicator(int)
@@ -5319,6 +5323,7 @@ android.support.v7.widget.ActivityChooserView$ActivityChooserViewAdapter:
     public void setShowDefaultActivity(boolean,boolean)
 com.funny.translation.translation.TranslationResult:
     private short engineKind
+    private java.lang.String[][] resultTexts
     private short statue
 android.support.v4.app.FragmentManagerImpl:
     static final android.view.animation.Interpolator ACCELERATE_QUINT

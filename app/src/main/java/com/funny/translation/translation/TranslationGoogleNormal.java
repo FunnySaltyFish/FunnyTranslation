@@ -107,17 +107,18 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
                     if (eachDetail instanceof JSONArray) {
                         String text = eachDetail.getString(0);
                         if (eachDetail.isNull(2)) {
-                            break;
+                            continue;
                         }
-                        JSONArray explaination = eachDetail.getJSONArray(2); //5 j 2
-                        detailTexts[j] = new String[explaination.length() + 1];//多一个，第一个放文字
+                        JSONArray explanation = eachDetail.getJSONArray(2); //5 j 2
+                        detailTexts[j] = new String[explanation.length() + 1];//多一个，第一个放文字
                         detailTexts[j][0] = text;
-                        for (int k = 0; k < explaination.length(); k++) {
-                            detailTexts[j][k + 1] = explaination.getJSONArray(k).getString(0);// 5 j 2 k 0
+                        for (int k = 0; k < explanation.length(); k++) {
+                            detailTexts[j][k + 1] = explanation.getJSONArray(k).getString(0);// 5 j 2 k 0
                         }
-                        showArray(detailTexts);
                     }
                 }
+                //System.out.println("current detailText length : "+detailTexts.length);
+                showArray(detailTexts);
             }
             //System.out.println(all);
         }

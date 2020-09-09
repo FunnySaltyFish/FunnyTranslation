@@ -1,5 +1,5 @@
 package com.funny.translation.utils;
-import com.funny.translation.utils.RC4;
+
 public class EggUtil
 {
 	public static String getAuthor(){
