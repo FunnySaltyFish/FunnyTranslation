@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -39,6 +40,10 @@ public class SettingActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
+        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
+
         setContentView(R.layout.activity_setting);
         ctx = this;
         if(savedInstanceState==null){
@@ -112,6 +117,7 @@ public class SettingActivity extends BaseActivity
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
         }
 
         private void showSortDialog(){
@@ -196,6 +202,20 @@ public class SettingActivity extends BaseActivity
                     })
                     .create();
             dialog.show();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                backIntent.putExtra("isRvChange",isRvChange);
+                backIntent.putExtra("isDiyBaiduChange",isDiyBaiduChange);
+                setResult(Consts.ACTIVITY_SETTING,backIntent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

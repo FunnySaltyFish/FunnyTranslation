@@ -2,7 +2,11 @@ package com.funny.translation;
 import android.app.Application;
 import com.danikula.videocache.HttpProxyCacheServer;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
 import com.danikula.videocache.file.FileNameGenerator;
+import com.funny.translation.bean.FunnyUncaughtExceptionHandler;
 import com.funny.translation.utils.FileUtil;
 import com.funny.translation.utils.StringUtil;
 //import com.qw.soul.permission.SoulPermission;
@@ -10,12 +14,25 @@ import com.funny.translation.utils.StringUtil;
 public class FunnyApplication extends Application
 {
 	private HttpProxyCacheServer proxy;
-
+	static FunnyApplication funnyApplication;
 	public static Context context;
+
+	@Override
+	public void onCreate()
+	{
+		// TODO: Implement this method
+		super.onCreate();
+		context=getApplicationContext();
+		funnyApplication = this;
+		FunnyUncaughtExceptionHandler funnyUncaughtExceptionHandler = FunnyUncaughtExceptionHandler.getInstance();
+		funnyUncaughtExceptionHandler.init(getFunnyContext());
+		//SoulPermission.init(this);
+	}
+
 	public FunnyApplication(){
 		super();
-
 	}
+
     public static HttpProxyCacheServer getProxy(Context context) {
         FunnyApplication myApplication = (FunnyApplication) context.getApplicationContext();
         return myApplication.proxy == null ? (myApplication.proxy = myApplication.newProxy()) : myApplication.proxy;
@@ -50,17 +67,13 @@ public class FunnyApplication extends Application
             return md5 + ".mp3";
         }
     }
-	
-	
-	
-	@Override
-	public void onCreate()
-	{
-		// TODO: Implement this method
-		super.onCreate();
-		context=getApplicationContext();
-		//SoulPermission.init(this);
+
+	public static FunnyApplication getInstance(){
+		return funnyApplication;
 	}
-	
+
+	public PackageInfo getLocalPackageInfo() throws PackageManager.NameNotFoundException {
+		return context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_CONFIGURATIONS);
+	}
 	
 }
