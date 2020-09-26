@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import com.danikula.videocache.file.FileNameGenerator;
 import com.funny.translation.bean.FunnyUncaughtExceptionHandler;
 import com.funny.translation.utils.FileUtil;
+import com.funny.translation.utils.OkHttpUtil;
 import com.funny.translation.utils.StringUtil;
 //import com.qw.soul.permission.SoulPermission;
 
@@ -26,6 +27,9 @@ public class FunnyApplication extends Application
 		funnyApplication = this;
 		FunnyUncaughtExceptionHandler funnyUncaughtExceptionHandler = FunnyUncaughtExceptionHandler.getInstance();
 		funnyUncaughtExceptionHandler.init(getFunnyContext());
+		OkHttpUtil.init();
+//		EasyHttp.init(this);
+//		EasyHttp.getInstance().debug("EasyHttp",true);
 		//SoulPermission.init(this);
 	}
 

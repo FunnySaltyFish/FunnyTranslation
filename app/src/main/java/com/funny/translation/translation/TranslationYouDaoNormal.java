@@ -31,17 +31,20 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
             // 打开和URL之间的连接
             URLConnection conn = realUrl.openConnection();
             // 设置通用的请求属性
-            conn.setRequestProperty("Host","fanyi.youdao.com");
-            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0");
-            conn.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
-            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+            conn.setRequestProperty("Cookie", "OUTFOX_SEARCH_USER_ID=970246104@10.169.0.83; OUTFOX_SEARCH_USER_ID_NCOO=570559528.1224236; _ntes_nnid=96bc13a2f5ce64962adfd6a278467214,1551873108952; JSESSIONID=aaae9i7plXPlKaJH_gkYw; td_cookie=18446744072941336803; SESSION_FROM_COOKIE=unknown; ___rl__test__cookies=1565689460872");
+            conn.setRequestProperty("Referer", "http://fanyi.youdao.com/");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36");
+//            conn.setRequestProperty("Host","fanyi.youdao.com");
+//            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0");
+//            conn.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
+//            conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
             //conn.setRequestProperty("Accept-Encoding","gzip, deflate");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            conn.setRequestProperty("X-Requested-With","XMLHttpRequest");
+//            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+//            conn.setRequestProperty("X-Requested-With","XMLHttpRequest");
             //conn.setRequestProperty("Content-Length","262");
-            conn.setRequestProperty("Connection","keep-alive");
-            conn.setRequestProperty("Referer","http://fanyi.youdao.com/");
-            conn.setRequestProperty("Cookie","YOUDAO_MOBILE_ACCESS_TYPE=1; OUTFOX_SEARCH_USER_ID=1378414660@10.108.160.19; JSESSIONID=aaaBTGxpwV4EQfnO_Oy1w; ___rl__test__cookies=1569154996426; OUTFOX_SEARCH_USER_ID_NCOO=752434577.0207007");
+//            conn.setRequestProperty("Connection","keep-alive");
+//            conn.setRequestProperty("Referer","http://fanyi.youdao.com/");
+//            conn.setRequestProperty("Cookie","YOUDAO_MOBILE_ACCESS_TYPE=1; OUTFOX_SEARCH_USER_ID=1378414660@10.108.160.19; JSESSIONID=aaaBTGxpwV4EQfnO_Oy1w; ___rl__test__cookies=1569154996426; OUTFOX_SEARCH_USER_ID_NCOO=752434577.0207007");
             // 发送POST请求必须设置如下两行
             conn.setDoOutput(true);
             conn.setDoInput(true);
@@ -53,7 +56,8 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
             long salt=System.currentTimeMillis()+(long)(Math.random()*9+1);
             String bv= StringUtil.md5("5.0 (Windows)");
             //System.out.println(bv);
-            String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"Nw(nmmbP%A-r6U3EUn]Aj");
+            String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"]BjuETDhU)zqSxf-=B#7m");//2020.9.10
+                    //"Nw(nmmbP%A-r6U3EUn]Aj");
             //"mmbP%A-r6U3Nw(n]BjuEU"); 2020/7/15失败
             ///*"n%A-rKaT5fb[Gy?;N5@Tj"*/);
             //System.out.println("fanyideskweb"+sourceString+salt+"n%A-rKaT5fb[Gy?;N5@Tj");
@@ -62,8 +66,9 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
                     "&sign="+sign+
                     "&ts="+salt+
                     "&bv="+bv+
-                    "&version=2.1&keyfrom=fanyi.web&action=FY_BY_CLICKBUTTION"
+                    "&bv=b6b8551f1d0b20d35d29f2fb5270dc9e&version=2.1&keyfrom=fanyi.web&action=FY_BY_REALTlME"
                     ;
+
             out.write(param,0,param.length());
             // flush输出流的缓冲
             out.flush();

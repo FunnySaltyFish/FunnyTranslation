@@ -12,7 +12,9 @@ anim abc_slide_out_top
 anim abc_tooltip_enter
 anim abc_tooltip_exit
 anim anim_none
+array bigger_text_performance
 array engines
+array entry_bigger_text_performance
 array entry_value_languages
 array languages
 array modes

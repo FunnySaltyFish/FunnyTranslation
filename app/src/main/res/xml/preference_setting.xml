@@ -74,5 +74,19 @@
 
     </android.support.v7.preference.PreferenceCategory>
 
+    <android.support.v7.preference.PreferenceCategory
+        android:title="字符放大"
+        >
+
+        <android.support.v7.preference.ListPreference
+            android:key="preference_bigger_text_performance"
+            android:summary="默认生成文字为宽文字，实际观感更好，但在部分应用中各行无法显示完全，会造成文字变形；窄模式下文字更窄，但观感较差。"
+            android:title="生成文字宽窄"
+            android:entries="@array/bigger_text_performance"
+            android:entryValues="@array/entry_bigger_text_performance"
+            android:defaultValue="0"
+            />
+    </android.support.v7.preference.PreferenceCategory>
+
 
 </android.support.v7.preference.PreferenceScreen>
