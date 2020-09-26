@@ -107,6 +107,7 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
                     if (eachDetail instanceof JSONArray) {
                         String text = eachDetail.getString(0);
                         if (eachDetail.isNull(2)) {
+                            detailTexts[j] = new String[]{eachDetail.getString(0)};
                             continue;
                         }
                         JSONArray explanation = eachDetail.getJSONArray(2); //5 j 2
@@ -142,6 +143,10 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
 
     public static void showArray(String[][] arr){
         for(String[] arr1:arr){
+            if(arr1==null){
+                System.out.println("showArray出现了一些错误！数组为空！");
+                continue;
+            }
             for(String str:arr1){
                 System.out.print(str);
                 System.out.print(" ");

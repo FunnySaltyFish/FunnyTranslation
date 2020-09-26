@@ -110,7 +110,7 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 						// TODO: Implement this method
 						BasicTranslationTask curTask=tasks.get(i);
 						short engineKind = curTask.engineKind;
-						if(engineKind==Consts.ENGINE_BV_TO_AV||engineKind==Consts.ENGINE_BIGGER_TEXT){
+						if(engineKind==Consts.ENGINE_BV_TO_AV||engineKind==Consts.ENGINE_BIGGER_TEXT||engineKind==Consts.ENGINE_EACH_TEXT){
 							ApplicationUtil.print(ctx,"当前引擎的翻译结果不支持朗读哦~");
 							return;
 						}
