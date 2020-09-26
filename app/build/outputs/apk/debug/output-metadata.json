@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "properties": [],
-      "versionCode": 11,
-      "versionName": "1.34.0",
+      "versionCode": 12,
+      "versionName": "1.34.0—bug修复版",
       "enabled": true,
       "outputFile": "app-debug.apk"
     }

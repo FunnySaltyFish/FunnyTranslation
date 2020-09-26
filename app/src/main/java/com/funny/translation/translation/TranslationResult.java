@@ -25,13 +25,12 @@ public class TranslationResult
 	private String partOfSpeech;//词性
 
 	public TranslationResult(short engineKind,String sourceString) {
-		this.engineKind = engineKind;
-		this.sourceString = sourceString;
+		this(engineKind,sourceString,null);
 	}
 
 	public TranslationResult(short engineKind)
 	{
-		this.engineKind = engineKind;
+		this(engineKind,"",null);
 	}
 
 	public TranslationResult(short engineKind, String basicResult, String[][] resultTexts)

@@ -1,4 +1,10 @@
-#Wed Sep 09 23:25:35 CST 2020
-base.0=D\:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+#Sat Sep 26 11:16:05 CST 2020
+base.2=D\:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\classes_0.dex
+path.2=classes_0.dex
+base.1=D\:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\classes.dex
+path.1=classes.dex
+base.0=D\:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
 renamed.0=classes.dex
 path.0=classes.dex

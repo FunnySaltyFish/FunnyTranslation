@@ -8,6 +8,11 @@ public class Consts
 
 	//抽象话词库
 	//https://github.com/gaowanliang/NMSL/blob/master/src/data/emoji.json
+	//bing
+	//https://cn.bing.com/dict/search?q=%E5%8D%95%E8%AF%8D
+	//有道朗读
+	//http://dict.youdao.com/dictvoice?audio=good
+
 	public static String AUTHOR="FunnySaltyFish";
 
 	public static final int ACTIVITY_MAIN=1;
@@ -24,12 +29,14 @@ public class Consts
 	public static final String ERROR_ONLY_CHINESE_SUPPORT = "当前翻译模式仅支持中文！";
 	public static final String ERROR_NO_BV_OR_AV = "未检测到有效的Bv号或Av号";
 
-	public final static short ENGINE_YOUDAO_EASY=0;
+	//public final static short ENGINE_YOUDAO_EASY=0;
+	public static final short ENGINE_JINSHAN = 0;
 	public final static short ENGINE_YOUDAO_NORMAL=1;
 	public final static short ENGINE_BAIDU_NORMAL=2;
 	public final static short ENGINE_GOOGLE=3;
 	public static final short ENGINE_BV_TO_AV=4;//Bv，Av互转
 	public static final short ENGINE_BIGGER_TEXT = 5;//字符放大
+	public static final short ENGINE_EACH_TEXT = 6;//逐字翻译
 	
 	public final static short TTS_LOCAL=0;
 	public final static short TTS_BAIDU=1;
@@ -51,16 +58,16 @@ public class Consts
 
 
 	public static String[][] LANGUAGES={
-		//有道翻译 简/标准 百度翻译 标准 谷歌(短)
+		//有道翻译 简版（已弃用）/标准 百度翻译 标准 谷歌(短)
 		{"auto","auto","auto","auto"},
-		{"zh-CHS","cn","zh","zh-CN"},
-		{"en","en","en","en"},
+		{"zh","zh-CHS","zh","zh-CN"},
+		{"en-US","en","en","en"},
 		{"ja","ja","jp","ja"},
 		{"ko","ko","kor","ko"},
 		{"fr","fr","fra","fr"},
 		{"ru","ru","ru","ru"},
 		{"de","de","de","de"},
-		{"zh-CHS","cn","wyw","zh-CN"}
+		{"zh","zh-CHS","wyw","zh-CN"}
 	};
 	
 	public final static short CHECK_SINGLE=0;

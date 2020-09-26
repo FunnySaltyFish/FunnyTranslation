@@ -1,5 +1,7 @@
 package com.funny.translation.translation;
 
+import android.support.v7.preference.PreferenceManager;
+
 import com.funny.translation.FunnyApplication;
 import com.funny.translation.utils.FunnyBiggerText;
 
@@ -15,7 +17,20 @@ public class TranslationBiggerText extends  BasicTranslationTask {
 
     @Override
     TranslationResult getFormattedResult(String basicText) throws TranslationException {
-        return new TranslationResult(engineKind,FunnyBiggerText.drawString(FunnyApplication.getFunnyContext(),basicText),new String[1][1]);
+        int performance = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext()).getString("preference_bigger_text_performance","1"));
+        String str = "";
+        switch (performance){
+            case 0:
+                str = FunnyBiggerText.drawWideString(FunnyApplication.getFunnyContext(),basicText);
+                break;
+            case 1:
+                str = FunnyBiggerText.drawMiddleString(FunnyApplication.getFunnyContext(),basicText);
+                break;
+            case 2:
+                str = FunnyBiggerText.drawNarrowString(FunnyApplication.getFunnyContext(),basicText);
+                break;
+        }
+        return new TranslationResult(engineKind,str,null);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.funny.translation;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationBV2AV;
 import com.funny.translation.translation.TranslationBaiduNormal;
 import com.funny.translation.translation.TranslationBiggerText;
+import com.funny.translation.translation.TranslationEachText;
 import com.funny.translation.translation.TranslationGoogleNormal;
 import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.bean.Consts;
@@ -42,6 +44,7 @@ import com.billy.android.swipe.SmartSwipe;
 import com.billy.android.swipe.consumer.DrawerConsumer;
 import android.support.v7.widget.RecyclerView;
 
+import com.funny.translation.translation.TranslationJinshanEasy;
 import com.funny.translation.translation.TranslationYouDaoEasy;
 import com.funny.translation.translation.TranslationYouDaoNormal;
 import com.funny.translation.utils.ClipBoardUtil;
@@ -342,7 +345,7 @@ public class MainActivity extends BaseActivity
 			boolean onlyHasOfflineEngine = true;
 			for (LanguageBean bean : engines){
 				short engine = bean.getUserData();
-				if (engine==ENGINE_BAIDU_NORMAL||engine==ENGINE_GOOGLE||engine==ENGINE_YOUDAO_EASY||engine==ENGINE_YOUDAO_NORMAL){
+				if (engine==ENGINE_BAIDU_NORMAL||engine==ENGINE_GOOGLE||engine==ENGINE_JINSHAN||engine==ENGINE_YOUDAO_NORMAL){
 					onlyHasOfflineEngine = false;
 				}
 			}
@@ -555,7 +558,7 @@ public class MainActivity extends BaseActivity
 		rightModeRv.initData(modeList,modeMapping);
 
 		engineList.get(ENGINE_GOOGLE).setIsSelected(true);
-		engineList.get(ENGINE_BAIDU_NORMAL).setIsSelected(true);
+		engineList.get(ENGINE_YOUDAO_NORMAL).setIsSelected(true);
 		ttsList.get(TTS_BAIDU).setIsSelected(true);
 		modeList.get(MODE_NORMAL).setIsSelected(true);
 	}
@@ -632,8 +635,9 @@ public class MainActivity extends BaseActivity
 			for(LanguageBean engine:getCheckedList(engineList)){
 				BasicTranslationTask task;
 				switch (engine.getUserData()){
-					case ENGINE_YOUDAO_EASY:
-						task = new TranslationYouDaoEasy(helper,content,source,target.getUserData(),ENGINE_YOUDAO_EASY);
+					case ENGINE_JINSHAN:
+						//task = new TranslationYouDaoEasy(helper,content,source,target.getUserData(),ENGINE_YOUDAO_EASY);
+						task = new TranslationJinshanEasy(helper,content,source,target.getUserData(),ENGINE_JINSHAN);
 						break;
 					case ENGINE_YOUDAO_NORMAL:
 						task = new TranslationYouDaoNormal(helper,content,source,target.getUserData(),ENGINE_YOUDAO_NORMAL);
@@ -649,6 +653,9 @@ public class MainActivity extends BaseActivity
 						break;
 					case ENGINE_BIGGER_TEXT:
 						task = new TranslationBiggerText(helper,content,source,target.getUserData(),ENGINE_BIGGER_TEXT);
+						break;
+					case ENGINE_EACH_TEXT:
+						task = new TranslationEachText(helper,content,source,target.getUserData(),ENGINE_EACH_TEXT);
 						break;
 					default:
 						throw new IllegalStateException("没有这个引擎: " + engine.getUserData());
@@ -733,8 +740,20 @@ public class MainActivity extends BaseActivity
 					public void onClick(DialogInterface p1, int p2)
 					{
 						// TODO: Implement this method
-						ApplicationUtil.copyToClipboard(MainActivity.this,"https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png");
-						ApplicationUtil.print(MainActivity.this,"网址已保存在剪贴板里喽！");
+//						ApplicationUtil.copyToClipboard(MainActivity.this,"https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png");
+//						ApplicationUtil.print(MainActivity.this,"网址已保存在剪贴板里喽！");
+						String url="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hZTAxLmFsaWNkbi5jb20va2YvSGJmZmU2OWQyNTE0ZDRhZjhhZDBmYzgwNjY4YzU3ZDU0US5wbmc?x-oss-process=image/format,png";
+						String url2="https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png";
+						Intent intent=new Intent();
+						Uri uri;
+						if(Math.random()<0.5){
+							uri=Uri.parse(url);
+						}else{
+							uri=Uri.parse(url2);
+						}
+						intent.setAction(Intent.ACTION_VIEW);
+						intent.setData(uri);
+						MainActivity.this.startActivity(intent);
 					}
 				})
 				.create();
