@@ -18,6 +18,7 @@ public class TranslationBiggerText extends  BasicTranslationTask {
     @Override
     TranslationResult getFormattedResult(String basicText) throws TranslationException {
         int performance = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext()).getString("preference_bigger_text_performance","1"));
+        FunnyBiggerText.fillChar = PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext()).getString("preference_bigger_text_fill_char","");
         String str = "";
         switch (performance){
             case 0:

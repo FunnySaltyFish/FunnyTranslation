@@ -129,6 +129,7 @@
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:livedata-core:1.1.1@aar" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.core:runtime:1.1.1@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.billy.android:smart-swipe:1.1.2@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.hjq:toast:8.6@aar" level="project" />
     <orderEntry type="module" module-name="library" />
   </component>
 </module>

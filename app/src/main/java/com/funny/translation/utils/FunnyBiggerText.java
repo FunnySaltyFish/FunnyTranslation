@@ -13,6 +13,7 @@ public class FunnyBiggerText {
     private final static String ZK16 = "HZK16";
 
     private static boolean[][] arr;
+    public static String fillChar = "";
     static int all_16_32 = 16;
     static int all_2_4 = 2;
     static int all_32_128 = 32;
@@ -28,8 +29,13 @@ public class FunnyBiggerText {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < str.length(); i++) {
-            char curChar = str.charAt(i);
-            if (curChar < 0x80) {
+            char curChar;
+            if (fillChar.equals("")){
+                curChar = str.charAt(i);
+            }else{
+                curChar = fillChar.charAt(0);
+            }
+            if (str.charAt(i) < 0x80) {
                 continue;
             }
             code = getByteCode(str.substring(i, i + 1));
@@ -69,8 +75,13 @@ public class FunnyBiggerText {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < str.length(); i++) {
-            char curChar = str.charAt(i);
-            if (curChar < 0x80) {
+            char curChar;
+            if (fillChar.equals("")){
+                curChar = str.charAt(i);
+            }else{
+                curChar = fillChar.charAt(0);
+            }
+            if (str.charAt(i) < 0x80) {
                 continue;
             }
             code = getByteCode(str.substring(i, i + 1));
@@ -110,8 +121,13 @@ public class FunnyBiggerText {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < str.length(); i++) {
-            char curChar = str.charAt(i);
-            if (curChar < 0x80) {
+            char curChar;
+            if (fillChar.equals("")){
+                curChar = str.charAt(i);
+            }else{
+                curChar = fillChar.charAt(0);
+            }
+            if (str.charAt(i) < 0x80) {
                 continue;
             }
             code = getByteCode(str.substring(i, i + 1));

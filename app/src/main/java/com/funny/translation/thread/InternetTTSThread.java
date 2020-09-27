@@ -78,8 +78,7 @@ public class InternetTTSThread extends Thread
 	public void init(){
 		if(internetTTS==null){
 			AppCompatActivity activity=(AppCompatActivity)ctx;
-			FunnyApplication application=(FunnyApplication)activity.getApplication();
-			proxy=application.getProxy(ctx);
+			proxy= FunnyApplication.getProxy(ctx);
 			internetTTS=new MediaPlayer();
 			internetTTS.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
 					@Override

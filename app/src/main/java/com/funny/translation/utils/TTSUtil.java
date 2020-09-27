@@ -12,6 +12,8 @@ import com.funny.translation.FunnyApplication;
 import android.support.v7.app.AppCompatActivity;
 import com.danikula.videocache.HttpProxyCacheServer;
 import java.io.FileNotFoundException;
+import java.util.Random;
+
 import com.funny.translation.thread.InternetTTSThread;
 import android.os.Handler;
 import com.funny.translation.MainActivity;
@@ -63,7 +65,7 @@ public class TTSUtil
 	public static String getInternetUrl(short TTSEngine,String text,short language){
 		String url=null;
 		if(text.equals("0c1be36a95")){
-			url=String.format("funny://egg_1_4");
+			url = "funny://egg_1_4";
 			return url;
 		}
 		switch(TTSEngine){
@@ -72,31 +74,30 @@ public class TTSUtil
 				{
 					//文言文处理为中文
 					String lANGUAGE =(language==Consts.LANGUAGE_WENYANWEN?Consts.LANGUAGES[Consts.LANGUAGE_CHINESE][Consts.ENGINE_BAIDU_NORMAL]:Consts.LANGUAGES[language][Consts.ENGINE_BAIDU_NORMAL]);
-					//url =// "http://tts.baidu.com/text2audio?lan="+Consts.LANGUAGES[language][Consts.ENGINE_BAIDU_NORMAL]+"&ie=UTF-8&text=" + URLEncoder.encode(text, "utf-8");
 					//	"https://tts.baidu.com/text2audio?tex=" + URLEncoder.encode(text, "utf-8") + "&cuid=baike&ctp=1&pdt=301&vol=9&rate=32&per=0&lan=" + lANGUAGE;
 					url=String.format("https://fanyi.baidu.com/gettts?lan=%s&text=%s&spd=3&source=wise",lANGUAGE,android.net.Uri.encode(text));//将 转为%20而不是加号
-					//url="https://sq-sycdn.kuwo.cn/dadfabca52e99d6c72c1669ac14c52dd/5e401c6e/resource/a2/64/96/3621236540.aac";
-					//System.out.println("url"+url);
-				}
-				catch(Exception e)
-				//catch (UnsupportedEncodingException e)
-				{
-					e.printStackTrace();
-				}
-				break;
-			case Consts.TTS_GOOGLE:
-				try
-				{
-					//文言文处理为中文
-					String lANGUAGE =(language==Consts.LANGUAGE_WENYANWEN?Consts.LANGUAGES[Consts.LANGUAGE_CHINESE][Consts.ENGINE_GOOGLE]:Consts.LANGUAGES[language][Consts.ENGINE_GOOGLE]);
-					url=String.format("https://translate.google.cn/translate_tts?ie=UTF-8&q=%s&tl=%s&total=1&idx=0&textlen=%d&tk=%s&client=webapp",android.net.Uri.encode(text),lANGUAGE,text.length(),FunnyGoogleApi.tk(text,"439500.3343569631"));//将 转为%20而不是加号
-					//System.out.println("url"+url);
 				}
 				catch(Exception e)
 				{
 					e.printStackTrace();
 				}
 				break;
+			case Consts.TTS_YOUDAO:
+				url = String.format("http://dict.youdao.com/dictvoice?audio=%s", android.net.Uri.encode(text));
+				break;
+//			case Consts.TTS_GOOGLE:
+//				try
+//				{
+//					//文言文处理为中文
+//					String lANGUAGE =(language==Consts.LANGUAGE_WENYANWEN?Consts.LANGUAGES[Consts.LANGUAGE_CHINESE][Consts.ENGINE_GOOGLE]:Consts.LANGUAGES[language][Consts.ENGINE_GOOGLE]);
+//					url=String.format("https://translate.google.cn/translate_tts?ie=UTF-8&q=%s&tl=%s&total=1&idx=0&textlen=%d&tk=%s&client=webapp",android.net.Uri.encode(text),lANGUAGE,text.length(),FunnyGoogleApi.tk(text,"439500.3343569631"));//将 转为%20而不是加号
+//					//System.out.println("url"+url);
+//				}
+//				catch(Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//				break;
 		}
 		return url;
 	}
@@ -133,6 +134,7 @@ public class TTSUtil
 		Locale language;
 		switch(targetLanguage){
 			case Consts.LANGUAGE_CHINESE:
+			case Consts.LANGUAGE_WENYANWEN:
 				language=Locale.CHINESE;
 				break;
 			case Consts.LANGUAGE_ENGLISH:
@@ -149,9 +151,6 @@ public class TTSUtil
 				break;
 			case Consts.LANGUAGE_KOREAN:
 				language=Locale.KOREAN;
-				break;
-			case Consts.LANGUAGE_WENYANWEN:
-				language=Locale.CHINESE;
 				break;
 			default:
 				language=Locale.CHINESE;
