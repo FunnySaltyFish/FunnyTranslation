@@ -742,6 +742,16 @@ com.billy.android.swipe.refresh.ClassicFooter:
     public long onFinish(boolean)
     public void onDataLoading()
 com.billy.android.swipe.SmartSwipeBack$2$1
+com.hjq.toast.ToastUtils:
+    private void <init>()
+    public static void show(java.lang.Object)
+    public static void show(int)
+    public static varargs void show(int,java.lang.Object[])
+    public static varargs void show(java.lang.String,java.lang.Object[])
+    public static synchronized void cancel()
+    public static android.view.View getView()
+    public static void initStyle(com.hjq.toast.IToastStyle)
+    public static android.widget.Toast getToast()
 kotlin.ranges.CharRange$Companion
 kotlin.OverloadResolutionByLambdaReturnType
 android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener
@@ -1459,6 +1469,7 @@ com.funny.translation.utils.HttpUtil$1
 kotlin.Experimental$Level
 kotlin.collections.UArraySortingKt
 android.support.fragment.R$dimen
+com.hjq.toast.style.ToastAliPayStyle
 android.support.v7.view.menu.MenuView:
     public abstract int getWindowAnimations()
 okhttp3.CipherSuite:
@@ -3898,7 +3909,6 @@ kotlin.text.StringsKt__RegexExtensionsKt:
     private static final kotlin.text.Regex toRegex(java.lang.String,java.util.Set)
     public void <init>()
 org.intellij.lang.annotations.JdkConstants$TabLayoutPolicy
-android.support.loader.R$string
 kotlin.collections.SetsKt__SetsJVMKt:
     private static final java.util.Set buildSetInternal(kotlin.jvm.functions.Function1)
     private static final java.util.Set buildSetInternal(int,kotlin.jvm.functions.Function1)
@@ -3908,6 +3918,7 @@ kotlin.collections.SetsKt__SetsJVMKt:
     public static final varargs java.util.TreeSet sortedSetOf(java.lang.Object[])
     public static final varargs java.util.TreeSet sortedSetOf(java.util.Comparator,java.lang.Object[])
     public void <init>()
+android.support.loader.R$string
 kotlin.js.ExperimentalJsExport
 kotlin.sequences.SequencesKt___SequencesJvmKt$filterIsInstance$1
 kotlin.ExperimentalStdlibApi
@@ -5806,6 +5817,7 @@ com.funny.translation.R
 android.support.v7.widget.ViewBoundsCheck$Callback:
     public abstract int getChildCount()
     public abstract android.view.View getParent()
+com.hjq.toast.BuildConfig
 kotlin.annotation.Target
 android.support.v4.app.FragmentHostCallback:
     public void <init>(android.content.Context,android.os.Handler,int)
@@ -5969,6 +5981,7 @@ com.funny.translation.R$id
 okio.HashingSource
 android.support.v14.preference.PreferenceFragment$2
 kotlin.io.FilesKt__UtilsKt$copyRecursively$2
+com.hjq.toast.style.ToastQQStyle
 kotlin.sequences.DistinctIterator
 android.support.v7.preference.CollapsiblePreferenceGroupController:
     public boolean onPreferenceVisibilityChange(android.support.v7.preference.Preference)
@@ -5982,6 +5995,10 @@ com.danikula.videocache.sourcestorage.DatabaseSourceInfoStorage:
     private static final java.lang.String COLUMN_MIME
     private static final java.lang.String CREATE_SQL
 kotlin.RequiresOptIn$Level
+com.hjq.toast.IToastStrategy:
+    public abstract void cancel()
+    public static final int SHORT_DURATION_TIMEOUT
+    public static final int LONG_DURATION_TIMEOUT
 android.support.v7.preference.PreferenceGroup:
     private boolean removePreferenceInt(android.support.v7.preference.Preference)
     public boolean isOrderingAsAdded()
@@ -7193,11 +7210,7 @@ kotlin.text.MatchNamedGroupCollection
 okhttp3.internal.tls.BasicCertificateChainCleaner:
     private static final int MAX_SIGNERS
 kotlin.jvm.functions.Function15
-com.funny.translation.utils.HttpUtil:
-    public void <init>()
-    public static java.lang.String sendPost(java.lang.String,java.lang.String)
-    public static boolean isAvailable(java.lang.String)
-    public static java.io.File downloadFile(java.lang.String,java.lang.String)
+com.funny.translation.utils.HttpUtil
 android.support.v4.graphics.PathUtils
 android.arch.lifecycle.R
 android.support.v4.view.ViewConfigurationCompat:
@@ -7745,13 +7758,13 @@ kotlin.collections.CollectionsKt__MutableCollectionsJVMKt:
     private static final void shuffle(java.util.List)
     private static final void shuffle(java.util.List,java.util.Random)
     public void <init>()
-android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory$DefaultRoundedBitmapDrawable
 android.support.v4.content.res.GradientColorInflaterCompat:
     private void <init>()
     static android.graphics.Shader createFromXml(android.content.res.Resources,org.xmlpull.v1.XmlPullParser,android.content.res.Resources$Theme)
     private static final int TILE_MODE_CLAMP
     private static final int TILE_MODE_REPEAT
     private static final int TILE_MODE_MIRROR
+android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory$DefaultRoundedBitmapDrawable
 android.support.v4.graphics.TypefaceCompatApi26Impl:
     private static final java.lang.String TAG
     private static final java.lang.String FONT_FAMILY_CLASS
@@ -8268,6 +8281,7 @@ com.danikula.videocache.HttpProxyCacheServer:
 com.billy.android.swipe.consumer.ActivityDoorBackConsumer
 kotlin.collections.CollectionsKt___CollectionsKt$elementAt$1
 android.support.v4.view.accessibility.AccessibilityManagerCompat$TouchExplorationStateChangeListenerWrapper
+com.hjq.toast.style.ToastWhiteStyle
 android.support.v4.net.TrafficStatsCompat
 kotlin.collections.ArrayAsCollection:
     public final java.lang.Object[] getValues()
@@ -8967,6 +8981,7 @@ android.support.v4.util.LruCache:
     public final synchronized java.util.Map snapshot()
 kotlin.jvm.internal.ArrayBooleanIterator
 kotlin.sequences.SequenceScope
+com.hjq.toast.R
 org.intellij.lang.annotations.PrintFormat
 android.support.v4.content.FileProvider$SimplePathStrategy
 android.support.cursoradapter.R
@@ -9219,6 +9234,7 @@ com.funny.translation.bean.Consts:
     public static final short TTS_LOCAL
     public static final short TTS_BAIDU
     public static final short TTS_GOOGLE
+    public static final short TTS_YOUDAO
     public static final short LANGUAGE_AUTO
     public static final short LANGUAGE_CHINESE
     public static final short LANGUAGE_ENGLISH
@@ -9939,6 +9955,13 @@ kotlin.contracts.ExperimentalContracts
 kotlin.StandardKt__StandardKt
 kotlin.math.MathKt__MathHKt
 kotlin.time.TimedValue
+com.hjq.toast.ToastStrategy:
+    public void cancel()
+    private static final int DELAY_TIMEOUT
+    private static final int TYPE_SHOW
+    private static final int TYPE_CONTINUE
+    private static final int TYPE_CANCEL
+    private static final int MAX_TOAST_CAPACITY
 kotlin.jvm.internal.ClassReference$Companion
 kotlin.reflect.KMutableProperty
 kotlin.sequences.SequencesKt___SequencesKt$filterNotNull$1

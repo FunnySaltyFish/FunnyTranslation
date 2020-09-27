@@ -17,7 +17,7 @@ public class UpdateUtil
 		JSONObject obj=null;
 		try
 		{
-			String str=HttpUtil.sendGet("https://gitee.com/funnysaltyfish/FunnyTranslationDownload/raw/master/description.json","");
+			String str = OkHttpUtil.get("https://gitee.com/funnysaltyfish/FunnyTranslationDownload/raw/master/description.json");
 			obj= new JSONObject(str);
 		}
 		catch (JSONException e)

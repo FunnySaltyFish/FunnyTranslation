@@ -86,6 +86,15 @@
             android:entryValues="@array/entry_bigger_text_performance"
             android:defaultValue="0"
             />
+
+        <android.support.v7.preference.EditTextPreference
+            android:key="preference_bigger_text_fill_char"
+            android:title="自定义填充"
+            android:summary="您可以自定义填充的字符，默认为空时填充当前字符本身"
+            android:defaultValue=""
+            android:dialogTitle="输入一个字符"
+            />
+
     </android.support.v7.preference.PreferenceCategory>
 
 

@@ -349,6 +349,7 @@ Referenced Strings:
   ON_RESUME
   ON_START
   ON_STOP
+  OP_POST_NOTIFICATION
   OkHttp
   OkHttpClient::class.java.name
   OpenJSSE
@@ -681,6 +682,7 @@ Referenced Strings:
   appcompat:local_night_mode
   appcompat_skip_skip
   appid
+  appops
   arc_angle
   args
   array
@@ -726,6 +728,7 @@ Referenced Strings:
   chain
   chars
   charset
+  checkOpNoThrow
   checked_text
   chunked
   cipherSuite
@@ -960,6 +963,7 @@ Referenced Strings:
   mButtonDrawable
   mDrawableCache
   mFactory2
+  mHandler
   mIsChildViewEnabled
   mListener
   mMinHeight
@@ -968,6 +972,7 @@ Referenced Strings:
   mOverlapAnchor
   mRecreateDisplayList
   mResourcesImpl
+  mTN
   mUnthemedEntries
   makeOptionalFitsSystemWindows
   map
@@ -988,6 +993,7 @@ Referenced Strings:
   newValue
   nm
   none
+  notification
   null
   nullLayouts
   objectAnimator
@@ -1038,6 +1044,7 @@ Referenced Strings:
   preference_baidu_diy_key
   preference_baidu_diy_sleep_time
   preference_baidu_is_diy_api
+  preference_bigger_text_fill_char
   preference_bigger_text_performance
   preference_language_sort
   preference_language_source_default
@@ -1551,6 +1558,43 @@ Marking styleable:SeekBarPreference_seekBarIncrement:-1 used because its prefix 
 Marking styleable:SeekBarPreference_showSeekBarValue:-1 used because its prefix matches string pool constant SeekBarPreference
 Marking attr:logo:2130903296 used because its prefix matches string pool constant log
 Marking attr:logoDescription:2130903297 used because its prefix matches string pool constant log
+Marking dimen:notification_action_icon_size:2131099755 used because its prefix matches string pool constant notification
+Marking dimen:notification_action_text_size:2131099756 used because its prefix matches string pool constant notification
+Marking dimen:notification_big_circle_margin:2131099757 used because its prefix matches string pool constant notification
+Marking dimen:notification_content_margin_start:2131099758 used because its prefix matches string pool constant notification
+Marking dimen:notification_large_icon_height:2131099759 used because its prefix matches string pool constant notification
+Marking dimen:notification_large_icon_width:2131099760 used because its prefix matches string pool constant notification
+Marking dimen:notification_main_column_padding_top:2131099761 used because its prefix matches string pool constant notification
+Marking dimen:notification_media_narrow_margin:2131099762 used because its prefix matches string pool constant notification
+Marking dimen:notification_right_icon_size:2131099763 used because its prefix matches string pool constant notification
+Marking dimen:notification_right_side_padding_top:2131099764 used because its prefix matches string pool constant notification
+Marking dimen:notification_small_icon_background_padding:2131099765 used because its prefix matches string pool constant notification
+Marking dimen:notification_small_icon_size_as_large:2131099766 used because its prefix matches string pool constant notification
+Marking dimen:notification_subtext_size:2131099767 used because its prefix matches string pool constant notification
+Marking dimen:notification_top_pad:2131099768 used because its prefix matches string pool constant notification
+Marking dimen:notification_top_pad_large_text:2131099769 used because its prefix matches string pool constant notification
+Marking layout:notification_action:2131361828 used because its prefix matches string pool constant notification
+Marking layout:notification_action_tombstone:2131361829 used because its prefix matches string pool constant notification
+Marking layout:notification_template_custom_big:2131361830 used because its prefix matches string pool constant notification
+Marking layout:notification_template_icon_group:2131361831 used because its prefix matches string pool constant notification
+Marking layout:notification_template_part_chronometer:2131361832 used because its prefix matches string pool constant notification
+Marking layout:notification_template_part_time:2131361833 used because its prefix matches string pool constant notification
+Marking drawable:notification_action_background:2131165297 used because its prefix matches string pool constant notification
+Marking drawable:notification_bg:2131165298 used because its prefix matches string pool constant notification
+Marking drawable:notification_bg_low:2131165299 used because its prefix matches string pool constant notification
+Marking drawable:notification_bg_low_normal:2131165300 used because its prefix matches string pool constant notification
+Marking drawable:notification_bg_low_pressed:2131165301 used because its prefix matches string pool constant notification
+Marking drawable:notification_bg_normal:2131165302 used because its prefix matches string pool constant notification
+Marking drawable:notification_bg_normal_pressed:2131165303 used because its prefix matches string pool constant notification
+Marking drawable:notification_icon_background:2131165304 used because its prefix matches string pool constant notification
+Marking drawable:notification_template_icon_bg:2131165305 used because its prefix matches string pool constant notification
+Marking drawable:notification_template_icon_low_bg:2131165306 used because its prefix matches string pool constant notification
+Marking drawable:notification_tile_bg:2131165307 used because its prefix matches string pool constant notification
+Marking id:notification_background:2131230818 used because its prefix matches string pool constant notification
+Marking id:notification_main_column:2131230819 used because its prefix matches string pool constant notification
+Marking id:notification_main_column_container:2131230820 used because its prefix matches string pool constant notification
+Marking color:notification_action_color_filter:2131034198 used because its prefix matches string pool constant notification
+Marking color:notification_icon_bg_color:2131034199 used because its prefix matches string pool constant notification
 Marking id:group_divider:2131230782 used because its prefix matches string pool constant group
 Marking styleable:PreferenceGroup:-1 used because its prefix matches string pool constant PreferenceGroup
 Marking styleable:PreferenceGroup_android_orderingFromXml:-1 used because its prefix matches string pool constant PreferenceGroup
@@ -2294,6 +2338,21 @@ dimen:abc_action_bar_stacked_max_height:2131099657,
    dimen:item_touch_helper_max_drag_scroll_per_frame:2131099752,
    dimen:item_touch_helper_swipe_escape_max_velocity:2131099753,
    dimen:item_touch_helper_swipe_escape_velocity:2131099754,
+   dimen:notification_action_icon_size:2131099755,
+   dimen:notification_action_text_size:2131099756,
+   dimen:notification_big_circle_margin:2131099757,
+   dimen:notification_content_margin_start:2131099758,
+   dimen:notification_large_icon_height:2131099759,
+   dimen:notification_large_icon_width:2131099760,
+   dimen:notification_main_column_padding_top:2131099761,
+   dimen:notification_media_narrow_margin:2131099762,
+   dimen:notification_right_icon_size:2131099763,
+   dimen:notification_right_side_padding_top:2131099764,
+   dimen:notification_small_icon_background_padding:2131099765,
+   dimen:notification_small_icon_size_as_large:2131099766,
+   dimen:notification_subtext_size:2131099767,
+   dimen:notification_top_pad:2131099768,
+   dimen:notification_top_pad_large_text:2131099769,
    dimen:tooltip_corner_radius:2131099784,
    dimen:tooltip_horizontal_padding:2131099785,
    dimen:tooltip_margin:2131099786,
@@ -2477,6 +2536,12 @@ dimen:abc_action_bar_stacked_max_height:2131099657,
    layout:abc_search_dropdown_item_icons_2line:2131361816,
    layout:abc_search_view:2131361817,
    layout:abc_tooltip:2131361819,
+   layout:notification_action:2131361828,
+   layout:notification_action_tombstone:2131361829,
+   layout:notification_template_custom_big:2131361830,
+   layout:notification_template_icon_group:2131361831,
+   layout:notification_template_part_chronometer:2131361832,
+   layout:notification_template_part_time:2131361833,
    layout:select_dialog_item_material:2131361851,
    layout:select_dialog_multichoice_material:2131361852,
    layout:select_dialog_singlechoice_material:2131361853,
@@ -2488,6 +2553,17 @@ dimen:abc_action_bar_stacked_max_height:2131099657,
    integer:status_bar_notification_info_maxnum:2131296260,
    id:ssr_classics_progress:2131230856,
    id:ssr_classics_title:2131230857,
+   drawable:notification_action_background:2131165297,
+   drawable:notification_bg:2131165298,
+   drawable:notification_bg_low:2131165299,
+   drawable:notification_bg_low_normal:2131165300,
+   drawable:notification_bg_low_pressed:2131165301,
+   drawable:notification_bg_normal:2131165302,
+   drawable:notification_bg_normal_pressed:2131165303,
+   drawable:notification_icon_background:2131165304,
+   drawable:notification_template_icon_bg:2131165305,
+   drawable:notification_template_icon_low_bg:2131165306,
+   drawable:notification_tile_bg:2131165307,
    styleable:ColorStateListItem:-1,
    styleable:ColorStateListItem_android_color:-1,
    styleable:ColorStateListItem_android_alpha:-1,
@@ -2555,6 +2631,9 @@ dimen:abc_action_bar_stacked_max_height:2131099657,
    id:italic:2131230793,
    id:line1:2131230796,
    id:line3:2131230797,
+   id:notification_background:2131230818,
+   id:notification_main_column:2131230819,
+   id:notification_main_column_container:2131230820,
    id:right_icon:2131230827,
    id:right_side:2131230828,
    id:tag_transition_group:2131230863,
@@ -2570,6 +2649,8 @@ dimen:abc_action_bar_stacked_max_height:2131099657,
    color:abc_tint_seek_thumb:2131034133,
    color:abc_tint_spinner:2131034134,
    color:abc_tint_switch_track:2131034135,
+   color:notification_action_color_filter:2131034198,
+   color:notification_icon_bg_color:2131034199,
    color:tooltip_background_dark:2131034221,
    color:tooltip_background_light:2131034222,
    string:abc_action_bar_up_description:2131492865,
@@ -3376,35 +3457,9 @@ Skipped unused resource res/drawable/bg_progressbar.xml: 1024 bytes (replaced wi
 Skipped unused resource res/drawable/bg_progressbar_shape1.xml: 532 bytes (replaced with small dummy file of size 104 bytes)
 Skipped unused resource res/drawable/ic_menu_down_arrow.png: 266 bytes (replaced with small dummy file of size 67 bytes)
 Skipped unused resource res/drawable/ic_rotate_narrow.png: 1121 bytes (replaced with small dummy file of size 67 bytes)
-Skipped unused resource res/drawable-v21/notification_action_background.xml: 1180 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/drawable/notification_bg.xml: 532 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/drawable/notification_bg_low.xml: 532 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/drawable/notification_icon_background.xml: 372 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/drawable/notification_tile_bg.xml: 304 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/drawable-mdpi-v4/notification_bg_low_normal.9.png: 215 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-mdpi-v4/notification_bg_low_pressed.9.png: 223 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-mdpi-v4/notification_bg_normal.9.png: 215 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-mdpi-v4/notification_bg_normal_pressed.9.png: 223 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-mdpi-v4/notify_panel_notification_icon_bg.png: 98 bytes (replaced with small dummy file of size 67 bytes)
-Skipped unused resource res/drawable-hdpi-v4/notification_bg_low_normal.9.png: 212 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-hdpi-v4/notification_bg_low_pressed.9.png: 225 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-hdpi-v4/notification_bg_normal.9.png: 212 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-hdpi-v4/notification_bg_normal_pressed.9.png: 225 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-hdpi-v4/notify_panel_notification_icon_bg.png: 107 bytes (replaced with small dummy file of size 67 bytes)
-Skipped unused resource res/drawable-xhdpi-v4/notification_bg_low_normal.9.png: 221 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-xhdpi-v4/notification_bg_low_pressed.9.png: 252 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-xhdpi-v4/notification_bg_normal.9.png: 221 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-xhdpi-v4/notification_bg_normal_pressed.9.png: 247 bytes (replaced with small dummy file of size 77 bytes)
-Skipped unused resource res/drawable-xhdpi-v4/notify_panel_notification_icon_bg.png: 138 bytes (replaced with small dummy file of size 67 bytes)
 Skipped unused resource res/drawable-xxxhdpi-v4/ic_menu_narrow_left.png: 322 bytes (replaced with small dummy file of size 67 bytes)
 Skipped unused resource res/layout/abc_action_bar_up_container.xml: 440 bytes (replaced with small dummy file of size 104 bytes)
 Skipped unused resource res/layout/dialog_translating.xml: 1080 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/layout-v21/notification_action.xml: 1052 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/layout-v21/notification_action_tombstone.xml: 1228 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/layout-v21/notification_template_custom_big.xml: 2456 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/layout-v21/notification_template_icon_group.xml: 988 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/layout/notification_template_part_chronometer.xml: 440 bytes (replaced with small dummy file of size 104 bytes)
-Skipped unused resource res/layout/notification_template_part_time.xml: 440 bytes (replaced with small dummy file of size 104 bytes)
 Skipped unused resource res/layout/preference_information.xml: 1544 bytes (replaced with small dummy file of size 104 bytes)
 Skipped unused resource res/layout-v21/preference_information_material.xml: 1864 bytes (replaced with small dummy file of size 104 bytes)
 Skipped unused resource res/layout/recycler_view_item.xml: 752 bytes (replaced with small dummy file of size 104 bytes)
