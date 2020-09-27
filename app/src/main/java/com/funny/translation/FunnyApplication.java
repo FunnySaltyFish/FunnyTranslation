@@ -10,6 +10,7 @@ import com.funny.translation.bean.FunnyUncaughtExceptionHandler;
 import com.funny.translation.utils.FileUtil;
 import com.funny.translation.utils.OkHttpUtil;
 import com.funny.translation.utils.StringUtil;
+import com.hjq.toast.ToastUtils;
 //import com.qw.soul.permission.SoulPermission;
 
 public class FunnyApplication extends Application
@@ -28,6 +29,7 @@ public class FunnyApplication extends Application
 		FunnyUncaughtExceptionHandler funnyUncaughtExceptionHandler = FunnyUncaughtExceptionHandler.getInstance();
 		funnyUncaughtExceptionHandler.init(getFunnyContext());
 		OkHttpUtil.init();
+		ToastUtils.init(this);
 //		EasyHttp.init(this);
 //		EasyHttp.getInstance().debug("EasyHttp",true);
 		//SoulPermission.init(this);

@@ -4,9 +4,14 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.Gravity;
 import android.widget.Toast;
 import android.view.LayoutInflater;
+
+import com.funny.translation.FunnyApplication;
 import com.funny.translation.R;
+import com.hjq.toast.ToastUtils;
+
 import android.view.View;
 import android.widget.TextView;
 import java.io.InputStream;
@@ -17,8 +22,12 @@ import java.io.StringWriter;
 import android.content.SharedPreferences;
 public class ApplicationUtil
 {
-	public static Toast toast=null;
-	public static TextView toastTV=null;
+//	public static int MAX_TOASTS = 3;
+//	public static Toast[] toasts=null;
+//	public static TextView[] toastTVs=null;
+//	private static int curToast = 0;
+	//private static TextView toastTV;
+	private static boolean hasInitToast = false;
 	public static void copyToClipboard(Context ctx,String content){
 		//获取剪贴板管理器：
 		// 获取系统剪贴板
@@ -34,33 +43,39 @@ public class ApplicationUtil
 	}
 	
 	public static void print(Context ctx,String str){
-		if(toast==null){//单例模式，加快展示速度
-			toast=new Toast(ctx);
-			View v=LayoutInflater.from(ctx).inflate(R.layout.view_toast,null);
-			toast.setDuration(Toast.LENGTH_SHORT);
-			toastTV=v.findViewById(R.id.view_toast_tv);
-			toastTV.setText(str);
-			toast.setView(v);
-		}else{
-			toastTV.setText(str);
-			toast.setDuration(Toast.LENGTH_SHORT);
+//		if (toasts==null){//完全初始化
+//			toasts = new Toast[MAX_TOASTS];
+//			toastTVs = new TextView[MAX_TOASTS];
+//
+//			for (int i = 0; i < MAX_TOASTS; i++) {
+//				Toast toast = new Toast(ctx);
+//				View v=LayoutInflater.from(ctx).inflate(R.layout.view_toast,null);
+//				TextView toastTV=v.findViewById(R.id.view_toast_tv);
+//				toast.setView(toastTV);
+//				toasts[i] = toast;
+//				toastTVs[i] = toastTV;
+//			}
+//		}
+//
+//		toasts[curToast].setDuration(Toast.LENGTH_SHORT);
+//		toastTVs[curToast].setText(str);
+//		toasts[curToast].show();
+//
+//		curToast++;
+//		if (curToast==MAX_TOASTS)curToast=0;
+		if (!hasInitToast){
+//			View v=LayoutInflater.from(FunnyApplication.getFunnyContext()).inflate(R.layout.view_toast,null);
+//			toastTV=v.findViewById(R.id.view_toast_tv);
+			ToastUtils.setView(R.layout.view_toast);
+			ToastUtils.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,0,200);
+			hasInitToast = true;
 		}
-		toast.show();
+		ToastUtils.show(str);
 	}
+
 	
 	public static void print(Context ctx,String str,boolean isLong){
-		if(toast==null){//单例模式，加快展示速度
-			toast=new Toast(ctx);
-			View v=LayoutInflater.from(ctx).inflate(R.layout.view_toast,null);
-			toast.setDuration(Toast.LENGTH_SHORT);
-			toastTV=v.findViewById(R.id.view_toast_tv);
-			toastTV.setText(str);
-			toast.setView(v);
-		}else{
-			toastTV.setText(str);
-			toast.setDuration(isLong?Toast.LENGTH_LONG:Toast.LENGTH_SHORT);
-		}
-		toast.show();
+		print(ctx, str,false);
 	}
 	
 	public static String getTextFromAssets(Context ctx,String fileName){

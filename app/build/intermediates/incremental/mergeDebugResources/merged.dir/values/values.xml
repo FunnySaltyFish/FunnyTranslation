@@ -49,6 +49,7 @@
     <string-array name="tts_engines">
 		<item name="tts_local">本地</item>
 		<item name="tts_baidu">百度翻译</item>
+		<item>有道词典</item>
 	</string-array>
     <attr format="color|reference" name="attr_language_adapter_bg_color_checked"/>
     <attr format="color|reference" name="attr_language_adapter_text_color"/>

@@ -6,6 +6,7 @@ import com.funny.translation.utils.RC4;
 public class Consts
 {
 
+
 	//抽象话词库
 	//https://github.com/gaowanliang/NMSL/blob/master/src/data/emoji.json
 	//bing
@@ -41,7 +42,8 @@ public class Consts
 	public final static short TTS_LOCAL=0;
 	public final static short TTS_BAIDU=1;
 	public final static short TTS_GOOGLE=2;
-	
+	public static final short TTS_YOUDAO = 2;
+
 	public final static short LANGUAGE_AUTO=0;
 	public final static short LANGUAGE_CHINESE=1;
 	public final static short LANGUAGE_ENGLISH=2;

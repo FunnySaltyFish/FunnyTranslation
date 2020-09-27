@@ -3120,6 +3120,7 @@
 	</string-array><string-array name="tts_engines">
 		<item name="tts_local">本地</item>
 		<item name="tts_baidu">百度翻译</item>
+		<item>有道词典</item>
 	</string-array><string-array name="modes">
 		<item>普通翻译模式</item>
 		<item>逐行翻译模式</item>
