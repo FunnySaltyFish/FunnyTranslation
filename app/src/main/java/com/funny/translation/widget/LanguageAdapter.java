@@ -40,7 +40,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		this.kind=kind;
 		this.rv=rv;
 		this.mapping = mapping;
-		//doubleMap = new DoubleMap(mapping);
 	}
 	
 	public void setOnClickItemListener(OnClickItemListener listener){
@@ -153,7 +152,13 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		//return doubleMap.getByKey(number);
 		return mapping[number];
 	}
+
+	public int[] getMapping() {
+		return mapping;
+	}
+
 	public interface OnClickItemListener {
 		public void onClick(int position);
 	}
+
 }

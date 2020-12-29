@@ -88,6 +88,14 @@
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_sort.png"
     },
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_flag.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_flag.png"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_view_popup_list_item.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\view_popup_list_item.xml"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_ic_launcher.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable-xxhdpi\\ic_launcher.png"
     },
@@ -112,16 +120,20 @@
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\view_drawer_normal.xml"
     },
     {
-        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_round_button_unclickable.xml.flat",
-        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\bg_round_button_unclickable.xml"
-    },
-    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_down_arrow.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_menu_down_arrow.png"
     },
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_round_button_unclickable.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\bg_round_button_unclickable.xml"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_ic_launcher.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_exchange.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_exchange.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_progressbar.xml.flat",
@@ -178,6 +190,10 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_key.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_key.png"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_view_popup_list.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\view_popup_list.xml"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_copy.png.flat",

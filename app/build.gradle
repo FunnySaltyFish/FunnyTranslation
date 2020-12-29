@@ -23,10 +23,10 @@ android {
 	}
     defaultConfig {
         applicationId "com.funny.translation"
-        minSdkVersion 24
+        minSdkVersion 19
         targetSdkVersion 30
-        versionCode 14
-        versionName "1.89.0"
+        versionCode 16
+        versionName "1.23.3"
 		resConfigs('zh-rCN')
 
 //		jackOptions {
@@ -74,6 +74,7 @@ dependencies {
 	implementation 'com.billy.android:smart-swipe:1.1.2'
 	implementation "com.squareup.okhttp3:okhttp:4.9.0"
 	implementation 'com.hjq:toast:8.6'
+	//implementation 'com.github.razerdp:BasePopup:2.2.1'
 	//implementation 'net.dongliu:requests:5.0.8'
 	//implementation 'com.optimus:editTextField:0.2.0'
 	implementation fileTree(dir: 'libs', include: ['*.jar'])

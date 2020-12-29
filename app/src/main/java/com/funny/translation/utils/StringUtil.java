@@ -74,7 +74,16 @@ public class StringUtil
 
         return new String(iOutputChar);   
 
-    }  
+    }
+
+    public static String replaceEnglishPunctuation(String text){
+		String result = text;
+		result = result.replaceAll(",","，");
+		result = result.replaceAll("\\.","：");
+		result = result.replaceAll(";","；");
+		result = result.replaceAll(" ","");
+		return result;
+	}
 	
 	public static String unicodeToString(String str) {  
 	    Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");  

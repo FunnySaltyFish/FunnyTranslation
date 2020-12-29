@@ -30,6 +30,11 @@ android.support.v4.graphics.TypefaceCompat:
     private static final java.lang.String TAG
 kotlin.coroutines.jvm.internal.RestrictedContinuationImpl
 kotlin.jvm.internal.TypeReference$asString$args$1
+com.funny.translation.db.DBEnglishWords:
+    private void insertOneWord(java.lang.String,com.funny.translation.db.DBEnglishWords$Word)
+    public static final java.lang.String DB_NAME
+    public static final java.lang.String TABLE_NAME
+    private static final int MAX_WORDS
 android.support.v4.os.OperationCanceledException
 kotlin.contracts.ContractBuilderKt
 android.support.v7.app.ActionBarDrawerToggle$1
@@ -736,6 +741,8 @@ kotlin.coroutines.AbstractCoroutineContextElement
 android.support.annotation.VisibleForTesting
 android.support.v4.hardware.display.DisplayManagerCompat
 android.support.v7.preference.PreferenceFragmentCompat$ScrollToPreferenceObserver
+com.funny.translation.utils.TimeUtil:
+    public void <init>()
 kotlin.collections.MapWithDefault
 com.billy.android.swipe.refresh.ClassicFooter:
     public void onProgress(boolean,float)
@@ -1032,7 +1039,6 @@ okhttp3.OkHttpClient$Builder:
     public final okhttp3.OkHttpClient$Builder cookieJar(okhttp3.CookieJar)
     public final okhttp3.OkHttpClient$Builder cache(okhttp3.Cache)
     public final okhttp3.OkHttpClient$Builder dns(okhttp3.Dns)
-    public final okhttp3.OkHttpClient$Builder proxy(java.net.Proxy)
     public final okhttp3.OkHttpClient$Builder proxySelector(java.net.ProxySelector)
     public final okhttp3.OkHttpClient$Builder proxyAuthenticator(okhttp3.Authenticator)
     public final okhttp3.OkHttpClient$Builder socketFactory(javax.net.SocketFactory)
@@ -1044,7 +1050,6 @@ okhttp3.OkHttpClient$Builder:
     public final okhttp3.OkHttpClient$Builder certificatePinner(okhttp3.CertificatePinner)
     public final okhttp3.OkHttpClient$Builder callTimeout(long,java.util.concurrent.TimeUnit)
     public final okhttp3.OkHttpClient$Builder callTimeout(java.time.Duration)
-    public final okhttp3.OkHttpClient$Builder connectTimeout(long,java.util.concurrent.TimeUnit)
     public final okhttp3.OkHttpClient$Builder connectTimeout(java.time.Duration)
     public final okhttp3.OkHttpClient$Builder readTimeout(long,java.util.concurrent.TimeUnit)
     public final okhttp3.OkHttpClient$Builder readTimeout(java.time.Duration)
@@ -3551,6 +3556,8 @@ android.support.v4.widget.ListViewCompat:
 kotlin.collections.CollectionsKt__IterablesKt$Iterable$1
 android.support.v7.view.menu.MenuItemWrapperJB$ActionProviderWrapperJB:
     public void refreshVisibility()
+com.funny.translation.utils.AutoCompleteUtil:
+    public void <init>()
 android.support.compat.R$integer
 android.support.v13.view.inputmethod.InputContentInfoCompat$InputContentInfoCompatBaseImpl
 kotlin.contracts.InvocationKind
@@ -3680,6 +3687,8 @@ android.support.v4.graphics.TypefaceCompatApi28Impl:
     private static final int RESOLVE_BY_FONT_TABLE
     private static final java.lang.String DEFAULT_FAMILY
 com.funny.translation.widget.ResultAdapter:
+    public void update(java.util.ArrayList)
+    public java.util.ArrayList getTasks()
     java.lang.String[][] results
 com.funny.translation.utils.NetworkUtil:
     public void <init>()
@@ -3728,6 +3737,8 @@ okhttp3.Cookie$Companion:
     public static final synthetic boolean access$pathMatch(okhttp3.Cookie$Companion,okhttp3.HttpUrl,java.lang.String)
 okhttp3.internal.connection.RealConnectionPool$Companion:
     public final okhttp3.internal.connection.RealConnectionPool get(okhttp3.ConnectionPool)
+com.funny.translation.widget.WordCompleteAdapter:
+    public java.util.ArrayList getWords()
 okhttp3.Address:
     public final okhttp3.HttpUrl -deprecated_url()
     public final okhttp3.Dns -deprecated_dns()
@@ -3909,6 +3920,7 @@ kotlin.text.StringsKt__RegexExtensionsKt:
     private static final kotlin.text.Regex toRegex(java.lang.String,java.util.Set)
     public void <init>()
 org.intellij.lang.annotations.JdkConstants$TabLayoutPolicy
+android.support.loader.R$string
 kotlin.collections.SetsKt__SetsJVMKt:
     private static final java.util.Set buildSetInternal(kotlin.jvm.functions.Function1)
     private static final java.util.Set buildSetInternal(int,kotlin.jvm.functions.Function1)
@@ -3918,7 +3930,6 @@ kotlin.collections.SetsKt__SetsJVMKt:
     public static final varargs java.util.TreeSet sortedSetOf(java.lang.Object[])
     public static final varargs java.util.TreeSet sortedSetOf(java.util.Comparator,java.lang.Object[])
     public void <init>()
-android.support.loader.R$string
 kotlin.js.ExperimentalJsExport
 kotlin.sequences.SequencesKt___SequencesJvmKt$filterIsInstance$1
 kotlin.ExperimentalStdlibApi
@@ -4648,7 +4659,6 @@ android.arch.lifecycle.MethodCallsLogger:
     public boolean approveCall(java.lang.String,int)
 kotlin.Deprecated
 okhttp3.internal.ws.RealWebSocket$connect$1
-com.funny.translation.widget.LanguageAdapter$OnClickItemListener
 android.support.v4.provider.FontsContractCompat$4$6
 org.slf4j.helpers.SubstituteLoggerFactory:
     public java.util.List getLoggerNames()
@@ -4916,8 +4926,6 @@ android.support.v7.widget.FastScroller:
 android.support.v13.view.inputmethod.InputContentInfoCompat$InputContentInfoCompatApi25Impl
 android.support.documentfile.R
 com.danikula.videocache.ByteArraySource
-com.funny.translation.widget.LanguageRecyclerView:
-    public void updateData()
 android.support.coreutils.R
 okhttp3.Credentials:
     public static synthetic java.lang.String basic$default(java.lang.String,java.lang.String,java.nio.charset.Charset,int,java.lang.Object)
@@ -6519,7 +6527,6 @@ android.support.v7.cardview.R
 kotlin.jvm.functions.Function20
 okhttp3.internal.Util:
     public static synthetic int delimiterOffset$default(java.lang.String,java.lang.String,int,int,int,java.lang.Object)
-    public static final int checkDuration(java.lang.String,long,java.util.concurrent.TimeUnit)
     public static final java.lang.String peerName(java.net.Socket)
     public static final void ignoreIoExceptions(kotlin.jvm.functions.Function0)
     public static final void threadName(java.lang.String,kotlin.jvm.functions.Function0)
@@ -8240,6 +8247,8 @@ android.support.v7.widget.Toolbar:
     public void inflateMenu(int)
     public void setContentInsetsAbsolute(int,int)
     private static final java.lang.String TAG
+com.funny.translation.widget.WordCompleteRV:
+    public void update(java.util.ArrayList)
 android.support.annotation.XmlRes
 android.support.v7.preference.Preference$OnPreferenceChangeInternalListener:
     public abstract void onPreferenceVisibilityChange(android.support.v7.preference.Preference)
@@ -9848,6 +9857,10 @@ okhttp3.internal.http2.Http2ExchangeCodec:
     private static final java.lang.String TE
     private static final java.lang.String ENCODING
     private static final java.lang.String UPGRADE
+com.funny.translation.db.DBEnglishWords$Word:
+    public void setWord(java.lang.String)
+    public void setPhoneticSymbol(java.lang.String)
+    public void setExplanation(java.lang.String)
 kotlin.reflect.KMutableProperty$Setter
 kotlin.sequences.SequencesKt___SequencesKt$zip$1
 kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3
@@ -9989,7 +10002,6 @@ okhttp3.Request$Builder:
     public okhttp3.Request$Builder url(java.net.URL)
     public okhttp3.Request$Builder addHeader(java.lang.String,java.lang.String)
     public okhttp3.Request$Builder cacheControl(okhttp3.CacheControl)
-    public okhttp3.Request$Builder get()
     public okhttp3.Request$Builder head()
     public okhttp3.Request$Builder post(okhttp3.RequestBody)
     public okhttp3.Request$Builder delete(okhttp3.RequestBody)
@@ -10564,9 +10576,6 @@ com.billy.android.swipe.SmartSwipeRefresh$RefreshView
 kotlin.reflect.KFunction$DefaultImpls
 android.support.v7.app.ActionBarDrawerToggleHoneycomb$SetIndicatorInfo
 kotlin.ranges.ULongRange
-com.funny.translation.MainActivity:
-    android.widget.TextView dialogTranslatingContentTV
-    android.widget.ProgressBar dialogTranslatingProgressbar
 kotlin.reflect.KTypeParameter
 com.danikula.videocache.ProxyCacheException:
     public void <init>(java.lang.Throwable)
@@ -10942,6 +10951,14 @@ okhttp3.internal.http2.Http2Connection$$special$$inlined$schedule$1:
     final synthetic java.lang.String $name
 android.support.v4.provider.SelfDestructiveThread$3:
     final synthetic android.support.v4.provider.SelfDestructiveThread this$0
+com.funny.translation.db.DBEnglishWords:
+    private final int VERSION
+    private final java.lang.String COLUMN_WORD
+    private final java.lang.String COLUMN_PHONETIC_SYMBOL
+    private final java.lang.String COLUMN_EXPLANATION
+    private final int COLUMN_WORD_INDEX
+    private final int COLUMN_PHONETIC_SYMBOL_INDEX
+    private final int COLUMN_EXPLANATION_INDEX
 android.support.v7.view.menu.ActionMenuItem:
     private final int mCategoryOrder
     private int mIconResId
@@ -10961,6 +10978,8 @@ com.funny.translation.widget.LanguageAdapter:
     private android.support.v7.widget.RecyclerView rv
 okhttp3.internal.http2.Http2Connection$Listener:
     public static final okhttp3.internal.http2.Http2Connection$Listener$Companion Companion
+com.funny.translation.widget.WordCompleteAdapter$SingleItemVH:
+    final synthetic com.funny.translation.widget.WordCompleteAdapter this$0
 okhttp3.internal.http.ExchangeCodec:
     public static final okhttp3.internal.http.ExchangeCodec$Companion Companion
 android.support.v4.app.FragmentActivity$NonConfigurationInstances:
@@ -10972,6 +10991,8 @@ com.billy.android.swipe.refresh.ClassicFooter:
 android.support.v4.view.ActionProvider:
     private final android.content.Context mContext
 android.arch.core.executor.ArchTaskExecutor$2
+com.funny.translation.MainActivity$4:
+    final synthetic com.funny.translation.MainActivity this$0
 android.support.v4.provider.SelfDestructiveThread$2:
     final synthetic android.support.v4.provider.SelfDestructiveThread this$0
 android.arch.core.executor.ArchTaskExecutor$1
@@ -11121,6 +11142,11 @@ android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityA
     public static final android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat ACTION_MOVE_WINDOW
     public static final android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat ACTION_SHOW_TOOLTIP
     public static final android.support.v4.view.accessibility.AccessibilityNodeInfoCompat$AccessibilityActionCompat ACTION_HIDE_TOOLTIP
+android.support.v4.app.LoaderManagerImpl$LoaderInfo:
+    android.support.v4.content.Loader getLoader()
+android.support.v7.widget.ActivityChooserModel:
+    public int getActivityIndex(android.content.pm.ResolveInfo)
+    public int getHistorySize()
 android.support.v4.app.FragmentTransitionImpl$2:
     final synthetic android.support.v4.app.FragmentTransitionImpl this$0
 okhttp3.internal.http2.Http2Connection$sendDegradedPingLater$$inlined$execute$1:
@@ -11137,8 +11163,6 @@ android.support.v7.view.menu.MenuItemWrapperJB$ActionProviderWrapperJB:
 com.funny.translation.widget.DrawerAdapter$DrawerViewHolder:
     final synthetic com.funny.translation.widget.DrawerAdapter this$0
 okio.Segment$Companion
-com.funny.translation.MainActivity$12:
-    final synthetic com.funny.translation.MainActivity this$0
 okhttp3.Authenticator:
     public static final okhttp3.Authenticator JAVA_NET_AUTHENTICATOR
     public static final okhttp3.Authenticator$Companion Companion
@@ -11170,6 +11194,7 @@ android.support.v7.app.WindowDecorActionBar:
     private java.util.ArrayList mTabs
     private int mSavedTabPosition
     static final synthetic boolean $assertionsDisabled
+android.support.v4.content.Loader$OnLoadCompleteListener
 okhttp3.Cache:
     public final void update$okhttp(okhttp3.Response,okhttp3.Response)
 kotlin.internal.PlatformImplementations$ReflectThrowable:
@@ -11288,6 +11313,8 @@ android.support.v7.graphics.drawable.DrawableContainer:
     private int mLastIndex
 com.funny.translation.ProcessTextActivity:
     static final synthetic boolean $assertionsDisabled
+com.funny.translation.MainActivity$9:
+    static final synthetic boolean $assertionsDisabled
 android.support.v7.preference.PreferenceGroup:
     private final android.os.Handler mHandler
     private final java.lang.Runnable mClearRecycleCacheRunnable
@@ -11297,7 +11324,13 @@ android.arch.lifecycle.LiveData:
     static synthetic java.lang.Object access$100(android.arch.lifecycle.LiveData)
     static synthetic java.lang.Object access$102(android.arch.lifecycle.LiveData,java.lang.Object)
     static synthetic java.lang.Object access$200()
+    public java.lang.Object getValue()
+    public boolean hasActiveObservers()
     private final java.lang.Runnable mPostValueRunnable
+android.support.v4.content.Loader:
+    public void unregisterListener(android.support.v4.content.Loader$OnLoadCompleteListener)
+    public void abandon()
+    public java.lang.String dataToString(java.lang.Object)
 android.support.v7.preference.Preference:
     private boolean mWasDetached
 android.support.v7.widget.AppCompatSpinner$DropdownPopup$1:
@@ -11398,6 +11431,8 @@ android.support.v4.view.ViewCompat:
 android.arch.core.executor.TaskExecutor:
     public abstract void executeOnDiskIO(java.lang.Runnable)
     public abstract void postToMainThread(java.lang.Runnable)
+com.funny.translation.MainActivity$16:
+    final synthetic com.funny.translation.MainActivity this$0
 com.funny.translation.thread.InternetTTSThread$1:
     final synthetic com.funny.translation.thread.InternetTTSThread this$0
 com.funny.translation.widget.DrawerAdapter$DrawerItemNormal:
@@ -11405,6 +11440,8 @@ com.funny.translation.widget.DrawerAdapter$DrawerItemNormal:
 okhttp3.internal.http2.Settings$Companion
 android.support.v4.graphics.TypefaceCompatBaseImpl$1:
     final synthetic android.support.v4.graphics.TypefaceCompatBaseImpl this$0
+com.funny.translation.widget.WordCompleteRV:
+    private com.funny.translation.widget.WordCompleteAdapter adapter
 okhttp3.internal.http2.Http2Stream$Companion
 okio.Timeout$Companion
 okio.-Base64:
@@ -11441,6 +11478,10 @@ android.support.v7.widget.helper.ItemTouchHelper$RecoverAnimation:
     final int mAnimationType
 okhttp3.internal.http2.PushObserver:
     public static final okhttp3.internal.http2.PushObserver$Companion Companion
+android.support.v4.app.LoaderManagerImpl$LoaderObserver:
+    boolean hasDeliveredData()
+    void reset()
+    public void dump(java.lang.String,java.io.PrintWriter)
 okhttp3.internal.http.RetryAndFollowUpInterceptor:
     public static final okhttp3.internal.http.RetryAndFollowUpInterceptor$Companion Companion
 android.support.v4.app.FragmentTransitionCompat21$2:
@@ -11475,6 +11516,12 @@ com.funny.translation.thread.InternetTTSThread:
 okhttp3.MediaType:
     private final java.lang.String type
     private final java.lang.String subtype
+android.support.v7.widget.ActivityChooserView$ActivityChooserViewAdapter:
+    public int measureContentWidth()
+    public void setMaxActivityCount(int)
+    public void setShowFooterView(boolean)
+    public int getHistorySize()
+    public void setShowDefaultActivity(boolean,boolean)
 com.funny.translation.translation.TranslationResult:
     private short engineKind
     private java.lang.String[][] resultTexts
@@ -11483,6 +11530,8 @@ okhttp3.internal.http1.HeadersReader$Companion
 okhttp3.internal.connection.RealConnection:
     private final okhttp3.internal.connection.RealConnectionPool connectionPool
     public static final okhttp3.internal.connection.RealConnection$Companion Companion
+com.funny.translation.db.DBEnglishWords$Word:
+    final synthetic com.funny.translation.db.DBEnglishWords this$0
 okhttp3.internal.http1.HeadersReader:
     public static final okhttp3.internal.http1.HeadersReader$Companion Companion
 com.funny.translation.widget.DrawerAdapter$DrawerItemHeader:

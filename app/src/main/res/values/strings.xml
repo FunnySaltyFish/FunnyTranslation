@@ -24,6 +24,7 @@
     <string name="process_text">FunnyTranslation</string>
     <string name="feedback">反馈</string>
     <string name="crash">崩溃</string>
+    <string name="description_exchange_language">交换源语言和目标语言的按钮</string>
 
 
 </resources>

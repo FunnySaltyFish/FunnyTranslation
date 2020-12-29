@@ -1,7 +1,7 @@
 # compiler: R8
 # compiler_version: 2.0.88
-# min_api: 24
-# pg_map_id: fe44ee5
+# min_api: 19
+# pg_map_id: 6067e81
 # common_typos_disable
 android.arch.core.executor.ArchTaskExecutor -> a.a.a.a.a:
     android.arch.core.executor.ArchTaskExecutor sInstance -> c
@@ -176,13 +176,11 @@ android.arch.lifecycle.LiveData -> android.arch.lifecycle.LiveData:
     void assertMainThread(java.lang.String) -> d
     void considerNotify(android.arch.lifecycle.LiveData$ObserverWrapper) -> e
     void dispatchingValue(android.arch.lifecycle.LiveData$ObserverWrapper) -> f
-    java.lang.Object getValue() -> g
-    boolean hasActiveObservers() -> h
-    void observe(android.arch.lifecycle.LifecycleOwner,android.arch.lifecycle.Observer) -> i
-    void onActive() -> j
-    void onInactive() -> k
-    void removeObserver(android.arch.lifecycle.Observer) -> l
-    void setValue(java.lang.Object) -> m
+    void observe(android.arch.lifecycle.LifecycleOwner,android.arch.lifecycle.Observer) -> g
+    void onActive() -> h
+    void onInactive() -> i
+    void removeObserver(android.arch.lifecycle.Observer) -> j
+    void setValue(java.lang.Object) -> k
 android.arch.lifecycle.LiveData$LifecycleBoundObserver -> android.arch.lifecycle.LiveData$LifecycleBoundObserver:
     android.arch.lifecycle.LiveData this$0 -> f
     android.arch.lifecycle.LifecycleOwner mOwner -> e
@@ -201,7 +199,7 @@ android.arch.lifecycle.LiveData$ObserverWrapper -> android.arch.lifecycle.LiveDa
     boolean shouldBeActive() -> k
 android.arch.lifecycle.MethodCallsLogger -> android.arch.lifecycle.i:
 android.arch.lifecycle.MutableLiveData -> android.arch.lifecycle.j:
-    void setValue(java.lang.Object) -> m
+    void setValue(java.lang.Object) -> k
 android.arch.lifecycle.Observer -> android.arch.lifecycle.k:
     void onChanged(java.lang.Object) -> a
 android.arch.lifecycle.OnLifecycleEvent -> android.arch.lifecycle.l:
@@ -1463,18 +1461,14 @@ android.support.v4.app.LoaderManagerImpl$LoaderInfo -> android.support.v4.app.Lo
     android.support.v4.app.LoaderManagerImpl$LoaderObserver mObserver -> n
     android.support.v4.content.Loader mLoader -> l
     android.os.Bundle mArgs -> k
-    void onActive() -> j
-    void onInactive() -> k
-    void removeObserver(android.arch.lifecycle.Observer) -> l
-    void setValue(java.lang.Object) -> m
-    android.support.v4.content.Loader destroy(boolean) -> n
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> o
-    android.support.v4.content.Loader getLoader() -> p
-    void markForRedelivery() -> q
+    void onActive() -> h
+    void onInactive() -> i
+    void removeObserver(android.arch.lifecycle.Observer) -> j
+    void setValue(java.lang.Object) -> k
+    android.support.v4.content.Loader destroy(boolean) -> l
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> m
+    void markForRedelivery() -> n
 android.support.v4.app.LoaderManagerImpl$LoaderObserver -> android.support.v4.app.LoaderManagerImpl$b:
-    void dump(java.lang.String,java.io.PrintWriter) -> b
-    boolean hasDeliveredData() -> c
-    void reset() -> d
 android.support.v4.app.LoaderManagerImpl$LoaderViewModel -> android.support.v4.app.LoaderManagerImpl$LoaderViewModel:
     android.arch.lifecycle.ViewModelProvider$Factory FACTORY -> b
     android.support.v4.util.SparseArrayCompat mLoaders -> a
@@ -1526,15 +1520,11 @@ android.support.v4.content.ContextCompat -> a.b.d.a.a:
     android.graphics.drawable.Drawable getDrawable(android.content.Context,int) -> d
     boolean startActivities(android.content.Context,android.content.Intent[],android.os.Bundle) -> e
 android.support.v4.content.Loader -> a.b.d.a.b:
-    void abandon() -> a
-    boolean cancelLoad() -> b
-    java.lang.String dataToString(java.lang.Object) -> c
-    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> d
-    void reset() -> e
-    void startLoading() -> f
-    void stopLoading() -> g
-    void unregisterListener(android.support.v4.content.Loader$OnLoadCompleteListener) -> h
-android.support.v4.content.Loader$OnLoadCompleteListener -> a.b.d.a.b$a:
+    boolean cancelLoad() -> a
+    void dump(java.lang.String,java.io.FileDescriptor,java.io.PrintWriter,java.lang.String[]) -> b
+    void reset() -> c
+    void startLoading() -> d
+    void stopLoading() -> e
 android.support.v4.content.PermissionChecker -> a.b.d.a.c:
     int checkPermission(android.content.Context,java.lang.String,int,int,java.lang.String) -> a
     int checkSelfPermission(android.content.Context,java.lang.String) -> b
@@ -5998,10 +5988,8 @@ android.support.v7.widget.ActivityChooserModel -> android.support.v7.widget.d:
     android.content.Intent chooseActivity(int) -> a
     android.content.pm.ResolveInfo getActivity(int) -> b
     int getActivityCount() -> c
-    int getActivityIndex(android.content.pm.ResolveInfo) -> d
-    android.content.pm.ResolveInfo getDefaultActivity() -> e
-    int getHistorySize() -> f
-    void setDefaultActivity(int) -> g
+    android.content.pm.ResolveInfo getDefaultActivity() -> d
+    void setDefaultActivity(int) -> e
 android.support.v7.widget.ActivityChooserView -> android.support.v7.widget.ActivityChooserView:
     android.widget.FrameLayout mDefaultActivityButton -> h
     android.graphics.drawable.Drawable mActivityChooserContentBackground -> e
@@ -6048,13 +6036,8 @@ android.support.v7.widget.ActivityChooserView$ActivityChooserViewAdapter -> andr
     int getActivityCount() -> a
     android.support.v7.widget.ActivityChooserModel getDataModel() -> b
     android.content.pm.ResolveInfo getDefaultActivity() -> c
-    int getHistorySize() -> d
-    boolean getShowDefaultActivity() -> e
-    int measureContentWidth() -> f
-    void setDataModel(android.support.v7.widget.ActivityChooserModel) -> g
-    void setMaxActivityCount(int) -> h
-    void setShowDefaultActivity(boolean,boolean) -> i
-    void setShowFooterView(boolean) -> j
+    boolean getShowDefaultActivity() -> d
+    void setDataModel(android.support.v7.widget.ActivityChooserModel) -> e
 android.support.v7.widget.ActivityChooserView$Callbacks -> android.support.v7.widget.ActivityChooserView$g:
     android.support.v7.widget.ActivityChooserView this$0 -> b
     void notifyOnDismissListener() -> a
@@ -9782,88 +9765,106 @@ com.funny.translation.FunnyApplication -> com.funny.translation.FunnyApplication
 com.funny.translation.FunnyApplication$FunnyFileNameGenerator -> com.funny.translation.FunnyApplication$a:
     java.lang.String generate(java.lang.String) -> a
 com.funny.translation.MainActivity -> com.funny.translation.MainActivity:
-    java.util.ArrayList ttsList -> F
-    java.util.ArrayList targetList -> D
-    android.support.v7.widget.RecyclerView$LayoutManager layoutManager -> t
-    android.support.v7.app.AlertDialog tipDialog -> R
-    com.funny.translation.widget.LanguageRecyclerView rightModeRv -> B
-    com.github.lzyzsd.circleprogress.CircleProgress translateProgress -> w
-    android.os.Handler handler -> N
-    android.support.v7.widget.Toolbar toolbar -> q
-    com.funny.translation.widget.LanguageRecyclerView rightEngineRv -> z
-    com.billy.android.swipe.consumer.SlidingConsumer leftSlidingConsumer -> I
-    long firstBackTime -> P
-    com.funny.translation.widget.EditTextField inputText -> r
-    android.support.v7.widget.RecyclerView outputRecyclerView -> s
-    android.widget.Button translateButton -> v
-    com.funny.translation.widget.LanguageRecyclerView rightSourceRv -> x
-    java.util.ArrayList modeList -> G
-    java.util.ArrayList engineList -> E
-    com.funny.translation.widget.ResultItemDecoration itemDecoration -> u
-    java.util.ArrayList sourceList -> C
-    android.support.v7.app.AlertDialog translatingProgressDialog -> Q
+    com.funny.translation.widget.WordCompleteAdapter wordCompleteAdapter -> P
+    android.widget.Button translateButton -> w
+    android.support.v7.widget.RecyclerView outputRecyclerView -> t
+    android.os.Handler handler -> R
+    android.widget.ImageButton exchangeButton -> x
+    java.util.ArrayList sourceList -> F
+    android.support.v7.app.AlertDialog translatingProgressDialog -> V
+    boolean isBackground -> X
+    com.funny.translation.widget.ResultItemDecoration itemDecoration -> v
+    com.billy.android.swipe.consumer.DrawerConsumer rightDrawerConsumer -> K
+    com.funny.translation.widget.LanguageRecyclerView rightModeRv -> D
+    java.util.ArrayList tasks -> N
+    com.funny.translation.widget.LanguageRecyclerView rightEngineRv -> B
+    java.lang.String TAG -> Y
+    com.funny.translation.db.DBEnglishWords dbEnglishWords -> S
+    com.funny.translation.widget.ResultAdapter resultAdapter -> O
+    java.util.ArrayList modeList -> J
+    android.widget.TextView copyrightTextView -> E
+    java.util.ArrayList engineList -> H
+    com.funny.translation.widget.LanguageRecyclerView rightSourceRv -> z
+    long curBackTime -> T
+    com.github.lzyzsd.circleprogress.CircleProgress translateProgress -> y
+    com.billy.android.swipe.listener.SimpleSwipeListener swipeListener -> M
+    java.util.ArrayList targetList -> G
+    java.lang.String currentWord -> q
+    android.support.v7.app.AlertDialog tipDialog -> W
     android.content.res.Resources re -> p
-    com.billy.android.swipe.consumer.DrawerConsumer rightDrawerConsumer -> H
-    boolean isBackground -> S
-    java.lang.String TAG -> T
-    com.funny.translation.widget.LanguageRecyclerView rightTTSRv -> A
-    java.util.ArrayList tasks -> K
-    com.funny.translation.translation.TranslationHelper helper -> M
-    com.billy.android.swipe.listener.SimpleSwipeListener swipeListener -> J
-    com.funny.translation.widget.ResultAdapter adapter -> L
-    com.funny.translation.widget.LanguageRecyclerView rightTargetRv -> y
-    long curBackTime -> O
+    android.support.v7.widget.RecyclerView$LayoutManager layoutManager -> u
+    com.funny.translation.translation.TranslationHelper helper -> Q
+    com.funny.translation.widget.LanguageRecyclerView rightTTSRv -> C
+    com.funny.translation.widget.LanguageRecyclerView rightTargetRv -> A
+    long firstBackTime -> U
+    java.util.ArrayList ttsList -> I
+    android.support.v7.widget.Toolbar toolbar -> r
+    com.funny.translation.widget.EditTextField inputText -> s
+    com.billy.android.swipe.consumer.SlidingConsumer leftSlidingConsumer -> L
     void access$000(com.funny.translation.MainActivity) -> D
     void access$100(com.funny.translation.MainActivity) -> E
-    void access$200(com.funny.translation.MainActivity,java.lang.String) -> F
-    void createDialogs() -> G
-    void createLeftSlideView() -> H
-    void createRightSlideView() -> I
-    void disSelectList(java.util.ArrayList) -> J
-    java.util.ArrayList getCheckedList(java.util.ArrayList) -> K
-    short getCheckedTTSEngine() -> L
-    android.os.Handler getHandler() -> M
-    android.graphics.drawable.Drawable getIcon(int,int) -> N
-    android.graphics.drawable.Drawable getIcon(int,int,int,int) -> O
-    int getStatusBarHeight() -> P
-    void initBitmaps() -> Q
-    void initConsts() -> R
-    void initHandler() -> S
-    void initIntentData() -> T
-    void initMainView() -> U
-    void initPreferenceDataDiyBaidu() -> V
-    void initPreferenceDataRightRv() -> W
-    void initSwipeListener() -> X
-    void initTasks(java.lang.String) -> Y
-    boolean isFree() -> Z
-    void showUpdateDialog() -> a0
-    void startTranslate(java.lang.String) -> b0
-com.funny.translation.MainActivity$1 -> com.funny.translation.MainActivity$d:
+    void access$200(com.funny.translation.MainActivity) -> F
+    void access$300(com.funny.translation.MainActivity,java.lang.String) -> G
+    java.util.ArrayList access$400(com.funny.translation.MainActivity,java.util.ArrayList) -> H
+    void access$500(com.funny.translation.MainActivity,java.util.ArrayList) -> I
+    void createDialogs() -> J
+    void createLeftSlideView() -> K
+    void createRightSlideView() -> L
+    void createWordCompletePopup() -> M
+    void disSelectList(java.util.ArrayList) -> N
+    java.util.ArrayList getCheckedList(java.util.ArrayList) -> O
+    short getCheckedTTSEngine() -> P
+    android.os.Handler getHandler() -> Q
+    android.graphics.drawable.Drawable getIcon(int,int) -> R
+    android.graphics.drawable.Drawable getIcon(int,int,int,int) -> S
+    int getStatusBarHeight() -> T
+    void initBitmaps() -> U
+    void initConsts() -> V
+    void initEnglishWords() -> W
+    void initHandler() -> X
+    void initIntentData() -> Y
+    void initMainView() -> Z
+    void initPreferenceDataDiyBaidu() -> a0
+    void initPreferenceDataRightRv() -> b0
+    void initSwipeListener() -> c0
+    void initTasks(java.lang.String) -> d0
+    boolean isFree() -> e0
+    void showUpdateDialog() -> f0
+    void startTranslate(java.lang.String) -> g0
+com.funny.translation.MainActivity$1 -> com.funny.translation.MainActivity$h:
     com.funny.translation.MainActivity this$0 -> b
 com.funny.translation.MainActivity$10 -> com.funny.translation.MainActivity$a:
     com.funny.translation.MainActivity this$0 -> b
 com.funny.translation.MainActivity$11 -> com.funny.translation.MainActivity$b:
-    com.funny.translation.MainActivity this$0 -> b
-com.funny.translation.MainActivity$12 -> com.funny.translation.MainActivity$c:
-com.funny.translation.MainActivity$2 -> com.funny.translation.MainActivity$e:
-    com.funny.translation.MainActivity this$0 -> a
-com.funny.translation.MainActivity$3 -> com.funny.translation.MainActivity$f:
-    com.funny.translation.MainActivity this$0 -> b
-com.funny.translation.MainActivity$4 -> com.funny.translation.MainActivity$g:
-    com.funny.translation.MainActivity this$0 -> b
-com.funny.translation.MainActivity$5 -> com.funny.translation.MainActivity$h:
-    com.funny.translation.MainActivity this$0 -> b
-com.funny.translation.MainActivity$6 -> com.funny.translation.MainActivity$i:
-    com.funny.translation.MainActivity this$0 -> a
-    void itemClick(com.funny.translation.widget.DrawerAdapter$DrawerItemNormal) -> a
-com.funny.translation.MainActivity$7 -> com.funny.translation.MainActivity$j:
     com.funny.translation.MainActivity this$0 -> a
     void onSwipeProcess(com.billy.android.swipe.SmartSwipeWrapper,com.billy.android.swipe.SwipeConsumer,int,boolean,float) -> b
     void onSwipeOpened(com.billy.android.swipe.SmartSwipeWrapper,com.billy.android.swipe.SwipeConsumer,int) -> e
     void onSwipeClosed(com.billy.android.swipe.SmartSwipeWrapper,com.billy.android.swipe.SwipeConsumer,int) -> h
-com.funny.translation.MainActivity$8 -> com.funny.translation.MainActivity$k:
+com.funny.translation.MainActivity$12 -> com.funny.translation.MainActivity$c:
     com.funny.translation.MainActivity this$0 -> b
-com.funny.translation.MainActivity$9 -> com.funny.translation.MainActivity$l:
+com.funny.translation.MainActivity$13 -> com.funny.translation.MainActivity$d:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$14 -> com.funny.translation.MainActivity$e:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$15 -> com.funny.translation.MainActivity$f:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$16 -> com.funny.translation.MainActivity$g:
+com.funny.translation.MainActivity$2 -> com.funny.translation.MainActivity$i:
+    com.funny.translation.MainActivity this$0 -> a
+com.funny.translation.MainActivity$3 -> com.funny.translation.MainActivity$j:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$4 -> com.funny.translation.MainActivity$k:
+    void onClick(int) -> a
+com.funny.translation.MainActivity$5 -> com.funny.translation.MainActivity$l:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$6 -> com.funny.translation.MainActivity$m:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$7 -> com.funny.translation.MainActivity$n:
+    com.funny.translation.MainActivity this$0 -> b
+com.funny.translation.MainActivity$8 -> com.funny.translation.MainActivity$o:
+    com.funny.translation.MainActivity this$0 -> a
+    void itemClick(com.funny.translation.widget.DrawerAdapter$DrawerItemNormal) -> a
+com.funny.translation.MainActivity$9 -> com.funny.translation.MainActivity$p:
     com.funny.translation.MainActivity this$0 -> b
 com.funny.translation.ProcessTextActivity -> com.funny.translation.ProcessTextActivity:
     java.lang.String getCheckedText(android.content.Intent) -> D
@@ -9875,15 +9876,16 @@ com.funny.translation.SettingActivity -> com.funny.translation.SettingActivity:
     boolean isDiyBaiduChange -> q
     java.lang.String TAG -> s
 com.funny.translation.SettingActivity$SettingFragment -> com.funny.translation.SettingActivity$a:
-    java.util.ArrayList mSortedList -> q0
-    android.support.v7.preference.Preference$OnPreferenceClickListener preferenceClickListener -> n0
+    java.util.ArrayList mSortedList -> r0
+    android.support.v7.preference.Preference$OnPreferenceClickListener preferenceClickListener -> o0
     android.support.v7.preference.Preference pre_language_sort -> j0
     android.support.v7.preference.Preference pre_source_language -> k0
+    android.content.res.Resources res -> q0
     android.support.v7.preference.Preference pre_target_language -> l0
-    com.funny.translation.SettingActivity ctx -> r0
     android.support.v7.preference.Preference pre_is_diy_baidu -> m0
-    android.support.v7.preference.Preference$OnPreferenceChangeListener preferenceChangeListener -> o0
-    android.content.res.Resources res -> p0
+    com.funny.translation.SettingActivity ctx -> s0
+    android.support.v7.preference.Preference pre_engines -> n0
+    android.support.v7.preference.Preference$OnPreferenceChangeListener preferenceChangeListener -> p0
     void access$000(com.funny.translation.SettingActivity$SettingFragment) -> B1
     void showSortDialog() -> C1
     void onCreate(android.os.Bundle) -> Z
@@ -9943,7 +9945,22 @@ com.funny.translation.bean.LanguageBean -> com.funny.translation.c.c:
     void setIsSelected(boolean) -> e
     void setText(java.lang.String) -> f
     void setUserData(short) -> g
-com.funny.translation.thread.InternetTTSThread -> com.funny.translation.d.a:
+com.funny.translation.db.DBEnglishWords -> com.funny.translation.d.a:
+    com.funny.translation.db.DBEnglishWords mInstance -> b
+    com.funny.translation.db.DBHelper dbHelper -> a
+    com.funny.translation.db.DBEnglishWords getInstance() -> a
+    void init(java.lang.String) -> b
+    java.util.ArrayList queryWords(java.lang.String) -> c
+com.funny.translation.db.DBEnglishWords$Word -> com.funny.translation.d.a$a:
+    java.lang.String word -> a
+    java.lang.String explanation -> c
+    java.lang.String phoneticSymbol -> b
+    java.lang.String getExplanation() -> a
+    java.lang.String getPhoneticSymbol() -> b
+    java.lang.String getWord() -> c
+com.funny.translation.db.DBHelper -> com.funny.translation.d.b:
+    boolean hasCreatedDB(java.lang.String) -> g
+com.funny.translation.thread.InternetTTSThread -> com.funny.translation.e.a:
     android.os.Handler handler -> g
     java.lang.String needAddUrl -> f
     com.danikula.videocache.HttpProxyCacheServer proxy -> h
@@ -9959,36 +9976,36 @@ com.funny.translation.thread.InternetTTSThread -> com.funny.translation.d.a:
     void print(java.lang.Object,boolean) -> f
     void replay() -> g
     void setAddUrl(java.lang.String) -> h
-com.funny.translation.thread.InternetTTSThread$1 -> com.funny.translation.d.a$a:
-com.funny.translation.thread.InternetTTSThread$2 -> com.funny.translation.d.a$b:
+com.funny.translation.thread.InternetTTSThread$1 -> com.funny.translation.e.a$a:
+com.funny.translation.thread.InternetTTSThread$2 -> com.funny.translation.e.a$b:
     com.funny.translation.thread.InternetTTSThread this$0 -> a
-com.funny.translation.thread.InternetTTSThread$3 -> com.funny.translation.d.a$c:
+com.funny.translation.thread.InternetTTSThread$3 -> com.funny.translation.e.a$c:
     com.funny.translation.thread.InternetTTSThread this$0 -> a
-com.funny.translation.thread.UpdateThread -> com.funny.translation.d.b:
+com.funny.translation.thread.UpdateThread -> com.funny.translation.e.b:
     com.funny.translation.MainActivity ctx -> b
     java.lang.String ErrorMessage -> f
     boolean hasError -> e
     boolean isShowResult -> c
     boolean haveNewVersion -> d
-com.funny.translation.thread.UpdateThread$1 -> com.funny.translation.d.b$a:
+com.funny.translation.thread.UpdateThread$1 -> com.funny.translation.e.b$a:
     com.funny.translation.thread.UpdateThread this$0 -> b
-com.funny.translation.thread.UpdateThread$2 -> com.funny.translation.d.b$b:
+com.funny.translation.thread.UpdateThread$2 -> com.funny.translation.e.b$b:
     com.funny.translation.thread.UpdateThread this$0 -> b
-com.funny.translation.translation.BaiduHttpGet -> com.funny.translation.e.a:
+com.funny.translation.translation.BaiduHttpGet -> com.funny.translation.f.a:
     javax.net.ssl.TrustManager myX509TrustManager -> a
     void close(java.io.Closeable) -> a
     java.lang.String encode(java.lang.String) -> b
     java.lang.String get(java.lang.String,java.util.Map) -> c
     java.lang.String getUrlWithQueryString(java.lang.String,java.util.Map) -> d
-com.funny.translation.translation.BaiduHttpGet$1 -> com.funny.translation.e.a$a:
-com.funny.translation.translation.BaiduTransApi -> com.funny.translation.e.b:
+com.funny.translation.translation.BaiduHttpGet$1 -> com.funny.translation.f.a$a:
+com.funny.translation.translation.BaiduTransApi -> com.funny.translation.f.b:
     java.lang.String appid -> a
     java.lang.String securityKey -> b
     com.funny.translation.translation.BaiduTransApi api -> c
     java.util.Map buildParams(java.lang.String,java.lang.String,java.lang.String) -> a
     com.funny.translation.translation.BaiduTransApi getBaiduTransApi(java.lang.String,java.lang.String) -> b
     java.lang.String getTransResult(java.lang.String,java.lang.String,java.lang.String) -> c
-com.funny.translation.translation.BasicTranslationTask -> com.funny.translation.e.c:
+com.funny.translation.translation.BasicTranslationTask -> com.funny.translation.f.c:
     short engineKind -> e
     com.funny.translation.translation.TranslationHelper helper -> a
     com.funny.translation.translation.TranslationResult result -> f
@@ -10005,47 +10022,47 @@ com.funny.translation.translation.BasicTranslationTask -> com.funny.translation.
     java.lang.String madeURL() -> h
     void reFormatBasicText(com.funny.translation.translation.TranslationResult,short) -> i
     void translate(short) -> j
-com.funny.translation.translation.FunnyGoogleApi -> com.funny.translation.e.d:
+com.funny.translation.translation.FunnyGoogleApi -> com.funny.translation.f.d:
     int Number(java.lang.Object) -> a
     int charCodeAt(java.lang.Object,int) -> c
     java.lang.String tk(java.lang.String,java.lang.String) -> d
-com.funny.translation.translation.MD5 -> com.funny.translation.e.e:
+com.funny.translation.translation.MD5 -> com.funny.translation.f.e:
     char[] hexDigits -> a
     java.lang.String byteArrayToHex(byte[]) -> a
     java.lang.String md5(java.lang.String) -> b
-com.funny.translation.translation.OnTranslateListener -> com.funny.translation.e.f:
+com.funny.translation.translation.OnTranslateListener -> com.funny.translation.f.f:
     void onFail(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> a
     void onSuccess(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> b
-com.funny.translation.translation.TranslationBV2AV -> com.funny.translation.e.g:
+com.funny.translation.translation.TranslationBV2AV -> com.funny.translation.f.g:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationBaiduNormal -> com.funny.translation.e.h:
+com.funny.translation.translation.TranslationBaiduNormal -> com.funny.translation.f.h:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationBiggerText -> com.funny.translation.e.i:
+com.funny.translation.translation.TranslationBiggerText -> com.funny.translation.f.i:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationEachText -> com.funny.translation.e.j:
+com.funny.translation.translation.TranslationEachText -> com.funny.translation.f.j:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationException -> com.funny.translation.e.k:
+com.funny.translation.translation.TranslationException -> com.funny.translation.f.k:
     java.lang.String errorMessage -> b
     java.lang.String getErrorMessage() -> a
-com.funny.translation.translation.TranslationGoogleNormal -> com.funny.translation.e.l:
+com.funny.translation.translation.TranslationGoogleNormal -> com.funny.translation.f.l:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
     void showArray(java.lang.String[][]) -> k
-com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.m:
+com.funny.translation.translation.TranslationHelper -> com.funny.translation.f.m:
     com.funny.translation.translation.OnTranslateListener defaultListener -> k
     int curI -> h
     short mode -> i
@@ -10061,17 +10078,17 @@ com.funny.translation.translation.TranslationHelper -> com.funny.translation.e.m
     void reStart() -> c
     void setMode(short) -> d
     void setTasks(java.util.ArrayList) -> e
-com.funny.translation.translation.TranslationHelper$1 -> com.funny.translation.e.m$a:
+com.funny.translation.translation.TranslationHelper$1 -> com.funny.translation.f.m$a:
     com.funny.translation.translation.TranslationHelper this$0 -> a
     void onFail(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> a
     void onSuccess(com.funny.translation.translation.TranslationHelper,com.funny.translation.translation.TranslationResult) -> b
-com.funny.translation.translation.TranslationJinshanEasy -> com.funny.translation.e.n:
+com.funny.translation.translation.TranslationJinshanEasy -> com.funny.translation.f.n:
     java.lang.String TAG -> g
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.translation.TranslationResult -> com.funny.translation.e.o:
+com.funny.translation.translation.TranslationResult -> com.funny.translation.f.o:
     java.lang.String basicResult -> a
     java.lang.String sourceString -> b
     java.lang.String getBasicResult() -> a
@@ -10079,12 +10096,12 @@ com.funny.translation.translation.TranslationResult -> com.funny.translation.e.o
     void setBasicResult(java.lang.String) -> c
     void setSourceString(java.lang.String) -> d
     void setStatue(short) -> e
-com.funny.translation.translation.TranslationYouDaoNormal -> com.funny.translation.e.p:
+com.funny.translation.translation.TranslationYouDaoNormal -> com.funny.translation.f.p:
     java.lang.String getBasicText(java.lang.String) -> c
     com.funny.translation.translation.TranslationResult getFormattedResult(java.lang.String) -> d
     boolean isOffline() -> g
     java.lang.String madeURL() -> h
-com.funny.translation.utils.ApplicationUtil -> com.funny.translation.f.a:
+com.funny.translation.utils.ApplicationUtil -> com.funny.translation.g.a:
     boolean hasInitToast -> a
     void copyToClipboard(android.content.Context,java.lang.String) -> a
     java.lang.String getTextFromAssets(android.content.Context,java.lang.String) -> b
@@ -10093,25 +10110,27 @@ com.funny.translation.utils.ApplicationUtil -> com.funny.translation.f.a:
     void print(android.content.Context,java.lang.String) -> e
     void print(android.content.Context,java.lang.String,boolean) -> f
     void startWebBrowse(android.content.Context,java.lang.String) -> g
-com.funny.translation.utils.BitmapUtil -> com.funny.translation.f.b:
+com.funny.translation.utils.AutoCompleteUtil -> com.funny.translation.g.b:
+    java.lang.String getCurrentText(java.lang.String,int) -> a
+com.funny.translation.utils.BitmapUtil -> com.funny.translation.g.c:
     android.graphics.Bitmap getBigBitmapFromResources(android.content.res.Resources,int,int,int) -> a
     android.graphics.Bitmap getBitmapFromResources(android.content.res.Resources,int) -> b
     android.graphics.Bitmap getBitmapFromResources(android.content.res.Resources,int,int,int) -> c
     android.graphics.Bitmap getCircleBitmap(android.graphics.Bitmap) -> d
     android.graphics.Bitmap getScaledBitmap(android.graphics.Bitmap,int,int) -> e
-com.funny.translation.utils.ClipBoardUtil -> com.funny.translation.f.c:
+com.funny.translation.utils.ClipBoardUtil -> com.funny.translation.g.d:
     void copy(android.content.Context,java.lang.String) -> a
     java.lang.String get(android.content.Context) -> b
-com.funny.translation.utils.DataUtil -> com.funny.translation.f.d:
+com.funny.translation.utils.DataUtil -> com.funny.translation.g.e:
     java.lang.String coverIntArrayToString(int[]) -> a
     int[] coverStringToIntArray(java.lang.String) -> b
     int findStringIndex(java.lang.String[],java.lang.String) -> c
     void setDefaultMapping(int[]) -> d
-com.funny.translation.utils.FileUtil -> com.funny.translation.f.e:
+com.funny.translation.utils.FileUtil -> com.funny.translation.g.f:
     java.lang.String getAssetsData(android.content.Context,java.lang.String) -> a
     java.io.File getAudioCacheDir(android.content.Context) -> b
     boolean isCached(android.content.Context,java.lang.String) -> c
-com.funny.translation.utils.FunnyBiggerText -> com.funny.translation.f.f:
+com.funny.translation.utils.FunnyBiggerText -> com.funny.translation.g.g:
     android.content.Context context -> a
     int all_32_128 -> f
     boolean[][] arr -> b
@@ -10123,7 +10142,7 @@ com.funny.translation.utils.FunnyBiggerText -> com.funny.translation.f.f:
     java.lang.String drawWideString(android.content.Context,java.lang.String) -> c
     int[] getByteCode(java.lang.String) -> d
     byte[] read(int,int) -> e
-com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.f.g:
+com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.g.h:
     long[] tr -> e
     int[] s -> c
     long add -> b
@@ -10131,25 +10150,26 @@ com.funny.translation.utils.FunnyBvToAv -> com.funny.translation.f.g:
     java.lang.String TABLE -> d
     java.lang.String dec(java.lang.String) -> a
     java.lang.String enc(long) -> b
-com.funny.translation.utils.FunnyEachText -> com.funny.translation.f.h:
+com.funny.translation.utils.FunnyEachText -> com.funny.translation.g.i:
     org.json.JSONObject WORDS -> a
     org.json.JSONObject getWords() -> a
     void init(android.content.Context) -> b
-com.funny.translation.utils.NetworkUtil -> com.funny.translation.f.i:
+com.funny.translation.utils.NetworkUtil -> com.funny.translation.g.j:
     boolean isNetworkConnected(android.content.Context) -> a
-com.funny.translation.utils.OkHttpUtil -> com.funny.translation.f.j:
+com.funny.translation.utils.OkHttpUtil -> com.funny.translation.g.k:
     okhttp3.OkHttpClient okHttpClient -> a
     java.lang.String get(java.lang.String) -> a
     okhttp3.OkHttpClient getClient() -> b
-    void init() -> c
-com.funny.translation.utils.RC4 -> com.funny.translation.f.k:
+    java.lang.String getWithIP(java.lang.String,java.lang.String,int) -> c
+    void init() -> d
+com.funny.translation.utils.RC4 -> com.funny.translation.g.l:
     java.lang.String CHARSET -> a
     byte[] HexString2Bytes(java.lang.String) -> a
     byte[] RC4Base(byte[],java.lang.String) -> b
     java.lang.String decry_RC4(java.lang.String,java.lang.String) -> c
     byte[] initKey(java.lang.String) -> d
     byte uniteBytes(byte,byte) -> e
-com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.l:
+com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.g.m:
     android.content.SharedPreferences$Editor editor -> b
     android.content.SharedPreferences share -> a
     com.funny.translation.utils.SharedPreferenceUtil instance -> d
@@ -10157,7 +10177,7 @@ com.funny.translation.utils.SharedPreferenceUtil -> com.funny.translation.f.l:
     com.funny.translation.utils.SharedPreferenceUtil getInstance() -> a
     java.lang.String getString(java.lang.String,java.lang.String) -> b
     void putString(java.lang.String,java.lang.String) -> c
-com.funny.translation.utils.StringUtil -> com.funny.translation.f.m:
+com.funny.translation.utils.StringUtil -> com.funny.translation.g.n:
     java.lang.String extraChinese(java.lang.String) -> a
     long findAv(java.lang.String) -> b
     java.lang.String findBv(java.lang.String) -> c
@@ -10166,8 +10186,9 @@ com.funny.translation.utils.StringUtil -> com.funny.translation.f.m:
     boolean isUnicode(java.lang.String) -> f
     boolean isValidContent(java.lang.String) -> g
     java.lang.String md5(java.lang.String) -> h
-    java.lang.String unicodeToString(java.lang.String) -> i
-com.funny.translation.utils.TTSUtil -> com.funny.translation.f.n:
+    java.lang.String replaceEnglishPunctuation(java.lang.String) -> i
+    java.lang.String unicodeToString(java.lang.String) -> j
+com.funny.translation.utils.TTSUtil -> com.funny.translation.g.o:
     android.speech.tts.TextToSpeech localTTS -> a
     com.funny.translation.thread.InternetTTSThread internetTTSThread -> b
     void destroyTTS() -> a
@@ -10177,8 +10198,13 @@ com.funny.translation.utils.TTSUtil -> com.funny.translation.f.n:
     void initLocal(android.content.Context) -> e
     void rePlayInternet(android.content.Context,java.lang.String) -> f
     void speak(android.content.Context,java.lang.String,short,short) -> g
-com.funny.translation.utils.TTSUtil$1 -> com.funny.translation.f.n$a:
-com.funny.translation.utils.UpdateUtil -> com.funny.translation.f.o:
+com.funny.translation.utils.TTSUtil$1 -> com.funny.translation.g.o$a:
+com.funny.translation.utils.TimeUtil -> com.funny.translation.g.p:
+    long mTime -> a
+    java.lang.String TAG -> b
+    void end() -> a
+    void start() -> b
+com.funny.translation.utils.UpdateUtil -> com.funny.translation.g.q:
     org.json.JSONObject updateDescription -> a
     java.lang.String updateLog -> b
     boolean isUpdate -> c
@@ -10248,7 +10274,8 @@ com.funny.translation.widget.LanguageAdapter -> com.funny.translation.widget.b:
     short kind -> e
     java.util.ArrayList list -> d
     int access$000(com.funny.translation.widget.LanguageAdapter,int) -> C
-    int getMappingIndex(int) -> D
+    int[] getMapping() -> D
+    int getMappingIndex(int) -> E
     int getItemCount() -> e
     void onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder,int) -> r
     android.support.v7.widget.RecyclerView$ViewHolder onCreateViewHolder(android.view.ViewGroup,int) -> t
@@ -10257,18 +10284,21 @@ com.funny.translation.widget.LanguageAdapter$1 -> com.funny.translation.widget.b
     com.funny.translation.widget.LanguageAdapter this$0 -> c
 com.funny.translation.widget.LanguageAdapter$LanguageViewHolder -> com.funny.translation.widget.b$b:
     android.widget.TextView tv -> t
+com.funny.translation.widget.LanguageAdapter$OnClickItemListener -> com.funny.translation.widget.b$c:
+    void onClick(int) -> a
 com.funny.translation.widget.LanguageRecyclerView -> com.funny.translation.widget.LanguageRecyclerView:
     com.funny.translation.widget.LanguageAdapter adapter -> M0
     android.content.Context ctx -> K0
     short checkKind -> L0
     void initData(java.util.ArrayList,int[]) -> w1
+    void updateData() -> x1
 com.funny.translation.widget.ResultAdapter -> com.funny.translation.widget.c:
     com.funny.translation.MainActivity ctx -> d
     com.funny.translation.translation.BasicTranslationTask task -> e
     java.util.ArrayList tasks -> c
     java.lang.StringBuilder sb -> f
     void insert(java.util.ArrayList) -> C
-    void updata(java.util.ArrayList) -> D
+    void setTasks(java.util.ArrayList) -> D
     int getItemCount() -> e
     int getItemViewType(int) -> g
     void onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder,int) -> r
@@ -10302,6 +10332,24 @@ com.funny.translation.widget.SimpleAdapter -> com.funny.translation.widget.e:
     android.support.v7.widget.RecyclerView$ViewHolder onCreateViewHolder(android.view.ViewGroup,int) -> t
 com.funny.translation.widget.SimpleAdapter$SimpleHolder -> com.funny.translation.widget.e$a:
     android.widget.TextView tv -> t
+com.funny.translation.widget.WordCompleteAdapter -> com.funny.translation.widget.f:
+    com.funny.translation.widget.LanguageAdapter$OnClickItemListener listener -> e
+    java.util.ArrayList words -> c
+    android.content.Context ctx -> d
+    void setListener(com.funny.translation.widget.LanguageAdapter$OnClickItemListener) -> C
+    void setWords(java.util.ArrayList) -> D
+    void update(java.util.ArrayList) -> E
+    int getItemCount() -> e
+    void onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder,int) -> r
+    android.support.v7.widget.RecyclerView$ViewHolder onCreateViewHolder(android.view.ViewGroup,int) -> t
+com.funny.translation.widget.WordCompleteAdapter$1 -> com.funny.translation.widget.f$a:
+    com.funny.translation.widget.WordCompleteAdapter this$0 -> c
+    android.support.v7.widget.RecyclerView$ViewHolder val$viewHolder -> b
+com.funny.translation.widget.WordCompleteAdapter$SingleItemVH -> com.funny.translation.widget.f$b:
+    android.widget.TextView detail -> u
+    android.widget.TextView word -> t
+com.funny.translation.widget.WordCompleteRV -> com.funny.translation.widget.WordCompleteRV:
+    java.util.ArrayList list -> K0
 com.github.lzyzsd.circleprogress.ArcProgress -> com.github.lzyzsd.circleprogress.ArcProgress:
     int finishedStrokeColor -> n
     java.lang.String bottomText -> h
@@ -11549,37 +11597,39 @@ okhttp3.OkHttpClient$Builder -> d.a0$a:
     okhttp3.Dns dns -> l
     javax.net.ssl.SSLSocketFactory sslSocketFactoryOrNull -> q
     okhttp3.CertificatePinner certificatePinner -> v
-    okhttp3.internal.connection.RouteDatabase getRouteDatabase$okhttp() -> A
-    javax.net.SocketFactory getSocketFactory$okhttp() -> B
-    javax.net.ssl.SSLSocketFactory getSslSocketFactoryOrNull$okhttp() -> C
-    int getWriteTimeout$okhttp() -> D
-    javax.net.ssl.X509TrustManager getX509TrustManagerOrNull$okhttp() -> E
+    boolean getRetryOnConnectionFailure$okhttp() -> A
+    okhttp3.internal.connection.RouteDatabase getRouteDatabase$okhttp() -> B
+    javax.net.SocketFactory getSocketFactory$okhttp() -> C
+    javax.net.ssl.SSLSocketFactory getSslSocketFactoryOrNull$okhttp() -> D
+    int getWriteTimeout$okhttp() -> E
+    javax.net.ssl.X509TrustManager getX509TrustManagerOrNull$okhttp() -> F
+    okhttp3.OkHttpClient$Builder proxy(java.net.Proxy) -> G
     okhttp3.OkHttpClient build() -> a
-    okhttp3.Authenticator getAuthenticator$okhttp() -> b
-    okhttp3.Cache getCache$okhttp() -> c
-    int getCallTimeout$okhttp() -> d
-    okhttp3.internal.tls.CertificateChainCleaner getCertificateChainCleaner$okhttp() -> e
-    okhttp3.CertificatePinner getCertificatePinner$okhttp() -> f
-    int getConnectTimeout$okhttp() -> g
-    okhttp3.ConnectionPool getConnectionPool$okhttp() -> h
-    java.util.List getConnectionSpecs$okhttp() -> i
-    okhttp3.CookieJar getCookieJar$okhttp() -> j
-    okhttp3.Dispatcher getDispatcher$okhttp() -> k
-    okhttp3.Dns getDns$okhttp() -> l
-    okhttp3.EventListener$Factory getEventListenerFactory$okhttp() -> m
-    boolean getFollowRedirects$okhttp() -> n
-    boolean getFollowSslRedirects$okhttp() -> o
-    javax.net.ssl.HostnameVerifier getHostnameVerifier$okhttp() -> p
-    java.util.List getInterceptors$okhttp() -> q
-    long getMinWebSocketMessageToCompress$okhttp() -> r
-    java.util.List getNetworkInterceptors$okhttp() -> s
-    int getPingInterval$okhttp() -> t
-    java.util.List getProtocols$okhttp() -> u
-    java.net.Proxy getProxy$okhttp() -> v
-    okhttp3.Authenticator getProxyAuthenticator$okhttp() -> w
-    java.net.ProxySelector getProxySelector$okhttp() -> x
-    int getReadTimeout$okhttp() -> y
-    boolean getRetryOnConnectionFailure$okhttp() -> z
+    okhttp3.OkHttpClient$Builder connectTimeout(long,java.util.concurrent.TimeUnit) -> b
+    okhttp3.Authenticator getAuthenticator$okhttp() -> c
+    okhttp3.Cache getCache$okhttp() -> d
+    int getCallTimeout$okhttp() -> e
+    okhttp3.internal.tls.CertificateChainCleaner getCertificateChainCleaner$okhttp() -> f
+    okhttp3.CertificatePinner getCertificatePinner$okhttp() -> g
+    int getConnectTimeout$okhttp() -> h
+    okhttp3.ConnectionPool getConnectionPool$okhttp() -> i
+    java.util.List getConnectionSpecs$okhttp() -> j
+    okhttp3.CookieJar getCookieJar$okhttp() -> k
+    okhttp3.Dispatcher getDispatcher$okhttp() -> l
+    okhttp3.Dns getDns$okhttp() -> m
+    okhttp3.EventListener$Factory getEventListenerFactory$okhttp() -> n
+    boolean getFollowRedirects$okhttp() -> o
+    boolean getFollowSslRedirects$okhttp() -> p
+    javax.net.ssl.HostnameVerifier getHostnameVerifier$okhttp() -> q
+    java.util.List getInterceptors$okhttp() -> r
+    long getMinWebSocketMessageToCompress$okhttp() -> s
+    java.util.List getNetworkInterceptors$okhttp() -> t
+    int getPingInterval$okhttp() -> u
+    java.util.List getProtocols$okhttp() -> v
+    java.net.Proxy getProxy$okhttp() -> w
+    okhttp3.Authenticator getProxyAuthenticator$okhttp() -> x
+    java.net.ProxySelector getProxySelector$okhttp() -> y
+    int getReadTimeout$okhttp() -> z
 okhttp3.OkHttpClient$Companion -> d.a0$b:
     java.util.List getDEFAULT_CONNECTION_SPECS$okhttp() -> a
     java.util.List getDEFAULT_PROTOCOLS$okhttp() -> b
@@ -11619,12 +11669,13 @@ okhttp3.Request$Builder -> d.c0$a:
     java.util.Map tags -> e
     java.lang.String method -> b
     okhttp3.Request build() -> a
-    okhttp3.Request$Builder header(java.lang.String,java.lang.String) -> b
-    okhttp3.Request$Builder headers(okhttp3.Headers) -> c
-    okhttp3.Request$Builder method(java.lang.String,okhttp3.RequestBody) -> d
-    okhttp3.Request$Builder removeHeader(java.lang.String) -> e
-    okhttp3.Request$Builder url(java.lang.String) -> f
-    okhttp3.Request$Builder url(okhttp3.HttpUrl) -> g
+    okhttp3.Request$Builder get() -> b
+    okhttp3.Request$Builder header(java.lang.String,java.lang.String) -> c
+    okhttp3.Request$Builder headers(okhttp3.Headers) -> d
+    okhttp3.Request$Builder method(java.lang.String,okhttp3.RequestBody) -> e
+    okhttp3.Request$Builder removeHeader(java.lang.String) -> f
+    okhttp3.Request$Builder url(java.lang.String) -> g
+    okhttp3.Request$Builder url(okhttp3.HttpUrl) -> h
 okhttp3.RequestBody -> d.d0:
     okhttp3.RequestBody$Companion Companion -> a
     long contentLength() -> a
@@ -11762,26 +11813,27 @@ okhttp3.internal.Util -> d.i0.b:
     boolean assertionsEnabled -> g
     java.util.TimeZone UTC -> e
     okhttp3.Headers EMPTY_HEADERS -> b
-    java.lang.String[] intersect(java.lang.String[],java.lang.String[],java.util.Comparator) -> A
-    boolean isHealthy(java.net.Socket,okio.BufferedSource) -> B
-    int parseHexDigit(char) -> C
-    java.nio.charset.Charset readBomAsCharset(okio.BufferedSource,java.nio.charset.Charset) -> D
-    int readMedium(okio.BufferedSource) -> E
-    int skipAll(okio.Buffer,byte) -> F
-    boolean skipAll(okio.Source,int,java.util.concurrent.TimeUnit) -> G
-    java.util.concurrent.ThreadFactory threadFactory(java.lang.String,boolean) -> H
-    java.util.List toHeaderList(okhttp3.Headers) -> I
-    okhttp3.Headers toHeaders(java.util.List) -> J
-    java.lang.String toHostHeader(okhttp3.HttpUrl,boolean) -> K
-    java.lang.String toHostHeader$default(okhttp3.HttpUrl,boolean,int,java.lang.Object) -> L
-    java.util.List toImmutableList(java.util.List) -> M
-    java.util.Map toImmutableMap(java.util.Map) -> N
-    long toLongOrDefault(java.lang.String,long) -> O
-    int toNonNegativeInt(java.lang.String,int) -> P
-    java.lang.String trimSubstring(java.lang.String,int,int) -> Q
-    java.lang.String trimSubstring$default(java.lang.String,int,int,int,java.lang.Object) -> R
-    java.lang.Throwable withSuppressed(java.lang.Exception,java.util.List) -> S
-    void writeMedium(okio.BufferedSink,int) -> T
+    int indexOfNonWhitespace(java.lang.String,int) -> A
+    java.lang.String[] intersect(java.lang.String[],java.lang.String[],java.util.Comparator) -> B
+    boolean isHealthy(java.net.Socket,okio.BufferedSource) -> C
+    int parseHexDigit(char) -> D
+    java.nio.charset.Charset readBomAsCharset(okio.BufferedSource,java.nio.charset.Charset) -> E
+    int readMedium(okio.BufferedSource) -> F
+    int skipAll(okio.Buffer,byte) -> G
+    boolean skipAll(okio.Source,int,java.util.concurrent.TimeUnit) -> H
+    java.util.concurrent.ThreadFactory threadFactory(java.lang.String,boolean) -> I
+    java.util.List toHeaderList(okhttp3.Headers) -> J
+    okhttp3.Headers toHeaders(java.util.List) -> K
+    java.lang.String toHostHeader(okhttp3.HttpUrl,boolean) -> L
+    java.lang.String toHostHeader$default(okhttp3.HttpUrl,boolean,int,java.lang.Object) -> M
+    java.util.List toImmutableList(java.util.List) -> N
+    java.util.Map toImmutableMap(java.util.Map) -> O
+    long toLongOrDefault(java.lang.String,long) -> P
+    int toNonNegativeInt(java.lang.String,int) -> Q
+    java.lang.String trimSubstring(java.lang.String,int,int) -> R
+    java.lang.String trimSubstring$default(java.lang.String,int,int,int,java.lang.Object) -> S
+    java.lang.Throwable withSuppressed(java.lang.Exception,java.util.List) -> T
+    void writeMedium(okio.BufferedSink,int) -> U
     void addIfAbsent(java.util.List,java.lang.Object) -> a
     int and(byte,int) -> b
     int and(short,int) -> c
@@ -11789,25 +11841,25 @@ okhttp3.internal.Util -> d.i0.b:
     okhttp3.EventListener$Factory asFactory(okhttp3.EventListener) -> e
     boolean canParseAsIpAddress(java.lang.String) -> f
     boolean canReuseConnectionFor(okhttp3.HttpUrl,okhttp3.HttpUrl) -> g
-    void checkOffsetAndCount(long,long,long) -> h
-    void closeQuietly(java.io.Closeable) -> i
-    void closeQuietly(java.net.Socket) -> j
-    java.lang.String[] concat(java.lang.String[],java.lang.String) -> k
-    int delimiterOffset(java.lang.String,char,int,int) -> l
-    int delimiterOffset(java.lang.String,java.lang.String,int,int) -> m
-    int delimiterOffset$default(java.lang.String,char,int,int,int,java.lang.Object) -> n
-    boolean discard(okio.Source,int,java.util.concurrent.TimeUnit) -> o
-    java.lang.String format(java.lang.String,java.lang.Object[]) -> p
-    boolean hasIntersection(java.lang.String[],java.lang.String[],java.util.Comparator) -> q
-    long headersContentLength(okhttp3.Response) -> r
-    java.util.List immutableListOf(java.lang.Object[]) -> s
-    int indexOf(java.lang.String[],java.lang.String,java.util.Comparator) -> t
-    int indexOfControlOrNonAscii(java.lang.String) -> u
-    int indexOfFirstNonAsciiWhitespace(java.lang.String,int,int) -> v
-    int indexOfFirstNonAsciiWhitespace$default(java.lang.String,int,int,int,java.lang.Object) -> w
-    int indexOfLastNonAsciiWhitespace(java.lang.String,int,int) -> x
-    int indexOfLastNonAsciiWhitespace$default(java.lang.String,int,int,int,java.lang.Object) -> y
-    int indexOfNonWhitespace(java.lang.String,int) -> z
+    int checkDuration(java.lang.String,long,java.util.concurrent.TimeUnit) -> h
+    void checkOffsetAndCount(long,long,long) -> i
+    void closeQuietly(java.io.Closeable) -> j
+    void closeQuietly(java.net.Socket) -> k
+    java.lang.String[] concat(java.lang.String[],java.lang.String) -> l
+    int delimiterOffset(java.lang.String,char,int,int) -> m
+    int delimiterOffset(java.lang.String,java.lang.String,int,int) -> n
+    int delimiterOffset$default(java.lang.String,char,int,int,int,java.lang.Object) -> o
+    boolean discard(okio.Source,int,java.util.concurrent.TimeUnit) -> p
+    java.lang.String format(java.lang.String,java.lang.Object[]) -> q
+    boolean hasIntersection(java.lang.String[],java.lang.String[],java.util.Comparator) -> r
+    long headersContentLength(okhttp3.Response) -> s
+    java.util.List immutableListOf(java.lang.Object[]) -> t
+    int indexOf(java.lang.String[],java.lang.String,java.util.Comparator) -> u
+    int indexOfControlOrNonAscii(java.lang.String) -> v
+    int indexOfFirstNonAsciiWhitespace(java.lang.String,int,int) -> w
+    int indexOfFirstNonAsciiWhitespace$default(java.lang.String,int,int,int,java.lang.Object) -> x
+    int indexOfLastNonAsciiWhitespace(java.lang.String,int,int) -> y
+    int indexOfLastNonAsciiWhitespace$default(java.lang.String,int,int,int,java.lang.Object) -> z
 okhttp3.internal.Util$asFactory$1 -> d.i0.b$a:
     okhttp3.EventListener $this_asFactory -> a
     okhttp3.EventListener create(okhttp3.Call) -> a

@@ -53,6 +53,7 @@ public class FileUtil
 			String line;
 			while ((line = bf.readLine()) != null) {
 				stringBuilder.append(line);
+				stringBuilder.append("\n");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

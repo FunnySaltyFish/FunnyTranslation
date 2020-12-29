@@ -60,7 +60,7 @@ public class Consts
 
 
 	public static String[][] LANGUAGES={
-		//有道翻译 简版（已弃用）/标准 百度翻译 标准 谷歌(短)
+		//有道翻译 简版（已弃用，改为金山）/标准 百度翻译 标准 谷歌(短)
 		{"auto","auto","auto","auto"},
 		{"zh","zh-CHS","zh","zh-CN"},
 		{"en-US","en","en","en"},

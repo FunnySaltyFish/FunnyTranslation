@@ -15,6 +15,7 @@ anim anim_none
 array bigger_text_performance
 array engines
 array entry_bigger_text_performance
+array entry_value_engines
 array entry_value_languages
 array languages
 array modes
@@ -783,7 +784,9 @@ drawable ic_appid
 drawable ic_arrow_down_24dp
 drawable ic_clear_button
 drawable ic_copy
+drawable ic_exchange
 drawable ic_feedback
+drawable ic_flag
 drawable ic_key
 drawable ic_launcher
 drawable ic_menu
@@ -895,7 +898,9 @@ id line3
 id listMode
 id list_item
 id main_slide_left_rv
+id main_slide_right_copyright
 id main_slide_right_engine_rv
+id main_slide_right_exchange_button
 id main_slide_right_mode_rv
 id main_slide_right_source_rv
 id main_slide_right_source_tv
@@ -981,6 +986,9 @@ id view_drawer_header_tv
 id view_drawer_normal_img
 id view_drawer_normal_tv
 id view_language_tv
+id view_popup_rv
+id view_popup_word
+id view_popup_word_detail
 id view_result_cardview
 id view_result_content_copy_button
 id view_result_content_engine
@@ -1072,6 +1080,8 @@ layout view_drawer_divider
 layout view_drawer_header
 layout view_drawer_normal
 layout view_language_item
+layout view_popup_list
+layout view_popup_list_item
 layout view_result_content
 layout view_result_space
 layout view_simple_adapter_item
@@ -1122,6 +1132,7 @@ string app_name
 string copyright
 string crash
 string description_drawer_header_image
+string description_exchange_language
 string engine
 string engine_baidu
 string engine_youdao_easy

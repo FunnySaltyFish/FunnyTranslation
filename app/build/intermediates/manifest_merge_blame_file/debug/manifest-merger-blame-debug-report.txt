@@ -1,11 +1,11 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.funny.translation"
-4    android:versionCode="13"
-5    android:versionName="1.55.0" >
+4    android:versionCode="16"
+5    android:versionName="1.23.3" >
 6
 7    <uses-sdk
-8        android:minSdkVersion="24"
+8        android:minSdkVersion="19"
 8-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="30" />
 9-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml
@@ -29,100 +29,99 @@
 18        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
 18-->[com.android.support:support-compat:28.0.0] C:\Users\Shen\.gradle\caches\transforms-2\files-2.1\00567bd0de14b33d1bf8a440dc72bff8\support-compat-28.0.0\AndroidManifest.xml:22:18-91
 19        android:debuggable="true"
-20        android:extractNativeLibs="false"
-21        android:icon="@drawable/ic_launcher"
-21-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:12:3-39
-22        android:label="@string/app_name"
-22-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:13:3-35
-23        android:networkSecurityConfig="@xml/network_security_config"
-23-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:16:3-63
-24        android:resizeableActivity="true"
-24-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:17:3-36
-25        android:supportsRtl="true"
-25-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:15:3-29
-26        android:testOnly="true"
-27        android:theme="@style/AppTheme" >
-27-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:14:3-34
-28        <activity
-28-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:19:3-26:14
-29            android:name="com.funny.translation.MainActivity"
-29-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:20:4-32
-30            android:label="@string/app_name" >
-30-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:21:4-36
-31            <intent-filter>
-31-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:22:4-25:20
-32                <action android:name="android.intent.action.MAIN" />
-32-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:23:5-56
-32-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:23:13-54
-33
-34                <category android:name="android.intent.category.LAUNCHER" />
-34-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:5-64
-34-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:15-62
-35            </intent-filter>
-36        </activity>
-37        <activity
-37-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:3-110
-38            android:name="com.funny.translation.SettingActivity"
-38-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:13-44
-39            android:label="@string/setting"
-39-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:45-76
-40            android:theme="@style/AppTheme" />
-40-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:77-108
-41        <activity
-41-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:3-112
-42            android:name="com.funny.translation.FeedbackActivity"
-42-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:13-45
-43            android:label="@string/feedback"
-43-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:46-78
-44            android:theme="@style/AppTheme" />
-44-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:79-110
-45        <activity
-45-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:3-112
-46            android:name="com.funny.translation.ErrorDialogActivity"
-46-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:13-48
-47            android:label="@string/crash"
-47-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:49-78
-48            android:theme="@style/AppTheme" />
-48-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:79-110
-49        <activity
-49-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:30:3-45:14
-50            android:name="com.funny.translation.ProcessTextActivity"
-50-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:30:13-48
-51            android:exported="true"
-51-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:33:4-27
-52            android:label="@string/process_text"
-52-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:31:4-40
-53            android:theme="@style/AppTheme.Dialog" >
-53-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:32:4-42
-54            <intent-filter>
-54-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:35:4-39:20
-55                <action android:name="android.intent.action.PROCESS_TEXT" />
-55-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:36:5-64
-55-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:36:13-62
-56
-57                <category android:name="android.intent.category.DEFAULT" />
-57-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:5-63
-57-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:15-61
-58
-59                <data android:mimeType="text/plain" />
-59-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:5-42
-59-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:11-40
-60            </intent-filter>
-61            <intent-filter>
-61-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:40:4-44:20
-62                <action android:name="android.intent.action.SEND" />
-62-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:41:5-56
-62-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:41:13-54
-63
-64                <category android:name="android.intent.category.DEFAULT" />
-64-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:5-63
-64-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:15-61
-65
-66                <data android:mimeType="text/plain" />
-66-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:5-42
-66-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:11-40
-67            </intent-filter>
-68        </activity>
-69    </application>
-70
-71</manifest>
+20        android:icon="@drawable/ic_launcher"
+20-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:12:3-39
+21        android:label="@string/app_name"
+21-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:13:3-35
+22        android:networkSecurityConfig="@xml/network_security_config"
+22-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:16:3-63
+23        android:resizeableActivity="true"
+23-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:17:3-36
+24        android:supportsRtl="true"
+24-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:15:3-29
+25        android:testOnly="true"
+26        android:theme="@style/AppTheme" >
+26-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:14:3-34
+27        <activity
+27-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:19:3-26:14
+28            android:name="com.funny.translation.MainActivity"
+28-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:20:4-32
+29            android:label="@string/app_name" >
+29-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:21:4-36
+30            <intent-filter>
+30-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:22:4-25:20
+31                <action android:name="android.intent.action.MAIN" />
+31-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:23:5-56
+31-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:23:13-54
+32
+33                <category android:name="android.intent.category.LAUNCHER" />
+33-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:5-64
+33-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:24:15-62
+34            </intent-filter>
+35        </activity>
+36        <activity
+36-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:3-110
+37            android:name="com.funny.translation.SettingActivity"
+37-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:13-44
+38            android:label="@string/setting"
+38-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:45-76
+39            android:theme="@style/AppTheme" />
+39-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:27:77-108
+40        <activity
+40-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:3-112
+41            android:name="com.funny.translation.FeedbackActivity"
+41-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:13-45
+42            android:label="@string/feedback"
+42-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:46-78
+43            android:theme="@style/AppTheme" />
+43-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:28:79-110
+44        <activity
+44-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:3-112
+45            android:name="com.funny.translation.ErrorDialogActivity"
+45-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:13-48
+46            android:label="@string/crash"
+46-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:49-78
+47            android:theme="@style/AppTheme" />
+47-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:29:79-110
+48        <activity
+48-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:30:3-45:14
+49            android:name="com.funny.translation.ProcessTextActivity"
+49-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:30:13-48
+50            android:exported="true"
+50-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:33:4-27
+51            android:label="@string/process_text"
+51-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:31:4-40
+52            android:theme="@style/AppTheme.Dialog" >
+52-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:32:4-42
+53            <intent-filter>
+53-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:35:4-39:20
+54                <action android:name="android.intent.action.PROCESS_TEXT" />
+54-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:36:5-64
+54-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:36:13-62
+55
+56                <category android:name="android.intent.category.DEFAULT" />
+56-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:5-63
+56-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:15-61
+57
+58                <data android:mimeType="text/plain" />
+58-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:5-42
+58-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:11-40
+59            </intent-filter>
+60            <intent-filter>
+60-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:40:4-44:20
+61                <action android:name="android.intent.action.SEND" />
+61-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:41:5-56
+61-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:41:13-54
+62
+63                <category android:name="android.intent.category.DEFAULT" />
+63-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:5-63
+63-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:37:15-61
+64
+65                <data android:mimeType="text/plain" />
+65-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:5-42
+65-->D:\projects\AppProjects\Mine\FunnyTranslation\app\src\main\AndroidManifest.xml:38:11-40
+66            </intent-filter>
+67        </activity>
+68    </application>
+69
+70</manifest>

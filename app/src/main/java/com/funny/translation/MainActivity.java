@@ -1,27 +1,58 @@
 package com.funny.translation;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.os.Bundle;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.MenuInflater;
-import android.widget.TextView;
-import android.widget.Button;
-import android.view.View.OnClickListener;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.billy.android.swipe.SmartSwipe;
 import com.billy.android.swipe.SmartSwipeWrapper;
+import com.billy.android.swipe.SwipeConsumer;
+import com.billy.android.swipe.consumer.DrawerConsumer;
 import com.billy.android.swipe.consumer.SlidingConsumer;
+import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
+import com.funny.translation.bean.Consts;
+import com.funny.translation.bean.LanguageBean;
+import com.funny.translation.db.DBEnglishWords;
+import com.funny.translation.db.DBHelper;
+import com.funny.translation.thread.UpdateThread;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationBV2AV;
 import com.funny.translation.translation.TranslationBaiduNormal;
@@ -29,69 +60,73 @@ import com.funny.translation.translation.TranslationBiggerText;
 import com.funny.translation.translation.TranslationEachText;
 import com.funny.translation.translation.TranslationGoogleNormal;
 import com.funny.translation.translation.TranslationHelper;
-import com.funny.translation.bean.Consts;
-import android.support.v7.app.AlertDialog;
-//import com.qw.soul.permission.SoulPermission;
-//import com.qw.soul.permission.callbcak.CheckRequestPermissionListener;
-//import com.qw.soul.permission.bean.Permission;
-import android.os.Handler;
-import android.os.Message;
-import android.content.DialogInterface;
-import android.view.LayoutInflater;
-import android.widget.ProgressBar;
-
-import com.billy.android.swipe.SmartSwipe;
-import com.billy.android.swipe.consumer.DrawerConsumer;
-import android.support.v7.widget.RecyclerView;
-
 import com.funny.translation.translation.TranslationJinshanEasy;
-import com.funny.translation.translation.TranslationYouDaoEasy;
 import com.funny.translation.translation.TranslationYouDaoNormal;
+import com.funny.translation.utils.ApplicationUtil;
+import com.funny.translation.utils.AutoCompleteUtil;
+import com.funny.translation.utils.BitmapUtil;
 import com.funny.translation.utils.ClipBoardUtil;
 import com.funny.translation.utils.DataUtil;
+import com.funny.translation.utils.FileUtil;
+import com.funny.translation.utils.NetworkUtil;
 import com.funny.translation.utils.SharedPreferenceUtil;
 import com.funny.translation.utils.StringUtil;
+import com.funny.translation.utils.TTSUtil;
+import com.funny.translation.utils.TimeUtil;
+import com.funny.translation.utils.UpdateUtil;
 import com.funny.translation.widget.DrawerAdapter;
+import com.funny.translation.widget.EditTextField;
+import com.funny.translation.widget.LanguageAdapter;
+import com.funny.translation.widget.LanguageRecyclerView;
 import com.funny.translation.widget.ResultAdapter;
-import android.support.v7.widget.LinearLayoutManager;
 import com.funny.translation.widget.ResultItemDecoration;
+import com.funny.translation.widget.WordCompleteAdapter;
+import com.github.lzyzsd.circleprogress.CircleProgress;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 
-import static com.funny.translation.bean.Consts.*;
-import android.view.ViewGroup;
-import com.billy.android.swipe.consumer.StretchConsumer;
-import com.billy.android.swipe.SwipeConsumer;
+import static com.funny.translation.bean.Consts.ACTIVITY_MAIN;
+import static com.funny.translation.bean.Consts.ACTIVITY_SETTING;
+import static com.funny.translation.bean.Consts.BAIDU_APP_ID;
+import static com.funny.translation.bean.Consts.BAIDU_SECURITY_KEY;
+import static com.funny.translation.bean.Consts.BAIDU_SLEEP_TIME;
+import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_APP_ID;
+import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_SECURITY_KEY;
+import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_SLEEP_TIME;
+import static com.funny.translation.bean.Consts.ENGINE_BAIDU_NORMAL;
+import static com.funny.translation.bean.Consts.ENGINE_BIGGER_TEXT;
+import static com.funny.translation.bean.Consts.ENGINE_BV_TO_AV;
+import static com.funny.translation.bean.Consts.ENGINE_EACH_TEXT;
+import static com.funny.translation.bean.Consts.ENGINE_GOOGLE;
+import static com.funny.translation.bean.Consts.ENGINE_JINSHAN;
+import static com.funny.translation.bean.Consts.ENGINE_NAMES;
+import static com.funny.translation.bean.Consts.ENGINE_YOUDAO_NORMAL;
+import static com.funny.translation.bean.Consts.IC_MENU_RIGHT_ARROW;
+import static com.funny.translation.bean.Consts.IC_MULTI_CHECK;
+import static com.funny.translation.bean.Consts.IC_MULTI_CHECK_CHECKED;
+import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK;
+import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK_CHECKED;
+import static com.funny.translation.bean.Consts.LANGUAGES;
+import static com.funny.translation.bean.Consts.LANGUAGE_AUTO;
+import static com.funny.translation.bean.Consts.LANGUAGE_NAMES;
+import static com.funny.translation.bean.Consts.MODE_NAMES;
+import static com.funny.translation.bean.Consts.MODE_NORMAL;
+import static com.funny.translation.bean.Consts.TTS_BAIDU;
+import static com.funny.translation.bean.Consts.TTS_NAMES;
+
+//import com.qw.soul.permission.SoulPermission;
+//import com.qw.soul.permission.callbcak.CheckRequestPermissionListener;
+//import com.qw.soul.permission.bean.Permission;
 //import com.luwei.checkhelper.MultiCheckHelper;
 //import com.luwei.checkhelper.CheckHelper;
-import com.funny.translation.bean.LanguageBean;
-import android.content.res.Resources;
-import com.funny.translation.utils.BitmapUtil;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
-import android.graphics.Color;
-import android.widget.RelativeLayout;
-import android.text.TextWatcher;
-import android.text.Editable;
-import com.funny.translation.utils.ApplicationUtil;
-import android.view.KeyEvent;
-import com.funny.translation.utils.UpdateUtil;
-import com.funny.translation.thread.UpdateThread;
-import android.os.Looper;
-import android.view.Menu;
-import android.view.MenuItem;
-import com.funny.translation.widget.LanguageRecyclerView;
-import com.funny.translation.widget.EditTextField;
-import com.funny.translation.utils.TTSUtil;
-import com.github.lzyzsd.circleprogress.CircleProgress;
-import com.funny.translation.utils.NetworkUtil;
 
 public class MainActivity extends BaseActivity 
 {
 	Resources re;
+	String currentWord="";//自动补全 ：当前正在输入的单词
 	
 	Toolbar toolbar;
 	EditTextField inputText;
@@ -99,9 +134,11 @@ public class MainActivity extends BaseActivity
 	RecyclerView.LayoutManager layoutManager;
 	ResultItemDecoration itemDecoration;
 	Button translateButton;
+	ImageButton exchangeButton;
 	CircleProgress translateProgress;
 	
 	LanguageRecyclerView rightSourceRv,rightTargetRv,rightEngineRv,rightTTSRv,rightModeRv;
+	TextView copyrightTextView;
 	
 	ArrayList<LanguageBean> sourceList,targetList,engineList,ttsList,modeList;
 
@@ -110,16 +147,18 @@ public class MainActivity extends BaseActivity
 	SimpleSwipeListener swipeListener;
 
 	ArrayList<BasicTranslationTask> tasks;
-	ResultAdapter adapter;
+	ResultAdapter resultAdapter;
+	WordCompleteAdapter wordCompleteAdapter;
 	TranslationHelper helper;
 	
 	Handler handler;
+	DBEnglishWords dbEnglishWords;
+
 	long curBackTime=0,firstBackTime=0;
 
 	AlertDialog translatingProgressDialog=null;
 	AlertDialog tipDialog=null;
-	TextView dialogTranslatingContentTV;
-	ProgressBar dialogTranslatingProgressbar;
+	//WordCompletePopup wordCompletePopup;
 
 	boolean isBackground=false;//Activity是否处于后台
 
@@ -139,12 +178,14 @@ public class MainActivity extends BaseActivity
 				{
 					initConsts();
 					initBitmaps();
+					initEnglishWords();
 					// TODO: Implement this method
 				}
 		}).start();
 		initMainView();
 		createRightSlideView();
 		createLeftSlideView();
+		createWordCompletePopup();
 		initSwipeListener();
 		initPreferenceDataRightRv();
 		initPreferenceDataDiyBaidu();
@@ -154,7 +195,19 @@ public class MainActivity extends BaseActivity
 		new UpdateThread(this).start();
     }
 
-    private void initIntentData(){
+	private void initEnglishWords() {
+    	dbEnglishWords = DBEnglishWords.getInstance();
+    	if(!DBHelper.hasCreatedDB(DBEnglishWords.DB_NAME)){
+			try {
+				String words = FileUtil.getAssetsData(this,"english_words.txt");
+				dbEnglishWords.init(words);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void initIntentData(){
     	Intent intent = getIntent();
     	if (intent.hasExtra("checked_text")) {//选择的
 			String checkedText = intent.getStringExtra("checked_text");
@@ -179,8 +232,8 @@ public class MainActivity extends BaseActivity
 						{
 							//dialogTranslatingProgressbar.setProgress(helper.getProcess());
 							//dialogTranslatingContentTV.setText("已完成：" + helper.getProcess() + "/" + helper.totalTimes + "");
-							
-							adapter.insert(helper.finishTasks);
+							if(!(outputRecyclerView.getAdapter() instanceof ResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
+							resultAdapter.insert(helper.finishTasks);
 							translateProgress.setProgress(helper.getProcess());
 						}
 						break;
@@ -191,7 +244,7 @@ public class MainActivity extends BaseActivity
 							//translationResult=(String[][])obj2;
 							//adapter.updata(translationResult);
 							tasks = (ArrayList<BasicTranslationTask>)obj2;
-							adapter.updata(tasks);
+							//resultAdapter.insert(tasks);
 							itemDecoration.setTasks(tasks);
 							outputRecyclerView.invalidateItemDecorations();
 							//System.out.println("MainActivity:resultStrs:"+translationResult.toString()+"  length:"+translationResult.length);
@@ -233,43 +286,75 @@ public class MainActivity extends BaseActivity
 
 		inputText = findViewById(R.id.widget_main_inputtext);
 		inputText.addTextChangedListener(new TextWatcher(){
-				@Override
-				public void beforeTextChanged(CharSequence p1, int p2, int p3, int p4)
-				{
-					// TODO: Implement this method
-				}
+			@Override
+			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-				@Override
-				public void onTextChanged(CharSequence p1, int p2, int p3, int p4)
-				{
-					// TODO: Implement this method
-					if(p1!=null&&p1.length()>0){
-						translateButton.setEnabled(true);
-					}else{
-						translateButton.setEnabled(false);
+			}
+
+			@Override
+			public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+				if(charSequence!=null&&charSequence.length()>0){
+					if(!translateButton.isEnabled())translateButton.setEnabled(true);
+					if(before>0&&count==0){
+						char last=charSequence.charAt(start-before);
+						if('A'>last||last>'z') return;
 					}
+					if(count>1)return;
+					String text = charSequence.toString();
+					currentWord= AutoCompleteUtil.getCurrentText(text,start-before);
+					if(currentWord.equals(""))return;;
+					Log.i(TAG,"current is "+currentWord);
+					TimeUtil.start();
+					ArrayList<DBEnglishWords.Word> queryResults = DBEnglishWords.getInstance().queryWords(currentWord);
+					if(outputRecyclerView.getAdapter() instanceof ResultAdapter) {
+						if (queryResults.size() > 0) {
+							wordCompleteAdapter.setWords(queryResults);
+							outputRecyclerView.setAdapter(wordCompleteAdapter);
+						}
+					}else{
+						wordCompleteAdapter.update(queryResults);
+					}
+//
+//					wordCompletePopup.showPopupWindow(translateButton);
+					TimeUtil.end();
+//					DBEnglishWords.Word word = queryResults.get(0);
+					Log.i(TAG,""+queryResults.size());
+				}else{
+					translateButton.setEnabled(false);
 				}
+			}
 
-				@Override
-				public void afterTextChanged(Editable p1)
-				{
-					// TODO: Implement this method
-				}
+			@Override
+			public void afterTextChanged(Editable editable) {
+
+			}
 		});
 
 		inputText.setClickable(true);
 		inputText.setFocusable(true);
 
-
 		outputRecyclerView = findViewById(R.id.widget_main_recycler_view);
 
-
-		adapter = new ResultAdapter(this, null);
+		resultAdapter = new ResultAdapter(this, null);
 		itemDecoration = new ResultItemDecoration(this, tasks);
 		layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-		outputRecyclerView.setAdapter(adapter);
+		outputRecyclerView.setAdapter(resultAdapter);
 		outputRecyclerView.setLayoutManager(layoutManager);
 		outputRecyclerView.addItemDecoration(itemDecoration);
+
+		wordCompleteAdapter=new WordCompleteAdapter(this,null);
+		wordCompleteAdapter.setListener(new LanguageAdapter.OnClickItemListener() {
+			@Override
+			public void onClick(int position) {
+//				if(StringUtil.isValidContent(currentWord)){
+//					DBEnglishWords.Word word=wordCompleteAdapter.getWords().get(position);
+//					String input = inputText.getText().toString();
+//					input=input.replace(currentWord,word.getWord());
+//					inputText.setText(input);
+//				}
+			}
+		});
+		//wordCompleteDecoration=new WordCompleteDecoration();
 
 		translateButton = findViewById(R.id.widget_main_translate);
 		translateButton.setClickable(true);
@@ -324,6 +409,17 @@ public class MainActivity extends BaseActivity
 		inputText.setOnLongClickListener(onLongClickListener);
 		translateProgress=findViewById(R.id.widget_main_translate_progress);
 		translateProgress.setVisibility(View.GONE);
+		translateProgress.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if(helper!=null&&helper.isTranslating()){
+					helper.flag = 0;
+					ApplicationUtil.print(MainActivity.this,"当前任务已终止！");
+					translateProgress.setVisibility(View.INVISIBLE);
+					translateButton.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 	}
 
 	private void startTranslate(String content) {
@@ -340,6 +436,7 @@ public class MainActivity extends BaseActivity
 		if (!StringUtil.isValidContent(content)){
 			return;
 		}
+		content = content.trim();
 		if(!NetworkUtil.isNetworkConnected(MainActivity.this)){
 			ArrayList<LanguageBean> engines = getCheckedList(engineList);
 			boolean onlyHasOfflineEngine = true;
@@ -367,6 +464,13 @@ public class MainActivity extends BaseActivity
 		helper.setMode(mode);
 		//Log.i(TAG,"正在使用的翻译模式是："+MODE_NAMES[mode]);
 		initTasks(content);
+		//修改为outputRV
+		if(outputRecyclerView.getAdapter() instanceof WordCompleteAdapter){
+			resultAdapter.setTasks(tasks);
+			outputRecyclerView.setAdapter(resultAdapter);
+//			outputRecyclerView.removeItemDecoration(wordCompleteDecoration);
+//			outputRecyclerView.addItemDecoration(itemDecoration);
+		}
 		helper.setTasks(tasks);
 		helper.totalTimes = tasks.size();
 		helper.start();
@@ -376,6 +480,8 @@ public class MainActivity extends BaseActivity
 
 		translateButton.setVisibility(View.INVISIBLE);
 		translateProgress.setVisibility(View.VISIBLE);
+
+
 	}
 
 	private void createLeftSlideView(){
@@ -419,13 +525,6 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void createRightSlideView(){
-//		View leftSlideView=LayoutInflater.from(this).inflate(R.layout.main_slide_right,null);
-//		leftSlideView.setLayoutParams(new ViewGroup.LayoutParams(SmartSwipe.dp2px(280,this), ViewGroup.LayoutParams.MATCH_PARENT));
-//		//SmartSwipeWrapper leftMenuWrapper = SmartSwipe.wrap(leftSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
-//		DrawerConsumer leftDrawerConsumer=new DrawerConsumer().setDrawerView(SwipeConsumer.DIRECTION_LEFT,leftSlideView);
-//		leftDrawerConsumer.setEdgeSize(SmartSwipe.dp2px(40,this));
-//		SmartSwipe.wrap(this).addConsumer(leftDrawerConsumer);
-		
 		View rightSlideView=LayoutInflater.from(this).inflate(R.layout.main_slide_right,null);
 		SmartSwipe.wrap(rightSlideView).addConsumer(new StretchConsumer()).enableVertical();
 		
@@ -449,7 +548,6 @@ public class MainActivity extends BaseActivity
 			sourceList.add(bean);
 		}
 
-
 		rightTargetRv=rightSlideView.findViewById(R.id.main_slide_right_target_rv);
 		targetList=new ArrayList<LanguageBean>();
 		for(short i=0;i<Consts.LANGUAGE_NAMES.length;i++){
@@ -460,8 +558,7 @@ public class MainActivity extends BaseActivity
 			bean.setText(LANGUAGE_NAMES[i]);
 			targetList.add(bean);
 		}
-		
-		
+
 		rightEngineRv=rightSlideView.findViewById(R.id.main_slide_right_engine_rv);
 		engineList=new ArrayList<LanguageBean>();
 		for(short i=0;i<Consts.ENGINE_NAMES.length;i++){
@@ -472,8 +569,7 @@ public class MainActivity extends BaseActivity
 			bean.setText(ENGINE_NAMES[i]);
 			engineList.add(bean);
 		}
-		
-		
+
 		rightTTSRv=rightSlideView.findViewById(R.id.main_slide_right_tts_rv);
 		ttsList=new ArrayList<LanguageBean>();
 		for(short i=0;i<Consts.TTS_NAMES.length;i++){
@@ -502,7 +598,81 @@ public class MainActivity extends BaseActivity
 		rightDrawerConsumer.setShadowColor(Color.parseColor("#9e9e9e"));
 		rightDrawerConsumer.setShadowSize(SmartSwipe.dp2px(8,this));
 		SmartSwipe.wrap(this).addConsumer(rightDrawerConsumer);
-		
+
+		exchangeButton = findViewById(R.id.main_slide_right_exchange_button);
+		exchangeButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				LanguageBean checkedSourceLanguage = getCheckedList(sourceList).get(0);
+				ArrayList<LanguageBean> checkedTargetLanguages = getCheckedList(targetList);
+				LanguageBean checkedTargetLanguage;
+				if(checkedTargetLanguages.isEmpty()){
+					disSelectList(targetList);
+					targetList.get(checkedSourceLanguage.getUserData()).setIsSelected(true);
+					sourceList.get(checkedSourceLanguage.getUserData()).setIsSelected(false);
+					sourceList.get(LANGUAGE_AUTO).setIsSelected(true);
+					rightSourceRv.updateData();
+					rightTargetRv.updateData();
+//					targetList.get(checkedSourceLanguage)
+//					return;
+				}else{
+					assert rightTargetRv.getAdapter() != null;
+					int[] mapping = rightTargetRv.getAdapter().getMapping();
+					for (int each : mapping) {
+						if (targetList.get(each).isSelected()){
+							checkedTargetLanguage = targetList.get(each);
+							disSelectList(targetList);
+							targetList.get(checkedSourceLanguage.getUserData()).setIsSelected(true);
+							sourceList.get(checkedSourceLanguage.getUserData()).setIsSelected(false);
+							sourceList.get(checkedTargetLanguage.getUserData()).setIsSelected(true);
+							rightSourceRv.updateData();
+							rightTargetRv.updateData();
+							break;
+						}
+					}
+				}
+				Log.i(TAG,"click button!");
+			}
+		});
+
+		String copyrightInfo="Copyright@FunnySaltyFish\n2020\nAll Rights Reserved";
+		copyrightTextView=findViewById(R.id.main_slide_right_copyright);
+		SpannableStringBuilder ssb=new SpannableStringBuilder();
+		ssb.append(copyrightInfo);
+		ClickableSpan sc=new ClickableSpan(){
+			@Override
+			public void onClick(View p1)
+			{
+				// TODO: Implement this method
+				String url="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hZTAxLmFsaWNkbi5jb20va2YvSGJmZmU2OWQyNTE0ZDRhZjhhZDBmYzgwNjY4YzU3ZDU0US5wbmc?x-oss-process=image/format,png";
+				String url2="https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png";
+				Intent intent=new Intent();
+				Uri uri;
+				if(Math.random()<0.5){
+					uri=Uri.parse(url);
+				}else{
+					uri=Uri.parse(url2);
+				}
+				intent.setAction(Intent.ACTION_VIEW);
+				intent.setData(uri);
+				MainActivity.this.startActivity(intent);
+			}
+		};
+		int start=copyrightInfo.indexOf("FunnySaltyFish");
+		int end=start+"FunnySaltyFish".length();
+		ssb.setSpan(sc,start,end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#2196f3"));
+		ssb.setSpan(foregroundColorSpan,start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+		//配置给TextView
+		copyrightTextView.setMovementMethod(LinkMovementMethod.getInstance());
+		copyrightTextView.setText(ssb);
+//		exchangeButton.setLayoutParams(tvParam);
+	}
+
+	private void createWordCompletePopup(){
+    	//wordCompletePopup = new WordCompletePopup(this,null);
 	}
 
 	private void disSelectList(@NonNull ArrayList<LanguageBean> list){
@@ -533,6 +703,16 @@ public class MainActivity extends BaseActivity
 			targetList.get(2).setIsSelected(true);
 		}
 
+		String[] checkedEngines=sp.getStringSet("preference_engines_default",new HashSet<String>()).toArray(new String[0]);
+		if (checkedEngines.length!=0){
+			for (int i = 0; i < checkedEngines.length; i++) {
+				engineList.get(Integer.parseInt(checkedEngines[i])).setIsSelected(true);
+			}
+		}else{
+			engineList.get(ENGINE_GOOGLE).setIsSelected(true);
+			engineList.get(ENGINE_YOUDAO_NORMAL).setIsSelected(true);
+		}
+
 		String pre_language_mapping_string = SharedPreferenceUtil.getInstance().getString("pre_language_mapping_string","");
 		int[] languageMapping;
 		if (pre_language_mapping_string.equals("")){
@@ -557,8 +737,7 @@ public class MainActivity extends BaseActivity
 		DataUtil.setDefaultMapping(modeMapping);
 		rightModeRv.initData(modeList,modeMapping);
 
-		engineList.get(ENGINE_GOOGLE).setIsSelected(true);
-		engineList.get(ENGINE_YOUDAO_NORMAL).setIsSelected(true);
+
 		ttsList.get(TTS_BAIDU).setIsSelected(true);
 		modeList.get(MODE_NORMAL).setIsSelected(true);
 	}
@@ -909,24 +1088,4 @@ public class MainActivity extends BaseActivity
 		}
 	}
 
-
-
-	//	private void getInternetPermission(){
-//		SoulPermission.getInstance().checkAndRequestPermission(Manifest.permission.ACCESS_NETWORK_STATE, new CheckRequestPermissionListener(){
-//				@Override
-//				public void onPermissionOk(Permission p)
-//				{
-//					// TODO: Implement this method
-//					print("已授权");
-//				}
-//
-//				@Override
-//				public void onPermissionDenied(Permission p)
-//				{
-//					// TODO: Implement this method
-//					print("授权失败！");
-//				}
-//		});
-//	}
-	
 }
