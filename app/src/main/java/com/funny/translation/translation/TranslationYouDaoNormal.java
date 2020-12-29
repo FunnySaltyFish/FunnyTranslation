@@ -1,8 +1,10 @@
 package com.funny.translation.translation;
 
 import com.funny.translation.bean.Consts;
+import com.funny.translation.utils.OkHttpUtil;
 import com.funny.translation.utils.StringUtil;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +18,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okio.Timeout;
+
 public class TranslationYouDaoNormal extends BasicTranslationTask {
     public TranslationYouDaoNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
@@ -27,6 +37,39 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
         BufferedReader in = null;
         String result = "";
         try {
+//            OkHttpClient client = OkHttpUtil.getClient();
+//            String from= Consts.LANGUAGES[sourceLanguage][engineKind];
+//            String to=Consts.LANGUAGES[targetLanguage][engineKind];
+//            long salt=System.currentTimeMillis()+(long)(Math.random()*9+1);
+//            String bv= StringUtil.md5("5.0 (Windows)");
+//            String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"]BjuETDhU)zqSxf-=B#7m");
+//            FormBody formBody = new FormBody.Builder()
+//                    .add("i", URLEncoder.encode(sourceString,"UTF-8"))
+//                    .add("from", from)
+//                    .add("to", to)
+//                    .add("smartresult", "dict")
+//                    .add("client", "fanyideskweb")
+//                    .add("salt", ""+salt)
+//                    .add("sign", sign)
+//                    .add("ts",""+salt)
+////                    .add("lts", "1603598346659")
+//                    .add("bv", bv)
+////                    .add("bv","b6b8551f1d0b20d35d29f2fb5270dc9e")
+//                    .add("doctype", "json")
+//                    .add("version", "2.1")
+//                    .add("keyfrom", "fanyi.web")
+//                    .add("action", "FY_BY_REALTlME")
+//                    .build();
+//            Request request = new Request.Builder()
+//                    .url(url)
+//                    .addHeader("Cookie", "OUTFOX_SEARCH_USER_ID=970246104@10.169.0.83; OUTFOX_SEARCH_USER_ID_NCOO=570559528.1224236; _ntes_nnid=96bc13a2f5ce64962adfd6a278467214,1551873108952; JSESSIONID=aaae9i7plXPlKaJH_gkYw; td_cookie=18446744072941336803; SESSION_FROM_COOKIE=unknown; ___rl__test__cookies=1565689460872")
+//                    .addHeader("Referer", "http://fanyi.youdao.com/")
+//                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36")
+//                    .post(formBody)
+//                    .build();
+//            Call call = client.newCall(request);
+//            Response response = call.execute();
+//            return response.body().string();
             URL realUrl = new URL(url);
             // 打开和URL之间的连接
             URLConnection conn = realUrl.openConnection();
@@ -57,7 +100,7 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
             String bv= StringUtil.md5("5.0 (Windows)");
             //System.out.println(bv);
             String sign =StringUtil.md5("fanyideskweb"+sourceString+salt+"]BjuETDhU)zqSxf-=B#7m");//2020.9.10
-                    //"Nw(nmmbP%A-r6U3EUn]Aj");
+            //"Nw(nmmbP%A-r6U3EUn]Aj");
             //"mmbP%A-r6U3Nw(n]BjuEU"); 2020/7/15失败
             ///*"n%A-rKaT5fb[Gy?;N5@Tj"*/);
             //System.out.println("fanyideskweb"+sourceString+salt+"n%A-rKaT5fb[Gy?;N5@Tj");

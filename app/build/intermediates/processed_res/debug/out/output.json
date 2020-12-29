@@ -10,8 +10,8 @@
       "apkData": {
         "type": "MAIN",
         "splits": [],
-        "versionCode": 13,
-        "versionName": "1.55.0",
+        "versionCode": 16,
+        "versionName": "1.23.3",
         "outputFile": "app-debug.apk",
         "fullName": "debug",
         "baseName": "debug",
@@ -21,7 +21,7 @@
       "properties": {
         "packageId": "com.funny.translation",
         "split": "",
-        "minSdkVersion": "24"
+        "minSdkVersion": "19"
       }
     }
   ]

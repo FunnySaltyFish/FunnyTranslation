@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/view_popup_word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginBottom="2dp"
+        android:textSize="16sp"
+        android:textColor="@color/colorPrimaryBlue"
+        android:textStyle="bold"
+        tools:text="hh" />
+
+    <TextView
+        android:id="@+id/view_popup_word_detail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingBottom="2dp"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        tools:text="TextView" />
+</LinearLayout>

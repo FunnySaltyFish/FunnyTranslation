@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" filepath="$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" group="FunnyTranslation" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="FunnyTranslation/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/library.iml" group="FunnyTranslation/library" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" filepath="$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FunnyTranslation.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FunnyTranslation.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/FunnyTranslation.library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/FunnyTranslation.library.iml" />
     </modules>
   </component>
 </project>

@@ -64,7 +64,7 @@ public class SettingActivity extends BaseActivity
 
     public static class SettingFragment extends PreferenceFragmentCompat
     {
-        Preference pre_language_sort,pre_source_language,pre_target_language,pre_is_diy_baidu;
+        Preference pre_language_sort,pre_source_language,pre_target_language,pre_is_diy_baidu,pre_engines;
         Preference.OnPreferenceClickListener preferenceClickListener;
         Preference.OnPreferenceChangeListener preferenceChangeListener;
         Resources res;
@@ -80,6 +80,7 @@ public class SettingActivity extends BaseActivity
             pre_language_sort=getPreferenceManager().findPreference("preference_language_sort");
             pre_source_language=getPreferenceManager().findPreference("preference_language_source_default");
             pre_target_language=getPreferenceManager().findPreference("preference_language_target_default");
+            pre_engines=getPreferenceManager().findPreference("preference_engines_default");
             pre_is_diy_baidu = getPreferenceManager().findPreference("preference_baidu_is_diy_api");
             preferenceClickListener =new Preference.OnPreferenceClickListener(){
                 @Override
@@ -98,6 +99,7 @@ public class SettingActivity extends BaseActivity
                     switch (preference.getKey()){
                         case "preference_language_source_default":
                         case "preference_language_target_default":
+                        case "preference_engines_default":
                             ctx.isRvChange=true;
                             return true;
                         case "preference_baidu_is_diy_api":
@@ -111,6 +113,7 @@ public class SettingActivity extends BaseActivity
             if(pre_language_sort!=null){pre_language_sort.setOnPreferenceClickListener(preferenceClickListener);}
             pre_target_language.setOnPreferenceChangeListener(preferenceChangeListener);
             pre_source_language.setOnPreferenceChangeListener(preferenceChangeListener);
+            pre_engines.setOnPreferenceChangeListener(preferenceChangeListener);
             pre_is_diy_baidu.setOnPreferenceChangeListener(preferenceChangeListener);
         }
 

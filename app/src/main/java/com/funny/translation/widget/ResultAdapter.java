@@ -36,7 +36,7 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 		this.ctx = ctx;
 	}
 	
-	public void updata(ArrayList<BasicTranslationTask> tasks){
+	public void update(ArrayList<BasicTranslationTask> tasks){
 		this.tasks=tasks;
 		notifyDataSetChanged();
 	}
@@ -87,42 +87,45 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 			}else{
 				rcHolder.text.setTextSize(16);
 			}
+			if(task.getResult()==null)return;
 			rcHolder.text.setText(task.getResult().getBasicResult());
 			//System.out.println("resultString:"+task.resultString);
-			rcHolder.copyButton.setClickable(true);
-			rcHolder.copyButton.setOnClickListener(new OnClickListener(){
+			if (!rcHolder.copyButton.hasOnClickListeners()) {
+				rcHolder.copyButton.setClickable(true);
+				rcHolder.copyButton.setOnClickListener(new OnClickListener() {
 					@Override
-					public void onClick(View p1)
-					{
+					public void onClick(View p1) {
 						// TODO: Implement this method
-						TextView tv=rcHolder.text;
-						String text=tv.getText().toString();
+						TextView tv = rcHolder.text;
+						String text = tv.getText().toString();
 						//System.out.println(text);
-						ApplicationUtil.copyToClipboard(ctx,text);
-						ApplicationUtil.print(ctx,"已复制翻译结果["+(text.length()<8?text:(text.substring(0,5))+"...")+"]到剪贴板！");
+						ApplicationUtil.copyToClipboard(ctx, text);
+						ApplicationUtil.print(ctx, "已复制翻译结果[" + (text.length() < 8 ? text : (text.substring(0, 5)) + "...") + "]到剪贴板！");
 					}
-			});
-			rcHolder.ttsButton.setClickable(true);
-			rcHolder.ttsButton.setOnClickListener(new OnClickListener(){
+				});
+			}
+			if (!rcHolder.ttsButton.hasOnClickListeners()) {
+				rcHolder.ttsButton.setClickable(true);
+				rcHolder.ttsButton.setOnClickListener(new OnClickListener() {
 					@Override
-					public void onClick(View p1)
-					{
+					public void onClick(View p1) {
 						// TODO: Implement this method
-						BasicTranslationTask curTask=tasks.get(i);
+						BasicTranslationTask curTask = tasks.get(i);
 						short engineKind = curTask.engineKind;
-						if(engineKind==Consts.ENGINE_BV_TO_AV||engineKind==Consts.ENGINE_BIGGER_TEXT||engineKind==Consts.ENGINE_EACH_TEXT){
-							ApplicationUtil.print(ctx,"当前引擎的翻译结果不支持朗读哦~");
+						if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
+							ApplicationUtil.print(ctx, "当前引擎的翻译结果不支持朗读哦~");
 							return;
 						}
-						short TTSEngine=ctx.getCheckedTTSEngine();
-						System.out.println("TTSEngine:"+TTSEngine);
+						short TTSEngine = ctx.getCheckedTTSEngine();
+						System.out.println("TTSEngine:" + TTSEngine);
 						short targetLanguage = curTask.targetLanguage;
-						if (targetLanguage == Consts.LANGUAGE_WENYANWEN){
+						if (targetLanguage == Consts.LANGUAGE_WENYANWEN) {
 							targetLanguage = Consts.LANGUAGE_CHINESE;
 						}
-						TTSUtil.speak(ctx,curTask.getResult().getBasicResult(),targetLanguage,TTSEngine);
+						TTSUtil.speak(ctx, curTask.getResult().getBasicResult(), targetLanguage, TTSEngine);
 					}
-			});
+				});
+			}
 			//rcHolder.engine.setText(results[i][1]);
 			//rcHolder.text.setText(results[i][0]);
 		}
@@ -146,7 +149,15 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 		// TODO: Implement this method
 		return tasks==null?0:(tasks.size()+1);
 	}
-	
+
+	public ArrayList<BasicTranslationTask> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(ArrayList<BasicTranslationTask> tasks) {
+		this.tasks = tasks;
+	}
+
 	class ResultContentHolder extends RecyclerView.ViewHolder{
 		TextView text,engine;
 		ImageButton copyButton,ttsButton;

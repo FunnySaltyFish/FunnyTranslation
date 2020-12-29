@@ -402,6 +402,16 @@ library {
   }
 }
 library {
+  maven_library {
+    groupId: "com.hjq"
+    artifactId: "toast"
+    version: "8.6"
+  }
+  digests {
+    sha256: "\226G\325\201c\024\305\304\325=N\212E\363\212\313\341\267E\345\332\\n\tr2\035j$C\303?"
+  }
+}
+library {
   digests {
     sha256: "8t\260\227_\232\322\2032\214\003q\314\336-\343SuM\243?\3326\346\021p&#\356\036Z\225"
   }
@@ -637,6 +647,9 @@ library_dependencies {
 library_dependencies {
   library_index: 41
 }
+library_dependencies {
+  library_index: 42
+}
 module_dependencies {
   module_name: "base"
   dependency_index: 0
@@ -646,6 +659,7 @@ module_dependencies {
   dependency_index: 35
   dependency_index: 40
   dependency_index: 41
+  dependency_index: 42
   dependency_index: 30
   dependency_index: 31
 }
