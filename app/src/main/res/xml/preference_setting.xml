@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="设置">
 
     <android.support.v7.preference.PreferenceCategory
@@ -32,6 +32,16 @@
             android:entryValues="@array/entry_value_languages"
             android:icon="@drawable/ic_multi_check_checked"
             />
+
+        <android.support.v14.preference.MultiSelectListPreference
+            android:key="preference_engines_default"
+            android:summary="选择默认状况下的翻译引擎"
+            android:title="默认翻译引擎"
+            android:entries="@array/engines"
+            android:entryValues="@array/entry_value_engines"
+            android:icon="@drawable/ic_flag"
+            />
+
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
