@@ -18,7 +18,7 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -79,7 +79,7 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         TranslationResult result=new TranslationResult(Consts.ENGINE_GOOGLE);
         try
         {
@@ -87,7 +87,8 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
             StringBuilder sb = new StringBuilder();
             int i = 0;
             JSONArray jsonArray_0 = all.getJSONArray(0);
-            while(!jsonArray_0.getJSONArray(i).isNull(0)){
+            int jsonArray_0_length=jsonArray_0.length();
+            while(i<jsonArray_0_length&&!jsonArray_0.getJSONArray(i).isNull(0)){
                 String string = jsonArray_0.getJSONArray(i).getString(0);
                 if(!string.equals("null")) {
                     sb.append(string);
@@ -132,12 +133,12 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return null;
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return false;
     }
 

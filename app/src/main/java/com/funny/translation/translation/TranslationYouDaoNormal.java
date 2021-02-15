@@ -32,7 +32,7 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         OutputStreamWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -147,7 +147,7 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         TranslationResult result = new TranslationResult(engineKind);
         try {
             StringBuilder sb = new StringBuilder();
@@ -192,12 +192,12 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return "http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule";
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return false;
     }
 }

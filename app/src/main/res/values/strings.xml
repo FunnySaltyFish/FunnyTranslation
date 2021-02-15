@@ -25,6 +25,10 @@
     <string name="feedback">反馈</string>
     <string name="crash">崩溃</string>
     <string name="description_exchange_language">交换源语言和目标语言的按钮</string>
+    <string name="other_apps">开发者其他应用</string>
+    <string name="app_funnyluckyman_name">FunnyLuckyMan(欧皇测试器)</string>
+    <string name="app_funnyluckyman_introduction">一款利用猴子排序看看你的幸运度的小软件，欢迎体验！</string>
+    <string name="app_funnyluckyman_url">https://gitee.com/funnysaltyfish/funny-lucky-man-update</string>
 
 
 </resources>

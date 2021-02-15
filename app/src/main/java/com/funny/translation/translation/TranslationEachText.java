@@ -15,12 +15,12 @@ public class TranslationEachText extends BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         return sourceString;
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         if (basicText==null){
             throw new TranslationException(Consts.ERROR_IO);
         }
@@ -47,12 +47,12 @@ public class TranslationEachText extends BasicTranslationTask {
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return null;
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return true;
     }
 }

@@ -51,30 +51,6 @@ public class FunnyUncaughtExceptionHandler implements Thread.UncaughtExceptionHa
 
             intent.putExtra("CRASH_MESSAGE", getCrashReport(ex));
             applicationContext.startActivity(intent);
-
-//            final String crashReason = getCrashReport(ex);
-//            AlertDialog dialog = new AlertDialog.Builder(applicationContext)
-//                    .setTitle("抱歉，应用程序发生了崩溃！")
-//                    .setMessage("应用程序发生了崩溃，我们建议您发送崩溃报告以反馈。\n\n为什么需要崩溃报告？" +
-//                            "\n应用崩溃对于使用者和开发者来说都是相当大的灾难，我们都希望将其修复。但是，没有报错原因的崩溃，犹如坏了的无法打开的黑盒子，" +
-//                            "你只知道出现问题，却不知道是什么问题、问题在哪，难以完成修复。因此，还望您可以提供病症，我们才可以对症下药。" +
-//                            "\n\n具体原因如下:\n" + crashReason)
-//                    .setPositiveButton("复制并反馈", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            ClipBoardUtil.copy(applicationContext,crashReason);
-//                            ApplicationUtil.startWebBrowse(applicationContext,"https://support.qq.com/embed/phone/191372");
-//                            destroy();
-//                        }
-//                    })
-//                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            destroy();
-//                        }
-//                    })
-//                    .create();
-//            dialog.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

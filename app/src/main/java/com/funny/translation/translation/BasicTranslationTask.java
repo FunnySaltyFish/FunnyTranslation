@@ -17,10 +17,10 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
 
     public TranslationResult result;
 
-    abstract String getBasicText(String url) throws TranslationException;
-    abstract TranslationResult getFormattedResult(String basicText) throws TranslationException;
-    abstract String madeURL();
-    abstract boolean isOffline();
+    public abstract String getBasicText(String url) throws TranslationException;
+    public abstract TranslationResult getFormattedResult(String basicText) throws TranslationException;
+    public abstract String madeURL();
+    public abstract boolean isOffline();
 
     public BasicTranslationTask(TranslationHelper helper,String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         this.helper = helper;
