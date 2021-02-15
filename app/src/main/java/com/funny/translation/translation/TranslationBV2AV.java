@@ -12,7 +12,7 @@ public class TranslationBV2AV extends BasicTranslationTask{
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         String result="";
         String inputText = sourceString;
         if (TextUtils.isEmpty(inputText))
@@ -37,7 +37,7 @@ public class TranslationBV2AV extends BasicTranslationTask{
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         TranslationResult result = new TranslationResult(engineKind);
         if (!basicText.equals("")){
             result.setBasicResult(basicText);
@@ -48,12 +48,12 @@ public class TranslationBV2AV extends BasicTranslationTask{
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return null;
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return true;
     }
 }

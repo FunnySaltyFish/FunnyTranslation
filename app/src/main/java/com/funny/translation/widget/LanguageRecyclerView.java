@@ -1,13 +1,15 @@
 package com.funny.translation.widget;
 import android.annotation.SuppressLint;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.content.Context;
 import android.util.AttributeSet;
 import com.funny.translation.bean.LanguageBean;
 import java.util.ArrayList;
-import android.support.v7.widget.LinearLayoutManager;
 import android.content.res.TypedArray;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.funny.translation.R;
 public class LanguageRecyclerView extends RecyclerView
 {

@@ -1,16 +1,17 @@
 package com.funny.translation.widget;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.funny.translation.bean.App;
 import com.funny.translation.R;
 
 import java.util.List;
 
-public class OtherAppsAdapter extends BaseQuickAdapter<App,BaseViewHolder> {
+public class OtherAppsAdapter extends BaseQuickAdapter<App, BaseViewHolder> {
     public OtherAppsAdapter(int layoutResId, @Nullable List<App> data) {
         super(layoutResId, data);
     }
