@@ -16,7 +16,7 @@ public class TranslationBaiduNormal extends BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         //Log.i(TAG,String.format("正在使用百度翻译！用的appid是%s",Consts.BAIDU_APP_ID));
         BaiduTransApi api=BaiduTransApi.getBaiduTransApi(Consts.BAIDU_APP_ID,Consts.BAIDU_SECURITY_KEY);
         String from=Consts.LANGUAGES[sourceLanguage][engineKind];
@@ -31,7 +31,7 @@ public class TranslationBaiduNormal extends BasicTranslationTask {
 }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         TranslationResult translationResult=new TranslationResult(Consts.ENGINE_BAIDU_NORMAL);
         try
         {
@@ -63,12 +63,12 @@ public class TranslationBaiduNormal extends BasicTranslationTask {
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return null;
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return false;
     }
 }

@@ -14,6 +14,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.EditText;
+
+import androidx.appcompat.widget.AppCompatEditText;
+
 import com.funny.translation.R;
 import com.funny.translation.utils.BitmapUtil;
 import com.funny.translation.utils.ApplicationUtil;
@@ -23,7 +26,7 @@ import com.funny.translation.utils.ApplicationUtil;
 /**
  * Created by opprime on 16-7-21.
  */
-public class EditTextField extends android.support.v7.widget.AppCompatEditText {
+public class EditTextField extends AppCompatEditText {
     private Context mContext;
     private Bitmap mClearButton;
     private Paint mPaint;

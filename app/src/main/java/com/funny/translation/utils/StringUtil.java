@@ -1,8 +1,8 @@
 package com.funny.translation.utils;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import com.funny.translation.bean.Consts;

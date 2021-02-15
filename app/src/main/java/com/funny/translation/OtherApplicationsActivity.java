@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.funny.translation.bean.App;
 import com.funny.translation.widget.OtherAppsAdapter;
 
@@ -33,11 +36,11 @@ public class OtherApplicationsActivity extends BaseActivity{
         ));
 
         adapter=new OtherAppsAdapter(R.layout.view_other_applications_item,apps);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                OtherAppsAdapter adapter = (OtherAppsAdapter)baseQuickAdapter;
-                openURL(adapter.getData().get(i).getUrl());
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                OtherAppsAdapter adapter1 = (OtherAppsAdapter)adapter;
+                openURL(adapter1.getData().get(position).getUrl());
             }
         });
 

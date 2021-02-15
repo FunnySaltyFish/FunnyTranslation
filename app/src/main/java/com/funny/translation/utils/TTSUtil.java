@@ -1,23 +1,16 @@
 package com.funny.translation.utils;
-import android.speech.tts.TextToSpeech;
-import android.content.Context;
-import java.util.Locale;
-import com.funny.translation.bean.Consts;
-import android.media.MediaPlayer;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
-import java.io.File;
-import com.funny.translation.FunnyApplication;
-import android.support.v7.app.AppCompatActivity;
-import com.danikula.videocache.HttpProxyCacheServer;
-import java.io.FileNotFoundException;
-import java.util.Random;
 
-import com.funny.translation.thread.InternetTTSThread;
+import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
+
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.funny.translation.MainActivity;
-import com.funny.translation.translation.FunnyGoogleApi;
+import com.funny.translation.bean.Consts;
+import com.funny.translation.thread.InternetTTSThread;
+
+import java.util.Locale;
 
 public class TTSUtil
 {

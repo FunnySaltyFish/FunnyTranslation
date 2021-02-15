@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.funny.translation.ErrorDialogActivity;
 import com.funny.translation.FunnyApplication;

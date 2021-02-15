@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<android.support.v7.widget.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.ButtonBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                            android:id="@+id/buttonPanel"
                                            android:layout_width="match_parent"
                                            android:layout_height="wrap_content"
@@ -48,4 +48,4 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
 
-</android.support.v7.widget.ButtonBarLayout>
+</androidx.appcompat.widget.ButtonBarLayout>

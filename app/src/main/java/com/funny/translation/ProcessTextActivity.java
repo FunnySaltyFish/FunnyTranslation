@@ -3,10 +3,9 @@ package com.funny.translation;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.view.WindowManager;
 
-import com.funny.translation.utils.ApplicationUtil;
+import androidx.annotation.RequiresApi;
 
 import java.util.Objects;
 

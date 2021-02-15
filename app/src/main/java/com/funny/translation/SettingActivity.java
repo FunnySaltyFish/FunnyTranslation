@@ -1,22 +1,23 @@
 package com.funny.translation;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.ApplicationUtil;
@@ -124,7 +125,7 @@ public class SettingActivity extends BaseActivity
         }
 
         private void showSortDialog(){
-            RecyclerView recyclerView=new RecyclerView(Objects.requireNonNull(getContext()));
+            RecyclerView recyclerView=new RecyclerView(requireContext());
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             params.setMargins(12,0,12,0);
@@ -149,14 +150,16 @@ public class SettingActivity extends BaseActivity
                     arr);
             recyclerView.setAdapter(mAdapter);
             ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
-                public int getMovementFlags(RecyclerView recyclerView, android.support.v7.widget.RecyclerView.ViewHolder viewHolder) {
+                @Override
+                public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                     //首先回调的方法,返回int表示是否监听该方向
                     int dragFlag = ItemTouchHelper.DOWN | ItemTouchHelper.UP;//拖拽
                     int swipeFlag = 0;//侧滑删除
                     return makeMovementFlags(dragFlag, swipeFlag);
                 }
 
-                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, android.support.v7.widget.RecyclerView.ViewHolder target) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                     if (mAdapter != null) {
                         mAdapter.onMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                     }
@@ -175,7 +178,7 @@ public class SettingActivity extends BaseActivity
                     super.onSelectedChanged(viewHolder, actionState);
                 }
 
-                public void clearView(RecyclerView recyclerView, android.support.v7.widget.RecyclerView.ViewHolder viewHolder) {
+                public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                     super.clearView(recyclerView, viewHolder);
                     viewHolder.itemView.setAlpha(1.0f);
                     if (mAdapter != null) {
