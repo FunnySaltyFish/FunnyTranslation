@@ -37,6 +37,7 @@ public class ErrorDialogActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             destroy();
+//                            System.exit(0);
                             Context application = FunnyApplication.getFunnyContext();
                             Intent intent = new Intent(application, MainActivity.class);
                             PendingIntent restartIntent = PendingIntent.getActivity(

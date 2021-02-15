@@ -1,4 +1,4 @@
-#Sun Dec 27 10:34:02 CST 2020
+#Sun Feb 14 17:41:18 CST 2021
 base.0=D\:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

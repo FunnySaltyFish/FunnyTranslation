@@ -9,7 +9,7 @@ public class AutoCompleteUtil {
         while(i>0&&(fullText.charAt(i)<32||fullText.charAt(i)>47)){
             i--;
         }
-        if(i==0){
+        if(i==0&&currentCursor>=0){
             return fullText.substring(0,currentCursor+1);
         }else{
             end = currentCursor+1;

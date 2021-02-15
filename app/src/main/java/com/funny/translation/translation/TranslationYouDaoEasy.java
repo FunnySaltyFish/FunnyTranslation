@@ -25,7 +25,7 @@ public class TranslationYouDaoEasy extends BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         /*最简单的有道翻译接口，翻译结果差 最早写出来的*/
         PrintWriter out = null;
         BufferedReader in = null;
@@ -80,7 +80,7 @@ public class TranslationYouDaoEasy extends BasicTranslationTask {
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         TranslationResult result = new TranslationResult(engineKind);
         try
         {
@@ -124,12 +124,12 @@ public class TranslationYouDaoEasy extends BasicTranslationTask {
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return "http://fanyi.youdao.com/translate";
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return false;
     }
 }

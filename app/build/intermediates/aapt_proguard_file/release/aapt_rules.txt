@@ -3,6 +3,7 @@
 -keep class com.funny.translation.FeedbackActivity { <init>(); }
 -keep class com.funny.translation.FunnyApplication { <init>(); }
 -keep class com.funny.translation.MainActivity { <init>(); }
+-keep class com.funny.translation.OtherApplicationsActivity { <init>(); }
 -keep class com.funny.translation.ProcessTextActivity { <init>(); }
 -keep class com.funny.translation.SettingActivity { <init>(); }
 -keep class android.support.v14.preference.MultiSelectListPreference { <init>(...); }

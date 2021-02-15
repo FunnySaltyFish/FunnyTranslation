@@ -1,9 +1,11 @@
 package com.funny.translation;
+import android.app.Activity;
 import android.app.Application;
 import com.danikula.videocache.HttpProxyCacheServer;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 
 import com.danikula.videocache.file.FileNameGenerator;
 import com.funny.translation.bean.FunnyUncaughtExceptionHandler;
@@ -30,9 +32,45 @@ public class FunnyApplication extends Application
 		funnyUncaughtExceptionHandler.init(getFunnyContext());
 		OkHttpUtil.init();
 		ToastUtils.init(this);
+		initActivityManager();
 //		EasyHttp.init(this);
 //		EasyHttp.getInstance().debug("EasyHttp",true);
 		//SoulPermission.init(this);
+	}
+
+	private void initActivityManager() {
+			registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+				@Override
+				public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+					MyActivityManager.getInstance().setCurrentActivity(activity);
+				}
+
+				@Override
+				public void onActivityStarted(Activity activity) {
+				}
+
+				@Override
+				public void onActivityResumed(Activity activity) {
+					MyActivityManager.getInstance().setCurrentActivity(activity);
+				}
+
+				@Override
+				public void onActivityPaused(Activity activity) {
+				}
+
+				@Override
+				public void onActivityStopped(Activity activity) {
+				}
+
+				@Override
+				public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+				}
+
+				@Override
+				public void onActivityDestroyed(Activity activity) {
+				}
+			});
+
 	}
 
 	public FunnyApplication(){

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.funny.translation.R;
 import com.funny.translation.db.DBEnglishWords;
+import com.funny.translation.db.DBEnglishWordsUtils;
 
 import java.util.ArrayList;
 

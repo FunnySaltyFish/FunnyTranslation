@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.funny.translation.R;
 import com.funny.translation.bean.Consts;
-import com.funny.translation.bean.DoubleMap;
 import com.funny.translation.bean.LanguageBean;
 
 import java.util.ArrayList;
