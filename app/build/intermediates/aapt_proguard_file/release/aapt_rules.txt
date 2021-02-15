@@ -1,4 +1,4 @@
--keep class android.support.v4.app.CoreComponentFactory { <init>(); }
+-keep class androidx.core.app.CoreComponentFactory { <init>(); }
 -keep class com.funny.translation.ErrorDialogActivity { <init>(); }
 -keep class com.funny.translation.FeedbackActivity { <init>(); }
 -keep class com.funny.translation.FunnyApplication { <init>(); }
@@ -6,69 +6,55 @@
 -keep class com.funny.translation.OtherApplicationsActivity { <init>(); }
 -keep class com.funny.translation.ProcessTextActivity { <init>(); }
 -keep class com.funny.translation.SettingActivity { <init>(); }
--keep class android.support.v14.preference.MultiSelectListPreference { <init>(...); }
-
--keep class android.support.v4.widget.NestedScrollView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.app.AlertController$RecycleListView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.internal.widget.PreferenceImageView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.preference.EditTextPreference { <init>(...); }
-
--keep class android.support.v7.preference.ListPreference { <init>(...); }
-
--keep class android.support.v7.preference.Preference { <init>(...); }
-
--keep class android.support.v7.preference.PreferenceCategory { <init>(...); }
-
--keep class android.support.v7.preference.PreferenceScreen { <init>(...); }
-
--keep class android.support.v7.preference.SwitchPreferenceCompat { <init>(...); }
-
--keep class android.support.v7.preference.UnPressableLinearLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.view.menu.ActionMenuItemView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.view.menu.ExpandedMenuView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.view.menu.ListMenuItemView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ActionBarContainer { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ActionBarContextView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ActionBarOverlayLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ActionMenuView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ActivityChooserView$InnerLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.AlertDialogLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ButtonBarLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.CardView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ContentFrameLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.DialogTitle { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.FitWindowsFrameLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.FitWindowsLinearLayout { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.RecyclerView { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.SearchView$SearchAutoComplete { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.SwitchCompat { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.Toolbar { <init>(android.content.Context, android.util.AttributeSet); }
-
--keep class android.support.v7.widget.ViewStubCompat { <init>(android.content.Context, android.util.AttributeSet); }
-
 -keep class android.widget.Space { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.app.AlertController$RecycleListView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.view.menu.ActionMenuItemView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.view.menu.ExpandedMenuView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.view.menu.ListMenuItemView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ActionBarContainer { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ActionBarContextView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ActionBarOverlayLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ActionMenuView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ActivityChooserView$InnerLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.AlertDialogLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ButtonBarLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ContentFrameLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.DialogTitle { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.FitWindowsFrameLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.FitWindowsLinearLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.SearchView$SearchAutoComplete { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.SwitchCompat { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.Toolbar { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.appcompat.widget.ViewStubCompat { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.cardview.widget.CardView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.core.widget.NestedScrollView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.preference.UnPressableLinearLayout { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.preference.internal.PreferenceImageView { <init>(android.content.Context, android.util.AttributeSet); }
+
+-keep class androidx.recyclerview.widget.RecyclerView { <init>(android.content.Context, android.util.AttributeSet); }
 
 -keep class com.funny.translation.widget.EditTextField { <init>(android.content.Context, android.util.AttributeSet); }
 

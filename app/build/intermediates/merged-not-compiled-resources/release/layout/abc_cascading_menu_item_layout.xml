@@ -17,7 +17,7 @@
 
 <!-- Keep in sync with abc_popup_menu_item_layout.xml (which only differs in the title and shortcut
     position). -->
-<android.support.v7.view.menu.ListMenuItemView
+<androidx.appcompat.view.menu.ListMenuItemView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,4 +79,4 @@
 
     </LinearLayout>
 
-</android.support.v7.view.menu.ListMenuItemView>
+</androidx.appcompat.view.menu.ListMenuItemView>

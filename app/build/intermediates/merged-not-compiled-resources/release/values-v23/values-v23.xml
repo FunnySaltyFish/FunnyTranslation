@@ -14,6 +14,7 @@
         <!-- We can use the platform styles on v23+ -->
         <item name="actionMenuTextColor">?android:attr/actionMenuTextColor</item>
         <item name="actionMenuTextAppearance">?android:attr/actionMenuTextAppearance</item>
+        <item name="actionOverflowButtonStyle">?android:attr/actionOverflowButtonStyle</item>
 
         <item name="controlBackground">@drawable/abc_control_background_material</item>
     </style>
@@ -27,14 +28,26 @@
         <!-- We can use the platform styles on v23+ -->
         <item name="actionMenuTextColor">?android:attr/actionMenuTextColor</item>
         <item name="actionMenuTextAppearance">?android:attr/actionMenuTextAppearance</item>
+        <item name="actionOverflowButtonStyle">?android:attr/actionOverflowButtonStyle</item>
 
         <item name="controlBackground">@drawable/abc_control_background_material</item>
     </style>
+    <style name="Base.Widget.AppCompat.ActionButton.Overflow" parent="android:Widget.Material.ActionButton.Overflow"/>
     <style name="Base.Widget.AppCompat.Button.Borderless.Colored" parent="android:Widget.Material.Button.Borderless.Colored"/>
-    <style name="Base.Widget.AppCompat.Button.Colored" parent="android:Widget.Material.Button.Colored"/>
+    <style name="Base.Widget.AppCompat.Button.Colored" parent="android:Widget.Material.Button.Colored">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Widget.Button.Colored</item>
+    </style>
+    <style name="Base.Widget.AppCompat.EditText" parent="android:Widget.Material.EditText">
+        <item name="android:hyphenationFrequency">none</item>
+        <item name="android:breakStrategy">simple</item>
+    </style>
     <style name="Base.Widget.AppCompat.RatingBar.Indicator" parent="android:Widget.Material.RatingBar.Indicator"/>
     <style name="Base.Widget.AppCompat.RatingBar.Small" parent="android:Widget.Material.RatingBar.Small"/>
     <style name="Base.Widget.AppCompat.Spinner.Underlined" parent="android:Widget.Material.Spinner.Underlined"/>
+    <style name="Base.Widget.AppCompat.TextView" parent="android:Widget.Material.TextView">
+        <item name="android:hyphenationFrequency">none</item>
+        <item name="android:breakStrategy">high_quality</item>
+    </style>
     <style name="CardView" parent="Base.CardView">
         <item name="cardBackgroundColor">?android:attr/colorBackgroundFloating</item>
     </style>

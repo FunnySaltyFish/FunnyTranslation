@@ -1,6 +1,7 @@
 package com.funny.translation.translation;
 
-import android.support.v7.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import com.funny.translation.FunnyApplication;
 import com.funny.translation.utils.FunnyBiggerText;
@@ -11,12 +12,12 @@ public class TranslationBiggerText extends  BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         return sourceString;
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         int performance = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext()).getString("preference_bigger_text_performance","1"));
         FunnyBiggerText.fillChar = PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext()).getString("preference_bigger_text_fill_char","");
         String str = "";
@@ -35,12 +36,12 @@ public class TranslationBiggerText extends  BasicTranslationTask {
     }
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         return null;
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return true;
     }
 }

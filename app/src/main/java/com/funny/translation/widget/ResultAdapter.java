@@ -1,6 +1,5 @@
 package com.funny.translation.widget;
 import android.annotation.SuppressLint;
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.funny.translation.translation.BasicTranslationTask;
@@ -20,6 +19,9 @@ import com.funny.translation.utils.TTSUtil;
 import com.funny.translation.MainActivity;
 import android.widget.Space;
 import android.widget.ImageButton;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 	String[][] results;
