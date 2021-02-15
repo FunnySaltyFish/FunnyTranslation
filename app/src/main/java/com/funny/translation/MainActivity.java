@@ -50,8 +50,10 @@ import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.bean.LanguageBean;
+import com.funny.translation.db.DBEnglishWordsUtils;
 import com.funny.translation.db.DBEnglishWords;
-import com.funny.translation.db.DBHelper;
+import com.funny.translation.js.FunnyJSEngine;
+import com.funny.translation.js.JSEngine;
 import com.funny.translation.thread.UpdateThread;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationBV2AV;
@@ -152,13 +154,11 @@ public class MainActivity extends BaseActivity
 	TranslationHelper helper;
 	
 	Handler handler;
-	DBEnglishWords dbEnglishWords;
+	DBEnglishWordsUtils dbEnglishWordsUtils;
 
 	long curBackTime=0,firstBackTime=0;
 
-	AlertDialog translatingProgressDialog=null;
 	AlertDialog tipDialog=null;
-	//WordCompletePopup wordCompletePopup;
 
 	boolean isBackground=false;//Activity是否处于后台
 
@@ -172,15 +172,11 @@ public class MainActivity extends BaseActivity
 		re=getResources();
 		setContentView(R.layout.main);
 		
-		new Thread(new Runnable(){
-				@Override
-				public void run()
-				{
-					initConsts();
-					initBitmaps();
-					initEnglishWords();
-					// TODO: Implement this method
-				}
+		new Thread(() -> {
+			initConsts();
+			initBitmaps();
+			initEnglishWords();
+			// TODO: Implement this method
 		}).start();
 		initMainView();
 		createRightSlideView();
@@ -192,19 +188,20 @@ public class MainActivity extends BaseActivity
 		createDialogs();
 		initHandler();
 		initIntentData();//用户选择后选择用该软件翻译的
+		initJSEngine();
 		new UpdateThread(this).start();
+		inputText.requestFocus();//自动获取焦点
     }
 
+    private void initJSEngine(){
+		JSEngine jsEngine = new JSEngine();
+		jsEngine.request();
+//		FunnyJSEngine jsEngine = new FunnyJSEngine();
+//		jsEngine.request();
+	}
+
 	private void initEnglishWords() {
-    	dbEnglishWords = DBEnglishWords.getInstance();
-    	if(!DBHelper.hasCreatedDB(DBEnglishWords.DB_NAME)){
-			try {
-				String words = FileUtil.getAssetsData(this,"english_words.txt");
-				dbEnglishWords.init(words);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+    	dbEnglishWordsUtils = DBEnglishWordsUtils.getInstance();
 	}
 
 	private void initIntentData(){
@@ -228,10 +225,7 @@ public class MainActivity extends BaseActivity
 				{
 					case 0x001:
 						Object obj=msg.obj;
-						if (obj != null)
-						{
-							//dialogTranslatingProgressbar.setProgress(helper.getProcess());
-							//dialogTranslatingContentTV.setText("已完成：" + helper.getProcess() + "/" + helper.totalTimes + "");
+						if (obj != null) {
 							if(!(outputRecyclerView.getAdapter() instanceof ResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
 							resultAdapter.insert(helper.finishTasks);
 							translateProgress.setProgress(helper.getProcess());
@@ -239,26 +233,14 @@ public class MainActivity extends BaseActivity
 						break;
 					case 0x002:
 						Object obj2=msg.obj;
-						if (obj2 != null)
-						{
-							//translationResult=(String[][])obj2;
-							//adapter.updata(translationResult);
+						if (obj2 != null) {
 							tasks = (ArrayList<BasicTranslationTask>)obj2;
 							//resultAdapter.insert(tasks);
 							itemDecoration.setTasks(tasks);
 							outputRecyclerView.invalidateItemDecorations();
-							//System.out.println("MainActivity:resultStrs:"+translationResult.toString()+"  length:"+translationResult.length);
-							//outputText.setText(translationResult[0][0]);
-							//if (!translateButton.isEnabled())
-							{//当处于暂停状态时，恢复
-								//translateButton.setEnabled(true);
-							}
 							translateProgress.setVisibility(View.INVISIBLE);
 							translateButton.setVisibility(View.VISIBLE);
-							//translatingProgressDialog.dismiss();
 						}
-						//ArrayList<TranslationTask> task
-						//outputText.setText(helper.tasks.get(0).resultString);
 						break;
 					case 0x101:
 						ApplicationUtil.print(MainActivity.this,msg.obj.toString(),msg.arg1==1);
@@ -305,7 +287,7 @@ public class MainActivity extends BaseActivity
 					if(currentWord.equals(""))return;;
 					Log.i(TAG,"current is "+currentWord);
 					TimeUtil.start();
-					ArrayList<DBEnglishWords.Word> queryResults = DBEnglishWords.getInstance().queryWords(currentWord);
+					ArrayList<DBEnglishWords.Word> queryResults = DBEnglishWordsUtils.getInstance().queryWords(currentWord);
 					if(outputRecyclerView.getAdapter() instanceof ResultAdapter) {
 						if (queryResults.size() > 0) {
 							wordCompleteAdapter.setWords(queryResults);
@@ -332,6 +314,8 @@ public class MainActivity extends BaseActivity
 
 		inputText.setClickable(true);
 		inputText.setFocusable(true);
+//		inputText.setFocusableInTouchMode(true);
+
 
 		outputRecyclerView = findViewById(R.id.widget_main_recycler_view);
 
@@ -509,6 +493,10 @@ public class MainActivity extends BaseActivity
 					case R.string.feedback:
 						leftSlidingConsumer.close();
 						moveToActivity(FeedbackActivity.class);
+						break;
+					case R.string.other_apps:
+						leftSlidingConsumer.close();
+						moveToActivity(OtherApplicationsActivity.class);
 						break;
 				}
 			}
@@ -985,9 +973,6 @@ public class MainActivity extends BaseActivity
 	}
 
 	public boolean isFree(){//判断本软件是否处于空闲状态
-		if(translatingProgressDialog!=null&&translatingProgressDialog.isShowing()){
-			return false;
-		}
 		if(tipDialog!=null&&tipDialog.isShowing()){
 			return false;
 		}
@@ -1072,6 +1057,7 @@ public class MainActivity extends BaseActivity
 		isBackground=true;
 		TTSUtil.destroyTTS();
 		FunnyApplication.getProxy(this).shutdown();
+		dbEnglishWordsUtils.close();
 		super.onDestroy();
 	}
 

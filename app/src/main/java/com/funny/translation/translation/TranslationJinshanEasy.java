@@ -20,9 +20,9 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
     }
 
     @Override
-    String getBasicText(String url) throws TranslationException {
+    public String getBasicText(String url) throws TranslationException {
         try {
-            String string = OkHttpUtil.getWithIP(url,"182.32.234.161",9999);
+            String string = OkHttpUtil.get(url);//OkHttpUtil.getWithIP(url,"182.32.234.161",9999);
             Log.i(TAG,"获取到的string:"+string);
             return string;
         } catch (IOException e) {
@@ -32,22 +32,26 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
     }
 
     @Override
-    TranslationResult getFormattedResult(String basicText) throws TranslationException {
+    public TranslationResult getFormattedResult(String basicText) throws TranslationException {
         TranslationResult result = new TranslationResult(engineKind);
         try{
             JSONObject all = new JSONObject(basicText);
             if(all.getString("errmsg").equals("success")&&all.getInt("errno")==0){
                 JSONObject baseInfo = all.getJSONObject("baesInfo");
-                JSONArray symbols = baseInfo.getJSONArray("symbols");
-                JSONArray parts = symbols.getJSONObject(0).getJSONArray("parts");
-                JSONArray means = parts.getJSONObject(0).getJSONArray("means");
-                StringBuilder sb=new StringBuilder();
-                for (int i=0;i<means.length();i++){
-                    sb.append(means.getString(i));
-                    sb.append("\n");
+                if(baseInfo.has("symbols")){//释义比较丰富的词汇
+                    JSONArray symbols = baseInfo.getJSONArray("symbols");
+                    JSONArray parts = symbols.getJSONObject(0).getJSONArray("parts");
+                    JSONArray means = parts.getJSONObject(0).getJSONArray("means");
+                    StringBuilder sb=new StringBuilder();
+                    for (int i=0;i<means.length();i++){
+                        sb.append(means.getString(i));
+                        sb.append("\n");
+                    }
+                    sb.deleteCharAt(sb.length()-1);
+                    result.setBasicResult(sb.toString());
+                }else{
+                    result.setBasicResult(baseInfo.getString("translate_result"));
                 }
-                sb.deleteCharAt(sb.length()-1);
-                result.setBasicResult(sb.toString());
             }else if(all.getInt("errno")==404){
                 result.setBasicResult(all.getString("errmsg"));
             }
@@ -97,7 +101,7 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
 //    9AA9FA4923AC16CED1583C26CF284C3F
 
     @Override
-    String madeURL() {
+    public String madeURL() {
         String from = Consts.LANGUAGES[sourceLanguage][engineKind];
         String to = Consts.LANGUAGES[targetLanguage][engineKind];
 
@@ -112,7 +116,7 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
     }
 
     @Override
-    boolean isOffline() {
+    public boolean isOffline() {
         return false;
     }
 }

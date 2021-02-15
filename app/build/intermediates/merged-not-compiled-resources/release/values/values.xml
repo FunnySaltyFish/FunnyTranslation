@@ -250,8 +250,12 @@
     <dimen name="compat_control_corner_material">2dp</dimen>
     <dimen name="compat_notification_large_icon_max_height">320dp</dimen>
     <dimen name="compat_notification_large_icon_max_width">320dp</dimen>
+    <dimen name="def_height">50dp</dimen>
     <item format="float" name="disabled_alpha_material_dark" type="dimen">0.30</item>
     <item format="float" name="disabled_alpha_material_light" type="dimen">0.26</item>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_4">4dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
     <dimen name="drawer_header_height">160dp</dimen>
     <dimen name="drawer_header_icon_size">72dp</dimen>
     <dimen name="drawer_item_height">56dp</dimen>
@@ -292,6 +296,7 @@
     <dimen name="preference_seekbar_padding_end">22dp</dimen>
     <dimen name="preference_seekbar_padding_start">0dp</dimen>
     <dimen name="preference_seekbar_value_width">36dp</dimen>
+    <dimen name="sp_14">14sp</dimen>
     <dimen name="text_appbar">20sp</dimen>
     <dimen name="text_big_title">24sp</dimen>
     <dimen name="text_big_title_2">34sp</dimen>
@@ -310,6 +315,10 @@
     <dimen name="tooltip_y_offset_touch">16dp</dimen>
     <drawable name="notification_template_icon_bg">#3333B5E5</drawable>
     <drawable name="notification_template_icon_low_bg">#0cffffff</drawable>
+    <item name="BaseQuickAdapter_databinding_support" type="id"/>
+    <item name="BaseQuickAdapter_dragging_support" type="id"/>
+    <item name="BaseQuickAdapter_swiping_support" type="id"/>
+    <item name="BaseQuickAdapter_viewholder_support" type="id"/>
     <item name="action_bar_activity_content" type="id"/>
     <item name="action_bar_spinner" type="id"/>
     <item name="action_menu_divider" type="id"/>
@@ -372,7 +381,14 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with <ns1:g example="Mail" id="application_name">%s</ns1:g></string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
+    <string name="app_funnyluckyman_introduction">一款利用猴子排序看看你的幸运度的小软件，欢迎体验！</string>
+    <string name="app_funnyluckyman_name">FunnyLuckyMan(欧皇测试器)</string>
+    <string name="app_funnyluckyman_url">https://gitee.com/funnysaltyfish/funny-lucky-man-update</string>
     <string name="app_name">FunnyTranslation</string>
+    <string name="brvah_app_name">Library</string>
+    <string name="brvah_load_end">没有更多数据</string>
+    <string name="brvah_load_failed">加载失败，请点我重试</string>
+    <string name="brvah_loading">正在加载中...</string>
     <string name="copyright">Copyright@FunnySaltyFish\n2020\nAll Rights Reserved</string>
     <string name="crash">崩溃</string>
     <string name="description_drawer_header_image">左侧侧滑顶部图片，下方是侧滑菜单列表</string>
@@ -391,6 +407,7 @@
     <string name="language_source">源语言</string>
     <string name="language_target">目标语言</string>
     <string name="mode">翻译模式</string>
+    <string name="other_apps">开发者其他应用</string>
     <string name="process_text">FunnyTranslation</string>
     <string name="search_menu_title">Search</string>
     <string name="setting">设置</string>

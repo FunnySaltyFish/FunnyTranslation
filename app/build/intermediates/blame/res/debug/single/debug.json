@@ -1,11 +1,19 @@
 [
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21_view_result_content.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout-v21\\view_result_content.xml"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_speak.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_speak.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_view_simple_adapter_item.xml.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\view_simple_adapter_item.xml"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_apps.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_apps.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_edittext_normal.xml.flat",
@@ -38,6 +46,10 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_right_arrow.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_menu_right_arrow.png"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_other_applications.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\activity_other_applications.xml"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_launcher.png.flat",
@@ -120,12 +132,20 @@
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\view_drawer_normal.xml"
     },
     {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_app_funnyluckyman.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\app_funnyluckyman.png"
+    },
+    {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_menu_down_arrow.png.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_menu_down_arrow.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_round_button_unclickable.xml.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\bg_round_button_unclickable.xml"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_launcher_new_year.png.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\ic_launcher_new_year.png"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_ic_launcher.png.flat",
@@ -138,10 +158,6 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_progressbar.xml.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\drawable\\bg_progressbar.xml"
-    },
-    {
-        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\menu_selection_action_menu.xml.flat",
-        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\menu\\selection_action_menu.xml"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_view_result_content.xml.flat",
@@ -182,6 +198,10 @@
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_main_slide_right.xml.flat",
         "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\main_slide_right.xml"
+    },
+    {
+        "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\layout_view_other_applications_item.xml.flat",
+        "source": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\src\\main\\res\\layout\\view_other_applications_item.xml"
     },
     {
         "merged": "D:\\projects\\AppProjects\\Mine\\FunnyTranslation\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_single_check.png.flat",

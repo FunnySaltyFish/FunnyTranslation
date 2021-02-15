@@ -1,49 +1,32 @@
 package com.funny.translation.db;
 
 import android.content.ContentValues;
-import android.database.Cursor;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 
 import com.funny.translation.FunnyApplication;
+import com.funny.translation.utils.FileUtil;
 import com.funny.translation.utils.StringUtil;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 
-public class DBEnglishWords {
-    public static final String DB_NAME = "english_words.db";
-    public static final String TABLE_NAME = "WORDS";
-    private final int VERSION = 1;
+import static com.funny.translation.db.DBEnglishWordsUtils.*;
 
-    private final String COLUMN_WORD = "word";
-    private final String COLUMN_PHONETIC_SYMBOL = "phonetic_symbols";
-    private final String COLUMN_EXPLANATION = "explanation";
-
-    private final int COLUMN_WORD_INDEX = 0;
-    private final int COLUMN_PHONETIC_SYMBOL_INDEX = 1;
-    private final int COLUMN_EXPLANATION_INDEX = 2;
-
-    private final DBHelper dbHelper;
-    private static DBEnglishWords mInstance;
-
-    private final static int MAX_WORDS = 30;
-
-    private DBEnglishWords(){
-        dbHelper = new DBHelper(FunnyApplication.getFunnyContext(),DB_NAME,null,VERSION);
+public class DBEnglishWords extends SQLiteOpenHelper {
+    Context ctx;
+    public DBEnglishWords(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+        this.ctx=context;
     }
 
-    public static DBEnglishWords getInstance(){
-        if (mInstance==null){
-            mInstance = new DBEnglishWords();
-        }
-        return mInstance;
-    }
-
-    public void init(String words){
-        synchronized (dbHelper){
-            SQLiteDatabase database = dbHelper.getWritableDatabase();
+    @Override
+    public void onCreate(SQLiteDatabase database) {
+        synchronized (lock) {
             try {
-//                String createTable = String.format("CREATE TABLE %s (%s TEXT NOT NULL , %s TEXT NOT NULL,%s TEXT NOT NULL);"
-//                        , TABLE_NAME, COLUMN_WORD, COLUMN_PHONETIC_SYMBOL, COLUMN_EXPLANATION);
+                String words = FileUtil.getAssetsData(ctx, "english_words.txt");
                 String createTable = String.format("CREATE VIRTUAL TABLE %s USING fts3(%s TEXT NOT NULL , %s TEXT NOT NULL,%s TEXT NOT NULL);"
                         , TABLE_NAME, COLUMN_WORD, COLUMN_PHONETIC_SYMBOL, COLUMN_EXPLANATION);
                 database.execSQL(createTable);
@@ -61,79 +44,46 @@ public class DBEnglishWords {
                                     StringUtil.replaceEnglishPunctuation(str.substring(last + 1))
                             );
                             contentValues.clear();
-                            contentValues.put(COLUMN_WORD,word.getWord());
-                            contentValues.put(COLUMN_PHONETIC_SYMBOL,word.getPhoneticSymbol());
-                            contentValues.put(COLUMN_EXPLANATION,word.getExplanation());
-                            database.insert(TABLE_NAME,null,contentValues);
-//                            String addString = String.format("INSERT INTO %s VALUES ('%s','%s','%s');",
-//                                    TABLE_NAME,word.getWord(),word.getPhoneticSymbol(),word.getExplanation());
-//                            database.execSQL(addString);
+                            contentValues.put(COLUMN_WORD, word.getWord());
+                            contentValues.put(COLUMN_PHONETIC_SYMBOL, word.getPhoneticSymbol());
+                            contentValues.put(COLUMN_EXPLANATION, word.getExplanation());
+                            database.insert(TABLE_NAME, null, contentValues);
                         }
                     }
                 }
-                database.setTransactionSuccessful();
-                database.endTransaction();
-            }catch (Exception e){
-                e.printStackTrace();
-            }finally {
-                if (database!=null){
-                    database.close();
-                }
-            }
-        }
-    }
 
-    public ArrayList<Word> queryWords(String startsWith){
-        synchronized (dbHelper) {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            db.beginTransaction();
-            ArrayList<Word> results = new ArrayList<>();
-            if (!StringUtil.isValidContent(startsWith)) {
-                return results;
-            }
-            //String tableName = startsWith.substring(0, 1).toUpperCase();
-            //String querySql = "select * from " + TABLE_NAME + " where " + COLUMN_WORD + " like " + "'" + startsWith + "%';";
-            String querySql = "select * from " + TABLE_NAME + " where " + COLUMN_WORD + " match '" + startsWith +"*';";
-            Cursor cursor = null;
-            try {
-                cursor = db.rawQuery(querySql, null);
-                while (cursor.moveToNext()) {
-                    if(results.size()>MAX_WORDS)break;
-                    Word word = new Word(
-                            cursor.getString(COLUMN_WORD_INDEX),
-                            cursor.getString(COLUMN_PHONETIC_SYMBOL_INDEX),
-                            cursor.getString(COLUMN_EXPLANATION_INDEX)
-                    );
-                    results.add(word);
-                }
-                db.setTransactionSuccessful();
-                db.endTransaction();
+            } catch (IOException e) {
+                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (cursor != null) {
-                    cursor.close();
+                if(database!=null) {
+                    database.setTransactionSuccessful();
+                    database.endTransaction();
                 }
-                if (db != null) {
-                    db.close();
-                }
-            }
-            return results;
-        }
-    }
 
-    private void insertOneWord(String tableName,Word word){
-        synchronized (dbHelper) {
-            try (SQLiteDatabase database = dbHelper.getWritableDatabase()) {
-                String sql = String.format("INSERT INTO %s (%s,%s,%s);", tableName, word.getWord(), word.getPhoneticSymbol(), word.getExplanation());
-                database.execSQL(sql);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
 
-    public class Word{
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        synchronized (lock) {
+            if (newVersion == 2) {//版本 2
+                if (hasCreatedDB(DB_NAME)) {
+                    sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+                }
+                onCreate(sqLiteDatabase);
+            }
+        }
+    }
+
+    public static boolean hasCreatedDB(String dbName){
+        File file = new File(FunnyApplication.getFunnyContext().getDatabasePath(dbName).getPath());
+        return file.exists();
+    }
+
+    public static class Word{
         String word;
         String phoneticSymbol;
         String explanation;
@@ -170,5 +120,4 @@ public class DBEnglishWords {
 
 
     }
-
 }

@@ -628,8 +628,12 @@ dimen compat_button_padding_vertical_material
 dimen compat_control_corner_material
 dimen compat_notification_large_icon_max_height
 dimen compat_notification_large_icon_max_width
+dimen def_height
 dimen disabled_alpha_material_dark
 dimen disabled_alpha_material_light
+dimen dp_10
+dimen dp_4
+dimen dp_40
 dimen drawer_header_height
 dimen drawer_header_icon_size
 dimen drawer_item_height
@@ -671,6 +675,7 @@ dimen preference_no_icon_padding_start
 dimen preference_seekbar_padding_end
 dimen preference_seekbar_padding_start
 dimen preference_seekbar_value_width
+dimen sp_14
 dimen text_appbar
 dimen text_big_title
 dimen text_big_title_2
@@ -771,6 +776,7 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable app_funnyluckyman
 drawable bg_edittext
 drawable bg_edittext_focused
 drawable bg_edittext_normal
@@ -780,7 +786,10 @@ drawable bg_round_button
 drawable bg_round_button_onpress
 drawable bg_round_button_unclickable
 drawable bg_round_button_unpress
+drawable brvah_sample_footer_loading
+drawable brvah_sample_footer_loading_progress
 drawable ic_appid
+drawable ic_apps
 drawable ic_arrow_down_24dp
 drawable ic_clear_button
 drawable ic_copy
@@ -789,6 +798,7 @@ drawable ic_feedback
 drawable ic_flag
 drawable ic_key
 drawable ic_launcher
+drawable ic_launcher_new_year
 drawable ic_menu
 drawable ic_menu_down_arrow
 drawable ic_menu_narrow_left
@@ -818,10 +828,12 @@ drawable preference_list_divider_material
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id ALT
+id BaseQuickAdapter_databinding_support
+id BaseQuickAdapter_dragging_support
+id BaseQuickAdapter_swiping_support
+id BaseQuickAdapter_viewholder_support
 id CTRL
 id FUNCTION
-id Informal22
-id Informal33
 id META
 id SHIFT
 id SYM
@@ -844,6 +856,7 @@ id action_mode_close_button
 id action_text
 id actions
 id activity_chooser_view_content
+id activity_other_applications_rv
 id activity_setting_layout
 id add
 id alertTitle
@@ -897,6 +910,11 @@ id line1
 id line3
 id listMode
 id list_item
+id load_more_load_end_view
+id load_more_load_fail_view
+id load_more_loading_view
+id loading_progress
+id loading_text
 id main_slide_left_rv
 id main_slide_right_copyright
 id main_slide_right_engine_rv
@@ -977,6 +995,7 @@ id titleDividerNoCustom
 id title_template
 id top
 id topPanel
+id tv_prompt
 id uniform
 id unlessEditing
 id up
@@ -986,6 +1005,9 @@ id view_drawer_header_tv
 id view_drawer_normal_img
 id view_drawer_normal_tv
 id view_language_tv
+id view_other_apps_item_image
+id view_other_apps_item_introduction
+id view_other_apps_item_name
 id view_popup_rv
 id view_popup_word
 id view_popup_word_detail
@@ -1040,7 +1062,9 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_feedback
+layout activity_other_applications
 layout activity_setting
+layout brvah_quick_view_load_more
 layout dialog_translating
 layout expand_button
 layout main
@@ -1080,6 +1104,7 @@ layout view_drawer_divider
 layout view_drawer_header
 layout view_drawer_normal
 layout view_language_item
+layout view_other_applications_item
 layout view_popup_list
 layout view_popup_list_item
 layout view_result_content
@@ -1088,7 +1113,6 @@ layout view_simple_adapter_item
 layout view_slide_left_item
 layout view_toast
 menu menu_main
-menu selection_action_menu
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description
@@ -1128,7 +1152,14 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string app_funnyluckyman_introduction
+string app_funnyluckyman_name
+string app_funnyluckyman_url
 string app_name
+string brvah_app_name
+string brvah_load_end
+string brvah_load_failed
+string brvah_loading
 string copyright
 string crash
 string description_drawer_header_image
@@ -1147,6 +1178,7 @@ string language_japanese
 string language_source
 string language_target
 string mode
+string other_apps
 string process_text
 string search_menu_title
 string setting
