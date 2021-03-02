@@ -34,8 +34,10 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.DrawerView
             new DrawerItemNormal(R.drawable.ic_setting,R.string.setting),
             new DrawerItemNormal(R.drawable.ic_feedback,R.string.feedback),
             new DrawerItemNormal(R.drawable.ic_apps,R.string.other_apps),
+            new DrawerItemDivider(),
+            new DrawerItemNormal(R.drawable.ic_js,R.string.js),
             new DrawerItemDivider()
-//            new DrawerItemNormal(R.mipmap.icon_drawerlayout_night, R.string.drawer_menu_night),
+            //            new DrawerItemNormal(R.mipmap.icon_drawerlayout_night, R.string.drawer_menu_night),
 //            new DrawerItemNormal(R.mipmap.icon_drawerlayout_offline, R.string.drawer_menu_offline)
     );
 

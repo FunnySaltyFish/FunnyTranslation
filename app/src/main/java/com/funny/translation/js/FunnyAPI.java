@@ -18,8 +18,8 @@ public class FunnyAPI extends ScriptableObject {
     }
 
     @JSStaticFunction
-    public static void printSelf(){
-        Log.i(TAG,"我是FunnyAPI");
+    public static void print(Object obj){
+        Log.i(TAG,obj.toString());
     }
 
     @Override

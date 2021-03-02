@@ -51,10 +51,16 @@ import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.bean.LanguageBean;
-import com.funny.translation.db.DBEnglishWordsUtils;
 import com.funny.translation.db.DBEnglishWords;
-import com.funny.translation.js.FunnyJSEngine;
+import com.funny.translation.db.DBEnglishWordsUtils;
+import com.funny.translation.db.DBJSUtils;
+import com.funny.translation.js.JS;
+import com.funny.translation.js.JSBean;
 import com.funny.translation.js.JSEngine;
+import com.funny.translation.js.JSException;
+import com.funny.translation.js.JSManager;
+import com.funny.translation.js.JSUtils;
+import com.funny.translation.js.TranslationCustom;
 import com.funny.translation.thread.UpdateThread;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationBV2AV;
@@ -70,7 +76,6 @@ import com.funny.translation.utils.AutoCompleteUtil;
 import com.funny.translation.utils.BitmapUtil;
 import com.funny.translation.utils.ClipBoardUtil;
 import com.funny.translation.utils.DataUtil;
-import com.funny.translation.utils.FileUtil;
 import com.funny.translation.utils.NetworkUtil;
 import com.funny.translation.utils.SharedPreferenceUtil;
 import com.funny.translation.utils.StringUtil;
@@ -86,7 +91,9 @@ import com.funny.translation.widget.ResultItemDecoration;
 import com.funny.translation.widget.WordCompleteAdapter;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
@@ -105,6 +112,7 @@ import static com.funny.translation.bean.Consts.ENGINE_BV_TO_AV;
 import static com.funny.translation.bean.Consts.ENGINE_EACH_TEXT;
 import static com.funny.translation.bean.Consts.ENGINE_GOOGLE;
 import static com.funny.translation.bean.Consts.ENGINE_JINSHAN;
+import static com.funny.translation.bean.Consts.ENGINE_JS;
 import static com.funny.translation.bean.Consts.ENGINE_NAMES;
 import static com.funny.translation.bean.Consts.ENGINE_YOUDAO_NORMAL;
 import static com.funny.translation.bean.Consts.IC_MENU_RIGHT_ARROW;
@@ -120,12 +128,6 @@ import static com.funny.translation.bean.Consts.MODE_NORMAL;
 import static com.funny.translation.bean.Consts.TTS_BAIDU;
 import static com.funny.translation.bean.Consts.TTS_NAMES;
 
-//import com.qw.soul.permission.SoulPermission;
-//import com.qw.soul.permission.callbcak.CheckRequestPermissionListener;
-//import com.qw.soul.permission.bean.Permission;
-//import com.luwei.checkhelper.MultiCheckHelper;
-//import com.luwei.checkhelper.CheckHelper;
-
 public class MainActivity extends BaseActivity 
 {
 	Resources re;
@@ -140,10 +142,10 @@ public class MainActivity extends BaseActivity
 	ImageButton exchangeButton;
 	CircleProgress translateProgress;
 	
-	LanguageRecyclerView rightSourceRv,rightTargetRv,rightEngineRv,rightTTSRv,rightModeRv;
+	LanguageRecyclerView rightSourceRv,rightTargetRv,rightEngineRv,rightTTSRv,rightModeRv,rightJSRv;
 	TextView copyrightTextView;
 	
-	ArrayList<LanguageBean> sourceList,targetList,engineList,ttsList,modeList;
+	ArrayList<LanguageBean> sourceList,targetList,engineList,ttsList,modeList,jsList;
 
 	DrawerConsumer rightDrawerConsumer;//右侧侧滑
 	SlidingConsumer leftSlidingConsumer;
@@ -156,6 +158,9 @@ public class MainActivity extends BaseActivity
 	
 	Handler handler;
 	DBEnglishWordsUtils dbEnglishWordsUtils;
+
+	ArrayList<JS> allEnabledJS;
+	DBJSUtils dbJSUtils;
 
 	long curBackTime=0,firstBackTime=0;
 
@@ -177,6 +182,7 @@ public class MainActivity extends BaseActivity
 			initConsts();
 			initBitmaps();
 			initEnglishWords();
+			initJSEngine();
 			// TODO: Implement this method
 		}).start();
 		initMainView();
@@ -189,13 +195,84 @@ public class MainActivity extends BaseActivity
 		createDialogs();
 		initHandler();
 		initIntentData();//用户选择后选择用该软件翻译的
-		initJSEngine();
+
 		new UpdateThread(this).start();
+
 		inputText.requestFocus();//自动获取焦点
     }
 
     private void initJSEngine(){
-		//JSEngine jsEngine = new JSEngine("","");
+    	dbJSUtils = DBJSUtils.getInstance();
+    	String code = "const all = this;\n" +
+				"/*FunnyTranslation JS Engine Start*/\n" +
+				"const FunnyJS = {\n" +
+				"    \"author\":\"FunnySaltyFish\",\n" +
+				"    \"about\":\"示例JS\",\n" +
+				"    \"version\":1,\n" +
+				"    \"name\":\"ExampleJS\",\n" +
+				"    \"debugMode\":true,\n" +
+				"    \"madeURL\":function(){return \"\"},\n" +
+				"    \"isOffline\":function(){return true;},\n" +
+				"\t\"getBasicText\":function(url){\n" +
+				"        FunnyAPI.print(\"all is :\"+all.sourceString);\n" +
+				"\t    FunnyAPI.print(\"source is :\"+sourceString);\n" +
+				"\t    return sourceString.replace(\"一\",\"二\");\n" +
+				"        // return \"测试文本\";\n" +
+				"    },\n" +
+				"\t\"getFormattedResult\":function(text){\n" +
+				"        var result = new JSTranslationResult(\"sourceString\");\n" +
+				"        result.basicText = text;\n" +
+				"        return result;\n" +
+				"\t}\n" +
+				"}\n" +
+				"/*FunnyTranslation JS Engine End*/\n" +
+				"function test(){\n" +
+				"    FunnyAPI.print(\"source is :\"+sourceString);\n" +
+				"}";
+//		JS addJS = new JS(0,"testJS",code,1,"FunnySaltyFish","",1);
+//		dbJSUtils.insertJS(addJS);
+
+    	allEnabledJS = dbJSUtils.queryAllEnabledJS();
+
+    	for(int i = 0;i<allEnabledJS.size();i++){
+    		JS js = allEnabledJS.get(i);
+			try {
+//				JSONObject object = JSUtils.extractConfiguration(js.code);
+//				if (object == null) {
+//					ApplicationUtil.print(this,"插件【"+js.fileName+"】加载出错！");
+//					continue;
+//				}
+				JSEngine jsEngine = new JSEngine();
+//				js.author = object.getString("author");
+//				js.version = object.getInt("version");
+//				js.about = object.getString("about");
+
+				jsEngine.loadJS(js);
+				jsEngine.loadBasicConfigurations();
+				JSManager.addJSEngine(jsEngine);
+			} catch (Exception e) {
+				e.printStackTrace();
+				allEnabledJS.remove(js);
+				i--;
+				ApplicationUtil.print(this,"插件【"+js.fileName+"】加载出错！原因是："+e.getMessage());
+			}
+
+		}
+		jsList = JSUtils.coverJSToLanguageBean(allEnabledJS);
+    	if(rightJSRv != null){
+			int[] mapping = new int[jsList.size()];
+			DataUtil.setDefaultMapping(mapping);
+			rightJSRv.initData(jsList,mapping);
+			rightJSRv.getAdapter().notifyDataSetChanged();
+//			rightJSRv.getAdapter().list = jsList;
+//			rightJSRv.getAdapter().resetMapping();
+//			rightJSRv.getAdapter().notifyDataSetChanged();
+		}
+//    	String code = "var Consts = com.funny.translation.bean.Consts;\n" +
+//				"FunnyAPI.print(Consts.LANGUAGE_AUTO);";
+//    	JS testJS = new JS("testJs",1001,code);
+
+
 		//jsEngine.request();
 //		FunnyJSEngine jsEngine = new FunnyJSEngine();
 //		jsEngine.request();
@@ -301,7 +378,7 @@ public class MainActivity extends BaseActivity
 //					wordCompletePopup.showPopupWindow(translateButton);
 					TimeUtil.end();
 //					DBEnglishWords.Word word = queryResults.get(0);
-					Log.i(TAG,""+queryResults.size());
+					//Log.i(TAG,""+queryResults.size());
 				}else{
 					translateButton.setEnabled(false);
 				}
@@ -414,7 +491,7 @@ public class MainActivity extends BaseActivity
     		ApplicationUtil.print(this,"您必须选择目标语言后再开始翻译！");
     		return;
 		}
-    	if (getCheckedList(engineList).size()==0){
+    	if (getCheckedList(engineList).size()==0&&getCheckedList(jsList).size()==0){
     		ApplicationUtil.print(this,"您必须选择翻译引擎再翻译！");
     		return;
 		}
@@ -499,6 +576,10 @@ public class MainActivity extends BaseActivity
 						leftSlidingConsumer.close();
 						moveToActivity(OtherApplicationsActivity.class);
 						break;
+					case R.string.js:
+						leftSlidingConsumer.close();
+						moveToActivity(JSManageActivity.class);
+						break;
 				}
 			}
 		});
@@ -580,6 +661,8 @@ public class MainActivity extends BaseActivity
 			bean.setText(MODE_NAMES[i]);
 			modeList.add(bean);
 		}
+
+		rightJSRv=rightSlideView.findViewById(R.id.main_slide_right_js_rv);
 
 		//SmartSwipeWrapper rightMenuWrapper = SmartSwipe.wrap(rightSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
 		rightDrawerConsumer=new DrawerConsumer().setDrawerView(SwipeConsumer.DIRECTION_RIGHT,rightSlideView);
@@ -726,6 +809,10 @@ public class MainActivity extends BaseActivity
 		DataUtil.setDefaultMapping(modeMapping);
 		rightModeRv.initData(modeList,modeMapping);
 
+//		int[] jsMapping = new int[MODE_NAMES.length];
+//		DataUtil.setDefaultMapping(jsMapping);
+//		rightJSRv.initData(jsList,jsMapping);
+
 
 		ttsList.get(TTS_BAIDU).setIsSelected(true);
 		modeList.get(MODE_NORMAL).setIsSelected(true);
@@ -799,9 +886,9 @@ public class MainActivity extends BaseActivity
 		}
 		short source=getCheckedList(sourceList).get(0).getUserData();
 		int i=0;
+		BasicTranslationTask task;
 		for(LanguageBean target:getCheckedList(targetList)){
 			for(LanguageBean engine:getCheckedList(engineList)){
-				BasicTranslationTask task;
 				switch (engine.getUserData()){
 					case ENGINE_JINSHAN:
 						//task = new TranslationYouDaoEasy(helper,content,source,target.getUserData(),ENGINE_YOUDAO_EASY);
@@ -832,6 +919,17 @@ public class MainActivity extends BaseActivity
 				//task.setLisener(helper.defaultListener);
 				tasks.add(task);
 			}
+			//处理插件
+			for (LanguageBean bean : getCheckedList(jsList)){
+				JSBean jsBean = (JSBean)bean;
+				JSEngine jsEngine = JSManager.getJSEngineById(jsBean.getId());
+				if(jsEngine!=null){
+					TranslationCustom customTask = new TranslationCustom(helper,content,source,target.getUserData(),ENGINE_JS);
+					customTask.setJSEngine(jsEngine);
+					tasks.add(customTask);
+				}
+			}
+
 		}
 //		for(int i=0;i<2;i++){
 //			TranslationTask task=new TranslationTask(ENGINE_YOUDAO_NORMAL,LANGUAGE_ENGLISH,LANGUAGE_CHINESE,inputText.getText().toString());

@@ -2,6 +2,7 @@ package com.funny.translation.widget;
 import android.annotation.SuppressLint;
 import android.view.ViewGroup;
 
+import com.funny.translation.js.TranslationCustom;
 import com.funny.translation.translation.BasicTranslationTask;
 
 import java.util.ArrayList;
@@ -77,7 +78,13 @@ public class ResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 			final ResultContentHolder rcHolder=(ResultContentHolder)holder;
 			task=tasks.get(i);
 			sb.setLength(0);
-			sb.append(Consts.ENGINE_NAMES[task.engineKind]);
+			if(task.engineKind==Consts.ENGINE_JS){
+				TranslationCustom custom = (TranslationCustom)task;
+				sb.append(custom.getJSEngine().js.fileName);
+			}else{
+				sb.append(Consts.ENGINE_NAMES[task.engineKind]);
+			}
+
 			sb.append("  ");
 			sb.append(Consts.LANGUAGE_NAMES[task.sourceLanguage]);
 			sb.append("->");

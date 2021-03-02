@@ -1,6 +1,5 @@
 package com.funny.translation.db;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -28,7 +27,7 @@ public class DBEnglishWordsUtils {
     private final DBEnglishWords dbHelper;
     private static DBEnglishWordsUtils mInstance;
 
-    public static Object lock=new Object();
+    public static final Object lock=new Object();
 
     private final static int MAX_WORDS = 30;
 

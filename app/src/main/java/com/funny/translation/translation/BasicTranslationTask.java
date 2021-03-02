@@ -7,7 +7,7 @@ import com.funny.translation.utils.StringUtil;
 
 public abstract class BasicTranslationTask implements OnTranslateListener {
     private static final String TAG = "BasicTranslationTask";
-    TranslationHelper helper;
+    protected TranslationHelper helper;
 
     public String sourceString;
 
@@ -30,7 +30,7 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
         this.engineKind = engineKind;
     }
 
-    public void translate(short mode){//返回值：是否离线翻译
+    public void translate(short mode){
         String url = madeURL();
         String processedString= null;
         result = new TranslationResult(engineKind);
@@ -54,8 +54,6 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
             result.setStatue(TranslationResult.TRANSLATE_STATUE_SUCCESS);
             onSuccess(helper,result);
         }
-
-        //
         catch (TranslationException e) {
             e.printStackTrace();
             reFormatBasicText(result,mode);//还原处理过的basicText

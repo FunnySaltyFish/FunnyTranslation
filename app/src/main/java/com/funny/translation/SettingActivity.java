@@ -23,10 +23,9 @@ import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.ApplicationUtil;
 import com.funny.translation.utils.DataUtil;
 import com.funny.translation.utils.SharedPreferenceUtil;
-import com.funny.translation.widget.SimpleAdapter;
+import com.funny.translation.widget.DraggableAdapter;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static com.funny.translation.bean.Consts.LANGUAGES;
 
@@ -146,7 +145,7 @@ public class SettingActivity extends BaseActivity
                 arr[i] = defaultArr[languageMapping[i]];
             }
 
-            final SimpleAdapter mAdapter = new SimpleAdapter(getContext(),
+            final DraggableAdapter mAdapter = new DraggableAdapter(getContext(),
                     arr);
             recyclerView.setAdapter(mAdapter);
             ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
