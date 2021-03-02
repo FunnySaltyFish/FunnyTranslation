@@ -18,8 +18,7 @@ public class FunnyJSEngine {
         jsContext = Context.enter();
         try {
             jsContext.setOptimizationLevel(-1);
-            script = jsContext.initSafeStandardObjects(new HostFunctions());
-            //ScriptableObjec
+            script = jsContext.initSafeStandardObjects();
             String code = "var a = 99;\nfunction test(str){return \"这里是test函数，参数为：\"+str;}\n";
             jsContext.evaluateString(script, code, "test1.js", 1, null);
 

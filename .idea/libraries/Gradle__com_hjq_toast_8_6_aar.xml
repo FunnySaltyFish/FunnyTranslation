@@ -5,6 +5,9 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/48dcf95225852a975ee6861b6dad1cac/toast-8.6/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b98604471da0446351a3bdabb98c0d50/toast-8.6/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b98604471da0446351a3bdabb98c0d50/toast-8.6/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b98604471da0446351a3bdabb98c0d50/jetified-toast-8.6/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b98604471da0446351a3bdabb98c0d50/jetified-toast-8.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b98604471da0446351a3bdabb98c0d50/jetified-toast-8.6/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.hjq/toast/8.6/30fa1251e86fdab025c252814fdc3f5a579bceb/toast-8.6-javadoc.jar!/" />

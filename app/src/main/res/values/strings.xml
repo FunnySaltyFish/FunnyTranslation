@@ -29,6 +29,8 @@
     <string name="app_funnyluckyman_name">FunnyLuckyMan(欧皇测试器)</string>
     <string name="app_funnyluckyman_introduction">一款利用猴子排序看看你的幸运度的小软件，欢迎体验！</string>
     <string name="app_funnyluckyman_url">https://gitee.com/funnysaltyfish/funny-lucky-man-update</string>
+    <string name="js">插件ᵝ</string>
+    <string name="js_manage">插件管理</string>
 
 
 </resources>

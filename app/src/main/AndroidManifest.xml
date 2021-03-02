@@ -5,7 +5,6 @@
 	package="com.funny.translation">
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<application
 		android:name=".FunnyApplication"
 		android:allowBackup="true"
@@ -45,5 +44,6 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".OtherApplicationsActivity" android:label="@string/other_apps" android:theme="@style/AppTheme"/>
+		<activity android:name=".JSManageActivity" android:label="@string/js_manage" android:theme="@style/AppTheme"/>
 	</application>
 </manifest>

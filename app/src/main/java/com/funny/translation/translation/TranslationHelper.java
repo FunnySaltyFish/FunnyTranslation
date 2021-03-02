@@ -11,6 +11,8 @@ import java.net.URLConnection;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import com.funny.translation.bean.Consts;
+import com.funny.translation.js.TranslationCustom;
+
 import android.os.Handler;
 import android.os.Message;
 import java.util.Map;
@@ -74,9 +76,11 @@ public class TranslationHelper extends Thread
 			if(flag==FLAG_TRANSLATING){
 				if(this.tasks==null||this.tasks.isEmpty()){return;}
 				BasicTranslationTask task=this.tasks.get(curI++);
-				task.translate(mode);
-				try
-				{
+				if(task instanceof TranslationCustom){
+					TranslationCustom custom = (TranslationCustom) task;
+					custom.translate(mode);
+				}else task.translate(mode);
+				try {
 					finishTasks.add(task);
 					Message msg=new Message();
 					msg.what=0x001;

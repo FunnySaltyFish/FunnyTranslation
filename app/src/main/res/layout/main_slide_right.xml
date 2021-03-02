@@ -69,12 +69,27 @@
 			android:layout_height="wrap_content"
 			android:layout_below="@id/mainheaderTextView2"
 			android:id="@+id/main_slide_right_engine_rv"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/js"
+			android:layout_below="@id/main_slide_right_engine_rv"
+			android:id="@+id/mainheaderTextView23"
+			android:textColor="#FF448AFF"/>
+
+		<com.funny.translation.widget.LanguageRecyclerView
+			app:check_kind="1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/mainheaderTextView23"
+			android:id="@+id/main_slide_right_js_rv"/>
 		
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/mode"
-			android:layout_below="@id/main_slide_right_tts_rv"
+			android:layout_below="@id/main_slide_right_js_rv"
 			android:id="@+id/mainheaderTextView4"
 			android:textColor="#FF448AFF"/>
 
@@ -89,7 +104,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/tts"
-			android:layout_below="@id/main_slide_right_engine_rv"
+			android:layout_below="@id/main_slide_right_mode_rv"
 			android:id="@+id/mainheaderTextView3"
 			android:textColor="#FF448AFF"/>
 
@@ -105,7 +120,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/copyright"
-			android:layout_below="@id/main_slide_right_mode_rv"
+			android:layout_below="@id/main_slide_right_tts_rv"
 			android:gravity="center"
 			android:layout_marginTop="8dp"
 			android:textColor="#36000000"

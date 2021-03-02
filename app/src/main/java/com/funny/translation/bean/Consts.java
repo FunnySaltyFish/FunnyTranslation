@@ -38,6 +38,8 @@ public class Consts
 	public static final short ENGINE_BV_TO_AV=4;//Bv，Av互转
 	public static final short ENGINE_BIGGER_TEXT = 5;//字符放大
 	public static final short ENGINE_EACH_TEXT = 6;//逐字翻译
+
+	public static final short ENGINE_JS = 100;
 	
 	public final static short TTS_LOCAL=0;
 	public final static short TTS_BAIDU=1;
@@ -57,6 +59,8 @@ public class Consts
 	public static final short MODE_NORMAL = 0;//普通翻译模式
 	public static final short MODE_EACH_LINE=1;//逐行翻译
 	public static final short MODE_EACH_TEXT = 2;//逐字翻译
+
+	public static final int MAX_JS_NUMBER = 20;
 
 
 	public static String[][] LANGUAGES={

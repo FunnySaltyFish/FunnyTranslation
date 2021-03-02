@@ -34,7 +34,6 @@ public class LanguageRecyclerView extends RecyclerView
 		this.list=list;
 		adapter=new LanguageAdapter(ctx,list,checkKind,this,mapping);
 		LinearLayoutManager linearLM=new LinearLayoutManager(ctx,LinearLayoutManager.VERTICAL,false);
-		setAdapter(adapter);
 		setClickable(true);
 		setLayoutManager(linearLM);
 		setAdapter(adapter);
