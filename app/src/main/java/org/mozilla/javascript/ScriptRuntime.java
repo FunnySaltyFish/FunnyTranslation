@@ -6,8 +6,14 @@
 
 package org.mozilla.javascript;
 
+import android.util.Log;
+
+import com.funny.translation.MyActivityManager;
+
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
@@ -4192,10 +4198,21 @@ public class ScriptRuntime {
             // ResourceBundle does caching.
             //ResourceBundle rb = ResourceBundle.getBundle(defaultResource, locale);
             ResourceBundle rb;
+            InputStream is=null;
             try {
-                rb = new PropertyResourceBundle(new FileReader("D:/projects/AppProjects/Mine/FunnyTranslation"+"/src/"+defaultResource.replace('.','/') + ".properties"));
+                is = MyActivityManager.getInstance().getCurrentActivity().getResources().getAssets().open("Messages.properties");
+                rb = new PropertyResourceBundle(is);
+                Log.i("ScriptRuntime","加载成功！！！");
             } catch (IOException e) {
                 rb = ResourceBundle.getBundle(defaultResource, locale);
+            }finally {
+                if(is!=null){
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             String formatString;

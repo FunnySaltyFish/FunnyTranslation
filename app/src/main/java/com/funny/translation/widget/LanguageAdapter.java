@@ -29,7 +29,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	private RecyclerView rv;
 
 
-	//private DoubleMap doubleMap;
 	private int[] mapping;//通过映射关系完成自定义顺序
 
 	String TAG = "LanguageAdapter";
@@ -73,6 +72,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		Drawable drawable;
 		if(p1 instanceof LanguageViewHolder){
 			LanguageViewHolder holder=(LanguageViewHolder)p1;
+			if(i>=mapping.length)return;
 			LanguageBean bean = list.get(mapping[i]);
 			//LanguageBean bean=list.get(doubleMap.getByKey(i));
 			//Log.i(TAG,String.format("i is %d , adn getByKey returns %d",i,doubleMap.getByKey(i)));
@@ -149,12 +149,24 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	}
 	
 	private int getMappingIndex(int number){
-		//return doubleMap.getByKey(number);
 		return mapping[number];
 	}
 
 	public int[] getMapping() {
 		return mapping;
+	}
+
+	public void resetMapping(){
+		if(list.size()>mapping.length){
+			int newLength = list.size();
+			int oldLength = mapping.length;
+			int[] newMapping = new int[newLength];
+			System.arraycopy(mapping,0,newMapping,0,oldLength);
+			for (int i = oldLength;i < newLength;i++){
+				newMapping[i] = i;
+			}
+			mapping = newMapping;
+		}
 	}
 
 	public interface OnClickItemListener {

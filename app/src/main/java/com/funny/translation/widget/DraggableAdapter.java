@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class SimpleAdapter extends RecyclerView.Adapter {
+public class DraggableAdapter extends RecyclerView.Adapter {
     Context ctx;
     ArrayList<String> list;
-    public SimpleAdapter(Context ctx, String[] list){
+    public DraggableAdapter(Context ctx, String[] list){
         this.ctx=ctx;
         this.list=new ArrayList<String>(Arrays.asList(list));
     }
