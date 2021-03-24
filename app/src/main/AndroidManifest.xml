@@ -8,7 +8,7 @@
 	<application
 		android:name=".FunnyApplication"
 		android:allowBackup="true"
-		android:icon="@drawable/ic_launcher_new_year"
+		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme"
 		android:supportsRtl="true"
@@ -19,10 +19,7 @@
 			android:name=".MainActivity"
 			android:windowSoftInputMode="stateVisible"
 			android:label="@string/app_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<category android:name="android.intent.category.LAUNCHER"/>
-			</intent-filter>
+
 		</activity>
 		<activity android:name=".SettingActivity" android:label="@string/setting" android:theme="@style/AppTheme"/>
 		<activity android:name=".FeedbackActivity" android:label="@string/feedback" android:theme="@style/AppTheme"/>
@@ -45,5 +42,11 @@
 		</activity>
 		<activity android:name=".OtherApplicationsActivity" android:label="@string/other_apps" android:theme="@style/AppTheme"/>
 		<activity android:name=".JSManageActivity" android:label="@string/js_manage" android:theme="@style/AppTheme"/>
+		<activity android:name=".CodeActivity" android:theme="@style/AppTheme" android:label="编辑">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+		</activity>
 	</application>
 </manifest>

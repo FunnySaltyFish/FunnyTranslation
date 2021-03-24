@@ -87,39 +87,16 @@
         <item name="android:progressDrawable">@drawable/bg_progressbar</item>
 	</style>
 	
-	<style name="MySpinnerStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
-		<!--设置弹窗背景为 系统设置的 应用主色调 在application 的colorPrimay 中配置的颜色, actionBar toolbar 默认使用这个为背景颜色-->     
-		<item name="android:popupBackground">?attr/colorPrimary</item>
-		<item name="android:layout_gravity">center</item>
-		<item name="android:gravity">center</item>
-		<item name="android:layout_width">wrap_content</item>
-		<item name="android:layout_height">wrap_content</item>
-		<!--设置 spinner 显示位置往下偏移 actionBarSize 的高度, 默认显示是直接显示在 Spinner 的选中项的上方-->
-		<!--<item name="android:dropDownVerticalOffset">?attr/actionBarSize</item>-->
-		<!--设置选中之后Item 的背景变换 设置背景为 灰色背景色-->     
-		<item name="android:dropDownSelector">#81d4fa</item>
-		<!--设置下拉框的 list 的样式, 主要是设置 分割线, 当然也可以设置下拉的 list 的背景颜色-->
-		<!--<item name="android:dropDownListViewStyle">@style/MySpinnerListStyle</item>-->
-		<!--设置显示在 popup 中 item(TextView) 的样式-->
-		<item name="android:dropDownItemStyle">@style/MySpinnerItemStyle</item>
-	</style>
-
-	<!--设置分割线-->
-	<style name="MySpinnerListStyle" parent="@android:style/Widget.ListView.DropDown">
-		<item name="android:divider">#fff</item>
-		<item name="android:dividerHeight">1dp</item>
-	</style>
-
-	<!--设置文本颜色 和大小-->
-	<style name="MySpinnerItemStyle" parent="@android:style/Widget.TextView.SpinnerItem">
-		<item name="android:textColor">@android:color/white</item>
-		<item name="android:textSize">14sp</item>
-	</style>
-	
 	<!--圆形波纹按钮-->
 	<style name="MyButtonRippleWhite">
 		<item name="android:radius">18dp</item>
 	</style>
+
+    <!-- FAB menu items -->
+    <style name="FabMenuLabelStyle">
+        <item name="android:background">@drawable/fab_label_background_black_pre21</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 
 	
 

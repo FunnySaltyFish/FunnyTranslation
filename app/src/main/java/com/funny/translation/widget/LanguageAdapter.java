@@ -29,7 +29,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	private RecyclerView rv;
 
 
-	private int[] mapping;//通过映射关系完成自定义顺序
+	protected int[] mapping;//通过映射关系完成自定义顺序
 
 	String TAG = "LanguageAdapter";
 	public LanguageAdapter(Context ctx, ArrayList list, short kind, RecyclerView rv,int[] mapping)

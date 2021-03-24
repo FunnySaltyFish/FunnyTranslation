@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.util.Log;
 
 public class FileUtil
@@ -17,7 +19,7 @@ public class FileUtil
      * @return
      */
     public static File getAudioCacheDir(Context context) {
-        return new File(context.getCacheDir(), "audio-cache");
+		return new File(context.getCacheDir(), "audio-cache");
     }
 	
 	public static boolean isCached(Context ctx,String url){
@@ -60,4 +62,19 @@ public class FileUtil
 		}
 		return stringBuilder.toString();
 	}
+
+	public static String readTextFromUri(Context ctx, Uri uri) throws IOException {
+		StringBuilder stringBuilder = new StringBuilder();
+		try (InputStream inputStream = ctx.getContentResolver().openInputStream(uri);
+			 BufferedReader reader = new BufferedReader(
+					 new InputStreamReader(Objects.requireNonNull(inputStream)))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stringBuilder.append(line);
+				stringBuilder.append("\n");
+			}
+		}
+		return stringBuilder.toString();
+	}
+
 }

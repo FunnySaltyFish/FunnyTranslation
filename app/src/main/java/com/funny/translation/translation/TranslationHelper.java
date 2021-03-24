@@ -82,9 +82,10 @@ public class TranslationHelper extends Thread
 				}else task.translate(mode);
 				try {
 					finishTasks.add(task);
-					Message msg=new Message();
-					msg.what=0x001;
-					msg.obj=1;
+					Message msg=handler.obtainMessage();
+					msg.what = Consts.MESSAGE_FINISH_CURRENT_TASK;
+					msg.obj = task;
+					msg.arg1 = 1;
 					handler.sendMessage(msg);
 					if (!task.isOffline()) {//离线翻译不休眠
 						//System.out.println("我是线程，我在执行translating");
@@ -103,9 +104,9 @@ public class TranslationHelper extends Thread
 					flag=FLAG_FINISHED;
 				}
 			}else if(flag==FLAG_FINISHED){
-				Message msg=new Message();
+				Message msg=handler.obtainMessage();
 				msg.obj=this.tasks;
-				msg.what=0x002;
+				msg.what=Consts.MESSAGE_FINISH_ALL_TASKS;
 				handler.sendMessage(msg);
 				flag=0;
 				curI=0;

@@ -7,11 +7,8 @@ import java.util.ArrayList;
 
 public class JSManager {
     public static ArrayList<JSEngine> currentRunningJSList = new ArrayList<>();
+    public static JSEngine currentRunningJSEngine;
     public static short currentRunningJSId = 99;
-
-//    public static void init(){
-//        currentRunningJSList =
-//    }
 
     public static short getJSEngineKind(){
         return currentRunningJSId;
@@ -21,6 +18,10 @@ public class JSManager {
         if(!currentRunningJSList.contains(engine)){
             currentRunningJSList.add(engine);
         }
+    }
+
+    public static void clearAllEngines(){
+        currentRunningJSList.clear();
     }
 
     @Nullable

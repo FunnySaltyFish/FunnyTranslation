@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -49,6 +50,8 @@ import com.billy.android.swipe.consumer.DrawerConsumer;
 import com.billy.android.swipe.consumer.SlidingConsumer;
 import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.bean.LanguageBean;
 import com.funny.translation.db.DBEnglishWords;
@@ -86,6 +89,7 @@ import com.funny.translation.widget.DrawerAdapter;
 import com.funny.translation.widget.EditTextField;
 import com.funny.translation.widget.LanguageAdapter;
 import com.funny.translation.widget.LanguageRecyclerView;
+import com.funny.translation.widget.NewResultAdapter;
 import com.funny.translation.widget.ResultAdapter;
 import com.funny.translation.widget.ResultItemDecoration;
 import com.funny.translation.widget.WordCompleteAdapter;
@@ -95,9 +99,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 
+import static com.funny.translation.bean.Consts.ACTIVITY_JS_MANAGE;
 import static com.funny.translation.bean.Consts.ACTIVITY_MAIN;
 import static com.funny.translation.bean.Consts.ACTIVITY_SETTING;
 import static com.funny.translation.bean.Consts.BAIDU_APP_ID;
@@ -123,6 +129,8 @@ import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK_CHECKED;
 import static com.funny.translation.bean.Consts.LANGUAGES;
 import static com.funny.translation.bean.Consts.LANGUAGE_AUTO;
 import static com.funny.translation.bean.Consts.LANGUAGE_NAMES;
+import static com.funny.translation.bean.Consts.MESSAGE_FINISH_ALL_TASKS;
+import static com.funny.translation.bean.Consts.MESSAGE_FINISH_CURRENT_TASK;
 import static com.funny.translation.bean.Consts.MODE_NAMES;
 import static com.funny.translation.bean.Consts.MODE_NORMAL;
 import static com.funny.translation.bean.Consts.TTS_BAIDU;
@@ -152,7 +160,9 @@ public class MainActivity extends BaseActivity
 	SimpleSwipeListener swipeListener;
 
 	ArrayList<BasicTranslationTask> tasks;
-	ResultAdapter resultAdapter;
+	ArrayList<BasicTranslationTask> finishTasks;
+
+	NewResultAdapter resultAdapter;
 	WordCompleteAdapter wordCompleteAdapter;
 	TranslationHelper helper;
 	
@@ -169,9 +179,12 @@ public class MainActivity extends BaseActivity
 	boolean isBackground=false;//Activity是否处于后台
 
 	String TAG="MainActivity";
+	private final static int MESSAGE_FINISH_LOAD_JS = 0x201;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+//		Date date = new Date(System.currentTimeMillis());
+//		Debug.startMethodTracing(date.toString().replaceAll(" ", "_"));
         super.onCreate(savedInstanceState);
 		
 		setTheme(R.style.AppTheme_NoActionBar);
@@ -182,11 +195,11 @@ public class MainActivity extends BaseActivity
 			initConsts();
 			initBitmaps();
 			initEnglishWords();
-			initJSEngine();
 			// TODO: Implement this method
 		}).start();
 		initMainView();
 		createRightSlideView();
+		initJSEngine();
 		createLeftSlideView();
 		createWordCompletePopup();
 		initSwipeListener();
@@ -199,56 +212,19 @@ public class MainActivity extends BaseActivity
 		new UpdateThread(this).start();
 
 		inputText.requestFocus();//自动获取焦点
+
+//		Debug.stopMethodTracing();
     }
 
     private void initJSEngine(){
     	dbJSUtils = DBJSUtils.getInstance();
-    	String code = "const all = this;\n" +
-				"/*FunnyTranslation JS Engine Start*/\n" +
-				"const FunnyJS = {\n" +
-				"    \"author\":\"FunnySaltyFish\",\n" +
-				"    \"about\":\"示例JS\",\n" +
-				"    \"version\":1,\n" +
-				"    \"name\":\"ExampleJS\",\n" +
-				"    \"debugMode\":true,\n" +
-				"    \"madeURL\":function(){return \"\"},\n" +
-				"    \"isOffline\":function(){return true;},\n" +
-				"\t\"getBasicText\":function(url){\n" +
-				"        FunnyAPI.print(\"all is :\"+all.sourceString);\n" +
-				"\t    FunnyAPI.print(\"source is :\"+sourceString);\n" +
-				"\t    return sourceString.replace(\"一\",\"二\");\n" +
-				"        // return \"测试文本\";\n" +
-				"    },\n" +
-				"\t\"getFormattedResult\":function(text){\n" +
-				"        var result = new JSTranslationResult(\"sourceString\");\n" +
-				"        result.basicText = text;\n" +
-				"        return result;\n" +
-				"\t}\n" +
-				"}\n" +
-				"/*FunnyTranslation JS Engine End*/\n" +
-				"function test(){\n" +
-				"    FunnyAPI.print(\"source is :\"+sourceString);\n" +
-				"}";
-//		JS addJS = new JS(0,"testJS",code,1,"FunnySaltyFish","",1);
-//		dbJSUtils.insertJS(addJS);
-
     	allEnabledJS = dbJSUtils.queryAllEnabledJS();
 
     	for(int i = 0;i<allEnabledJS.size();i++){
     		JS js = allEnabledJS.get(i);
 			try {
-//				JSONObject object = JSUtils.extractConfiguration(js.code);
-//				if (object == null) {
-//					ApplicationUtil.print(this,"插件【"+js.fileName+"】加载出错！");
-//					continue;
-//				}
 				JSEngine jsEngine = new JSEngine();
-//				js.author = object.getString("author");
-//				js.version = object.getInt("version");
-//				js.about = object.getString("about");
-
 				jsEngine.loadJS(js);
-				jsEngine.loadBasicConfigurations();
 				JSManager.addJSEngine(jsEngine);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -259,23 +235,13 @@ public class MainActivity extends BaseActivity
 
 		}
 		jsList = JSUtils.coverJSToLanguageBean(allEnabledJS);
-    	if(rightJSRv != null){
+
+    	//while(rightJSRv == null) { Log.i(TAG, "rightJSRv is null"); }
+		if(rightJSRv!=null) {
 			int[] mapping = new int[jsList.size()];
 			DataUtil.setDefaultMapping(mapping);
-			rightJSRv.initData(jsList,mapping);
-			rightJSRv.getAdapter().notifyDataSetChanged();
-//			rightJSRv.getAdapter().list = jsList;
-//			rightJSRv.getAdapter().resetMapping();
-//			rightJSRv.getAdapter().notifyDataSetChanged();
+			rightJSRv.initData(jsList, mapping);
 		}
-//    	String code = "var Consts = com.funny.translation.bean.Consts;\n" +
-//				"FunnyAPI.print(Consts.LANGUAGE_AUTO);";
-//    	JS testJS = new JS("testJs",1001,code);
-
-
-		//jsEngine.request();
-//		FunnyJSEngine jsEngine = new FunnyJSEngine();
-//		jsEngine.request();
 	}
 
 	private void initEnglishWords() {
@@ -301,21 +267,25 @@ public class MainActivity extends BaseActivity
 			{
 				switch (msg.what)
 				{
-					case 0x001:
+					case MESSAGE_FINISH_CURRENT_TASK:
 						Object obj=msg.obj;
 						if (obj != null) {
 							if(!(outputRecyclerView.getAdapter() instanceof ResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
-							resultAdapter.insert(helper.finishTasks);
+							BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj;
+							resultAdapter.addData(currentFinishTask);
+
 							translateProgress.setProgress(helper.getProcess());
 						}
 						break;
-					case 0x002:
+					case MESSAGE_FINISH_ALL_TASKS:
 						Object obj2=msg.obj;
 						if (obj2 != null) {
-							tasks = (ArrayList<BasicTranslationTask>)obj2;
+//							BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj2;
+//							tasks.add(currentFinishTask);
+//							resultAdapter.addData(currentFinishTask);
 							//resultAdapter.insert(tasks);
-							itemDecoration.setTasks(tasks);
-							outputRecyclerView.invalidateItemDecorations();
+							//itemDecoration.setTasks(tasks);
+							//outputRecyclerView.invalidateItemDecorations();
 							translateProgress.setVisibility(View.INVISIBLE);
 							translateButton.setVisibility(View.VISIBLE);
 						}
@@ -323,6 +293,12 @@ public class MainActivity extends BaseActivity
 					case 0x101:
 						ApplicationUtil.print(MainActivity.this,msg.obj.toString(),msg.arg1==1);
 						break;
+					//case MESSAGE_FINISH_LOAD_JS:
+//						if(rightJSRv!=null){
+//							rightJSRv.initData();
+//						}
+//						break;
+
 				}
 			}
 		};
@@ -355,13 +331,30 @@ public class MainActivity extends BaseActivity
 			public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 				if(charSequence!=null&&charSequence.length()>0){
 					if(!translateButton.isEnabled())translateButton.setEnabled(true);
-					if(before>0&&count==0){
-						char last=charSequence.charAt(start-before);
-						if('A'>last||last>'z') return;
-					}
-					if(count>1)return;
-					String text = charSequence.toString();
-					currentWord= AutoCompleteUtil.getCurrentText(text,start-before);
+//					if(before>0&&count==0){
+//						char last=charSequence.charAt(start-before);
+//						if('A'>last||last>'z') return;
+//					}
+//					if(count>1)return;
+//					String text = charSequence.toString();
+//					currentWord= AutoCompleteUtil.getCurrentText(text,start-before);
+
+//
+//					wordCompletePopup.showPopupWindow(translateButton);
+//					TimeUtil.end();
+//					DBEnglishWords.Word word = queryResults.get(0);
+					//Log.i(TAG,""+queryResults.size());
+				}else{
+					translateButton.setEnabled(false);
+				}
+			}
+
+			@Override
+			public void afterTextChanged(Editable editable) {
+				int place = inputText.getSelectionStart();
+				//Log.i(TAG,"光标位置："+place);
+				if(place == inputText.getSelectionEnd()){
+					currentWord = AutoCompleteUtil.getCurrentText(editable.toString(),place>0?place-1:0);
 					if(currentWord.equals(""))return;;
 					Log.i(TAG,"current is "+currentWord);
 					TimeUtil.start();
@@ -374,30 +367,49 @@ public class MainActivity extends BaseActivity
 					}else{
 						wordCompleteAdapter.update(queryResults);
 					}
-//
-//					wordCompletePopup.showPopupWindow(translateButton);
 					TimeUtil.end();
-//					DBEnglishWords.Word word = queryResults.get(0);
-					//Log.i(TAG,""+queryResults.size());
-				}else{
-					translateButton.setEnabled(false);
 				}
-			}
-
-			@Override
-			public void afterTextChanged(Editable editable) {
-
 			}
 		});
 
 		inputText.setClickable(true);
 		inputText.setFocusable(true);
-//		inputText.setFocusableInTouchMode(true);
-
 
 		outputRecyclerView = findViewById(R.id.widget_main_recycler_view);
 
-		resultAdapter = new ResultAdapter(this, null);
+		resultAdapter = new NewResultAdapter(R.layout.view_result_content,finishTasks);
+		View footerView = LayoutInflater.from(this).inflate(R.layout.view_result_space,null);
+		resultAdapter.addFooterView(footerView);
+		resultAdapter.addChildClickViewIds(R.id.view_result_content_copy_button,R.id.view_result_content_speak_button);
+		resultAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
+			@Override
+			public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+				NewResultAdapter resultAdapter = (NewResultAdapter)adapter;
+				BasicTranslationTask task = resultAdapter.getItem(position);
+				switch (view.getId()){
+					case R.id.view_result_content_copy_button:
+						String text = task.getResult().getBasicResult();
+						ApplicationUtil.copyToClipboard(MainActivity.this, text);
+						ApplicationUtil.print(MainActivity.this, "已复制翻译结果[" + (text.length() < 8 ? text : (text.substring(0, 5)) + "...") + "]到剪贴板！");
+						break;
+
+					case R.id.view_result_content_speak_button:
+						short engineKind = task.engineKind;
+						if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
+							ApplicationUtil.print(MainActivity.this, "当前引擎的翻译结果不支持朗读哦~");
+							return;
+						}
+						short TTSEngine = getCheckedTTSEngine();
+						short targetLanguage = task.targetLanguage;
+						if (targetLanguage == Consts.LANGUAGE_WENYANWEN) {
+							targetLanguage = Consts.LANGUAGE_CHINESE;
+						}
+						TTSUtil.speak(MainActivity.this, task.getResult().getBasicResult(), targetLanguage, TTSEngine);
+						break;
+				}
+			}
+		});
+
 		itemDecoration = new ResultItemDecoration(this, tasks);
 		layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 		outputRecyclerView.setAdapter(resultAdapter);
@@ -487,6 +499,9 @@ public class MainActivity extends BaseActivity
 	private void startTranslate(String content) {
 //    	String[] arr = null;
 //    	System.out.println(arr.length);
+    	if (!StringUtil.isValidContent(content)){
+			return;
+		}
     	if (getCheckedList(targetList).size()==0){
     		ApplicationUtil.print(this,"您必须选择目标语言后再开始翻译！");
     		return;
@@ -495,9 +510,7 @@ public class MainActivity extends BaseActivity
     		ApplicationUtil.print(this,"您必须选择翻译引擎再翻译！");
     		return;
 		}
-		if (!StringUtil.isValidContent(content)){
-			return;
-		}
+
 		content = content.trim();
 		if(!NetworkUtil.isNetworkConnected(MainActivity.this)){
 			ArrayList<LanguageBean> engines = getCheckedList(engineList);
@@ -507,6 +520,13 @@ public class MainActivity extends BaseActivity
 				if (engine==ENGINE_BAIDU_NORMAL||engine==ENGINE_GOOGLE||engine==ENGINE_JINSHAN||engine==ENGINE_YOUDAO_NORMAL){
 					onlyHasOfflineEngine = false;
 				}
+			}
+			ArrayList<LanguageBean> checkedJS = getCheckedList(jsList);
+			for(LanguageBean bean : checkedJS){
+				JSBean jsBean = (JSBean)bean;
+				boolean isOffline = JSManager.getJSEngineById(jsBean.getId()).js.isOffline;
+				if(!isOffline)onlyHasOfflineEngine = false;
+				break;
 			}
 			if(!onlyHasOfflineEngine) {
 				ApplicationUtil.print(MainActivity.this, "当前似乎没有网络连接呢~");
@@ -528,11 +548,11 @@ public class MainActivity extends BaseActivity
 		initTasks(content);
 		//修改为outputRV
 		if(outputRecyclerView.getAdapter() instanceof WordCompleteAdapter){
-			resultAdapter.setTasks(tasks);
 			outputRecyclerView.setAdapter(resultAdapter);
 //			outputRecyclerView.removeItemDecoration(wordCompleteDecoration);
 //			outputRecyclerView.addItemDecoration(itemDecoration);
 		}
+		//resultAdapter.setList(tasks);
 		helper.setTasks(tasks);
 		helper.totalTimes = tasks.size();
 		helper.start();
@@ -578,7 +598,7 @@ public class MainActivity extends BaseActivity
 						break;
 					case R.string.js:
 						leftSlidingConsumer.close();
-						moveToActivity(JSManageActivity.class);
+						moveToActivityForResult(JSManageActivity.class,new Intent(),ACTIVITY_MAIN);
 						break;
 				}
 			}
@@ -663,6 +683,7 @@ public class MainActivity extends BaseActivity
 		}
 
 		rightJSRv=rightSlideView.findViewById(R.id.main_slide_right_js_rv);
+		rightJSRv.initData(new ArrayList<LanguageBean>(),new int[]{});
 
 		//SmartSwipeWrapper rightMenuWrapper = SmartSwipe.wrap(rightSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
 		rightDrawerConsumer=new DrawerConsumer().setDrawerView(SwipeConsumer.DIRECTION_RIGHT,rightSlideView);
@@ -884,6 +905,14 @@ public class MainActivity extends BaseActivity
 			tasks.clear();
 			helper.finishTasks.clear();
 		}
+
+		if(finishTasks==null){
+			finishTasks=new ArrayList<>();
+		}else {
+			finishTasks.clear();
+		}
+		resultAdapter.setList(finishTasks);
+
 		short source=getCheckedList(sourceList).get(0).getUserData();
 		int i=0;
 		BasicTranslationTask task;
@@ -1165,11 +1194,20 @@ public class MainActivity extends BaseActivity
 		super.onActivityResult(requestCode, resultCode, data);
 		//Log.i(TAG,"onActivityResult。收到的requestCode:"+requestCode+"  resultCode is"+resultCode);
 		if (requestCode==ACTIVITY_MAIN&&resultCode==ACTIVITY_SETTING){
+			assert data != null;
 			boolean isRvChange=data.getBooleanExtra("isRvChange",false);//targetList、sourceList内容是否改变
 			boolean isDiyBaiduChange = data.getBooleanExtra("isDiyBaiduChange",false);//是否自定义百度
 			//Log.i(TAG,"_____获取到传回的isRvChange额为:"+isRvChange);
 			if (isRvChange) initPreferenceDataRightRv();
 			if (isDiyBaiduChange)initPreferenceDataDiyBaidu();
+		}
+		else if(requestCode==ACTIVITY_MAIN&&resultCode==ACTIVITY_JS_MANAGE){
+			assert data != null;
+			boolean hasChanged = data.getBooleanExtra("hasChanged",false);
+			if(hasChanged){
+				JSManager.clearAllEngines();
+				initJSEngine();
+			}
 		}
 	}
 

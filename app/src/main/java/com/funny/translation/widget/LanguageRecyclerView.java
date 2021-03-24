@@ -32,15 +32,21 @@ public class LanguageRecyclerView extends RecyclerView
 	
 	public void initData(ArrayList<LanguageBean> list,int[] mapping){
 		this.list=list;
-		adapter=new LanguageAdapter(ctx,list,checkKind,this,mapping);
-		LinearLayoutManager linearLM=new LinearLayoutManager(ctx,LinearLayoutManager.VERTICAL,false);
-		setClickable(true);
-		setLayoutManager(linearLM);
-		setAdapter(adapter);
+		if(adapter == null){
+			adapter=new LanguageAdapter(ctx,list,checkKind,this,mapping);
+			LinearLayoutManager linearLM=new LinearLayoutManager(ctx,LinearLayoutManager.VERTICAL,false);
+			setLayoutManager(linearLM);
+			setAdapter(adapter);
 
-		//以下解决滑动卡顿
-		setHasFixedSize(true);
-		setNestedScrollingEnabled(false);
+			//以下解决滑动卡顿
+			setHasFixedSize(true);
+			setNestedScrollingEnabled(false);
+		}else{
+			adapter.list = list;
+			adapter.mapping = mapping;
+			adapter.notifyDataSetChanged();
+		}
+
 	}
 
 	@Nullable
