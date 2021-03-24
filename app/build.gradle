@@ -2,55 +2,60 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-		debug {
-			storeFile file('D:\\projects\\mykey.keystore')
-			storePassword 'SHENying303654'
-			keyAlias '我的钥匙'
-			keyPassword 'SHENying303654'
-		}
-	}
-	compileSdkVersion 30
-	buildToolsVersion "30.0.0"
-		configurations.all {
-        	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-            	def requested = details.requested
-            	if (requested.group == 'com.android.support') {
-                	if (!requested.name.startsWith("multidex")) {
-                    	details.useVersion '28.0.0'
-                	}
-            	}
-        	}
-	}
+        debug {
+            storeFile file('D:\\projects\\mykey.keystore')
+            storePassword 'SHENying303654'
+            keyAlias '我的钥匙'
+            keyPassword 'SHENying303654'
+        }
+    }
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '28.0.0'
+                }
+            }
+        }
+    }
     defaultConfig {
         applicationId "com.funny.translation"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 17
-        versionName "1.37.7"
-		resConfigs('zh-rCN')
+        versionCode 19
+        versionName "2.0.0 beta-1"
+        resConfigs('zh-rCN')
     }
-    buildTypes {
-        release {
-			//开启代码混淆
-			minifyEnabled true
-			//Zipalign优化
-			zipAlignEnabled true
-			//移除无用的resource文件
-			shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-			signingConfig signingConfigs.debug
-		}
-		debug {
-			minifyEnabled false
-			signingConfig signingConfigs.debug
-		}
-		
+    buildFeatures{
+        dataBinding = true
     }
 
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
+
+    buildTypes {
+        release {
+            //开启代码混淆
+            minifyEnabled true
+            //Zipalign优化
+            zipAlignEnabled true
+            //移除无用的resource文件
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
 //	compileOptions {
 //		// Flag to enable support for the new language APIs
@@ -63,20 +68,33 @@ android {
 }
 
 dependencies {
-	implementation 'androidx.appcompat:appcompat:1.2.0'
-  	implementation 'androidx.recyclerview:recyclerview:1.1.0'
-  	implementation 'androidx.cardview:cardview:1.0.0'
-	implementation 'androidx.preference:preference:1.1.1'
-	implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-	//implementation 'com.zhouyou:rxeasyhttp:2.1.5'
-	implementation 'com.billy.android:smart-swipe:1.1.2'
-	implementation "com.squareup.okhttp3:okhttp:4.9.0"
-	implementation 'com.hjq:toast:8.6'
-	implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
-	//implementation 'com.github.razerdp:BasePopup:2.2.1'
-	//implementation 'net.dongliu:requests:5.0.8'
-	//implementation 'com.optimus:editTextField:0.2.0'
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
-	//
-	implementation project(path: ':library')
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+
+
+    //implementation 'com.zhouyou:rxeasyhttp:2.1.5'
+    implementation 'com.billy.android:smart-swipe:1.1.2'
+    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
+    implementation 'com.hjq:toast:8.6'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
+    implementation 'com.github.AmrDeveloper:CodeView:1.0.0'
+
+    //implementation 'com.github.razerdp:BasePopup:2.2.1'
+    //implementation 'net.dongliu:requests:5.0.8'
+    //implementation 'com.optimus:editTextField:0.2.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //
+    implementation project(path: ':library')
+    implementation 'androidx.navigation:navigation-fragment:2.2.2'
+    implementation 'androidx.navigation:navigation-ui:2.2.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
 }

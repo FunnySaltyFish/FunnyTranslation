@@ -1,6 +1,7 @@
 package com.funny.translation.db;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.funny.translation.FunnyApplication;
 import com.funny.translation.bean.Consts;
@@ -11,6 +12,7 @@ import java.util.Locale;
 
 import static com.funny.translation.db.DBJS.*;
 public class DBJSUtils {
+    private static final String TAG = "DBJSUtils";
     private final DBJS dbHelper;
     private static DBJSUtils mInstance;
 
@@ -126,6 +128,42 @@ public class DBJSUtils {
             db.execSQL(insert);
             if(db!=null)db.close();
         }
+    }
+
+    public void deleteJS(JS js){
+        synchronized (lock){
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String delete = String.format(Locale.CHINA,"DELETE FROM %s WHERE %s = %d;",
+                    TABLE_NAME,COLUMN_ID,js.id);
+            db.execSQL(delete);
+            if(db!=null)db.close();
+        }
+    }
+
+    public int getNextID(){
+        int currentID = 0;
+        synchronized (lock){
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String next = String.format(Locale.CHINA,"select * from %s order by %s desc limit 0,1;",
+                    TABLE_NAME,COLUMN_ID);
+            Cursor cursor = null;
+            try{
+                cursor = db.rawQuery(next,null);
+                if (cursor.moveToNext()){
+                    currentID = cursor.getInt(COLUMN_ID_INDEX);
+                    Log.i(TAG,"currentID = " + currentID);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            } finally {
+                if (cursor!=null){
+                    cursor.close();
+                }
+            }
+
+            if(db!=null)db.close();
+        }
+        return currentID+1;
     }
 
     public void close(){

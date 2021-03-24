@@ -20,6 +20,9 @@ public class FunnyAPI extends ScriptableObject {
     @JSStaticFunction
     public static void print(Object obj){
         Log.i(TAG,obj.toString());
+        if(JSManager.currentRunningJSEngine!=null&&JSManager.currentRunningJSEngine.js.isDebugMode){
+
+        }
     }
 
     @Override

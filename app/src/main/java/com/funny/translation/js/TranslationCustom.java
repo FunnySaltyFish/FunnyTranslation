@@ -7,6 +7,9 @@ import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.translation.TranslationResult;
 import com.funny.translation.utils.StringUtil;
 
+import org.mozilla.javascript.NativeJavaObject;
+import org.mozilla.javascript.NativeObject;
+
 public class TranslationCustom extends BasicTranslationTask {
     JSEngine mJSEngine;
 
@@ -24,6 +27,7 @@ public class TranslationCustom extends BasicTranslationTask {
     @Override
     public void translate(short mode){
         result = new TranslationResult(engineKind);
+        JSManager.currentRunningJSEngine = mJSEngine;
         try {
             mJSEngine.request(this);
             String url = madeURL();
@@ -46,12 +50,17 @@ public class TranslationCustom extends BasicTranslationTask {
 
     @Override
     public String getBasicText(String url) throws TranslationException {
-        Object obj =  mJSEngine.callFunnyJSFunction("getBasicText",new String[]{url});
         String result = "";
         try{
-            result = (String)obj;
-        }catch (Exception e){
-            throw new JSException("JS执行到getBasicText方法时发生过错误！");
+            Object obj =  mJSEngine.callFunnyJSFunction("getBasicText",new String[]{url});
+            if (obj instanceof NativeJavaObject){
+                result = (String)((NativeJavaObject) obj).unwrap();
+            }else result = (String)obj;
+        }catch (JSException e){
+            throw e;
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new JSException("JS执行到getBasicText方法时发生过错误！"+(mJSEngine.js.isDebugMode?"详细原因是："+e.getMessage():""));
         }
         return result;
     }
@@ -67,8 +76,11 @@ public class TranslationCustom extends BasicTranslationTask {
         String result = "";
         try{
             Object obj =  mJSEngine.callFunnyJSFunction("madeURL",new Object[]{});
-            result = (String)obj;
-        }catch (Exception e){
+            if (obj instanceof NativeJavaObject){
+                result = (String)((NativeJavaObject) obj).unwrap();
+            }else result = (String)obj;
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
         return result;

@@ -19,6 +19,7 @@ public class Consts
 	public static final int ACTIVITY_MAIN=1;
 	public static final int ACTIVITY_SETTING=2;
 	public static final int ACTIVITY_FEEDBACK=3;
+	public static final int ACTIVITY_JS_MANAGE=3;
 
 	public static final String ERROR_UNKNOWN="未知错误！翻译失败！";
 	public static final String ERROR_JSON="Json数据解析错误！";
@@ -55,6 +56,7 @@ public class Consts
 	public final static short LANGUAGE_RUSSIAN=6;
 	public final static short LANGUAGE_GERMANY=7;
 	public final static short LANGUAGE_WENYANWEN=8;
+	public final static short LANGUAGE_THAI=9;
 
 	public static final short MODE_NORMAL = 0;//普通翻译模式
 	public static final short MODE_EACH_LINE=1;//逐行翻译
@@ -73,7 +75,8 @@ public class Consts
 		{"fr","fr","fra","fr"},
 		{"ru","ru","ru","ru"},
 		{"de","de","de","de"},
-		{"zh","zh-CHS","wyw","zh-CN"}
+		{"zh","zh-CHS","wyw","zh-CN"},
+		{"th","th","th","th"}
 	};
 	
 	public final static short CHECK_SINGLE=0;
@@ -86,6 +89,7 @@ public class Consts
 	public static String[] TTS_NAMES;
 
 	public static String[] MODE_NAMES;
+
 	//百度翻译常量
 	public static String DEFAULT_BAIDU_APP_ID = RC4.decry_RC4("785ebf34dc6aa09ffc4f5726d7bcb14f3f","27420");
 	public static String DEFAULT_BAIDU_SECURITY_KEY = RC4.decry_RC4("0e36da569e6dd8e3a831377988e8b5373ab87173","27420");
@@ -100,6 +104,9 @@ public class Consts
 	public static Drawable IC_SINGLE_CHECK;
 	public static Drawable IC_SINGLE_CHECK_CHECKED;
 	public static Drawable IC_MENU_RIGHT_ARROW;
+
+	public final static int MESSAGE_FINISH_CURRENT_TASK = 0x001;
+	public final static int MESSAGE_FINISH_ALL_TASKS = 0x002;
 	
 	public final static short SKIN_BLUE=0;
 	public final static short SKIN_GREEN=1;

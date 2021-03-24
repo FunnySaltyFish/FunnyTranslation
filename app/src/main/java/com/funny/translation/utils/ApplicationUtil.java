@@ -63,9 +63,12 @@ public class ApplicationUtil
 //
 //		curToast++;
 //		if (curToast==MAX_TOASTS)curToast=0;
+		print(ctx, str,false);
+	}
+
+	
+	public static void print(Context ctx,String str,boolean isLong){
 		if (!hasInitToast){
-//			View v=LayoutInflater.from(FunnyApplication.getFunnyContext()).inflate(R.layout.view_toast,null);
-//			toastTV=v.findViewById(R.id.view_toast_tv);
 			ToastUtils.setView(R.layout.view_toast);
 			ToastUtils.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,0,200);
 			hasInitToast = true;
@@ -73,9 +76,13 @@ public class ApplicationUtil
 		ToastUtils.show(str);
 	}
 
-	
-	public static void print(Context ctx,String str,boolean isLong){
-		print(ctx, str,false);
+	public static void print(String str){
+		if (!hasInitToast){
+			ToastUtils.setView(R.layout.view_toast);
+			ToastUtils.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,0,200);
+			hasInitToast = true;
+		}
+		ToastUtils.show(str);
 	}
 	
 	public static String getTextFromAssets(Context ctx,String fileName){
