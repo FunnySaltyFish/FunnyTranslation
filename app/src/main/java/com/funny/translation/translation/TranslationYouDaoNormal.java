@@ -154,6 +154,7 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
             JSONObject all = new JSONObject(basicText);
             if (all.has("errorCode") && all.getInt("errorCode") > 0) {//出错
                 switch (all.getInt("errorCode")) {
+                    case 30:
                     case 40:
                         throw new TranslationException(Consts.ERROR_UNSUPPORT_LANGUAGE);
                     case 50:

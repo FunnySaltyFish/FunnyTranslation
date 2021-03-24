@@ -1,16 +1,10 @@
-v1.37.7：
+v2.0.0 beta-2：
 ◆你关注的更新
-—修复 部分提高了金山、谷歌的解析能力
-—新增 添加开发者其他应用一栏
-—调整 略微增大了 朗读和复制 的按钮
-——感谢 @酷安 Eggtart 的点评
-—调整 进入应用自动弹出输入法
-——感谢 @酷安 Eggtart 的点评
-—修复 部分单词过长导致显示畸形的问题
-——感谢 @酷安 Eggtart 的点评
-
+—修复 修复失效的金山翻译（暂仅支持中英互译）
+—新增 语言新增泰语（仅百度翻译
+—修复 修复删除文本时偶现的闪退问题
 ◆你不关注的更新
-—啥也没有
+—全面迁移到AndroidX
 
 ◆其他
 —使用过程中遇到任何问题欢迎反馈，任何有价值的建议都将可能被采纳！
@@ -51,12 +45,14 @@ A：哈，谢谢支持！
 
 ——分——割——
 ●鸣谢以下开源库：
-—Android Support Library
+—Android Jetpack Library(https://developer.android.google.cn/jetpack/)
 —SmartSwipe(https://github.com/luckybilly/SmartSwipe/)
 —EditTextField(https://github.com/opprime/EditTextField)
 —AndroidVideoCache(https://github.com/danikula/AndroidVideoCache)
 —CircleProgress(https://github.com/lzyzsd/CircleProgress/)
 —OkHttp3(https://github.com/square/okhttp)
+—BaseRecyclerViewAdapterHelper(https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
+—android-floating-action-button(https://github.com/zendesk/android-floating-action-button)
 
 Copyright@FunnySaltyFish
 2020-2021

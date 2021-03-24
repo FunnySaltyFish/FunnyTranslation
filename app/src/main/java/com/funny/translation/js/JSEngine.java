@@ -24,7 +24,6 @@ public class JSEngine {
 
     public JS js;
 
-    private String code;
     private String fileName;
 
 //    private String testCode = "var methodGetValue = ScriptAPI.getMethod(\"getValue\",[java.lang.Object]);\n" +
@@ -45,7 +44,7 @@ public class JSEngine {
         this.js = js;
         this.fileName = js.fileName;
         String baseJSCode = "var ScriptAPI = java.lang.Class.forName(\"" + clazz.getName() + "\", true, javaLoader);";
-        this.code = baseJSCode +js.code;
+        this.js.code = baseJSCode +js.code;
     }
 
     public void request(TranslationCustom translationCustom) throws JSException{
@@ -53,21 +52,21 @@ public class JSEngine {
         jsContext.setOptimizationLevel(-1);
         try{
             scope = jsContext.initStandardObjects();
-            funnyJS.setParentScope(scope);
             //设置当前类为上下文已经获取当前类的加载器
             ScriptableObject.putProperty(scope,"javaContext",Context.javaToJS(this,scope));
             ScriptableObject.putProperty(scope,"javaLoader",Context.javaToJS(clazz.getClassLoader(),scope));
             //ScriptableObject.putProperty(scope,"FunnyAPI",Context.javaToJS(new FunnyAPI(),scope));
             ScriptableObject.defineClass(scope,FunnyAPI.class);
             ScriptableObject.defineClass(scope,JSTranslationResult.class);
-            //ScriptableObject.defineClass(scope,JSConsts.class);
+            ScriptableObject.defineClass(scope,JSConsts.class);
 
             scope.put("sourceString",scope,Context.javaToJS(translationCustom.sourceString,scope));
             scope.put("sourceLanguage",scope,Context.javaToJS(translationCustom.sourceLanguage,scope));
             scope.put("targetLanguage",scope,Context.javaToJS(translationCustom.targetLanguage,scope));
+            //scope.put("Consts",scope,Context.javaToJS(new JSConsts(),scope));
             //scope.put("sourceString",scope,Context.javaToJS(translationCustom.,scope));
 
-            Object x = jsContext.evaluateString(scope, code ,fileName,1,null);
+            Object x = jsContext.evaluateString(scope, js.code ,fileName,1,null);
             Object funnyJS1 = scope.get("FunnyJS",scope);
             if(funnyJS1 instanceof NativeObject){
                 //2021 3 2 这个地方因为funnyJS为之前的一直错误（返回的值是之前的)，纠结了两天才找到bug……
@@ -84,30 +83,33 @@ public class JSEngine {
     }
 
     public void loadBasicConfigurations() throws JSException{
-        Context tempContext = Context.enter();
-        tempContext.setOptimizationLevel(-1);
+        jsContext = Context.enter();
+        jsContext.setOptimizationLevel(-1);
         try{
-            Scriptable tempScope = tempContext.initStandardObjects();
+            scope = jsContext.initStandardObjects();
             //设置当前类为上下文已经获取当前类的加载器
-            ScriptableObject.putProperty(tempScope,"javaContext",Context.javaToJS(this,tempScope));
-            ScriptableObject.putProperty(tempScope,"javaLoader",Context.javaToJS(clazz.getClassLoader(),tempScope));
+            ScriptableObject.putProperty(scope,"javaContext",Context.javaToJS(this,scope));
+            ScriptableObject.putProperty(scope,"javaLoader",Context.javaToJS(clazz.getClassLoader(),scope));
             //ScriptableObject.putProperty(scope,"FunnyAPI",Context.javaToJS(new FunnyAPI(),scope));
-            ScriptableObject.defineClass(tempScope,FunnyAPI.class);
-            ScriptableObject.defineClass(tempScope,JSTranslationResult.class);
-            ScriptableObject.defineClass(tempScope,JSConsts.class);
+            ScriptableObject.defineClass(scope,FunnyAPI.class);
+            ScriptableObject.defineClass(scope,JSTranslationResult.class);
+            ScriptableObject.defineClass(scope,JSConsts.class);
 
-            tempScope.put("sourceString",tempScope,Context.javaToJS("默认的",tempScope));
-            tempScope.put("sourceLanguage",tempScope,Context.javaToJS("源语言",tempScope));
-            tempScope.put("targetLanguage",tempScope,Context.javaToJS("目标语言",tempScope));
+            scope.put("sourceString",scope,Context.javaToJS("默认的",scope));
+            scope.put("sourceLanguage",scope,Context.javaToJS("源语言",scope));
+            scope.put("targetLanguage",scope,Context.javaToJS("目标语言",scope));
 
-            Object x = tempContext.evaluateString(tempScope, code ,fileName,1,null);
-            Object funnyJS1 = tempScope.get("FunnyJS",tempScope);
+            Object x = jsContext.evaluateString(scope, js.code ,fileName,1,null);
+            Object funnyJS1 = scope.get("FunnyJS",scope);
             if(funnyJS1 instanceof NativeObject){
-
                 funnyJS = (NativeObject)funnyJS1;
                 js.version = ((Double)funnyJS.get("version")).intValue();
                 js.about = (String) funnyJS.get("about");
                 js.author = (String) funnyJS.get("author");
+                js.fileName = (String) funnyJS.get("name");
+
+                js.isOffline = (Boolean) callFunnyJSFunction("isOffline",new Object[]{});
+                js.isDebugMode = (Boolean) funnyJS.get("debugMode");
             }else{
                 throw new JSException(String.format("解析配置文件时出错！请确保插件配置文件正确！\n@JS[version:%s,author:%s]",js.version,js.author));
             }

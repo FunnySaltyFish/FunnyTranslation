@@ -31,6 +31,8 @@
     <string name="app_funnyluckyman_url">https://gitee.com/funnysaltyfish/funny-lucky-man-update</string>
     <string name="js">插件ᵝ</string>
     <string name="js_manage">插件管理</string>
+    <string name="message_no_js">暂无插件，点击右下角添加吧！</string>
+    <string name="debug">调试运行</string>
 
 
 </resources>

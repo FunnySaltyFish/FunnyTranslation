@@ -6,6 +6,7 @@ public class AutoCompleteUtil {
         int i = currentCursor;
         int l=fullText.length();
         int end;
+        if (fullText.length()==0)return result;
         while(i>0&&(fullText.charAt(i)<32||fullText.charAt(i)>47)){
             i--;
         }
