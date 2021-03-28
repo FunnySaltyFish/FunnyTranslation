@@ -19,9 +19,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.funny.translation.R;
+import com.funny.translation.code.JavaScriptSyntaxManager;
 import com.funny.translation.code.JavaSyntaxManager;
 import com.funny.translation.databinding.CodeEditorFragmentBinding;
 import com.funny.translation.jetpack.ActivityCodeViewModel;
+import com.funny.translation.utils.FileUtil;
+
+import java.io.IOException;
 
 public class CodeEditorFragment extends Fragment {
 
@@ -49,7 +53,9 @@ public class CodeEditorFragment extends Fragment {
         re=getResources();
 
         mViewModel = new ViewModelProvider(this).get(CodeEditorViewModel.class);
-        activityCodeViewModel = new ViewModelProvider(getActivity()).get(ActivityCodeViewModel.class);
+        activityCodeViewModel = new ViewModelProvider(requireActivity()).get(ActivityCodeViewModel.class);
+
+
         // TODO: Use the ViewModel
         fragmentBinding.setData(mViewModel);
         fragmentBinding.setLifecycleOwner(this);
@@ -58,7 +64,7 @@ public class CodeEditorFragment extends Fragment {
     }
 
     private void initCodeEditor(){
-        mViewModel.setKeywords(re.getStringArray(R.array.java_keywords));
+        mViewModel.setKeywords(re.getStringArray(R.array.js_keywords));
 
         int layoutId = R.layout.view_code_suggestion_item;
         int tvId = R.id.view_code_suggestion_item_tv;
@@ -82,7 +88,13 @@ public class CodeEditorFragment extends Fragment {
             }
         });
 
-        JavaSyntaxManager.applyMonokaiTheme(requireContext(),fragmentBinding.codeView);
+        try {
+            fragmentBinding.codeView.setText(FileUtil.getAssetsData(requireActivity(),"js_temp.js"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JavaScriptSyntaxManager.applyMonokaiTheme(requireContext(),fragmentBinding.codeView);
     }
 
 }

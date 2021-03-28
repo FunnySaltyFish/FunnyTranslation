@@ -33,6 +33,9 @@
     <string name="js_manage">插件管理</string>
     <string name="message_no_js">暂无插件，点击右下角添加吧！</string>
     <string name="debug">调试运行</string>
+    <string name="wait_for_next_version">敬请期待</string>
+    <string name="edit_code">编辑代码</string>
+    <string name="run_code">运行结果</string>
 
 
 </resources>

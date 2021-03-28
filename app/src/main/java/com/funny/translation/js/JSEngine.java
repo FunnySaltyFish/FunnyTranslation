@@ -119,7 +119,10 @@ public class JSEngine {
             e.printStackTrace();
             String error = String.format(Locale.CHINA,"JS运行错误！详细的原因是：\n第%d行：%s",e.lineNumber(),e.details());
             throw new JSException(error);
-        }catch (Exception e){
+        }catch (JSException e){
+            throw e;
+        }
+        catch (Exception e){
             e.printStackTrace();
             throw new JSException("JS预加载时发生未知错误！");
         }finally {

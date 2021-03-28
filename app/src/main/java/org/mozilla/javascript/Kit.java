@@ -19,7 +19,7 @@ import java.util.Map;
 public class Kit
 {
     public static Class<?> classOrNull(String className)
-    {
+        {
         try {
             return Class.forName(className);
         } catch  (ClassNotFoundException ex) {

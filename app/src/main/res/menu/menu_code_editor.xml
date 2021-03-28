@@ -7,4 +7,6 @@
         android:icon="@drawable/ic_debug"
         android:title="@string/debug"
         app:showAsAction="ifRoom" />
+
+
 </menu>

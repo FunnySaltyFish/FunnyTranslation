@@ -1,4 +1,5 @@
-package com.funny.translation.translation;
+package com.funny.translation.translation;;
+
 public class TranslationResult
 {
 //	public final static short DETAIL_NONE=0;//非常简单的结果，没有详细信息
@@ -99,6 +100,12 @@ public class TranslationResult
 	public void setSourceString(String sourceString) {
 		this.sourceString = sourceString;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "TranslationResult{" +
+				"basicResult='" + basicResult + '\'' +
+				", sourceString='" + sourceString + '\'' +
+				'}';
+	}
 }

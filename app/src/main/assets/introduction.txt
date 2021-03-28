@@ -1,12 +1,21 @@
+v2.0.0 beta-3:
+该版本为紧急修复版本，对上一版造成的严重问题，在此向您表示深深歉意！
+—修复了 插件加载/插件运行/主页面翻译 场景下的闪退
+—修复了 自动补全
+
+以下是原更新：
 v2.0.0 beta-2：
 ◆你关注的更新
 —修复 修复失效的金山翻译（暂仅支持中英互译）
-—新增 语言新增泰语（仅百度翻译
-—修复 修复删除文本时偶现的闪退问题
+—新增 语言新增泰语（仅百度翻译、谷歌翻译）
+—新增 新增简单的代码编辑器
+
 ◆你不关注的更新
-—全面迁移到AndroidX
+—1202年了，新的界面终于采用DataBinding+ViewModel+LiveData构建了
+—其他一些我也忘了的更新
 
 ◆其他
+—目前代码编辑器还是半成品，后续将持续完善。最近几个版本重心都会放在这部分上，非常欢迎各路大神参与插件的贡献！
 —使用过程中遇到任何问题欢迎反馈，任何有价值的建议都将可能被采纳！
 
 ◆欢迎使用本软件
@@ -53,6 +62,7 @@ A：哈，谢谢支持！
 —OkHttp3(https://github.com/square/okhttp)
 —BaseRecyclerViewAdapterHelper(https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
 —android-floating-action-button(https://github.com/zendesk/android-floating-action-button)
+—CodeView(https://github.com/AmrDeveloper/CodeView)
 
 Copyright@FunnySaltyFish
 2020-2021

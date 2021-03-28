@@ -27,6 +27,7 @@ public class TranslationCustom extends BasicTranslationTask {
     @Override
     public void translate(short mode){
         result = new TranslationResult(engineKind);
+
         JSManager.currentRunningJSEngine = mJSEngine;
         try {
             mJSEngine.request(this);
@@ -37,11 +38,13 @@ public class TranslationCustom extends BasicTranslationTask {
                 String basicText = getBasicText(url);
                 result = getFormattedResult(basicText);
             }
+            result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_SUCCESS);
             onSuccess(helper,result);
         }
         catch (TranslationException e) {
             e.printStackTrace();
+            result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_FAIL);
             result.setBasicResult(e.getErrorMessage());
             onFail(helper,result);
