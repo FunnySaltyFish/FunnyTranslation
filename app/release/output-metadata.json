@@ -1,19 +1,17 @@
 {
-  "version": 1,
+  "version": 2,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
   "applicationId": "com.funny.translation",
-  "variantName": "release",
+  "variantName": "processReleaseResources",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "properties": [],
-      "versionCode": 19,
-      "versionName": "2.0.0 beta-1",
-      "enabled": true,
+      "versionCode": 21,
+      "versionName": "2.0.0 beta-3",
       "outputFile": "app-release.apk"
     }
   ]

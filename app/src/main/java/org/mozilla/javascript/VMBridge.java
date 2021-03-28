@@ -19,7 +19,7 @@ public abstract class VMBridge
     private static VMBridge makeInstance()
     {
         String[] classNames = {
-            "org.mozilla.javascript.VMBridge_custom",
+            "org.mozilla.javascript.VMBridge",
             "org.mozilla.javascript.jdk18.VMBridge_jdk18",
         };
         for (int i = 0; i != classNames.length; ++i) {

@@ -35,7 +35,7 @@
             android:id="@+id/js_manage_new_file"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_icon="@drawable/ic_add"
+            app:fab_icon="@drawable/ic_code_white"
             app:fab_title="新建文件"
             app:fab_size="mini"
             />

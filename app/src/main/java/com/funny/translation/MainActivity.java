@@ -90,7 +90,6 @@ import com.funny.translation.widget.EditTextField;
 import com.funny.translation.widget.LanguageAdapter;
 import com.funny.translation.widget.LanguageRecyclerView;
 import com.funny.translation.widget.NewResultAdapter;
-import com.funny.translation.widget.ResultAdapter;
 import com.funny.translation.widget.ResultItemDecoration;
 import com.funny.translation.widget.WordCompleteAdapter;
 import com.github.lzyzsd.circleprogress.CircleProgress;
@@ -270,7 +269,7 @@ public class MainActivity extends BaseActivity
 					case MESSAGE_FINISH_CURRENT_TASK:
 						Object obj=msg.obj;
 						if (obj != null) {
-							if(!(outputRecyclerView.getAdapter() instanceof ResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
+							if(!(outputRecyclerView.getAdapter() instanceof NewResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
 							BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj;
 							resultAdapter.addData(currentFinishTask);
 
@@ -359,7 +358,7 @@ public class MainActivity extends BaseActivity
 					Log.i(TAG,"current is "+currentWord);
 					TimeUtil.start();
 					ArrayList<DBEnglishWords.Word> queryResults = DBEnglishWordsUtils.getInstance().queryWords(currentWord);
-					if(outputRecyclerView.getAdapter() instanceof ResultAdapter) {
+					if(outputRecyclerView.getAdapter() instanceof NewResultAdapter) {
 						if (queryResults.size() > 0) {
 							wordCompleteAdapter.setWords(queryResults);
 							outputRecyclerView.setAdapter(wordCompleteAdapter);

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/codeEditorFragment"
         android:name="com.funny.translation.fragements.CodeEditorFragment"
-        android:label="code_editor_fragment"
+        android:label="@string/edit_code"
         tools:layout="@layout/code_editor_fragment">
         <action
             android:id="@+id/action_codeEditorFragment_to_codeRunFragment"
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/codeRunFragment"
         android:name="com.funny.translation.fragements.CodeRunFragment"
-        android:label="code_run_fragment"
+        android:label="@string/run_code"
         tools:layout="@layout/code_run_fragment">
         <action
             android:id="@+id/action_codeRunFragment_to_codeEditorFragment"

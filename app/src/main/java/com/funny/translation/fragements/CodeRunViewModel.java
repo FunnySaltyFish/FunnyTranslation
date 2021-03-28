@@ -3,21 +3,27 @@ package com.funny.translation.fragements;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.funny.translation.bean.Consts;
 import com.funny.translation.js.JS;
 import com.funny.translation.js.JSEngine;
 import com.funny.translation.js.JSException;
 import com.funny.translation.utils.LiveDataUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 public class CodeRunViewModel extends ViewModel {
     // TODO: Implement the ViewModel
     MutableLiveData<String> output = new MutableLiveData<>("");
     MutableLiveData<JSEngine> jsEngine = new MutableLiveData<>(new JSEngine());
 
+    short sourceLanguage=Consts.LANGUAGE_CHINESE,targetLanguage=Consts.LANGUAGE_ENGLISH;
+    String sourceString="你好";
+
     private JS mJS;
 
     public void setOutput(String output) {
         //在子线程调用
-       LiveDataUtil.setValue(getOutput(),output);
+       getOutput().setValue(output);
     }
 
     public MutableLiveData<String> getOutput() {
@@ -25,7 +31,7 @@ public class CodeRunViewModel extends ViewModel {
     }
 
     public void appendOutput(String text){
-        LiveDataUtil.setValue(getOutput(),getOutput().getValue()+"【Output】"+text+"\n");
+        getOutput().setValue(getOutput().getValue()+"【Output】"+text+"\n");
     }
 
     public void appendDividerLine(){
@@ -46,5 +52,29 @@ public class CodeRunViewModel extends ViewModel {
 
     public void clearOutput() {
         setOutput("");
+    }
+
+    public short getSourceLanguage() {
+        return sourceLanguage;
+    }
+
+    public void setSourceLanguage(short sourceLanguage) {
+        this.sourceLanguage = sourceLanguage;
+    }
+
+    public short getTargetLanguage() {
+        return targetLanguage;
+    }
+
+    public void setTargetLanguage(short targetLanguage) {
+        this.targetLanguage = targetLanguage;
+    }
+
+    public String getSourceString() {
+        return sourceString;
+    }
+
+    public void setSourceString(String sourceString) {
+        this.sourceString = sourceString;
     }
 }

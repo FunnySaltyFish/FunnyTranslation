@@ -19,6 +19,8 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
 
     public abstract String getBasicText(String url) throws TranslationException;
     public abstract TranslationResult getFormattedResult(String basicText) throws TranslationException;
+
+    ;
     public abstract String madeURL();
     public abstract boolean isOffline();
 
@@ -51,12 +53,14 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
                 result = getFormattedResult(basicText);
             }
             reFormatBasicText(result,mode);//还原处理过的basicText
+            result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_SUCCESS);
             onSuccess(helper,result);
         }
         catch (TranslationException e) {
             e.printStackTrace();
             reFormatBasicText(result,mode);//还原处理过的basicText
+            result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_FAIL);
             result.setBasicResult(e.getErrorMessage());
             onFail(helper,result);
