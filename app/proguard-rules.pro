@@ -15,3 +15,16 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+#有关JS全部保留
+-keep class org.mozilla.** {*;}
+-keep class com.funny.translation.js.** {*;}
+
+#BRVAH保留
+-keep class com.chad.library.** {*;}
+-keep class com.funny.translation.widget.* extends com.chad.library.adapter.base.BaseQuickAdapter {*;}
+-keep class com.funny.translation.widget.* extends com.chad.library.adapter.base.viewholder.BaseViewHolder {*;}
+
+-keepattributes Signature
+
+#抛出异常时保留代码行号，在异常分析中可以方便定位
+-keepattributes SourceFile,LineNumberTable

@@ -25,8 +25,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 19
-        versionName "2.0.0 beta-1"
+        versionCode 21
+        versionName "2.0.0 beta-3"
         resConfigs('zh-rCN')
     }
     buildFeatures{
@@ -36,6 +36,8 @@ android {
 
     buildTypes {
         release {
+            //临时可调式
+            //debuggable true
             //开启代码混淆
             minifyEnabled true
             //Zipalign优化

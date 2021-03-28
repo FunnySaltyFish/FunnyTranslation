@@ -107,6 +107,10 @@ public class Consts
 
 	public final static int MESSAGE_FINISH_CURRENT_TASK = 0x001;
 	public final static int MESSAGE_FINISH_ALL_TASKS = 0x002;
+
+	public final static int MESSAGE_CODE_RUN_UPDATE_OUTPUT = 0x301;
+	public final static int MESSAGE_CODE_RUN_CLEAR_OUTPUT = 0x302;
+	public final static int MESSAGE_CODE_RUN_UPDATE_DIVIDER = 0x303;
 	
 	public final static short SKIN_BLUE=0;
 	public final static short SKIN_GREEN=1;
