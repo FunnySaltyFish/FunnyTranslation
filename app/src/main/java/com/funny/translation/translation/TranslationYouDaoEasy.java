@@ -20,7 +20,7 @@ public class TranslationYouDaoEasy extends BasicTranslationTask {
 
     private static final String TAG = "TranslationYouDaoEasy";
 
-    public TranslationYouDaoEasy(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationYouDaoEasy(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 

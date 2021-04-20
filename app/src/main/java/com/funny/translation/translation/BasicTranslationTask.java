@@ -1,13 +1,11 @@
 package com.funny.translation.translation;
 
-import android.util.Log;
-
 import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.StringUtil;
 
 public abstract class BasicTranslationTask implements OnTranslateListener {
     private static final String TAG = "BasicTranslationTask";
-    protected TranslationHelper helper;
+    protected NewTranslationHelper helper;
 
     public String sourceString;
 
@@ -24,7 +22,7 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
     public abstract String madeURL();
     public abstract boolean isOffline();
 
-    public BasicTranslationTask(TranslationHelper helper,String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public BasicTranslationTask(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         this.helper = helper;
         this.sourceString = sourceString;
         this.sourceLanguage = sourceLanguage;
@@ -119,12 +117,12 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
     }
 
     @Override
-    public void onSuccess(TranslationHelper helper, TranslationResult result) {
-        helper.defaultListener.onSuccess(helper, result);
+    public void onSuccess(NewTranslationHelper helper, TranslationResult result) {
+        //helper.defaultListener.onSuccess(helper, result);
     }
 
     @Override
-    public void onFail(TranslationHelper helper, TranslationResult result) {
-        helper.defaultListener.onFail(helper, result);
+    public void onFail(NewTranslationHelper helper, TranslationResult result) {
+        //helper.defaultListener.onFail(helper, result);
     }
 }

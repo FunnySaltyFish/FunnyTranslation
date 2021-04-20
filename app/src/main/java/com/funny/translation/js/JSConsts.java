@@ -53,6 +53,9 @@ public class JSConsts extends ScriptableObject {
         return Consts.LANGUAGE_WENYANWEN;
     }
 
+    @JSGetter("LANGUAGE_THAI")
+    public int LANGUAGE_THAI(){return Consts.LANGUAGE_THAI;}
+
     @Override
     public String getClassName() {
         return TAG;

@@ -1,22 +1,12 @@
 package com.funny.translation.translation;
 
-import org.json.JSONObject;
-import org.json.JSONException;
-import org.json.JSONArray;
 import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.io.InputStreamReader;
-import java.io.IOException;
+
 import com.funny.translation.bean.Consts;
 import com.funny.translation.js.TranslationCustom;
 
 import android.os.Handler;
 import android.os.Message;
-import java.util.Map;
-import java.util.List;
 
 public class TranslationHelper extends Thread
 {
@@ -39,13 +29,13 @@ public class TranslationHelper extends Thread
 		this.handler=handler;
 		this.defaultListener=new OnTranslateListener(){
 			@Override
-			public void onSuccess(TranslationHelper helper, TranslationResult result) {
+			public void onSuccess(NewTranslationHelper helper, TranslationResult result) {
 				System.out.printf("成功！%s的翻译结果是：%s\n",result.getSourceString(),result.getBasicResult());
 				successTimes++;
 			}
 
 			@Override
-			public void onFail(TranslationHelper helper, TranslationResult result) {
+			public void onFail(NewTranslationHelper helper, TranslationResult result) {
 				System.out.printf("失败！原因是：\n%s",result.getBasicResult());
 				failureTimes++;
 			}

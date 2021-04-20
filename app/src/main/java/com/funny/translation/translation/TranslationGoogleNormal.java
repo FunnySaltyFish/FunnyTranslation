@@ -13,7 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class TranslationGoogleNormal extends BasicTranslationTask {
-    public TranslationGoogleNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationGoogleNormal(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 

@@ -1,8 +1,10 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     signingConfigs {
-        debug {
+        defaultMode {
             storeFile file('D:\\projects\\mykey.keystore')
             storePassword 'SHENying303654'
             keyAlias '我的钥匙'
@@ -45,27 +47,43 @@ android {
             //移除无用的resource文件
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.defaultMode
         }
         debug {
             minifyEnabled false
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.defaultMode
         }
 
+    }
+
+    //启用子文件夹
+    def listSubFile = {
+        def resFolder = 'src/main/res/layout/'
+        def files = file(resFolder).listFiles()
+        def folders = []
+        files.each {
+            item -> folders.add(item.absolutePath)
+        }
+        folders.add(file(resFolder).parentFile.absolutePath)
+        return folders
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res/layout/old',
+                            'src/main/res/layout/translation',
+                            'src/main/res/layout',
+                            'src/main/res'
+                    ]
+        }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-//	compileOptions {
-//		// Flag to enable support for the new language APIs
-//		//coreLibraryDesugaringEnabled true
-//		// Sets Java compatibility to Java 11
-//		sourceCompatibility JavaVersion.VERSION_11
-//		targetCompatibility JavaVersion.VERSION_11
-//	}
 
 }
 
@@ -98,5 +116,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+    implementation("com.gitee.funnysaltyfish:FunnyBottomNavigation:v1.0.2")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
