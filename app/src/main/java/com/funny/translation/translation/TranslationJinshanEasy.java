@@ -3,7 +3,6 @@ package com.funny.translation.translation;
 import android.util.Log;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.js.JSException;
 import com.funny.translation.utils.OkHttpUtil;
 
 import org.json.JSONArray;
@@ -19,7 +18,7 @@ import java.util.Locale;
 
 public class TranslationJinshanEasy extends BasicTranslationTask {
     String TAG = "TranslationJinshanEasy";
-    public TranslationJinshanEasy(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationJinshanEasy(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 

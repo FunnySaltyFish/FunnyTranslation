@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +23,13 @@ import com.funny.translation.jetpack.ActivityCodeViewModel;
 import com.funny.translation.js.JS;
 import com.funny.translation.js.JSEngine;
 import com.funny.translation.js.JSException;
-import com.funny.translation.js.JSManager;
 import com.funny.translation.js.TranslationCustom;
+import com.funny.translation.translation.NewTranslationHelper;
 import com.funny.translation.translation.TranslationException;
-import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.translation.TranslationResult;
-import com.funny.translation.utils.FileUtil;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class CodeRunFragment extends Fragment {
 
@@ -133,7 +130,7 @@ public class CodeRunFragment extends Fragment {
             codeRunFragment.appendDivider();
 
             JSEngine mJSEngine = mViewModel.jsEngine.getValue();
-            TranslationHelper translationHelper = new TranslationHelper(codeRunFragment.handler);
+            NewTranslationHelper translationHelper = new NewTranslationHelper(new ArrayList<>());
             CodeRunTranslationCustom translationCustom = new CodeRunTranslationCustom(translationHelper,
                     mViewModel.sourceString,mViewModel.sourceLanguage,mViewModel.targetLanguage,
                     Consts.ENGINE_JS);
@@ -172,7 +169,7 @@ public class CodeRunFragment extends Fragment {
 
     class CodeRunTranslationCustom extends TranslationCustom{
         CodeRunFragment codeRunFragment;
-        public CodeRunTranslationCustom(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+        public CodeRunTranslationCustom(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
             super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
         }
 

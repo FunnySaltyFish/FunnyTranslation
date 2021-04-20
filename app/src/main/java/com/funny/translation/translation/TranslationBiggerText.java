@@ -7,7 +7,7 @@ import com.funny.translation.FunnyApplication;
 import com.funny.translation.utils.FunnyBiggerText;
 
 public class TranslationBiggerText extends  BasicTranslationTask {
-    public TranslationBiggerText(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationBiggerText(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 

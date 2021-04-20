@@ -1,20 +1,17 @@
 package com.funny.translation.js;
 
-import com.funny.translation.bean.Consts;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationException;
-import com.funny.translation.translation.TranslationHelper;
+import com.funny.translation.translation.NewTranslationHelper;
 import com.funny.translation.translation.TranslationResult;
-import com.funny.translation.utils.StringUtil;
 
 import org.mozilla.javascript.NativeJavaObject;
-import org.mozilla.javascript.NativeObject;
 
 public class TranslationCustom extends BasicTranslationTask {
     JSEngine mJSEngine;
 
 
-    public TranslationCustom(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationCustom(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 

@@ -24,6 +24,9 @@ public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, New
 
     @Override
     protected void convert(@NotNull ResultContentHolder rcHolder, BasicTranslationTask task) {
+        //没出结果的跳过
+        if(task.getResult()==null)return;
+
         //设置翻译引擎的样子
         sb.setLength(0);
         if(task.engineKind == Consts.ENGINE_JS){
@@ -40,17 +43,15 @@ public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, New
 
         rcHolder.engine.setText(sb.toString());
 
-
         if (task.engineKind==Consts.ENGINE_BIGGER_TEXT){//缩小字符
             rcHolder.text.setTextSize(8);
         }else{
             rcHolder.text.setTextSize(16);
         }
-        if(task.getResult()==null)return;
         rcHolder.text.setText(task.getResult().getBasicResult());
     }
 
-     class ResultContentHolder extends BaseViewHolder{
+     static class ResultContentHolder extends BaseViewHolder{
         TextView text,engine;
         ImageButton copyButton,ttsButton;
         public ResultContentHolder(View itemView){

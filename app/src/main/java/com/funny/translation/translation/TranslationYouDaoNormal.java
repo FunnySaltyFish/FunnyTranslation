@@ -1,10 +1,8 @@
 package com.funny.translation.translation;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.utils.OkHttpUtil;
 import com.funny.translation.utils.StringUtil;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,16 +16,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okio.Timeout;
-
 public class TranslationYouDaoNormal extends BasicTranslationTask {
-    public TranslationYouDaoNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationYouDaoNormal(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 

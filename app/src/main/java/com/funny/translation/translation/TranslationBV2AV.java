@@ -7,7 +7,7 @@ import com.funny.translation.utils.FunnyBvToAv;
 import com.funny.translation.utils.StringUtil;
 
 public class TranslationBV2AV extends BasicTranslationTask{
-    public TranslationBV2AV(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationBV2AV(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 
