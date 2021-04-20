@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -60,19 +59,20 @@ import com.funny.translation.db.DBJSUtils;
 import com.funny.translation.js.JS;
 import com.funny.translation.js.JSBean;
 import com.funny.translation.js.JSEngine;
-import com.funny.translation.js.JSException;
 import com.funny.translation.js.JSManager;
 import com.funny.translation.js.JSUtils;
 import com.funny.translation.js.TranslationCustom;
 import com.funny.translation.thread.UpdateThread;
 import com.funny.translation.translation.BasicTranslationTask;
+import com.funny.translation.translation.OnTaskFinishListener;
 import com.funny.translation.translation.TranslationBV2AV;
 import com.funny.translation.translation.TranslationBaiduNormal;
 import com.funny.translation.translation.TranslationBiggerText;
 import com.funny.translation.translation.TranslationEachText;
 import com.funny.translation.translation.TranslationGoogleNormal;
-import com.funny.translation.translation.TranslationHelper;
+import com.funny.translation.translation.NewTranslationHelper;
 import com.funny.translation.translation.TranslationJinshanEasy;
+import com.funny.translation.translation.TranslationResult;
 import com.funny.translation.translation.TranslationYouDaoNormal;
 import com.funny.translation.utils.ApplicationUtil;
 import com.funny.translation.utils.AutoCompleteUtil;
@@ -94,11 +94,9 @@ import com.funny.translation.widget.ResultItemDecoration;
 import com.funny.translation.widget.WordCompleteAdapter;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -163,7 +161,7 @@ public class MainActivity extends BaseActivity
 
 	NewResultAdapter resultAdapter;
 	WordCompleteAdapter wordCompleteAdapter;
-	TranslationHelper helper;
+	NewTranslationHelper helper;
 	
 	Handler handler;
 	DBEnglishWordsUtils dbEnglishWordsUtils;
@@ -267,14 +265,12 @@ public class MainActivity extends BaseActivity
 				switch (msg.what)
 				{
 					case MESSAGE_FINISH_CURRENT_TASK:
-						Object obj=msg.obj;
-						if (obj != null) {
-							if(!(outputRecyclerView.getAdapter() instanceof NewResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
-							BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj;
-							resultAdapter.addData(currentFinishTask);
+						if(!(outputRecyclerView.getAdapter() instanceof NewResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
+							//BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj;
+							//resultAdapter.addData(currentFinishTask);
+						resultAdapter.notifyDataSetChanged();
+						translateProgress.setProgress(helper.getProgress());
 
-							translateProgress.setProgress(helper.getProcess());
-						}
 						break;
 					case MESSAGE_FINISH_ALL_TASKS:
 						Object obj2=msg.obj;
@@ -285,6 +281,7 @@ public class MainActivity extends BaseActivity
 							//resultAdapter.insert(tasks);
 							//itemDecoration.setTasks(tasks);
 							//outputRecyclerView.invalidateItemDecorations();
+							resultAdapter.notifyDataSetChanged();
 							translateProgress.setVisibility(View.INVISIBLE);
 							translateButton.setVisibility(View.VISIBLE);
 						}
@@ -486,7 +483,7 @@ public class MainActivity extends BaseActivity
 			@Override
 			public void onClick(View view) {
 				if(helper!=null&&helper.isTranslating()){
-					helper.flag = 0;
+					helper.cancelTask();
 					ApplicationUtil.print(MainActivity.this,"当前任务已终止！");
 					translateProgress.setVisibility(View.INVISIBLE);
 					translateButton.setVisibility(View.VISIBLE);
@@ -540,11 +537,12 @@ public class MainActivity extends BaseActivity
 			inputText.setText(content);
 		}
 		//根据选择翻译
-		helper = new TranslationHelper(MainActivity.this.handler);
+		initTasks(content);
+		helper = new NewTranslationHelper(tasks);
 		short mode = getCheckedList(modeList).get(0).getUserData();
 		helper.setMode(mode);
 		//Log.i(TAG,"正在使用的翻译模式是："+MODE_NAMES[mode]);
-		initTasks(content);
+
 		//修改为outputRV
 		if(outputRecyclerView.getAdapter() instanceof WordCompleteAdapter){
 			outputRecyclerView.setAdapter(resultAdapter);
@@ -552,9 +550,20 @@ public class MainActivity extends BaseActivity
 //			outputRecyclerView.addItemDecoration(itemDecoration);
 		}
 		//resultAdapter.setList(tasks);
-		helper.setTasks(tasks);
-		helper.totalTimes = tasks.size();
-		helper.start();
+		helper.setTotalTimes(tasks.size());
+		helper.translate(new OnTaskFinishListener() {
+			@Override
+			public void onSuccess(@NotNull TranslationResult result) {
+				handler.sendEmptyMessage(MESSAGE_FINISH_CURRENT_TASK);
+				Log.d(TAG, "onSuccess: "+result);
+			}
+
+			@Override
+			public void onFailure(@NotNull String errorMsg) {
+				handler.sendEmptyMessage(MESSAGE_FINISH_CURRENT_TASK);
+				Log.d(TAG, "onFailure: "+errorMsg);
+			}
+		});
 
 		translateProgress.setMax(100);
 		translateProgress.setProgress(0);
@@ -902,15 +911,8 @@ public class MainActivity extends BaseActivity
 			tasks=new ArrayList<BasicTranslationTask>();
 		}else{
 			tasks.clear();
-			helper.finishTasks.clear();
+			//helper.finishTasks.clear();
 		}
-
-		if(finishTasks==null){
-			finishTasks=new ArrayList<>();
-		}else {
-			finishTasks.clear();
-		}
-		resultAdapter.setList(finishTasks);
 
 		short source=getCheckedList(sourceList).get(0).getUserData();
 		int i=0;
@@ -959,13 +961,8 @@ public class MainActivity extends BaseActivity
 			}
 
 		}
-//		for(int i=0;i<2;i++){
-//			TranslationTask task=new TranslationTask(ENGINE_YOUDAO_NORMAL,LANGUAGE_ENGLISH,LANGUAGE_CHINESE,inputText.getText().toString());
-//			task.setId(i);
-//			task.setLisener(helper.defaultListener);
-//			tasks.add(task);
-//		}
-		
+
+		resultAdapter.setList(tasks);
 	}
 	
 	private ArrayList<LanguageBean> getCheckedList(ArrayList<LanguageBean> list){

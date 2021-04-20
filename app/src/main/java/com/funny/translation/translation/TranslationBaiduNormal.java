@@ -1,7 +1,5 @@
 package com.funny.translation.translation;
 
-import android.util.Log;
-
 import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.StringUtil;
 
@@ -11,7 +9,7 @@ import org.json.JSONObject;
 
 public class TranslationBaiduNormal extends BasicTranslationTask {
     String TAG="BaiduTranslation";
-    public TranslationBaiduNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
+    public TranslationBaiduNormal(NewTranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
         super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
     }
 
