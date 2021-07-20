@@ -19,6 +19,9 @@
 -keep class org.mozilla.** {*;}
 -keep class com.funny.translation.js.** {*;}
 
+#工具类
+-keep class com.funny.translation.utils.OkHttpUtil {*;}
+
 #BRVAH保留
 -keep class com.chad.library.** {*;}
 -keep class com.funny.translation.widget.* extends com.chad.library.adapter.base.BaseQuickAdapter {*;}

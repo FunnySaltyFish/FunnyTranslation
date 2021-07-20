@@ -93,11 +93,11 @@ public class Consts
 	//百度翻译常量
 	public static String DEFAULT_BAIDU_APP_ID = RC4.decry_RC4("785ebf34dc6aa09ffc4f5726d7bcb14f3f","27420");
 	public static String DEFAULT_BAIDU_SECURITY_KEY = RC4.decry_RC4("0e36da569e6dd8e3a831377988e8b5373ab87173","27420");
-	public static Long DEFAULT_BAIDU_SLEEP_TIME = 800L;
+	public static Long DEFAULT_BAIDU_SLEEP_TIME = 1000L;
 
 	public static String BAIDU_APP_ID = "";
     public static String BAIDU_SECURITY_KEY = "";
-	public static Long BAIDU_SLEEP_TIME = 800L;
+	public static Long BAIDU_SLEEP_TIME = DEFAULT_BAIDU_SLEEP_TIME;
 
 	public static Drawable IC_MULTI_CHECK;
 	public static Drawable IC_MULTI_CHECK_CHECKED;

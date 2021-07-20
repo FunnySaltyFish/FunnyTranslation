@@ -1,7 +1,5 @@
 package com.funny.translation.translation;
 
-import android.util.Log;
-
 import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.StringUtil;
 
@@ -11,13 +9,16 @@ import org.json.JSONObject;
 
 public class TranslationBaiduNormal extends BasicTranslationTask {
     String TAG="BaiduTranslation";
-    public TranslationBaiduNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationBaiduNormal(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
+
 
     @Override
     public String getBasicText(String url) throws TranslationException {
         //Log.i(TAG,String.format("正在使用百度翻译！用的appid是%s",Consts.BAIDU_APP_ID));
+        short engineKind = getEngineKind();
         BaiduTransApi api=BaiduTransApi.getBaiduTransApi(Consts.BAIDU_APP_ID,Consts.BAIDU_SECURITY_KEY);
         String from=Consts.LANGUAGES[sourceLanguage][engineKind];
         String to= Consts.LANGUAGES[targetLanguage][engineKind];
@@ -70,5 +71,10 @@ public class TranslationBaiduNormal extends BasicTranslationTask {
     @Override
     public boolean isOffline() {
         return false;
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_BAIDU_NORMAL;
     }
 }
