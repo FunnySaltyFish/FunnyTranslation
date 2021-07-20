@@ -5,7 +5,7 @@
     <data>
         <variable
             name="data"
-            type="com.funny.translation.fragements.CodeEditorViewModel" />
+            type="com.funny.translation.fragments.CodeEditorViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -26,11 +26,11 @@ public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, New
     protected void convert(@NotNull ResultContentHolder rcHolder, BasicTranslationTask task) {
         //设置翻译引擎的样子
         sb.setLength(0);
-        if(task.engineKind == Consts.ENGINE_JS){
+        if(task.getEngineKind() == Consts.ENGINE_JS){
             TranslationCustom custom = (TranslationCustom)task;
             sb.append(custom.getJSEngine().js.fileName);
         }else{
-            sb.append(Consts.ENGINE_NAMES[task.engineKind]);
+            sb.append(Consts.ENGINE_NAMES[task.getEngineKind()]);
         }
 
         sb.append("  ");
@@ -41,7 +41,7 @@ public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, New
         rcHolder.engine.setText(sb.toString());
 
 
-        if (task.engineKind==Consts.ENGINE_BIGGER_TEXT){//缩小字符
+        if (task.getEngineKind()==Consts.ENGINE_BIGGER_TEXT){//缩小字符
             rcHolder.text.setTextSize(8);
         }else{
             rcHolder.text.setTextSize(16);
@@ -50,7 +50,7 @@ public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, New
         rcHolder.text.setText(task.getResult().getBasicResult());
     }
 
-     class ResultContentHolder extends BaseViewHolder{
+     static class ResultContentHolder extends BaseViewHolder{
         TextView text,engine;
         ImageButton copyButton,ttsButton;
         public ResultContentHolder(View itemView){

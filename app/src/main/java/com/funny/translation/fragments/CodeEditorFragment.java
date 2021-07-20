@@ -1,4 +1,4 @@
-package com.funny.translation.fragements;
+package com.funny.translation.fragments;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,14 +13,12 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.funny.translation.R;
 import com.funny.translation.code.JavaScriptSyntaxManager;
-import com.funny.translation.code.JavaSyntaxManager;
 import com.funny.translation.databinding.CodeEditorFragmentBinding;
 import com.funny.translation.jetpack.ActivityCodeViewModel;
 import com.funny.translation.utils.FileUtil;

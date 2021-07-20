@@ -1,7 +1,6 @@
 package com.funny.translation;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -14,14 +13,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.funny.translation.databinding.ActivityCodeBinding;
-import com.funny.translation.fragements.CodeEditorViewModel;
+import com.funny.translation.fragments.CodeEditorViewModel;
 import com.funny.translation.jetpack.ActivityCodeViewModel;
-import com.funny.translation.utils.ApplicationUtil;
 
 public class CodeActivity extends BaseActivity{
     ActivityCodeViewModel activityCodeViewModel;

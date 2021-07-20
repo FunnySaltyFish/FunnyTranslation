@@ -4,11 +4,13 @@ package com.funny.translation.translation;
 import androidx.preference.PreferenceManager;
 
 import com.funny.translation.FunnyApplication;
+import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.FunnyBiggerText;
 
 public class TranslationBiggerText extends  BasicTranslationTask {
-    public TranslationBiggerText(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationBiggerText(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class TranslationBiggerText extends  BasicTranslationTask {
                 str = FunnyBiggerText.drawNarrowString(FunnyApplication.getFunnyContext(),basicText);
                 break;
         }
-        return new TranslationResult(engineKind,str,null);
+        return new TranslationResult(getEngineKind(),str,null);
     }
 
     @Override
@@ -43,5 +45,10 @@ public class TranslationBiggerText extends  BasicTranslationTask {
     @Override
     public boolean isOffline() {
         return true;
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_BIGGER_TEXT;
     }
 }

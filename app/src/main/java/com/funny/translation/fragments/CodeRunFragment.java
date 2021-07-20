@@ -1,4 +1,4 @@
-package com.funny.translation.fragements;
+package com.funny.translation.fragments;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +23,10 @@ import com.funny.translation.jetpack.ActivityCodeViewModel;
 import com.funny.translation.js.JS;
 import com.funny.translation.js.JSEngine;
 import com.funny.translation.js.JSException;
-import com.funny.translation.js.JSManager;
 import com.funny.translation.js.TranslationCustom;
 import com.funny.translation.translation.TranslationException;
-import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.translation.TranslationResult;
-import com.funny.translation.utils.FileUtil;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class CodeRunFragment extends Fragment {
@@ -133,21 +128,23 @@ public class CodeRunFragment extends Fragment {
             codeRunFragment.appendDivider();
 
             JSEngine mJSEngine = mViewModel.jsEngine.getValue();
-            TranslationHelper translationHelper = new TranslationHelper(codeRunFragment.handler);
-            CodeRunTranslationCustom translationCustom = new CodeRunTranslationCustom(translationHelper,
-                    mViewModel.sourceString,mViewModel.sourceLanguage,mViewModel.targetLanguage,
-                    Consts.ENGINE_JS);
+            CodeRunTranslationCustom translationCustom = new CodeRunTranslationCustom(mViewModel.sourceString, mViewModel.sourceLanguage, mViewModel.targetLanguage);
             translationCustom.setCodeRunFragment(codeRunFragment);
             translationCustom.setJSEngine(mJSEngine);
-            translationCustom.translate(Consts.MODE_NORMAL);
+            try {
+                translationCustom.translate(Consts.MODE_NORMAL);
+            } catch (TranslationException e) {
+                e.printStackTrace();
+                codeRunFragment.appendOutput("翻译过程中出错，具体原因是："+e.getMessage());
+                codeRunFragment.appendOutput("结束执行！");
+                return;
+            }
 
             codeRunFragment.appendOutput("执行完毕！");
         }
-
-
     }
 
-    class CodeRunHandler extends Handler{
+    static class CodeRunHandler extends Handler{
         WeakReference<CodeActivity> codeActivityWeakReference;
         CodeRunViewModel viewModel;
         public CodeRunHandler(CodeActivity activity,CodeRunViewModel codeRunViewModel){
@@ -158,7 +155,7 @@ public class CodeRunFragment extends Fragment {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if(mViewModel!=null){
+            if(viewModel!=null){
                 if(msg.what == Consts.MESSAGE_CODE_RUN_UPDATE_OUTPUT){
                     viewModel.appendOutput((String)msg.obj);
                 }else if(msg.what == Consts.MESSAGE_CODE_RUN_CLEAR_OUTPUT){
@@ -170,10 +167,11 @@ public class CodeRunFragment extends Fragment {
         }
     }
 
-    class CodeRunTranslationCustom extends TranslationCustom{
+    static class CodeRunTranslationCustom extends TranslationCustom{
         CodeRunFragment codeRunFragment;
-        public CodeRunTranslationCustom(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-            super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+        public CodeRunTranslationCustom(String sourceString, short sourceLanguage, short targetLanguage) {
+            super(sourceString, sourceLanguage, targetLanguage);
         }
 
         public void setCodeRunFragment(CodeRunFragment codeRunFragment) {

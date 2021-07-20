@@ -7,8 +7,9 @@ import com.funny.translation.utils.FunnyBvToAv;
 import com.funny.translation.utils.StringUtil;
 
 public class TranslationBV2AV extends BasicTranslationTask{
-    public TranslationBV2AV(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationBV2AV(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class TranslationBV2AV extends BasicTranslationTask{
 
     @Override
     public TranslationResult getFormattedResult(String basicText) throws TranslationException {
-        TranslationResult result = new TranslationResult(engineKind);
+        TranslationResult result = new TranslationResult(getEngineKind());
         if (!basicText.equals("")){
             result.setBasicResult(basicText);
         }else{
@@ -55,5 +56,10 @@ public class TranslationBV2AV extends BasicTranslationTask{
     @Override
     public boolean isOffline() {
         return true;
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_BV_TO_AV;
     }
 }

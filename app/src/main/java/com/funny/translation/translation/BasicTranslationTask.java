@@ -1,40 +1,35 @@
 package com.funny.translation.translation;
 
-import android.util.Log;
-
 import com.funny.translation.bean.Consts;
 import com.funny.translation.utils.StringUtil;
 
-public abstract class BasicTranslationTask implements OnTranslateListener {
+public abstract class BasicTranslationTask{
     private static final String TAG = "BasicTranslationTask";
-    protected TranslationHelper helper;
 
     public String sourceString;
 
     public short sourceLanguage;
     public short targetLanguage;
-    public short engineKind;
 
     public TranslationResult result;
 
     public abstract String getBasicText(String url) throws TranslationException;
     public abstract TranslationResult getFormattedResult(String basicText) throws TranslationException;
 
-    ;
     public abstract String madeURL();
     public abstract boolean isOffline();
+    public abstract short getEngineKind();
 
-    public BasicTranslationTask(TranslationHelper helper,String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        this.helper = helper;
+    public BasicTranslationTask(String sourceString, short sourceLanguage, short targetLanguage) {
         this.sourceString = sourceString;
         this.sourceLanguage = sourceLanguage;
         this.targetLanguage = targetLanguage;
-        this.engineKind = engineKind;
     }
 
-    public void translate(short mode){
+    public void translate(short mode) throws TranslationException {
         String url = madeURL();
-        String processedString= null;
+        String processedString = null;
+        short engineKind = getEngineKind();
         result = new TranslationResult(engineKind);
         try {
             if (mode==Consts.MODE_EACH_TEXT&&sourceLanguage!=Consts.LANGUAGE_CHINESE){
@@ -55,7 +50,6 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
             reFormatBasicText(result,mode);//还原处理过的basicText
             result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_SUCCESS);
-            onSuccess(helper,result);
         }
         catch (TranslationException e) {
             e.printStackTrace();
@@ -63,7 +57,7 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
             result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_FAIL);
             result.setBasicResult(e.getErrorMessage());
-            onFail(helper,result);
+            throw e;
         }
     }
 
@@ -116,15 +110,5 @@ public abstract class BasicTranslationTask implements OnTranslateListener {
 
     public TranslationResult getResult() {
         return result;
-    }
-
-    @Override
-    public void onSuccess(TranslationHelper helper, TranslationResult result) {
-        helper.defaultListener.onSuccess(helper, result);
-    }
-
-    @Override
-    public void onFail(TranslationHelper helper, TranslationResult result) {
-        helper.defaultListener.onFail(helper, result);
     }
 }

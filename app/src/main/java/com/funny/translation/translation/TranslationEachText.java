@@ -10,8 +10,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class TranslationEachText extends BasicTranslationTask {
-    public TranslationEachText(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationEachText(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class TranslationEachText extends BasicTranslationTask {
                 }
                 stringBuilder.append(" ");
             }
-            return new TranslationResult(engineKind,stringBuilder.toString(),null);
+            return new TranslationResult(getEngineKind(),stringBuilder.toString(),null);
         } catch (IOException e) {
             e.printStackTrace();
             throw new TranslationException(Consts.ERROR_IO);
@@ -54,5 +55,10 @@ public class TranslationEachText extends BasicTranslationTask {
     @Override
     public boolean isOffline() {
         return true;
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_EACH_TEXT;
     }
 }

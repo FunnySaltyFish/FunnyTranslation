@@ -98,16 +98,14 @@ public class TTSUtil
 	
 	public static void speak(Context ctx,String text,short language,short TTSEngine){
 		if (TTSEngine == Consts.TTS_LOCAL){
-			if (localTTS == null)
-			{
+			if (localTTS == null) {
 				initLocal(ctx);
-				ApplicationUtil.print(ctx,"正在初始化本地朗读引擎……\n如需朗读请稍等再次点击");
-				return;
+//				ApplicationUtil.print(ctx,"正在初始化本地朗读引擎……\n如需朗读请稍等再次点击");
+//				return;
 			}
 			int result=localTTS.setLanguage(getLanguage(language));
 			if (result != TextToSpeech.LANG_COUNTRY_AVAILABLE
-				&& result != TextToSpeech.LANG_AVAILABLE)
-			{
+				&& result != TextToSpeech.LANG_AVAILABLE) {
 				ApplicationUtil.print(ctx, "您的本地TTS暂不支持该种语言的朗读");
 				return;
 			}
@@ -116,8 +114,8 @@ public class TTSUtil
 			if(internetTTSThread==null){
 				MainActivity activity=(MainActivity)ctx;
 				initInternet(ctx,activity.getHandler());
-				ApplicationUtil.print(ctx,"正在初始化网络朗读引擎……\n如需朗读请稍等再次点击");
-				return;
+//				ApplicationUtil.print(ctx,"正在初始化网络朗读引擎……\n如需朗读请稍等再次点击");
+//				return;
 			}
 			rePlayInternet(ctx,getInternetUrl(TTSEngine,text,language));
 		}

@@ -1,4 +1,4 @@
-package com.funny.translation.fragements;
+package com.funny.translation.fragments;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
