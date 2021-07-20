@@ -25,6 +25,8 @@ public class TranslationResult
 	private String sourceString;
 	private String partOfSpeech;//词性
 
+	private int index;//该任务被执行时的顺序
+
 	public TranslationResult(short engineKind,String sourceString) {
 		this(engineKind,sourceString,null);
 	}
@@ -99,6 +101,18 @@ public class TranslationResult
 
 	public void setSourceString(String sourceString) {
 		this.sourceString = sourceString;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public short getEngineKind() {
+		return engineKind;
 	}
 
 	@Override
