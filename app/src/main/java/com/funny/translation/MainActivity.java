@@ -1,5 +1,37 @@
 package com.funny.translation;
 
+import static com.funny.translation.bean.Consts.ACTIVITY_JS_MANAGE;
+import static com.funny.translation.bean.Consts.ACTIVITY_MAIN;
+import static com.funny.translation.bean.Consts.ACTIVITY_SETTING;
+import static com.funny.translation.bean.Consts.BAIDU_APP_ID;
+import static com.funny.translation.bean.Consts.BAIDU_SECURITY_KEY;
+import static com.funny.translation.bean.Consts.BAIDU_SLEEP_TIME;
+import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_APP_ID;
+import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_SECURITY_KEY;
+import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_SLEEP_TIME;
+import static com.funny.translation.bean.Consts.ENGINE_BAIDU_NORMAL;
+import static com.funny.translation.bean.Consts.ENGINE_BIGGER_TEXT;
+import static com.funny.translation.bean.Consts.ENGINE_BV_TO_AV;
+import static com.funny.translation.bean.Consts.ENGINE_EACH_TEXT;
+import static com.funny.translation.bean.Consts.ENGINE_GOOGLE;
+import static com.funny.translation.bean.Consts.ENGINE_JINSHAN;
+import static com.funny.translation.bean.Consts.ENGINE_NAMES;
+import static com.funny.translation.bean.Consts.ENGINE_YOUDAO_NORMAL;
+import static com.funny.translation.bean.Consts.IC_MENU_RIGHT_ARROW;
+import static com.funny.translation.bean.Consts.IC_MULTI_CHECK;
+import static com.funny.translation.bean.Consts.IC_MULTI_CHECK_CHECKED;
+import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK;
+import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK_CHECKED;
+import static com.funny.translation.bean.Consts.LANGUAGES;
+import static com.funny.translation.bean.Consts.LANGUAGE_AUTO;
+import static com.funny.translation.bean.Consts.LANGUAGE_NAMES;
+import static com.funny.translation.bean.Consts.MESSAGE_FINISH_ALL_TASKS;
+import static com.funny.translation.bean.Consts.MESSAGE_FINISH_CURRENT_TASK;
+import static com.funny.translation.bean.Consts.MODE_NAMES;
+import static com.funny.translation.bean.Consts.MODE_NORMAL;
+import static com.funny.translation.bean.Consts.TTS_BAIDU;
+import static com.funny.translation.bean.Consts.TTS_NAMES;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +44,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -50,8 +81,6 @@ import com.billy.android.swipe.consumer.DrawerConsumer;
 import com.billy.android.swipe.consumer.SlidingConsumer;
 import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.bean.LanguageBean;
 import com.funny.translation.db.DBEnglishWords;
@@ -60,18 +89,18 @@ import com.funny.translation.db.DBJSUtils;
 import com.funny.translation.js.JS;
 import com.funny.translation.js.JSBean;
 import com.funny.translation.js.JSEngine;
-import com.funny.translation.js.JSException;
 import com.funny.translation.js.JSManager;
 import com.funny.translation.js.JSUtils;
 import com.funny.translation.js.TranslationCustom;
 import com.funny.translation.thread.UpdateThread;
 import com.funny.translation.translation.BasicTranslationTask;
+import com.funny.translation.translation.NewTranslationHelper;
+import com.funny.translation.translation.OnTranslateListener;
 import com.funny.translation.translation.TranslationBV2AV;
 import com.funny.translation.translation.TranslationBaiduNormal;
 import com.funny.translation.translation.TranslationBiggerText;
 import com.funny.translation.translation.TranslationEachText;
 import com.funny.translation.translation.TranslationGoogleNormal;
-import com.funny.translation.translation.TranslationHelper;
 import com.funny.translation.translation.TranslationJinshanEasy;
 import com.funny.translation.translation.TranslationYouDaoNormal;
 import com.funny.translation.utils.ApplicationUtil;
@@ -87,56 +116,17 @@ import com.funny.translation.utils.TimeUtil;
 import com.funny.translation.utils.UpdateUtil;
 import com.funny.translation.widget.DrawerAdapter;
 import com.funny.translation.widget.EditTextField;
-import com.funny.translation.widget.LanguageAdapter;
 import com.funny.translation.widget.LanguageRecyclerView;
 import com.funny.translation.widget.NewResultAdapter;
 import com.funny.translation.widget.ResultItemDecoration;
 import com.funny.translation.widget.WordCompleteAdapter;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 
-import static com.funny.translation.bean.Consts.ACTIVITY_JS_MANAGE;
-import static com.funny.translation.bean.Consts.ACTIVITY_MAIN;
-import static com.funny.translation.bean.Consts.ACTIVITY_SETTING;
-import static com.funny.translation.bean.Consts.BAIDU_APP_ID;
-import static com.funny.translation.bean.Consts.BAIDU_SECURITY_KEY;
-import static com.funny.translation.bean.Consts.BAIDU_SLEEP_TIME;
-import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_APP_ID;
-import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_SECURITY_KEY;
-import static com.funny.translation.bean.Consts.DEFAULT_BAIDU_SLEEP_TIME;
-import static com.funny.translation.bean.Consts.ENGINE_BAIDU_NORMAL;
-import static com.funny.translation.bean.Consts.ENGINE_BIGGER_TEXT;
-import static com.funny.translation.bean.Consts.ENGINE_BV_TO_AV;
-import static com.funny.translation.bean.Consts.ENGINE_EACH_TEXT;
-import static com.funny.translation.bean.Consts.ENGINE_GOOGLE;
-import static com.funny.translation.bean.Consts.ENGINE_JINSHAN;
-import static com.funny.translation.bean.Consts.ENGINE_JS;
-import static com.funny.translation.bean.Consts.ENGINE_NAMES;
-import static com.funny.translation.bean.Consts.ENGINE_YOUDAO_NORMAL;
-import static com.funny.translation.bean.Consts.IC_MENU_RIGHT_ARROW;
-import static com.funny.translation.bean.Consts.IC_MULTI_CHECK;
-import static com.funny.translation.bean.Consts.IC_MULTI_CHECK_CHECKED;
-import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK;
-import static com.funny.translation.bean.Consts.IC_SINGLE_CHECK_CHECKED;
-import static com.funny.translation.bean.Consts.LANGUAGES;
-import static com.funny.translation.bean.Consts.LANGUAGE_AUTO;
-import static com.funny.translation.bean.Consts.LANGUAGE_NAMES;
-import static com.funny.translation.bean.Consts.MESSAGE_FINISH_ALL_TASKS;
-import static com.funny.translation.bean.Consts.MESSAGE_FINISH_CURRENT_TASK;
-import static com.funny.translation.bean.Consts.MODE_NAMES;
-import static com.funny.translation.bean.Consts.MODE_NORMAL;
-import static com.funny.translation.bean.Consts.TTS_BAIDU;
-import static com.funny.translation.bean.Consts.TTS_NAMES;
-
-public class MainActivity extends BaseActivity 
-{
+public class MainActivity extends BaseActivity {
 	Resources re;
 	String currentWord="";//自动补全 ：当前正在输入的单词
 	
@@ -163,7 +153,26 @@ public class MainActivity extends BaseActivity
 
 	NewResultAdapter resultAdapter;
 	WordCompleteAdapter wordCompleteAdapter;
-	TranslationHelper helper;
+	NewTranslationHelper helper;
+	OnTranslateListener onTranslateListener = new OnTranslateListener() {
+		@Override
+		public void finishOne(BasicTranslationTask task, Exception e) {
+			Message msg = handler.obtainMessage();
+			msg.what = Consts.MESSAGE_FINISH_CURRENT_TASK;
+			msg.obj = task;
+			Log.d(TAG, "finishOne: "+helper.getProgress());
+			msg.arg1 = helper.getProgress();
+			handler.sendMessage(msg);
+		}
+
+		@Override
+		public void finishAll() {
+			Message msg = handler.obtainMessage();
+			msg.what = MESSAGE_FINISH_ALL_TASKS;
+			msg.arg1 = 1;
+			handler.sendMessage(msg);
+		}
+	};
 	
 	Handler handler;
 	DBEnglishWordsUtils dbEnglishWordsUtils;
@@ -178,8 +187,8 @@ public class MainActivity extends BaseActivity
 	boolean isBackground=false;//Activity是否处于后台
 
 	String TAG="MainActivity";
-	private final static int MESSAGE_FINISH_LOAD_JS = 0x201;
-    @Override
+
+	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
 //		Date date = new Date(System.currentTimeMillis());
@@ -189,7 +198,10 @@ public class MainActivity extends BaseActivity
 		setTheme(R.style.AppTheme_NoActionBar);
 		re=getResources();
 		setContentView(R.layout.main);
-		
+
+		helper = NewTranslationHelper.getInstance();
+		helper.setOnTranslateListener(onTranslateListener);
+
 		new Thread(() -> {
 			initConsts();
 			initBitmaps();
@@ -262,7 +274,7 @@ public class MainActivity extends BaseActivity
 	{
 		handler = new Handler(Looper.getMainLooper()){
 			@Override
-			public void handleMessage(Message msg)
+			public void handleMessage(@NonNull Message msg)
 			{
 				switch (msg.what)
 				{
@@ -272,22 +284,12 @@ public class MainActivity extends BaseActivity
 							if(!(outputRecyclerView.getAdapter() instanceof NewResultAdapter))outputRecyclerView.setAdapter(resultAdapter);
 							BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj;
 							resultAdapter.addData(currentFinishTask);
-
-							translateProgress.setProgress(helper.getProcess());
+							translateProgress.setProgress(msg.arg1);
 						}
 						break;
 					case MESSAGE_FINISH_ALL_TASKS:
-						Object obj2=msg.obj;
-						if (obj2 != null) {
-//							BasicTranslationTask currentFinishTask = (BasicTranslationTask)obj2;
-//							tasks.add(currentFinishTask);
-//							resultAdapter.addData(currentFinishTask);
-							//resultAdapter.insert(tasks);
-							//itemDecoration.setTasks(tasks);
-							//outputRecyclerView.invalidateItemDecorations();
-							translateProgress.setVisibility(View.INVISIBLE);
-							translateButton.setVisibility(View.VISIBLE);
-						}
+						translateProgress.setVisibility(View.INVISIBLE);
+						translateButton.setVisibility(View.VISIBLE);
 						break;
 					case 0x101:
 						ApplicationUtil.print(MainActivity.this,msg.obj.toString(),msg.arg1==1);
@@ -354,7 +356,7 @@ public class MainActivity extends BaseActivity
 				//Log.i(TAG,"光标位置："+place);
 				if(place == inputText.getSelectionEnd()){
 					currentWord = AutoCompleteUtil.getCurrentText(editable.toString(),place>0?place-1:0);
-					if(currentWord.equals(""))return;;
+					if(currentWord.equals(""))return;
 					Log.i(TAG,"current is "+currentWord);
 					TimeUtil.start();
 					ArrayList<DBEnglishWords.Word> queryResults = DBEnglishWordsUtils.getInstance().queryWords(currentWord);
@@ -380,32 +382,29 @@ public class MainActivity extends BaseActivity
 		View footerView = LayoutInflater.from(this).inflate(R.layout.view_result_space,null);
 		resultAdapter.addFooterView(footerView);
 		resultAdapter.addChildClickViewIds(R.id.view_result_content_copy_button,R.id.view_result_content_speak_button);
-		resultAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
-			@Override
-			public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-				NewResultAdapter resultAdapter = (NewResultAdapter)adapter;
-				BasicTranslationTask task = resultAdapter.getItem(position);
-				switch (view.getId()){
-					case R.id.view_result_content_copy_button:
-						String text = task.getResult().getBasicResult();
-						ApplicationUtil.copyToClipboard(MainActivity.this, text);
-						ApplicationUtil.print(MainActivity.this, "已复制翻译结果[" + (text.length() < 8 ? text : (text.substring(0, 5)) + "...") + "]到剪贴板！");
-						break;
+		resultAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+			NewResultAdapter resultAdapter = (NewResultAdapter)adapter;
+			BasicTranslationTask task = resultAdapter.getItem(position);
+			switch (view.getId()){
+				case R.id.view_result_content_copy_button:
+					String text = task.getResult().getBasicResult();
+					ApplicationUtil.copyToClipboard(MainActivity.this, text);
+					ApplicationUtil.print(MainActivity.this, "已复制翻译结果[" + (text.length() < 8 ? text : (text.substring(0, 5)) + "...") + "]到剪贴板！");
+					break;
 
-					case R.id.view_result_content_speak_button:
-						short engineKind = task.engineKind;
-						if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
-							ApplicationUtil.print(MainActivity.this, "当前引擎的翻译结果不支持朗读哦~");
-							return;
-						}
-						short TTSEngine = getCheckedTTSEngine();
-						short targetLanguage = task.targetLanguage;
-						if (targetLanguage == Consts.LANGUAGE_WENYANWEN) {
-							targetLanguage = Consts.LANGUAGE_CHINESE;
-						}
-						TTSUtil.speak(MainActivity.this, task.getResult().getBasicResult(), targetLanguage, TTSEngine);
-						break;
-				}
+				case R.id.view_result_content_speak_button:
+					short engineKind = task.getEngineKind();
+					if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
+						ApplicationUtil.print(MainActivity.this, "当前引擎的翻译结果不支持朗读哦~");
+						return;
+					}
+					short TTSEngine = getCheckedTTSEngine();
+					short targetLanguage = task.targetLanguage;
+					if (targetLanguage == Consts.LANGUAGE_WENYANWEN) {
+						targetLanguage = Consts.LANGUAGE_CHINESE;
+					}
+					TTSUtil.speak(MainActivity.this, task.getResult().getBasicResult(), targetLanguage, TTSEngine);
+					break;
 			}
 		});
 
@@ -416,33 +415,27 @@ public class MainActivity extends BaseActivity
 		outputRecyclerView.addItemDecoration(itemDecoration);
 
 		wordCompleteAdapter=new WordCompleteAdapter(this,null);
-		wordCompleteAdapter.setListener(new LanguageAdapter.OnClickItemListener() {
-			@Override
-			public void onClick(int position) {
+		wordCompleteAdapter.setListener(position -> {
 //				if(StringUtil.isValidContent(currentWord)){
 //					DBEnglishWords.Word word=wordCompleteAdapter.getWords().get(position);
 //					String input = inputText.getText().toString();
 //					input=input.replace(currentWord,word.getWord());
 //					inputText.setText(input);
 //				}
-			}
 		});
 		//wordCompleteDecoration=new WordCompleteDecoration();
 
 		translateButton = findViewById(R.id.widget_main_translate);
 		translateButton.setClickable(true);
 		translateButton.setEnabled(false);
-		translateButton.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View view)
-				{
-					// TODO: Implement this method
-					//矫正用户语言输入
-					//暂时废除
+		translateButton.setOnClickListener(view -> {
+			// TODO: Implement this method
+			//矫正用户语言输入
+			//暂时废除
 //					short curInputLanguage=StringUtil.getLanguage(inputText.getText().toString());
 //					short curChoosenLanguage=getCheckedList(sourceList).get(0).getUserData();
 //					if(curInputLanguage<0){
-//						
+//
 //					}
 //					else if(curInputLanguage==Consts.LANGUAGE_CHINESE&&curChoosenLanguage!=Consts.LANGUAGE_CHINESE&&curChoosenLanguage!=Consts.LANGUAGE_WENYANWEN){//文言文翻译不切换
 //						sourceList.get(Consts.LANGUAGE_CHINESE).setIsSelected(true);
@@ -462,9 +455,8 @@ public class MainActivity extends BaseActivity
 //						rightSourceRv.updateData();
 //						ApplicationUtil.print(MainActivity.this,"检测到您当前输入的语言为【英语】\n已自动为您切换");
 //					}
-					startTranslate(inputText.getText().toString());
-				}
-			});
+			startTranslate(inputText.getText().toString());
+		});
 		View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
@@ -485,8 +477,8 @@ public class MainActivity extends BaseActivity
 		translateProgress.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if(helper!=null&&helper.isTranslating()){
-					helper.flag = 0;
+				if(helper!=null){
+					helper.stopTasks();
 					ApplicationUtil.print(MainActivity.this,"当前任务已终止！");
 					translateProgress.setVisibility(View.INVISIBLE);
 					translateButton.setVisibility(View.VISIBLE);
@@ -516,15 +508,19 @@ public class MainActivity extends BaseActivity
 			boolean onlyHasOfflineEngine = true;
 			for (LanguageBean bean : engines){
 				short engine = bean.getUserData();
-				if (engine==ENGINE_BAIDU_NORMAL||engine==ENGINE_GOOGLE||engine==ENGINE_JINSHAN||engine==ENGINE_YOUDAO_NORMAL){
+				if (engine == ENGINE_BAIDU_NORMAL || engine == ENGINE_GOOGLE || engine == ENGINE_JINSHAN || engine == ENGINE_YOUDAO_NORMAL) {
 					onlyHasOfflineEngine = false;
+					break;
 				}
 			}
 			ArrayList<LanguageBean> checkedJS = getCheckedList(jsList);
 			for(LanguageBean bean : checkedJS){
 				JSBean jsBean = (JSBean)bean;
 				boolean isOffline = JSManager.getJSEngineById(jsBean.getId()).js.isOffline;
-				if(!isOffline)onlyHasOfflineEngine = false;
+				if (!isOffline) {
+					onlyHasOfflineEngine = false;
+					break;
+				}
 				break;
 			}
 			if(!onlyHasOfflineEngine) {
@@ -540,7 +536,7 @@ public class MainActivity extends BaseActivity
 			inputText.setText(content);
 		}
 		//根据选择翻译
-		helper = new TranslationHelper(MainActivity.this.handler);
+
 		short mode = getCheckedList(modeList).get(0).getUserData();
 		helper.setMode(mode);
 		//Log.i(TAG,"正在使用的翻译模式是："+MODE_NAMES[mode]);
@@ -552,9 +548,8 @@ public class MainActivity extends BaseActivity
 //			outputRecyclerView.addItemDecoration(itemDecoration);
 		}
 		//resultAdapter.setList(tasks);
-		helper.setTasks(tasks);
-		helper.totalTimes = tasks.size();
-		helper.start();
+
+		helper.initTasks(tasks);
 
 		translateProgress.setMax(100);
 		translateProgress.setProgress(0);
@@ -578,28 +573,25 @@ public class MainActivity extends BaseActivity
 
 		RecyclerView rv = leftSlideView.findViewById(R.id.main_slide_left_rv);
 		DrawerAdapter da = new DrawerAdapter(this);
-		da.setOnItemClickListener(new DrawerAdapter.OnItemClickListener() {
-			@Override
-			public void itemClick(DrawerAdapter.DrawerItemNormal drawerItemNormal) {
-				switch (drawerItemNormal.titleRes){
-					case R.string.setting:
-						leftSlidingConsumer.close();
-						Intent intent = new Intent();
-						moveToActivityForResult(SettingActivity.class,intent,ACTIVITY_MAIN);
-						break;
-					case R.string.feedback:
-						leftSlidingConsumer.close();
-						moveToActivity(FeedbackActivity.class);
-						break;
-					case R.string.other_apps:
-						leftSlidingConsumer.close();
-						moveToActivity(OtherApplicationsActivity.class);
-						break;
-					case R.string.js:
-						leftSlidingConsumer.close();
-						moveToActivityForResult(JSManageActivity.class,new Intent(),ACTIVITY_MAIN);
-						break;
-				}
+		da.setOnItemClickListener(drawerItemNormal -> {
+			switch (drawerItemNormal.titleRes){
+				case R.string.setting:
+					leftSlidingConsumer.close();
+					Intent intent = new Intent();
+					moveToActivityForResult(SettingActivity.class,intent,ACTIVITY_MAIN);
+					break;
+				case R.string.feedback:
+					leftSlidingConsumer.close();
+					moveToActivity(FeedbackActivity.class);
+					break;
+				case R.string.other_apps:
+					leftSlidingConsumer.close();
+					moveToActivity(OtherApplicationsActivity.class);
+					break;
+				case R.string.js:
+					leftSlidingConsumer.close();
+					moveToActivityForResult(JSManageActivity.class,new Intent(),ACTIVITY_MAIN);
+					break;
 			}
 		});
 		rv.setLayoutManager(new LinearLayoutManager(this));
@@ -627,7 +619,7 @@ public class MainActivity extends BaseActivity
 		tv.setLayoutParams(tvParam);
 		
 		rightSourceRv=rightSlideView.findViewById(R.id.main_slide_right_source_rv);
-		sourceList=new ArrayList<LanguageBean>();
+		sourceList= new ArrayList<>();
 		for(short i=0;i<Consts.LANGUAGE_NAMES.length;i++){
 			LanguageBean bean=new LanguageBean();
 			bean.setIsSelected(false);
@@ -638,7 +630,7 @@ public class MainActivity extends BaseActivity
 		}
 
 		rightTargetRv=rightSlideView.findViewById(R.id.main_slide_right_target_rv);
-		targetList=new ArrayList<LanguageBean>();
+		targetList= new ArrayList<>();
 		for(short i=0;i<Consts.LANGUAGE_NAMES.length;i++){
 			LanguageBean bean=new LanguageBean();
 			bean.setIsSelected(false);
@@ -649,7 +641,7 @@ public class MainActivity extends BaseActivity
 		}
 
 		rightEngineRv=rightSlideView.findViewById(R.id.main_slide_right_engine_rv);
-		engineList=new ArrayList<LanguageBean>();
+		engineList= new ArrayList<>();
 		for(short i=0;i<Consts.ENGINE_NAMES.length;i++){
 			LanguageBean bean=new LanguageBean();
 			bean.setIsSelected(false);
@@ -660,7 +652,7 @@ public class MainActivity extends BaseActivity
 		}
 
 		rightTTSRv=rightSlideView.findViewById(R.id.main_slide_right_tts_rv);
-		ttsList=new ArrayList<LanguageBean>();
+		ttsList=new ArrayList<>();
 		for(short i=0;i<Consts.TTS_NAMES.length;i++){
 			LanguageBean bean=new LanguageBean();
 			bean.setIsSelected(false);
@@ -671,7 +663,7 @@ public class MainActivity extends BaseActivity
 		}
 
 		rightModeRv=rightSlideView.findViewById(R.id.main_slide_right_mode_rv);
-		modeList=new ArrayList<LanguageBean>();
+		modeList=new ArrayList<>();
 		for(short i = 0; i< MODE_NAMES.length; i++){
 			LanguageBean bean=new LanguageBean();
 			bean.setIsSelected(false);
@@ -682,7 +674,7 @@ public class MainActivity extends BaseActivity
 		}
 
 		rightJSRv=rightSlideView.findViewById(R.id.main_slide_right_js_rv);
-		rightJSRv.initData(new ArrayList<LanguageBean>(),new int[]{});
+		rightJSRv.initData(new ArrayList<>(),new int[]{});
 
 		//SmartSwipeWrapper rightMenuWrapper = SmartSwipe.wrap(rightSlideView).addConsumer(new StretchConsumer()).enableVertical().getWrapper();
 		rightDrawerConsumer=new DrawerConsumer().setDrawerView(SwipeConsumer.DIRECTION_RIGHT,rightSlideView);
@@ -692,39 +684,36 @@ public class MainActivity extends BaseActivity
 		SmartSwipe.wrap(this).addConsumer(rightDrawerConsumer);
 
 		exchangeButton = findViewById(R.id.main_slide_right_exchange_button);
-		exchangeButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				LanguageBean checkedSourceLanguage = getCheckedList(sourceList).get(0);
-				ArrayList<LanguageBean> checkedTargetLanguages = getCheckedList(targetList);
-				LanguageBean checkedTargetLanguage;
-				if(checkedTargetLanguages.isEmpty()){
-					disSelectList(targetList);
-					targetList.get(checkedSourceLanguage.getUserData()).setIsSelected(true);
-					sourceList.get(checkedSourceLanguage.getUserData()).setIsSelected(false);
-					sourceList.get(LANGUAGE_AUTO).setIsSelected(true);
-					rightSourceRv.updateData();
-					rightTargetRv.updateData();
+		exchangeButton.setOnClickListener(view -> {
+			LanguageBean checkedSourceLanguage = getCheckedList(sourceList).get(0);
+			ArrayList<LanguageBean> checkedTargetLanguages = getCheckedList(targetList);
+			LanguageBean checkedTargetLanguage;
+			if(checkedTargetLanguages.isEmpty()){
+				disSelectList(targetList);
+				targetList.get(checkedSourceLanguage.getUserData()).setIsSelected(true);
+				sourceList.get(checkedSourceLanguage.getUserData()).setIsSelected(false);
+				sourceList.get(LANGUAGE_AUTO).setIsSelected(true);
+				rightSourceRv.updateData();
+				rightTargetRv.updateData();
 //					targetList.get(checkedSourceLanguage)
 //					return;
-				}else{
-					assert rightTargetRv.getAdapter() != null;
-					int[] mapping = rightTargetRv.getAdapter().getMapping();
-					for (int each : mapping) {
-						if (targetList.get(each).isSelected()){
-							checkedTargetLanguage = targetList.get(each);
-							disSelectList(targetList);
-							targetList.get(checkedSourceLanguage.getUserData()).setIsSelected(true);
-							sourceList.get(checkedSourceLanguage.getUserData()).setIsSelected(false);
-							sourceList.get(checkedTargetLanguage.getUserData()).setIsSelected(true);
-							rightSourceRv.updateData();
-							rightTargetRv.updateData();
-							break;
-						}
+			}else{
+				assert rightTargetRv.getAdapter() != null;
+				int[] mapping = rightTargetRv.getAdapter().getMapping();
+				for (int each : mapping) {
+					if (targetList.get(each).isSelected()){
+						checkedTargetLanguage = targetList.get(each);
+						disSelectList(targetList);
+						targetList.get(checkedSourceLanguage.getUserData()).setIsSelected(true);
+						sourceList.get(checkedSourceLanguage.getUserData()).setIsSelected(false);
+						sourceList.get(checkedTargetLanguage.getUserData()).setIsSelected(true);
+						rightSourceRv.updateData();
+						rightTargetRv.updateData();
+						break;
 					}
 				}
-				Log.i(TAG,"click button!");
 			}
+			Log.i(TAG,"click button!");
 		});
 
 		String copyrightInfo="Copyright@FunnySaltyFish\n2020\nAll Rights Reserved";
@@ -785,20 +774,20 @@ public class MainActivity extends BaseActivity
 		sourceList.get(checkedSourceLanguage).setIsSelected(true);
 		//Log.i(TAG,"____获取到的checkedSourceL is "+checkedSourceLanguage);
 
-		String[] checkedTargetLanguages=sp.getStringSet("preference_language_target_default",new HashSet<String>()).toArray(new String[0]);
+		String[] checkedTargetLanguages=sp.getStringSet("preference_language_target_default", new HashSet<>()).toArray(new String[0]);
 		if (checkedTargetLanguages.length!=0){
-			for (int i = 0; i < checkedTargetLanguages.length; i++) {
-				targetList.get(Integer.parseInt(checkedTargetLanguages[i])).setIsSelected(true);
+			for (String checkedTargetLanguage : checkedTargetLanguages) {
+				targetList.get(Integer.parseInt(checkedTargetLanguage)).setIsSelected(true);
 				//Log.i(TAG,"____获取到的checkedTargetL 包括 "+checkedTargetLanguages[i]);
 			}
 		}else{
 			targetList.get(2).setIsSelected(true);
 		}
 
-		String[] checkedEngines=sp.getStringSet("preference_engines_default",new HashSet<String>()).toArray(new String[0]);
+		String[] checkedEngines=sp.getStringSet("preference_engines_default", new HashSet<>()).toArray(new String[0]);
 		if (checkedEngines.length!=0){
-			for (int i = 0; i < checkedEngines.length; i++) {
-				engineList.get(Integer.parseInt(checkedEngines[i])).setIsSelected(true);
+			for (String checkedEngine : checkedEngines) {
+				engineList.get(Integer.parseInt(checkedEngine)).setIsSelected(true);
 			}
 		}else{
 			engineList.get(ENGINE_GOOGLE).setIsSelected(true);
@@ -899,10 +888,9 @@ public class MainActivity extends BaseActivity
 	
 	private void initTasks(String content){
 		if(tasks==null){
-			tasks=new ArrayList<BasicTranslationTask>();
+			tasks = new ArrayList<>();
 		}else{
 			tasks.clear();
-			helper.finishTasks.clear();
 		}
 
 		if(finishTasks==null){
@@ -913,32 +901,31 @@ public class MainActivity extends BaseActivity
 		resultAdapter.setList(finishTasks);
 
 		short source=getCheckedList(sourceList).get(0).getUserData();
-		int i=0;
 		BasicTranslationTask task;
 		for(LanguageBean target:getCheckedList(targetList)){
 			for(LanguageBean engine:getCheckedList(engineList)){
 				switch (engine.getUserData()){
 					case ENGINE_JINSHAN:
 						//task = new TranslationYouDaoEasy(helper,content,source,target.getUserData(),ENGINE_YOUDAO_EASY);
-						task = new TranslationJinshanEasy(helper,content,source,target.getUserData(),ENGINE_JINSHAN);
+						task = new TranslationJinshanEasy(content,source,target.getUserData());
 						break;
 					case ENGINE_YOUDAO_NORMAL:
-						task = new TranslationYouDaoNormal(helper,content,source,target.getUserData(),ENGINE_YOUDAO_NORMAL);
+						task = new TranslationYouDaoNormal(content,source,target.getUserData());
 						break;
 					case ENGINE_BAIDU_NORMAL:
-						task = new TranslationBaiduNormal(helper,content,source,target.getUserData(),ENGINE_BAIDU_NORMAL);
+						task = new TranslationBaiduNormal(content,source,target.getUserData());
 						break;
 					case ENGINE_GOOGLE:
-						task = new TranslationGoogleNormal(helper,content,source,target.getUserData(),ENGINE_GOOGLE);
+						task = new TranslationGoogleNormal(content,source,target.getUserData());
 						break;
 					case ENGINE_BV_TO_AV:
-						task = new TranslationBV2AV(helper,content,source,target.getUserData(),ENGINE_BV_TO_AV);
+						task = new TranslationBV2AV(content,source,target.getUserData());
 						break;
 					case ENGINE_BIGGER_TEXT:
-						task = new TranslationBiggerText(helper,content,source,target.getUserData(),ENGINE_BIGGER_TEXT);
+						task = new TranslationBiggerText(content,source,target.getUserData());
 						break;
 					case ENGINE_EACH_TEXT:
-						task = new TranslationEachText(helper,content,source,target.getUserData(),ENGINE_EACH_TEXT);
+						task = new TranslationEachText(content,source,target.getUserData());
 						break;
 					default:
 						throw new IllegalStateException("没有这个引擎: " + engine.getUserData());
@@ -952,7 +939,7 @@ public class MainActivity extends BaseActivity
 				JSBean jsBean = (JSBean)bean;
 				JSEngine jsEngine = JSManager.getJSEngineById(jsBean.getId());
 				if(jsEngine!=null){
-					TranslationCustom customTask = new TranslationCustom(helper,content,source,target.getUserData(),ENGINE_JS);
+					TranslationCustom customTask = new TranslationCustom(content,source,target.getUserData());
 					customTask.setJSEngine(jsEngine);
 					tasks.add(customTask);
 				}
@@ -969,7 +956,7 @@ public class MainActivity extends BaseActivity
 	}
 	
 	private ArrayList<LanguageBean> getCheckedList(ArrayList<LanguageBean> list){
-		ArrayList<LanguageBean> result=new ArrayList<LanguageBean>();
+		ArrayList<LanguageBean> result= new ArrayList<>();
 		for(LanguageBean bean:list){
 			if(bean.isSelected()){
 				result.add(bean);
@@ -994,7 +981,7 @@ public class MainActivity extends BaseActivity
 		BitmapDrawable b=new BitmapDrawable(bitmap);
 		b.setColorFilter(color,PorterDuff.Mode.SRC_IN);
 		return b;
-	};
+	}
 	
 	@NonNull
 	private Drawable getIcon(int id, int targetWidth, int targetHeight, int color){
@@ -1006,9 +993,8 @@ public class MainActivity extends BaseActivity
 	
 	private int getStatusBarHeight() {
 		int resourceId = re.getIdentifier("status_bar_height", "dimen","android");
-		int height = re.getDimensionPixelSize(resourceId);
 		//print("statuebarh:"+height);
-		return height;
+		return re.getDimensionPixelSize(resourceId);
 	}
 	
 	public short getCheckedTTSEngine(){
@@ -1085,12 +1071,8 @@ public class MainActivity extends BaseActivity
 				AlertDialog updateDialog=new AlertDialog.Builder(this)
 					.setTitle("公告！")
 					.setMessage(UpdateUtil.getUpdateLog())
-					.setPositiveButton("我知道了", new DialogInterface.OnClickListener(){
-						@Override
-						public void onClick(DialogInterface p1, int p2)
-						{
-							// TODO: Implement this method
-						}
+					.setPositiveButton("我知道了", (p1, p2) -> {
+						// TODO: Implement this method
 					})
 					.setCancelable(false)
 					.create();
@@ -1126,11 +1108,10 @@ public class MainActivity extends BaseActivity
 			if (curBackTime - firstBackTime > 2000) {
 				ApplicationUtil.print(this,"这位童鞋，再按一次退出程序哦(´-ω-`)");
 				firstBackTime = curBackTime;
-				return true;
 			} else{
 				finish();
-				return true;
 			}
+			return true;
 		}
 		return super.onKeyDown(keyCode,event);
 	}

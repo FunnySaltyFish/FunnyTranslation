@@ -20,7 +20,7 @@
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/../../../library/src/main/res;file://$MODULE_DIR$/../../../library/src/release/res;file://$MODULE_DIR$/../../../library/build/generated/res/rs/release;file://$MODULE_DIR$/../../../library/build/generated/res/resValues/release" />
-        <option name="TEST_RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/../../../library/src/androidTest/res;file://$MODULE_DIR$/../../../library/src/androidTestRelease/res" />
+        <option name="TEST_RES_FOLDERS_RELATIVE_PATH" value="" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
         <option name="PROJECT_TYPE" value="1" />
       </configuration>

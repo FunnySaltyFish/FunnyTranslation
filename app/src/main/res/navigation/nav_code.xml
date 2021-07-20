@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/codeEditorFragment"
-        android:name="com.funny.translation.fragements.CodeEditorFragment"
+        android:name="com.funny.translation.fragments.CodeEditorFragment"
         android:label="@string/edit_code"
         tools:layout="@layout/code_editor_fragment">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/codeRunFragment"
-        android:name="com.funny.translation.fragements.CodeRunFragment"
+        android:name="com.funny.translation.fragments.CodeRunFragment"
         android:label="@string/run_code"
         tools:layout="@layout/code_run_fragment">
         <action

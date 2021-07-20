@@ -13,8 +13,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class TranslationGoogleNormal extends BasicTranslationTask {
-    public TranslationGoogleNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationGoogleNormal(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     @Override
@@ -23,6 +24,7 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
         BufferedReader in = null;
         String result = "";
         try {
+            short engineKind = getEngineKind();
             String from= Consts.LANGUAGES[sourceLanguage][engineKind];
             String to=Consts.LANGUAGES[targetLanguage][engineKind];
             URL realUrl = new URL(String.format("https://translate.google.cn/translate_a/single?client=webapp&sl=%s&tl=%s&hl=%s&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=%s&q=%s",from,to,to,FunnyGoogleApi.tk(sourceString,"439500.3343569631"),android.net.Uri.encode(sourceString)));
@@ -51,7 +53,7 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            System.out.println("result:"+result);
+            //System.out.println("result:"+result);
         } catch (Exception e) {
             System.out.println("发送 POST 请求出现异常！"+e);
             e.printStackTrace();
@@ -154,5 +156,10 @@ public class TranslationGoogleNormal extends BasicTranslationTask {
             }
             System.out.println("");
         }
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_GOOGLE;
     }
 }

@@ -1,10 +1,8 @@
 package com.funny.translation.translation;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.utils.OkHttpUtil;
 import com.funny.translation.utils.StringUtil;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,17 +16,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okio.Timeout;
-
 public class TranslationYouDaoNormal extends BasicTranslationTask {
-    public TranslationYouDaoNormal(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationYouDaoNormal(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     @Override
@@ -93,6 +84,7 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
             conn.setDoInput(true);
             //防止中文乱码
             out=new OutputStreamWriter(conn.getOutputStream(),"UTF-8");
+            short engineKind = getEngineKind();
             // 发送请求参数
             String from= Consts.LANGUAGES[sourceLanguage][engineKind];
             String to=Consts.LANGUAGES[targetLanguage][engineKind];
@@ -148,7 +140,7 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
 
     @Override
     public TranslationResult getFormattedResult(String basicText) throws TranslationException {
-        TranslationResult result = new TranslationResult(engineKind);
+        TranslationResult result = new TranslationResult(getEngineKind());
         try {
             StringBuilder sb = new StringBuilder();
             JSONObject all = new JSONObject(basicText);
@@ -200,5 +192,10 @@ public class TranslationYouDaoNormal extends BasicTranslationTask {
     @Override
     public boolean isOffline() {
         return false;
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_YOUDAO_NORMAL;
     }
 }

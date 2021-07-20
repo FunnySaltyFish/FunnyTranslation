@@ -3,7 +3,6 @@ package com.funny.translation.translation;
 import android.util.Log;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.js.JSException;
 import com.funny.translation.utils.OkHttpUtil;
 
 import org.json.JSONArray;
@@ -19,8 +18,9 @@ import java.util.Locale;
 
 public class TranslationJinshanEasy extends BasicTranslationTask {
     String TAG = "TranslationJinshanEasy";
-    public TranslationJinshanEasy(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+
+    public TranslationJinshanEasy(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
     //版本 2
     @Override
     public TranslationResult getFormattedResult(String basicText) throws TranslationException {
-        TranslationResult result = new TranslationResult(engineKind);
+        TranslationResult result = new TranslationResult(getEngineKind());
         try{
             JSONObject all = new JSONObject(basicText);
             if(all.getInt("status")==1){
@@ -127,6 +127,7 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
 
     @Override
     public String madeURL() {
+        short engineKind = getEngineKind();
         String from = Consts.LANGUAGES[sourceLanguage][engineKind];
         String to = Consts.LANGUAGES[targetLanguage][engineKind];
 
@@ -182,5 +183,10 @@ public class TranslationJinshanEasy extends BasicTranslationTask {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_JINSHAN;
     }
 }

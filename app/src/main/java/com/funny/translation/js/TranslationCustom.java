@@ -3,19 +3,16 @@ package com.funny.translation.js;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationException;
-import com.funny.translation.translation.TranslationHelper;
+import com.funny.translation.translation.NewTranslationHelper;
 import com.funny.translation.translation.TranslationResult;
-import com.funny.translation.utils.StringUtil;
 
 import org.mozilla.javascript.NativeJavaObject;
-import org.mozilla.javascript.NativeObject;
 
 public class TranslationCustom extends BasicTranslationTask {
     JSEngine mJSEngine;
 
-
-    public TranslationCustom(TranslationHelper helper, String sourceString, short sourceLanguage, short targetLanguage, short engineKind) {
-        super(helper, sourceString, sourceLanguage, targetLanguage, engineKind);
+    public TranslationCustom(String sourceString, short sourceLanguage, short targetLanguage) {
+        super(sourceString, sourceLanguage, targetLanguage);
     }
 
     public void setJSEngine(JSEngine jsEngine){
@@ -25,8 +22,8 @@ public class TranslationCustom extends BasicTranslationTask {
     public JSEngine getJSEngine(){return mJSEngine;}
 
     @Override
-    public void translate(short mode){
-        result = new TranslationResult(engineKind);
+    public void translate(short mode) throws TranslationException {
+        result = new TranslationResult(getEngineKind());
 
         JSManager.currentRunningJSEngine = mJSEngine;
         try {
@@ -40,14 +37,13 @@ public class TranslationCustom extends BasicTranslationTask {
             }
             result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_SUCCESS);
-            onSuccess(helper,result);
         }
         catch (TranslationException e) {
             e.printStackTrace();
             result.setSourceString(sourceString);
             result.setStatue(TranslationResult.TRANSLATE_STATUE_FAIL);
             result.setBasicResult(e.getErrorMessage());
-            onFail(helper,result);
+            throw e;
         }
     }
 
@@ -97,5 +93,10 @@ public class TranslationCustom extends BasicTranslationTask {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public short getEngineKind() {
+        return Consts.ENGINE_JS;
     }
 }

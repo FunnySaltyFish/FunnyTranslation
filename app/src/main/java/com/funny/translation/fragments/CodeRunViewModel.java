@@ -1,4 +1,4 @@
-package com.funny.translation.fragements;
+package com.funny.translation.fragments;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,9 +7,6 @@ import com.funny.translation.bean.Consts;
 import com.funny.translation.js.JS;
 import com.funny.translation.js.JSEngine;
 import com.funny.translation.js.JSException;
-import com.funny.translation.utils.LiveDataUtil;
-
-import org.jetbrains.annotations.NotNull;
 
 public class CodeRunViewModel extends ViewModel {
     // TODO: Implement the ViewModel
