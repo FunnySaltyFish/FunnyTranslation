@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.billy.android:smart-swipe:1.1.2@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/32b8e27f45f4c440575088ba65cf7aa8/jetified-smart-swipe-1.1.2/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/32b8e27f45f4c440575088ba65cf7aa8/jetified-smart-swipe-1.1.2/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/32b8e27f45f4c440575088ba65cf7aa8/jetified-smart-swipe-1.1.2/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/fcbc72d3f799db3944f43ec6fa624097/jetified-smart-swipe-1.1.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/fcbc72d3f799db3944f43ec6fa624097/jetified-smart-swipe-1.1.2/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/fcbc72d3f799db3944f43ec6fa624097/jetified-smart-swipe-1.1.2/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.billy.android/smart-swipe/1.1.2/b3425bca4337e97062c3ae209aeb6305ccdf1bb4/smart-swipe-1.1.2-javadoc.jar!/" />

@@ -6,7 +6,6 @@ import java.net.CookieManager;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
