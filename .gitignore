@@ -1,6 +1,11 @@
-bin/
-gen/
-obj/
-build/
-libs/*/*.so
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
 
