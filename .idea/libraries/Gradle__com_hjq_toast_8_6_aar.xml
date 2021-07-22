@@ -3,9 +3,9 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/323f5253a8910127668d6ffeede581ac/jetified-toast-8.6/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b1e185b256ebc68e89c6914c0dac0154/jetified-toast-8.6/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6da150aaa4625aad8e535e5ddaa3643d/jetified-toast-8.6/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6da150aaa4625aad8e535e5ddaa3643d/jetified-toast-8.6/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6da150aaa4625aad8e535e5ddaa3643d/jetified-toast-8.6/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b1e185b256ebc68e89c6914c0dac0154/jetified-toast-8.6/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b1e185b256ebc68e89c6914c0dac0154/jetified-toast-8.6/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.hjq/toast/8.6/30fa1251e86fdab025c252814fdc3f5a579bceb/toast-8.6-javadoc.jar!/" />
