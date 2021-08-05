@@ -4,6 +4,11 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" filepath="$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FunnyTranslation.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FunnyTranslation.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FunnyTranslation.buildSrc.iml" filepath="$PROJECT_DIR$/.idea/modules/FunnyTranslation.buildSrc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/codeeditor/FunnyTranslation.codeeditor.iml" filepath="$PROJECT_DIR$/.idea/modules/codeeditor/FunnyTranslation.codeeditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/FunnyTranslation.editor.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/FunnyTranslation.editor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/language-base/FunnyTranslation.language-base.iml" filepath="$PROJECT_DIR$/.idea/modules/language-base/FunnyTranslation.language-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/language-universal/FunnyTranslation.language-universal.iml" filepath="$PROJECT_DIR$/.idea/modules/language-universal/FunnyTranslation.language-universal.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/FunnyTranslation.library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/FunnyTranslation.library.iml" />
     </modules>
   </component>

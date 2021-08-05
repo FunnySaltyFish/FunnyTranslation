@@ -1,2 +1,6 @@
 include ':library'
 include ':app'
+include ':codeeditor'
+include ':editor'
+include ":language-base"
+include ":language-universal"

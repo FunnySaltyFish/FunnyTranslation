@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="copy_complete">复制完成！</string>
+    <string name="share">分享</string>
+    <string name="debug">调试</string>
+    <string name="edit_code">编辑代码</string>
+    <string name="run_code">运行代码</string>
+    <string name="layout_tv_last">上一个</string>
+    <string name="layout_tv_next">下一个</string>
+    <string name="layout_tv_replace">替换</string>
+    <string name="layout_tv_replaceAll">全部替换</string>
+</resources>
