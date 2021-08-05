@@ -83,6 +83,7 @@ import com.billy.android.swipe.consumer.StretchConsumer;
 import com.billy.android.swipe.listener.SimpleSwipeListener;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.bean.LanguageBean;
+import com.funny.translation.codeeditor.CodeEditorActivity;
 import com.funny.translation.db.DBEnglishWords;
 import com.funny.translation.db.DBEnglishWordsUtils;
 import com.funny.translation.db.DBJSUtils;
@@ -223,6 +224,9 @@ public class MainActivity extends BaseActivity {
 		new UpdateThread(this).start();
 
 		inputText.requestFocus();//自动获取焦点
+
+		//Debug
+		moveToActivity(CodeEditorActivity.class);
 
 //		Debug.stopMethodTracing();
     }

@@ -23,11 +23,12 @@ android {
     }
     defaultConfig {
         applicationId "com.funny.translation"
-        minSdkVersion 19
+        minSdkVersion Versions.minSdkVersion
         targetSdkVersion 30
         versionCode 22
         versionName "2.0.0 beta-4"
         resConfigs('zh-rCN')
+        multiDexEnabled true
     }
     buildFeatures{
         dataBinding = true
@@ -71,9 +72,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "com.google.android.material:material:${Versions.materialVersion}"
+    implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
@@ -82,7 +83,7 @@ dependencies {
 
     //implementation 'com.zhouyou:rxeasyhttp:2.1.5'
     implementation 'com.billy.android:smart-swipe:1.1.2'
-    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.9.1"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
     implementation 'com.hjq:toast:8.6'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
@@ -95,9 +96,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //
     implementation project(path: ':library')
-    implementation 'androidx.navigation:navigation-fragment:2.2.2'
-    implementation 'androidx.navigation:navigation-ui:2.2.2'
+    implementation project(path: ":codeeditor")
+    
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+
+
 }

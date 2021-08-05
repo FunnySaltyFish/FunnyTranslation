@@ -92,7 +92,8 @@ public class JSManageActivity extends BaseActivity {
 
         btnNewFile = findViewById(R.id.js_manage_new_file);
         btnNewFile.setOnClickListener((View view)->{
-            moveToActivity(CodeActivity.class);
+            //moveToActivity(CodeActivity.class);
+            moveToActivity(com.funny.translation.codeeditor.CodeEditorActivity.class);
         });
     }
 

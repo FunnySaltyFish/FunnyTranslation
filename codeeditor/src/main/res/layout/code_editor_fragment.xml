@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="data"
+            type="com.funny.translation.codeeditor.vm.CodeEditorViewModel" />
+
+        <variable
+            name="click"
+            type="com.funny.translation.codeeditor.fragments.CodeEditorFragment.ClickProxy" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/search_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{click::gotoLast}"
+                        android:text="@string/layout_tv_last" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{click::gotoNext}"
+                        android:text="@string/layout_tv_next" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{click::replace"
+                        android:text="@string/layout_tv_replace" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{click::replaceAll}"
+                        android:text="@string/layout_tv_replaceAll" />
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+
+            <EditText
+                android:id="@+id/search_editor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/text_to_search" />
+
+            <EditText
+                android:id="@+id/replace_editor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/replacement" />
+
+        </LinearLayout>
+
+        <io.github.rosemoe.editor.widget.CodeEditor
+            android:id="@+id/code_editor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="36dp"/>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginTop="-36dp">
+
+            <io.github.rosemoe.editor.widget.SymbolInputView
+                android:id="@+id/symbol_input"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp" />
+
+        </HorizontalScrollView>
+
+    </LinearLayout>
+</layout>

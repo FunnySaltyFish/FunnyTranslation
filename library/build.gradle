@@ -3,14 +3,15 @@ apply plugin: 'com.android.library'
 version = "1.2.0"
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.0'
+    compileSdkVersion Versions.compileSdkVersion
+    buildToolsVersion Versions.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 5
         versionName version
+        multiDexEnabled true
     }
     buildTypes {
         release {

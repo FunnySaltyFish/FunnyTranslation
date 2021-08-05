@@ -39,15 +39,15 @@ public class ErrorDialogActivity extends BaseActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             destroy();
 //                            System.exit(0);
-                            Context application = FunnyApplication.getFunnyContext();
-                            Intent intent = new Intent(application, MainActivity.class);
-                            PendingIntent restartIntent = PendingIntent.getActivity(
-                                    application.getApplicationContext(), 0, intent,
-                                    PendingIntent.FLAG_CANCEL_CURRENT);
-                            //退出程序
-                            AlarmManager mgr = (AlarmManager)application.getSystemService(Context.ALARM_SERVICE);
-                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000,
-                                    restartIntent); // 1秒钟后重启应用
+//                            Context application = FunnyApplication.getFunnyContext();
+//                            Intent intent = new Intent(application, MainActivity.class);
+//                            PendingIntent restartIntent = PendingIntent.getActivity(
+//                                    application.getApplicationContext(), 0, intent,
+//                                    PendingIntent.FLAG_CANCEL_CURRENT);
+//                            //退出程序
+//                            AlarmManager mgr = (AlarmManager)application.getSystemService(Context.ALARM_SERVICE);
+//                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000,
+//                                    restartIntent); // 1秒钟后重启应用
                         }
                     })
                     .create();
