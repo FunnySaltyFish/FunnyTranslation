@@ -33,7 +33,6 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ffffff" />
                             <entry key="outputName" value="ic_debug" />
                             <entry key="sourceFile" value="D:\projects\AppProjects\Mine\FunnyTranslation" />
                           </map>

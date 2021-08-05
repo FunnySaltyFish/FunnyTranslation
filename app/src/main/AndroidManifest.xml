@@ -46,8 +46,5 @@
 		</activity>
 		<activity android:name=".OtherApplicationsActivity" android:label="@string/other_apps" android:theme="@style/AppTheme"/>
 		<activity android:name=".JSManageActivity" android:label="@string/js_manage" android:theme="@style/AppTheme"/>
-		<activity android:name=".CodeActivity" android:theme="@style/AppTheme.NoActionBar" android:label="编辑">
-
-		</activity>
-	</application>
+    </application>
 </manifest>

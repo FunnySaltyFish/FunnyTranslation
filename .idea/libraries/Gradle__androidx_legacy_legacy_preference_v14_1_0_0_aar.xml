@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.legacy:legacy-preference-v14:1.0.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6ccd9e8ef8c1e2acec32617a99731e97/legacy-preference-v14-1.0.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/47a9f46164a98a352cad7e8af9deb3f7/legacy-preference-v14-1.0.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/fd573dbec7f242d364abcffc01a5e358/legacy-preference-v14-1.0.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/47a9f46164a98a352cad7e8af9deb3f7/legacy-preference-v14-1.0.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/47a9f46164a98a352cad7e8af9deb3f7/legacy-preference-v14-1.0.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ac0371a75d1e21c8b1403a6de45c2955/transformed/legacy-preference-v14-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/98d624c5bd4efa516cd0aedf6310a401/transformed/legacy-preference-v14-1.0.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b2f1e748d0cd44482c2001bc26240e24/transformed/legacy-preference-v14-1.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b2f1e748d0cd44482c2001bc26240e24/transformed/legacy-preference-v14-1.0.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b2f1e748d0cd44482c2001bc26240e24/transformed/legacy-preference-v14-1.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
