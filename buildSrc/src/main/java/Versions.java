@@ -27,7 +27,7 @@ public final class Versions {
 
     // Dependency versions
     public final static String antlrVersion = "4.9.2";
-    public static final String appCompatVersion = "1.3.0";
+    public static final String appCompatVersion = "1.3.1";
     public static final String materialVersion = "1.4.0";
     public final static String navigationVersion = "2.3.5";
 
