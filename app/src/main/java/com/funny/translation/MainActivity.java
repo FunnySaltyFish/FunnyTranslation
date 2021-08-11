@@ -226,6 +226,7 @@ public class MainActivity extends BaseActivity {
 		inputText.requestFocus();//自动获取焦点
 
 		//Debug
+		//this.finish();
 		moveToActivity(CodeEditorActivity.class);
 
 //		Debug.stopMethodTracing();
@@ -1170,6 +1171,7 @@ public class MainActivity extends BaseActivity {
 		TTSUtil.destroyTTS();
 		FunnyApplication.getProxy(this).shutdown();
 		dbEnglishWordsUtils.close();
+		NewTranslationHelper.getInstance().finish();
 		super.onDestroy();
 	}
 

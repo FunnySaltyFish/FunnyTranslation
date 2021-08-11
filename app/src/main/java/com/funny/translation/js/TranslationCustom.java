@@ -3,7 +3,6 @@ package com.funny.translation.js;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.translation.BasicTranslationTask;
 import com.funny.translation.translation.TranslationException;
-import com.funny.translation.translation.NewTranslationHelper;
 import com.funny.translation.translation.TranslationResult;
 
 import org.mozilla.javascript.NativeJavaObject;

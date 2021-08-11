@@ -4,13 +4,13 @@
 
     <application
         android:allowBackup="true"
-        android:theme="@style/AppTheme"
         android:supportsRtl="true"
         >
         <activity android:name=".CodeEditorActivity"
-            android:theme="@style/CodeActivityTheme"
+            android:theme="@style/Theme.CodeActivity.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             android:label="@string/edit_code"
+            android:exported="true"
             >
         </activity>
     </application>

@@ -3,9 +3,12 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/224958dfad3390e5c42043f3c07156bf/transformed/jetified-CodeView-1.0.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4a52d3ff99ab47f413d7c719fe2be9a6/transformed/jetified-CodeView-1.0.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c82c4a43a72fcbc6cbb1a58f21beea41/transformed/jetified-CodeView-1.0.0/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/c82c4a43a72fcbc6cbb1a58f21beea41/transformed/jetified-CodeView-1.0.0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c82c4a43a72fcbc6cbb1a58f21beea41/transformed/jetified-CodeView-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e2cf45c77eca337ea86776d0af3913bb/transformed/jetified-CodeView-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/686fbadf1d61c1bcb343711c3ec0b4d9/transformed/jetified-CodeView-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/95abff6e4921bac0d9261ef762a4dcfa/transformed/jetified-CodeView-1.0.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/95abff6e4921bac0d9261ef762a4dcfa/transformed/jetified-CodeView-1.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/95abff6e4921bac0d9261ef762a4dcfa/transformed/jetified-CodeView-1.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

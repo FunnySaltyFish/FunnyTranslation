@@ -3,9 +3,12 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ac0371a75d1e21c8b1403a6de45c2955/transformed/legacy-preference-v14-1.0.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/98d624c5bd4efa516cd0aedf6310a401/transformed/legacy-preference-v14-1.0.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b2f1e748d0cd44482c2001bc26240e24/transformed/legacy-preference-v14-1.0.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b2f1e748d0cd44482c2001bc26240e24/transformed/legacy-preference-v14-1.0.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b2f1e748d0cd44482c2001bc26240e24/transformed/legacy-preference-v14-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/747692404208fcf4b73034defec1718c/transformed/legacy-preference-v14-1.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5eb75441fc9707afe8712b86b5b2f46f/transformed/legacy-preference-v14-1.0.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/8e8059e1cb80543d92ac1b24be6a0177/transformed/legacy-preference-v14-1.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8e8059e1cb80543d92ac1b24be6a0177/transformed/legacy-preference-v14-1.0.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8e8059e1cb80543d92ac1b24be6a0177/transformed/legacy-preference-v14-1.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
