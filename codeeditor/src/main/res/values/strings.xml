@@ -9,4 +9,5 @@
     <string name="layout_tv_next">下一个</string>
     <string name="layout_tv_replace">替换</string>
     <string name="layout_tv_replaceAll">全部替换</string>
+    <string name="code_run">运行结果</string>
 </resources>
