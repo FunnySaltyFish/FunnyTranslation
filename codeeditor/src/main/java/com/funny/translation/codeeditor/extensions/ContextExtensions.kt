@@ -14,6 +14,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.funny.translation.codeeditor.R
@@ -185,6 +186,12 @@ fun Context.readAssets(fileName : String) : String{
             e.printStackTrace()
         }
     }
+}
+
+fun Context.getActivity(): AppCompatActivity? = when (this) {
+    is AppCompatActivity -> this
+    is ContextWrapper -> baseContext.getActivity()
+    else -> null
 }
 
 /**

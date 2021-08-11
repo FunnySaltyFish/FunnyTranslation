@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" filepath="$PROJECT_DIR$/.idea/modules/FunnyTranslation.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FunnyTranslation.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FunnyTranslation.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jscore/FunnyTranslation.base-core.iml" filepath="$PROJECT_DIR$/.idea/modules/jscore/FunnyTranslation.base-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/FunnyTranslation.buildSrc.iml" filepath="$PROJECT_DIR$/.idea/modules/FunnyTranslation.buildSrc.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/codeeditor/FunnyTranslation.codeeditor.iml" filepath="$PROJECT_DIR$/.idea/modules/codeeditor/FunnyTranslation.codeeditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/FunnyTranslation.editor.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/FunnyTranslation.editor.iml" />
