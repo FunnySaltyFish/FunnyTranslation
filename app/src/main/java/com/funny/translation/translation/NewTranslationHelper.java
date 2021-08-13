@@ -1,7 +1,9 @@
 package com.funny.translation.translation;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.js.TranslationCustom;
+import com.funny.translation.js.core.JsTranslateTask;
+import com.funny.translation.trans.CoreTranslationTask;
+import com.funny.translation.trans.TranslationException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +16,7 @@ public class NewTranslationHelper {
     private final ExecutorService mThreadPool = Executors.newFixedThreadPool(8);
     private final HashMap<Short, Long> mLastTranslate = new HashMap<>();
     private PoolingThread mThread;
-    private final LinkedList<BasicTranslationTask> mTranslateList = new LinkedList<>();
+    private final LinkedList<CoreTranslationTask> mTranslateList = new LinkedList<>();
     private OnTranslateListener listener;
     private short mode = Consts.MODE_NORMAL;//翻译模式
 
@@ -41,13 +43,13 @@ public class NewTranslationHelper {
         this.listener = listener;
     }
 
-    public void initTasks(ArrayList<BasicTranslationTask> translationTasks) {
+    public void initTasks(ArrayList<CoreTranslationTask> translationTasks) {
         if (!mTranslateList.isEmpty())
             mTranslateList.clear();
         mTranslateList.addAll(translationTasks);
 
         mLastTranslate.clear();
-        for (BasicTranslationTask translationTask : translationTasks) {
+        for (CoreTranslationTask translationTask : translationTasks) {
             short type = translationTask.getEngineKind();
             if (!mLastTranslate.containsKey(type))
                 mLastTranslate.put(type, 0L);
@@ -95,7 +97,7 @@ public class NewTranslationHelper {
             try {
                 while (mThreadFlag) {// 永不停息
                     if (!mTranslateList.isEmpty()) {
-                        BasicTranslationTask currentTask = mTranslateList.removeFirst();
+                        CoreTranslationTask currentTask = mTranslateList.removeFirst();
                         short type = currentTask.getEngineKind();
                         if (currentTime() - mLastTranslate.get(type) >= getSleepTime(currentTask)) {
                             mThreadPool.execute(new Runnable() {
@@ -119,7 +121,7 @@ public class NewTranslationHelper {
                     }
 
                     // 按需休眠
-                    long sleepTime = mTranslateList.isEmpty() ? 100L : 10L;
+                    long sleepTime = mTranslateList.isEmpty() ? 200L : 50L;
                     sleep(sleepTime);
                 }
             } catch (Exception e) {
@@ -127,10 +129,10 @@ public class NewTranslationHelper {
             }
         }
 
-        private void translate(BasicTranslationTask task) throws TranslationException {
-            if (task instanceof TranslationCustom) {
-                TranslationCustom custom = (TranslationCustom) task;
-                custom.translate(mode);
+        private void translate(CoreTranslationTask task) throws TranslationException {
+            if (task instanceof JsTranslateTask) {
+                JsTranslateTask jsTranslateTask = (JsTranslateTask) task;
+                jsTranslateTask.translate(mode);
             } else task.translate(mode);
         }
 
@@ -138,7 +140,7 @@ public class NewTranslationHelper {
             return System.currentTimeMillis();
         }
 
-        private long getSleepTime(BasicTranslationTask task){
+        private long getSleepTime(CoreTranslationTask task){
             if(task.isOffline())return 1;
             else return task.getEngineKind() == Consts.ENGINE_BAIDU_NORMAL ? Consts.BAIDU_SLEEP_TIME : 50;
         }

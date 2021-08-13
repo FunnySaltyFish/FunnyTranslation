@@ -2,7 +2,7 @@ package com.funny.translation.js;
 
 import com.funny.translation.bean.LanguageBean;
 
-public class JSBean extends LanguageBean {
+public class JSLanguageBean extends LanguageBean {
     int id;
 
     public int getId() {

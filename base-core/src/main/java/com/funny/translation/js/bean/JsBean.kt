@@ -1,11 +1,11 @@
 package com.funny.translation.js.bean
 
 data class JsBean(
-    val id : Int,
+    var id : Int = 0,
     val fileName : String = "Plugin",
     val code : String = "",
     val author : String = "Author",
     val version : Int = 1,
     val description : String = "",
-    val enabled : Int = 0,
+    var enabled : Int = 0,
 )

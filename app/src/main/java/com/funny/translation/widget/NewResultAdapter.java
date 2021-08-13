@@ -8,35 +8,35 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.funny.translation.R;
 import com.funny.translation.bean.Consts;
-import com.funny.translation.js.TranslationCustom;
-import com.funny.translation.translation.BasicTranslationTask;
+import com.funny.translation.js.core.JsTranslateTask;
+import com.funny.translation.trans.CoreTranslationTask;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, NewResultAdapter.ResultContentHolder> {
+public class NewResultAdapter extends BaseQuickAdapter<CoreTranslationTask, NewResultAdapter.ResultContentHolder> {
     private final StringBuilder sb = new StringBuilder();
-    public NewResultAdapter(int layoutResId, @Nullable List<BasicTranslationTask> data) {
+    public NewResultAdapter(int layoutResId, @Nullable List<CoreTranslationTask> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(@NotNull ResultContentHolder rcHolder, BasicTranslationTask task) {
+    protected void convert(@NotNull ResultContentHolder rcHolder, CoreTranslationTask task) {
         //设置翻译引擎的样子
         sb.setLength(0);
         if(task.getEngineKind() == Consts.ENGINE_JS){
-            TranslationCustom custom = (TranslationCustom)task;
-            sb.append(custom.getJSEngine().js.fileName);
+            JsTranslateTask jsTranslateTask = (JsTranslateTask)task;
+            sb.append(jsTranslateTask.getJsEngine().getJsBean().getFileName());
         }else{
             sb.append(Consts.ENGINE_NAMES[task.getEngineKind()]);
         }
 
         sb.append("  ");
-        sb.append(Consts.LANGUAGE_NAMES[task.sourceLanguage]);
+        sb.append(Consts.LANGUAGE_NAMES[task.getSourceLanguage()]);
         sb.append("->");
-        sb.append(Consts.LANGUAGE_NAMES[task.targetLanguage]);
+        sb.append(Consts.LANGUAGE_NAMES[task.getTargetLanguage()]);
 
         rcHolder.engine.setText(sb.toString());
 
@@ -47,7 +47,7 @@ public class NewResultAdapter extends BaseQuickAdapter<BasicTranslationTask, New
             rcHolder.text.setTextSize(16);
         }
         if(task.getResult()==null)return;
-        rcHolder.text.setText(task.getResult().getBasicResult());
+        rcHolder.text.setText(task.getResult().getBasicResult().getTrans());
     }
 
      static class ResultContentHolder extends BaseViewHolder{

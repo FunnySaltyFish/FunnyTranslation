@@ -2,7 +2,7 @@ package com.funny.translation.js;
 
 import com.funny.translation.bean.Consts;
 import com.funny.translation.bean.LanguageBean;
-import com.funny.translation.db.DBJSUtils;
+import com.funny.translation.js.bean.JsBean;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,15 +12,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JSUtils {
-    public static ArrayList<LanguageBean> coverJSToLanguageBean(ArrayList<JS> jsList){
+    public static ArrayList<LanguageBean> coverJSToLanguageBean(ArrayList<JsBean> jsBeanList){
         ArrayList<LanguageBean> result=new ArrayList<>();
         int i=0;
-        for (JS js:jsList){
-            JSBean bean = new JSBean();
-            bean.text = js.fileName;
+        for (JsBean jsBean : jsBeanList){
+            JSLanguageBean bean = new JSLanguageBean();
+            bean.text = jsBean.getFileName();
             bean.setUserData((short)i);
             bean.setCheckKind(Consts.CHECK_MULTI);
-            bean.setId(js.id);
+            bean.setId(jsBean.getId());
             result.add(bean);
             i++;
         }
