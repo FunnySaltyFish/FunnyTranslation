@@ -15,7 +15,7 @@ public class ProcessTextActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        ((WindowManager.LayoutParams) layoutParams).flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS |
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         //ApplicationUtil.print(this,getCheckedText(getIntent()));
 

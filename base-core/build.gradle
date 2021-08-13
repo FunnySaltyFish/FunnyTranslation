@@ -34,11 +34,12 @@ android {
 
 dependencies {
     //OkHttp
-    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    api "com.squareup.okhttp3:okhttp:4.9.1"
 
     //JS rhino
     implementation('com.github.gedoor:rhino-android:1.6')
-    implementation 'androidx.annotation:annotation:1.2.0'
+    api 'androidx.annotation:annotation:1.2.0'
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -1,4 +1,7 @@
-apply plugin: 'com.android.application'
+plugins{
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 android {
     signingConfigs {
@@ -9,8 +12,8 @@ android {
             keyPassword 'SHENying303654'
         }
     }
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion Versions.compileSdkVersion
+    buildToolsVersion Versions.buildToolsVersion
     configurations.all {
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
             def requested = details.requested
@@ -29,9 +32,6 @@ android {
         versionName "2.0.0 beta-4"
         resConfigs('zh-rCN')
         multiDexEnabled true
-    }
-    buildFeatures{
-        dataBinding = true
     }
 
 
@@ -74,12 +74,11 @@ android {
 dependencies {
     implementation "com.google.android.material:material:${Versions.materialVersion}"
     implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
-    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     //implementation 'com.zhouyou:rxeasyhttp:2.1.5'
     implementation 'com.billy.android:smart-swipe:1.1.2'
@@ -90,6 +89,8 @@ dependencies {
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.github.AmrDeveloper:CodeView:1.0.0'
 
+    implementation 'androidx.core:core-ktx:1.6.0'
+
     //implementation 'com.github.razerdp:BasePopup:2.2.1'
     //implementation 'net.dongliu:requests:5.0.8'
     //implementation 'com.optimus:editTextField:0.2.0'
@@ -97,12 +98,6 @@ dependencies {
     //
     implementation project(path: ':library')
     implementation project(path: ":codeeditor")
-    
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-
+    implementation project(path: ":base-core")
 
 }
