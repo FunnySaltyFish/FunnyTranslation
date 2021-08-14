@@ -1,5 +1,6 @@
 package com.funny.translation.js.config
 
+import java.lang.StringBuilder
 import javax.script.Compilable
 import javax.script.Invocable
 import javax.script.ScriptEngine
@@ -16,5 +17,15 @@ class BaseConfig {
             get() = SCRIPT_ENGINE as Invocable
 
         const val JS_ENGINE_KIND = 9999.toShort()
+
+        val DEBUG_DIVIDER = "=" * 18
     }
+}
+
+private operator fun String.times(times: Int): String {
+    val stringBuilder = StringBuilder()
+    for(i in 0 until times){
+        stringBuilder.append(this)
+    }
+    return stringBuilder.toString()
 }

@@ -23,6 +23,7 @@ import com.funny.translation.utils.FileUtil
 import com.funny.translation.widget.JSManageAdapter
 import com.getbase.floatingactionbutton.FloatingActionButton
 import java.io.IOException
+import javax.script.ScriptException
 
 class JSManageActivity : BaseActivity() {
     var rv: RecyclerView? = null
@@ -91,7 +92,7 @@ class JSManageActivity : BaseActivity() {
         jsDetailDialog = AlertDialog.Builder(this@JSManageActivity)
             .setTitle(jsBean.fileName)
             .setMessage(java.lang.String.format("关于：\n%s", jsBean.description))
-            .setNegativeButton("删除") { dialog, which -> showDeleteJSDialog(jsBean) }
+            .setNegativeButton("删除") { _, _ -> showDeleteJSDialog(jsBean) }
             .create()
         jsDetailDialog?.show()
     }
@@ -134,17 +135,25 @@ class JSManageActivity : BaseActivity() {
                         val jsBean = JsBean(code = code)
                         jsBean.id = nextID
                         val jsEngine = JsEngine(jsBean)
-                        jsEngine.loadBasicConfigurations()
-                        adapter.addData(jsEngine.jsBean)
-                        insertJS(jsEngine.jsBean)
-                        hasChanged = true
-                        ApplicationUtil.print(this, "添加成功！")
+                        jsEngine.loadBasicConfigurations(
+                            {
+                                adapter.addData(jsEngine.jsBean)
+                                insertJS(jsEngine.jsBean)
+                                hasChanged = true
+                                ApplicationUtil.print(this, "添加成功！")
+                            },{
+                                e -> throw e
+                            }
+                        )
                     } catch (e: IOException) {
                         e.printStackTrace()
                         ApplicationUtil.print(this, "添加插件时发生IO流错误，添加失败。")
-                    } catch (e: JSException) {
+                    } catch (e: ScriptException) {
                         e.printStackTrace()
                         ApplicationUtil.print(this, "添加插件时插件本身产生错误，原因是：" + e.message)
+                    }catch (e : Exception){
+                        e.printStackTrace()
+                        ApplicationUtil.print(this, "添加插件时发生未知错误，原因是：" + e.message)
                     }
                 }
             }

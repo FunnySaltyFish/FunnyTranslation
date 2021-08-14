@@ -1,4 +1,4 @@
-package com.funny.translation.codeeditor.helper.handler
+package com.funny.translation.helper.handler
 
 import android.os.Build.VERSION.SDK_INT
 import android.os.Handler
