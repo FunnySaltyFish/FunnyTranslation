@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.funny.translation.codeeditor.R
-import com.funny.translation.codeeditor.helper.handler.runOnUI
+import com.funny.translation.helper.handler.runOnUI
 import java.io.File
 import java.io.InputStream
 

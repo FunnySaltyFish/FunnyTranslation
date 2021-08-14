@@ -37,8 +37,10 @@ dependencies {
     api "com.squareup.okhttp3:okhttp:4.9.1"
 
     //JS rhino
-    implementation('com.github.gedoor:rhino-android:1.6')
+    api 'com.github.gedoor:rhino-android:1.6'
     api 'androidx.annotation:annotation:1.2.0'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+
 
 
     testImplementation 'junit:junit:4.13.2'

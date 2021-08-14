@@ -14,7 +14,7 @@ abstract class CoreTranslationTask(
     abstract val isOffline: Boolean
     abstract val engineKind: Short
     @Throws(TranslationException::class)
-    abstract fun translate(mode: Short)
+    abstract fun translate(mode: Short = 0)
 
     companion object {
         private const val TAG = "BasicTranslationTask"

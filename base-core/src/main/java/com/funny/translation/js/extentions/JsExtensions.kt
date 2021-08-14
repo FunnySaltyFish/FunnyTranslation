@@ -1,5 +1,6 @@
 package com.funny.translation.js.extentions
 
+import javax.script.ScriptEngine
 import javax.script.ScriptException
 
 val ScriptException.messageWithDetail

@@ -1,22 +1,33 @@
 package com.funny.translation.codeeditor.ui.runner
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.funny.translation.codeeditor.R
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
+import com.funny.translation.debug.Debug
+import com.funny.translation.debug.DefaultDebugTarget
+private const val TAG = "CodeRunner"
 
 @Composable
 fun ComposeCodeRunner(
     navController: NavController,
     activityCodeViewModel: ActivityCodeViewModel
 ){
+    val viewModel : CodeRunnerViewModel = viewModel()
+    SideEffect {
+        Debug.addTarget(DefaultDebugTarget)
+    }
     Scaffold(
         topBar = { CodeRunnerTopBar(
             backAction = {
@@ -26,6 +37,7 @@ fun ComposeCodeRunner(
     ) {
         CodeRunnerText(
             modifier = Modifier.fillMaxWidth(),
+            viewModel = viewModel,
             activityCodeViewModel = activityCodeViewModel
         )
     }
@@ -50,10 +62,17 @@ fun CodeRunnerTopBar(
 @Composable
 fun CodeRunnerText(
     modifier: Modifier,
+    viewModel: CodeRunnerViewModel,
     activityCodeViewModel: ActivityCodeViewModel
 ) {
+    val code = activityCodeViewModel.codeState.value
+    LaunchedEffect(key1 = code){
+        //Log.d(TAG, "CodeRunnerText: $code")
+        viewModel.initJs(code.toString())
+    }
+    val output = viewModel.outputDebug.observeAsState("")
     Text(
-        activityCodeViewModel.codeState.value.toString(),
+        output.value,
         modifier = modifier
     )
 }
