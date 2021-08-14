@@ -1,6 +1,6 @@
-package com.funny.translation.codeeditor.helper.coroutine
+package com.funny.translation.helper.coroutine
 
-import com.funny.translation.codeeditor.config.BuildConfig
+import com.funny.translation.jsBean.core.BuildConfig
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

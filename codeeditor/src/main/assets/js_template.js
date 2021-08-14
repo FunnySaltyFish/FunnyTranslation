@@ -1,16 +1,15 @@
 /*FunnyTranslation JS Engine Start*/
-const FunnyJS = {
-    "author":"",
-    "about":"",
+let FunnyJS = {
+    "author":"张三",
+    "description":"这是一个插件",
     "version":1,
-    "name":"ExampleJS",
+    "name":"示例插件",
     "debugMode":true,
     "madeURL":function(){return ""},
     "isOffline":function(){return true;},
 	"getBasicText":function(url){return "";},
 	"getFormattedResult":function(text){
-        var result = new JSTranslationResult(sourceString);
-        result.basicText = text;
+        result.setBasicResult(text);
         return result;
 	}
 }
