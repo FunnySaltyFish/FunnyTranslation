@@ -8,8 +8,11 @@ object Debug {
         }
     }
 
-    fun log(text : CharSequence){
-        targets.forEach { it.appendLog("[${it.source}] $text") }
+    fun log(
+        text : CharSequence,
+        tempSource : String?= null
+    ){
+        targets.forEach { it.appendLog("[${tempSource?:it.source}] $text") }
     }
 
     fun clear(){

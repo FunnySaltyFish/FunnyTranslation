@@ -17,10 +17,13 @@ interface JsInterface {
     ) = OkHttpUtils.getRaw(url = url,headersMap = headersMap)
 
     fun print(text : Any){
-        Debug.log(text.toString())
+        Debug.log(
+            text.toString(),
+            tempSource = "print"
+        )
     }
 
     fun log(text : Any){
-        Debug.log(text.toString())
+        Debug.log(text.toString(),tempSource = "log")
     }
 }

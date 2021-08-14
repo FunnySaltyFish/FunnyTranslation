@@ -1,8 +1,6 @@
 package com.funny.translation.codeeditor.ui.runner
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.codeeditor.base.BaseViewModel
