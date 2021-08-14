@@ -1,5 +1,7 @@
 package com.funny.translation.js.core
 
+import com.funny.translation.debug.Debug
+import com.funny.translation.debug.DefaultDebugTarget
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -17,6 +19,7 @@ import javax.script.SimpleBindings
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+data class Bean(var name:String)
 
 class ExampleUnitTest : JsInterface{
     @Test
@@ -24,39 +27,74 @@ class ExampleUnitTest : JsInterface{
         assertEquals(4, 2 + 2)
     }
 
+    lateinit var obj : NativeObject
+    lateinit var invocable : Invocable
+
     @Test
     fun jsEngineTest(){
         val scriptEngine: ScriptEngine by lazy {
             ScriptEngineManager().getEngineByName("rhino")
         }
+        Debug.addTarget(object : Debug.DebugTarget{
+            override val source: String
+                get() = "Log"
+
+            override fun appendLog(text: CharSequence) {
+                println(text.toString())
+            }
+        })
+
         val code = """
             var obj = {
                 "c" : "Hello",
                 "d" : function(name){
                     println("d:"+name)
-                    return "d"
+                    funny.log("log:d:"+name)
+                    return name
                 }
             }
             function s(){
                 println("damn it")
             }
             
+            var jsStr = "张三";
+            
+            //typeof ->  object
+            var javaStr = bean.getName();
+            println(typeof(jsStr))
+            println(typeof(javaStr))
+            println(jsStr === (javaStr+""))
+            
+            bean.setName("李四");
+            println(bean);
+            
             println("Finish Load");
             //println(funny.get("https://www.baidu.com",null));
         """.trimIndent()
-        val bindings = SimpleBindings().apply {
-            this["funny"] = this@ExampleUnitTest
-        }
         scriptEngine.put("funny",this)
+        val bean = Bean("张三")
+        scriptEngine.put("bean",bean)
         scriptEngine.eval(code)
-        val invocable = scriptEngine as Invocable
+
+
+        println(bean)
+        invocable = scriptEngine as Invocable
+        obj = scriptEngine.get("obj") as NativeObject
+        println(
+            invocable.invokeMethod(obj,"d","惊叹号")
+            //invokeMethod("d",java.lang.String("惊叹号"))
+        )
         //invocable.invokeFunction("s")
-        val obj = scriptEngine.get("obj") as NativeObject
-        val func = obj["d"] as Function
-        val s = scriptEngine.factory.getMethodCallSyntax("obj","d")
+
+//        val func = obj["d"] as Function
+//        val s = scriptEngine.factory.getMethodCallSyntax("obj","d")
         //func.call(Context.getCurrentContext(),,func, arrayOf())
 
         println("Finish")
 
+    }
+
+    private fun invokeMethod(name: String, vararg arguments:Object){
+        invocable.invokeMethod(obj,name,arguments)
     }
 }

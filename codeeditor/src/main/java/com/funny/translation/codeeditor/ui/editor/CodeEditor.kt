@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -74,9 +75,7 @@ fun ComposeTopBar(
 @Composable
 fun rememberCodeEditor(): CodeEditor {
     val ctx = LocalContext.current
-    return remember(
-
-    ) {
+    return remember{
         CodeEditor(ctx).apply {
             typefaceText = Typeface.MONOSPACE
             isOverScrollEnabled = false
@@ -93,6 +92,13 @@ fun Editor(
 ){
     Column {
         val editor = rememberCodeEditor()
+        DisposableEffect(key1 = editor){
+            onDispose {
+                Log.d(TAG, "Editor: onDispose")
+                editor.hideAutoCompleteWindow()
+                editor.hideSoftInput()
+            }
+        }
         val symbolChannel = remember{
             editor.createNewSymbolChannel()
         }

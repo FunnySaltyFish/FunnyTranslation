@@ -10,6 +10,7 @@ import com.funny.translation.js.config.BaseConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.core.JsInterface
 import com.funny.translation.js.extentions.messageWithDetail
 import org.mozilla.javascript.NativeObject
+import java.util.*
 import javax.script.ScriptException
 
 class JsEngine(val jsBean: JsBean) : JsInterface {
@@ -38,7 +39,8 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
     }
 
     @Throws(ScriptException::class,NoSuchMethodException::class)
-    fun evalFunnyJSFunction(name : String,vararg arguments : Any) : Any? {
+    //不能用这个方法，否则传给JS的类型不对
+    fun evalFunnyJSFunction(name : String,vararg arguments : Object) : Any? {
         return try{
             INVOCABLE.invokeMethod(funnyJS,name,arguments)
         }catch (e : NoSuchMethodException){
