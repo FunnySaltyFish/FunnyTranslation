@@ -8,4 +8,6 @@ data class JsBean(
     var version : Int = 1,
     var description : String = "",
     var enabled : Int = 0,
+    var minSupportVersion : Int = 2,
+    var maxSupportVersion : Int = 2
 )

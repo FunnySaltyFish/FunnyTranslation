@@ -241,6 +241,8 @@ public class CodeEditor extends View implements ContentListener, TextAnalyzer.Ca
     private CharPosition mLockedSelection;
     KeyMetaStates mKeyMetaStates = new KeyMetaStates(this);
 
+    private OnEditorColorSchemeChangeListener onEditorColorSchemeChangeListener;
+
     public CodeEditor(Context context) {
         this(context, null);
     }
@@ -3412,12 +3414,16 @@ public class CodeEditor extends View implements ContentListener, TextAnalyzer.Ca
      * @param colors A non-null and free EditorColorScheme
      */
     public void setColorScheme(@NonNull EditorColorScheme colors) {
+        //一样的就不修改了
+        if(colors == mColors)return;
+
         colors.attachEditor(this);
         mColors = colors;
         if (mCompletionWindow != null) {
             mCompletionWindow.applyColorScheme();
         }
         invalidate();
+        if(onEditorColorSchemeChangeListener!=null)onEditorColorSchemeChangeListener.onChange(colors);
     }
 
     /**
@@ -4217,6 +4223,10 @@ public class CodeEditor extends View implements ContentListener, TextAnalyzer.Ca
 
     }
 
+    private void setOnEditorColorSchemeChangeListener(OnEditorColorSchemeChangeListener newListener){
+        this.onEditorColorSchemeChangeListener = newListener;
+    }
+
     /**
      * Class for saving state for cursor
      */
@@ -4267,6 +4277,10 @@ public class CodeEditor extends View implements ContentListener, TextAnalyzer.Ca
             editor.drawCursor(canvas, centerX, row, outRect, insert, handleType);
         }
 
+    }
+
+    interface OnEditorColorSchemeChangeListener{
+        void onChange(EditorColorScheme editorColorScheme);
     }
 
 }

@@ -10,5 +10,7 @@ enum class Language(val id : Int) {
     RUSSIAN(6),
     GERMANY(7),
     WENYANWEN(8),
-    THAI(9),
+    THAI(9)
 }
+
+fun findLanguageById(id : Int) = Language.values().filter { it.id == id }[0]

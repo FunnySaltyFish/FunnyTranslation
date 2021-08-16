@@ -10,4 +10,14 @@
     <string name="layout_tv_replace">替换</string>
     <string name="layout_tv_replaceAll">全部替换</string>
     <string name="code_run">运行结果</string>
+    <string name="change_editor_theme">编辑器主题</string>
+    <string name="editor_theme_darcula">Darcula</string>
+    <string name="editor_theme_eclipse">Eclipse</string>
+    <string name="editor_theme_github">Github</string>
+    <string name="editor_theme_notepadxx">Notepad++</string>
+    <string name="editor_theme_vs2019">VS2019</string>
+    <string name="open_file">打开文件</string>
+    <string name="undo">撤销</string>
+    <string name="redo">重做</string>
+    <string name="set_debug_arguments">设置参数</string>
 </resources>
