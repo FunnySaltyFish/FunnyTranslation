@@ -1,6 +1,7 @@
 package com.funny.translation.codeeditor.ui
 
 import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.lifecycle.viewmodel.compose.viewModel

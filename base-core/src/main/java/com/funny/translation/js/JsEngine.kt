@@ -3,10 +3,10 @@ package com.funny.translation.js
 import com.funny.translation.debug.Debug
 import com.funny.translation.helper.coroutine.Coroutine
 import com.funny.translation.js.bean.JsBean
-import com.funny.translation.js.config.BaseConfig
-import com.funny.translation.js.config.BaseConfig.Companion.COMPILABLE
-import com.funny.translation.js.config.BaseConfig.Companion.INVOCABLE
-import com.funny.translation.js.config.BaseConfig.Companion.SCRIPT_ENGINE
+import com.funny.translation.js.config.JsConfig
+import com.funny.translation.js.config.JsConfig.Companion.COMPILABLE
+import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
+import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.core.JsInterface
 import com.funny.translation.js.extentions.messageWithDetail
 import org.mozilla.javascript.NativeObject
@@ -86,14 +86,16 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                 description = funnyJS["description"] as String
                 fileName = funnyJS["name"] as String
                 version = (funnyJS["version"] as Double).toInt()
+                minSupportVersion = (funnyJS["minSupportVersion"] as Double).toInt()
+                maxSupportVersion = (funnyJS["maxSupportVersion"] as Double).toInt()
                 //Debug.log(funnyJS.toString())
             }
         }.onSuccess {
             Debug.log("插件加载完毕！")
-            Debug.log(BaseConfig.DEBUG_DIVIDER)
+            Debug.log(JsConfig.DEBUG_DIVIDER)
             Debug.log(" 【${jsBean.fileName}】 版本号：${jsBean.version}  作者：${jsBean.author}")
             Debug.log("  ---> ${jsBean.description}")
-            Debug.log(BaseConfig.DEBUG_DIVIDER)
+            Debug.log(JsConfig.DEBUG_DIVIDER)
             onSuccess()
         }.onError {  e ->
             when(e){

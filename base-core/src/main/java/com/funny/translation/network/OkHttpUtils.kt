@@ -1,9 +1,13 @@
 package com.funny.translation.network
 
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import androidx.annotation.Keep
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+@Keep
 object OkHttpUtils {
     private val okHttpClient by lazy {
         OkHttpClient
@@ -13,6 +17,7 @@ object OkHttpUtils {
             .build()
     }
 
+    @JvmOverloads
     fun get(
         url : String,
         headersMap : HashMap<String,String>? = null
@@ -25,6 +30,7 @@ object OkHttpUtils {
         return response.body?.string() ?: ""
     }
 
+    @JvmOverloads
     fun getRaw(
         url : String,
         headersMap: HashMap<String, String>? = null
@@ -37,7 +43,47 @@ object OkHttpUtils {
         return response.body?.bytes() ?: ByteArray(0)
     }
 
-    fun Request.Builder.addHeaders(headers: Map<String, String>) {
+    @Throws(IOException::class)
+    @JvmOverloads
+    fun postJSON(
+        url: String,
+        json: String,
+        headers: HashMap<String, String>? = null
+    ): String {
+        val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val body: RequestBody = json.toRequestBody(JSON)
+        val requestBuilder = Request.Builder()
+            .url(url)
+            .post(body)
+        headers?.let {
+            requestBuilder.addHeaders(headers)
+        }
+        val response: Response = okHttpClient.newCall(requestBuilder.build()).execute()
+        return response.body?.string() ?: ""
+    }
+
+    @JvmOverloads
+    fun postForm(
+        url: String,
+        form : HashMap<String,String>,
+        headers: HashMap<String, String>? = null
+    ): String {
+        val builder = FormBody.Builder()
+        for ((key, value) in form) {
+            builder.add(key, value)
+        }
+        val body: RequestBody = builder.build()
+        val requestBuilder = Request.Builder()
+            .url(url)
+            .post(body)
+        headers?.let {
+            requestBuilder.addHeaders(headers)
+        }
+        val response: Response = okHttpClient.newCall(requestBuilder.build()).execute()
+        return response.body?.string() ?: ""
+    }
+
+    private fun Request.Builder.addHeaders(headers: Map<String, String>) {
         headers.forEach {
             addHeader(it.key, it.value)
         }
