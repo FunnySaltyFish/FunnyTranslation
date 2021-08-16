@@ -33,15 +33,22 @@ android {
 }
 
 dependencies {
+    //androidx.core
+    api 'androidx.core:core-ktx:1.6.0'
+
     //OkHttp
     api "com.squareup.okhttp3:okhttp:4.9.1"
 
     //JS rhino
     api 'com.github.gedoor:rhino-android:1.6'
+
+    //FileUtils
+    // 核心库必选(Core library required)
+    //api 'com.github.javakam:file.core:1.6.2@aar'
+
+
     api 'androidx.annotation:annotation:1.2.0'
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
-
-
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

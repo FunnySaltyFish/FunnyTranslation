@@ -2,9 +2,9 @@ package com.funny.translation.translation
 
 import android.util.Log
 import com.funny.translation.bean.Consts
+import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.trans.TranslationResult
-import com.funny.translation.utils.OkHttpUtil
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -26,7 +26,7 @@ class TranslationJinshanEasy(sourceString: String?, sourceLanguage: Short, targe
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
         return try {
-            val string = OkHttpUtil.get(url) //OkHttpUtil.getWithIP(url,"182.32.234.161",9999);
+            val string = OkHttpUtils.get(url) //OkHttpUtil.getWithIP(url,"182.32.234.161",9999);
             Log.i(TAG, "获取到的string:$string")
             string
         } catch (e: IOException) {

@@ -10,9 +10,9 @@ import android.os.Bundle;
 import com.danikula.videocache.file.FileNameGenerator;
 import com.funny.translation.bean.FunnyUncaughtExceptionHandler;
 import com.funny.translation.utils.FileUtil;
-import com.funny.translation.utils.OkHttpUtil;
 import com.funny.translation.utils.StringUtil;
 import com.hjq.toast.ToastUtils;
+
 //import com.qw.soul.permission.SoulPermission;
 
 public class FunnyApplication extends Application
@@ -30,7 +30,6 @@ public class FunnyApplication extends Application
 		funnyApplication = this;
 		FunnyUncaughtExceptionHandler funnyUncaughtExceptionHandler = FunnyUncaughtExceptionHandler.getInstance();
 		funnyUncaughtExceptionHandler.init(getFunnyContext());
-		OkHttpUtil.init();
 		ToastUtils.init(this);
 		initActivityManager();
 //		EasyHttp.init(this);

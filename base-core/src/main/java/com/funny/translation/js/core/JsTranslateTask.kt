@@ -1,22 +1,16 @@
 package com.funny.translation.js.core
 
-import android.util.Log
 import com.funny.translation.debug.Debug
 import com.funny.translation.js.JsEngine
-import com.funny.translation.js.config.BaseConfig.Companion.INVOCABLE
-import com.funny.translation.js.config.BaseConfig.Companion.JS_ENGINE_KIND
-import com.funny.translation.js.config.BaseConfig.Companion.SCRIPT_ENGINE
+import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
+import com.funny.translation.js.config.JsConfig.Companion.JS_ENGINE_KIND
+import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.extentions.messageWithDetail
 import com.funny.translation.trans.CoreTranslationTask
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.trans.TranslationResult
-import org.mozilla.javascript.NativeObject
-import org.mozilla.javascript.RhinoException
 import java.lang.Exception
 import javax.script.ScriptException
-import javax.script.SimpleBindings
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 
 private const val TAG = "JsTranslateTask"
 

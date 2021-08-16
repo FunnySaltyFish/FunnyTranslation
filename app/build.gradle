@@ -61,14 +61,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-//	compileOptions {
-//		// Flag to enable support for the new language APIs
-//		//coreLibraryDesugaringEnabled true
-//		// Sets Java compatibility to Java 11
-//		sourceCompatibility JavaVersion.VERSION_11
-//		targetCompatibility JavaVersion.VERSION_11
-//	}
-
 }
 
 dependencies {
@@ -82,14 +74,9 @@ dependencies {
 
     //implementation 'com.zhouyou:rxeasyhttp:2.1.5'
     implementation 'com.billy.android:smart-swipe:1.1.2'
-    implementation "com.squareup.okhttp3:okhttp:4.9.1"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:4.9.0"
     implementation 'com.hjq:toast:8.6'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
-    implementation 'com.github.AmrDeveloper:CodeView:1.0.0'
-
-    implementation 'androidx.core:core-ktx:1.6.0'
 
     //implementation 'com.github.razerdp:BasePopup:2.2.1'
     //implementation 'net.dongliu:requests:5.0.8'

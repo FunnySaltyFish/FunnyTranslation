@@ -52,7 +52,9 @@ A：哈，谢谢支持！
 —OkHttp3(https://github.com/square/okhttp)
 —BaseRecyclerViewAdapterHelper(https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
 —android-floating-action-button(https://github.com/zendesk/android-floating-action-button)
-—CodeView(https://github.com/AmrDeveloper/CodeView)
+-legado(https://github.com/gedoor/legado/)
+—CodeEditor(https://github.com/Rosemoe/CodeEditor/)
+-FileOperator(https://github.com/javakam/FileOperator)
 
 Copyright@FunnySaltyFish
 2020-2021

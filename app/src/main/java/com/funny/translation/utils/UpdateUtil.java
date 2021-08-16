@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.funny.translation.network.OkHttpUtils;
+
 public class UpdateUtil {
     public static JSONObject updateDescription;
     public static String updateLog;
@@ -20,7 +22,7 @@ public class UpdateUtil {
     public static JSONObject getUpdateDescription() throws Exception {
         JSONObject obj = null;
         try {
-            String str = OkHttpUtil.get("https://gitee.com/funnysaltyfish/FunnyTranslationDownload/raw/master/description.json");
+            String str = OkHttpUtils.INSTANCE.get("https://gitee.com/funnysaltyfish/FunnyTranslationDownload/raw/master/description.json");
             obj = new JSONObject(str);
         } catch (JSONException e) {
             e.printStackTrace();
