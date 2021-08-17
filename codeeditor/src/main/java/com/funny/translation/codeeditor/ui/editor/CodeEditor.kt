@@ -5,10 +5,7 @@ import android.graphics.Typeface
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
@@ -21,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -69,15 +67,15 @@ fun ComposeCodeEditor(
         }
     }
 
-    val permissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted ->
-            if(!isGranted){
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar("未获取到授权，无法写入文件")
-                }
-            }
-
-        }
+//    val permissionLauncher =
+//        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted ->
+//            if(!isGranted){
+//                scope.launch {
+//                    scaffoldState.snackbarHostState.showSnackbar("未获取到授权，无法写入文件")
+//                }
+//            }
+//
+//        }
 
     val fileCreatorLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(),
@@ -109,7 +107,7 @@ fun ComposeCodeEditor(
                     }
                 },
                 saveAction = {
-                    permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    //permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     fileCreatorLauncher.launch("new_plugin.js")
                 },
                 undoAction = {
@@ -177,6 +175,7 @@ fun ComposeCodeEditor(
                                 label = { Text("翻译文本") },
                                 placeholder = { Text( sourceString.value!!) }
                             )
+                            Spacer(Modifier.height(8.dp))
                             ComposeSpinner(
                                 data = activityViewModel.allLanguageNames,
                                 initialData = findLanguageById(sourceLanguage.value!!).name,
@@ -185,6 +184,7 @@ fun ComposeCodeEditor(
                                 },
                                 label = "源语言"
                             )
+                            Spacer(Modifier.height(8.dp))
                             ComposeSpinner(
                                 data = activityViewModel.allLanguageNames,
                                 initialData = findLanguageById(targetLanguage.value!!).name,

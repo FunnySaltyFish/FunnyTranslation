@@ -2,7 +2,11 @@ package com.funny.translation.js.core
 
 import androidx.annotation.Keep
 import com.funny.translation.debug.Debug
+import com.funny.translation.js.JsManager
+import com.funny.translation.js.extentions.show
 import com.funny.translation.network.OkHttpUtils
+import org.mozilla.javascript.NativeArray
+import org.mozilla.javascript.NativeObject
 
 @Keep
 interface JsInterface {
@@ -16,14 +20,16 @@ interface JsInterface {
         headersMap : HashMap<String,String>? = null
     ) = OkHttpUtils.getRaw(url = url,headersMap = headersMap)
 
-    fun print(text : Any){
+    fun log(obj : Any){
+        val logStr = when(obj){
+            is NativeArray -> obj.show
+            is NativeObject -> obj.show()
+            else -> obj.toString()
+        }
         Debug.log(
-            text.toString(),
-            tempSource = "print"
+            logStr,
+            tempSource = "log",
+            JsManager.currentRunningJsEngine?.jsBean?.debugMode?:false
         )
-    }
-
-    fun log(text : Any){
-        Debug.log(text.toString(),tempSource = "log")
     }
 }

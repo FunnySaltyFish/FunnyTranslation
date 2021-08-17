@@ -22,7 +22,7 @@ class TranslationEachText(sourceString: String?, sourceLanguage: Short, targetLa
     @Throws(TranslationException::class)
     override fun getFormattedResult(basicText: String): TranslationResult {
         val chinese = StringUtil.extraChinese(basicText)
-        var words: JSONObject? = null
+        val words: JSONObject?
         return try {
             words = FunnyEachText.getWords()
             val stringBuilder = StringBuilder()

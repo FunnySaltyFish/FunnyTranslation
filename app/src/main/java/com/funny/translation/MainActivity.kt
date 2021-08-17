@@ -205,7 +205,7 @@ class MainActivity : BaseActivity() {
                         if (obj != null) {
                             if (outputRecyclerView.adapter !is NewResultAdapter) outputRecyclerView.adapter =
                                 resultAdapter
-                            val currentFinishTask = obj as BasicTranslationTask
+                            val currentFinishTask = obj as CoreTranslationTask
                             resultAdapter.addData(currentFinishTask)
                             translateProgress.progress = msg.arg1
                         }

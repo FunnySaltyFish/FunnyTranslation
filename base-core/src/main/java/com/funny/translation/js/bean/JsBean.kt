@@ -9,5 +9,7 @@ data class JsBean(
     var description : String = "",
     var enabled : Int = 0,
     var minSupportVersion : Int = 2,
-    var maxSupportVersion : Int = 2
+    var maxSupportVersion : Int = 2,
+    var isOffline : Boolean = false,
+    var debugMode : Boolean = true
 )
