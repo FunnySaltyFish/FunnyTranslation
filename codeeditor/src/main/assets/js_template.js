@@ -8,18 +8,19 @@ let FunnyJS = {
     // 插件版本。插件的更新依赖于此
     "version":1,
     // 最低支持的插件引擎版本
-    "mixSupportVersion":2,
+    "minSupportVersion":2,
     // 最高支持的插件引擎版本
     "maxSupportVersion":999,
     // 插件名称
     "name":"示例插件",
     // 是否开启Debug模式
     "debugMode":true,
+    // 插件是否为离线插件
+    "isOffline":false,
 
     // 下面是插件需要回调的方法
     // 详见 https://www.yuque.com/funnysaltyfish/vzmuud
     "madeURL":function(){return ""},
-    "isOffline":function(){return true;},
 	"getBasicText":function(url){return "";},
 	"getFormattedResult":function(text){
         result.setBasicResult(text);

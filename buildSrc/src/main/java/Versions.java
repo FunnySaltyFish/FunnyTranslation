@@ -31,6 +31,7 @@ public final class Versions {
     public static final String ktxCoreVersion = "1.6.0";
     public static final String materialVersion = "1.4.0";
     public final static String navigationVersion = "2.3.5";
+    public static final String recyclerViewVersion = "1.2.1";
 
     public static final String kotlinVersion = "1.5.21";
     public static final String composeVersion = "1.0.1";

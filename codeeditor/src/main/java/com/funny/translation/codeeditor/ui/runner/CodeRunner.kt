@@ -1,9 +1,11 @@
 package com.funny.translation.codeeditor.ui.runner
 
-import android.util.Log
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,6 +30,8 @@ fun ComposeCodeRunner(
     activityCodeViewModel: ActivityCodeViewModel
 ){
     val viewModel : CodeRunnerViewModel = viewModel()
+    val verticalScrollState = rememberScrollState()
+    val horizontalScrollState = rememberScrollState()
     SideEffect {
         Debug.addTarget(DefaultDebugTarget)
     }
@@ -39,7 +43,12 @@ fun ComposeCodeRunner(
         ) }
     ) {
         CodeRunnerText(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(8.dp)
+                .verticalScroll(verticalScrollState)
+                .horizontalScroll(horizontalScrollState),
             viewModel = viewModel,
             activityCodeViewModel = activityCodeViewModel
         )
@@ -76,6 +85,7 @@ fun CodeRunnerText(
     val output = viewModel.outputDebug.observeAsState("")
     Text(
         output.value,
-        modifier = modifier
+        modifier = modifier,
+        softWrap = false
     )
 }

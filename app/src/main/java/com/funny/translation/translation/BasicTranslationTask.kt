@@ -27,9 +27,9 @@ abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Short,
             }
             processedString = getProcessedString(sourceString, mode)
             //Log.i(TAG,"获取到的processedString是"+processedString);
-            result?.sourceString = processedString
+            result.sourceString = processedString
             if (sourceLanguage === targetLanguage) { //如果目标语言和源语言相同，跳过翻译
-                result?.setBasicResult(sourceString)
+                result.setBasicResult(sourceString)
             } else {
                 val basicText = getBasicText(url)
                 result = getFormattedResult(basicText)
@@ -38,7 +38,7 @@ abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Short,
             e.printStackTrace()
             throw e
         }finally {
-            result?.let {
+            result.let {
                 reFormatBasicText(it, mode) //还原处理过的basicText
                 it.sourceString = sourceString
             }
@@ -47,8 +47,7 @@ abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Short,
 
     @Throws(TranslationException::class)
     private fun getProcessedString(str: String, mode: Short): String {
-        var result = ""
-        result = when (mode) {
+        return when (mode) {
             Consts.MODE_EACH_TEXT -> {
                 val chinese = StringUtil.extraChinese(str)
                 if (!StringUtil.isValidContent(chinese)) {
@@ -58,7 +57,6 @@ abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Short,
             }
             else -> str
         }
-        return result
     }
 
     private fun reFormatBasicText(translationResult: TranslationResult, mode: Short) {

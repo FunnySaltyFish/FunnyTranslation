@@ -21,11 +21,11 @@ class TranslationBV2AV(sourceString: String?, sourceLanguage: Short, targetLangu
         if (StringUtil.isNumber(inputText)) {
             result = FunnyBvToAv.enc(inputText.toLong())
         } else {
-            var av: Long = 0
+            var av: Long
             if (StringUtil.findAv(inputText).also { av = it } > 0) {
                 result = FunnyBvToAv.enc(av)
             } else {
-                var bv: String? = ""
+                var bv: String?
                 if (StringUtil.findBv(inputText).also { bv = it } != "") {
                     result = FunnyBvToAv.dec(bv)
                 }

@@ -34,7 +34,8 @@ android {
 
 dependencies {
     //androidx.core
-    api 'androidx.core:core-ktx:1.6.0'
+    // api 'androidx.core:core-ktx:1.6.0'
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"
 
     //OkHttp
     api "com.squareup.okhttp3:okhttp:4.9.1"
@@ -46,9 +47,11 @@ dependencies {
     // 核心库必选(Core library required)
     //api 'com.github.javakam:file.core:1.6.2@aar'
 
-
     api 'androidx.annotation:annotation:1.2.0'
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+
+    def coroutines_version = '1.5.1'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

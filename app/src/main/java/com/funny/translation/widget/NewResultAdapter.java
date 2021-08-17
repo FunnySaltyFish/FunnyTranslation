@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.funny.translation.R;
 import com.funny.translation.bean.Consts;
+import com.funny.translation.js.config.JsConfig;
 import com.funny.translation.js.core.JsTranslateTask;
 import com.funny.translation.trans.CoreTranslationTask;
 
@@ -26,7 +27,7 @@ public class NewResultAdapter extends BaseQuickAdapter<CoreTranslationTask, NewR
     protected void convert(@NotNull ResultContentHolder rcHolder, CoreTranslationTask task) {
         //设置翻译引擎的样子
         sb.setLength(0);
-        if(task.getEngineKind() == Consts.ENGINE_JS){
+        if(task.getEngineKind() == JsConfig.JS_ENGINE_KIND){
             JsTranslateTask jsTranslateTask = (JsTranslateTask)task;
             sb.append(jsTranslateTask.getJsEngine().getJsBean().getFileName());
         }else{
@@ -46,7 +47,6 @@ public class NewResultAdapter extends BaseQuickAdapter<CoreTranslationTask, NewR
         }else{
             rcHolder.text.setTextSize(16);
         }
-        if(task.getResult()==null)return;
         rcHolder.text.setText(task.getResult().getBasicResult().getTrans());
     }
 
