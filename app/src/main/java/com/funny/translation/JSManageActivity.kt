@@ -15,7 +15,6 @@ import com.funny.translation.db.DBJSUtils.deleteJS
 import com.funny.translation.db.DBJSUtils.insertJS
 import com.funny.translation.db.DBJSUtils.nextID
 import com.funny.translation.db.DBJSUtils.queryAllJS
-import com.funny.translation.js.JSException
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.utils.ApplicationUtil
@@ -23,7 +22,6 @@ import com.funny.translation.utils.FileUtil
 import com.funny.translation.widget.JSManageAdapter
 import com.getbase.floatingactionbutton.FloatingActionButton
 import java.io.IOException
-import javax.script.ScriptException
 
 class JSManageActivity : BaseActivity() {
     var rv: RecyclerView? = null
@@ -36,6 +34,7 @@ class JSManageActivity : BaseActivity() {
     var hasChanged = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_js_manage)
         rv = findViewById(R.id.js_manage_rv)
         adapter = JSManageAdapter(R.layout.view_js_manage_rv_item).apply {
@@ -57,13 +56,14 @@ class JSManageActivity : BaseActivity() {
                 val jsBean = (adapter as JSManageAdapter).getItem(position)
                 showJSDetailDialog(jsBean)
             }
-            isUseEmpty = true
-            setEmptyView(R.layout.view_js_manage_rv_empty)
+
         }
 
         rv?.adapter = adapter
         rv?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+        adapter.isUseEmpty = true
+        adapter.setEmptyView(R.layout.view_js_manage_rv_empty)
         initFAB()
     }
 
@@ -142,16 +142,13 @@ class JSManageActivity : BaseActivity() {
                                 hasChanged = true
                                 ApplicationUtil.print(this, "添加成功！")
                             },{
-                                e -> throw e
+                                ApplicationUtil.print("插件加载时出错！请联系插件开发者解决！")
                             }
                         )
                     } catch (e: IOException) {
                         e.printStackTrace()
                         ApplicationUtil.print(this, "添加插件时发生IO流错误，添加失败。")
-                    } catch (e: ScriptException) {
-                        e.printStackTrace()
-                        ApplicationUtil.print(this, "添加插件时插件本身产生错误，原因是：" + e.message)
-                    }catch (e : Exception){
+                    } catch (e : Exception){
                         e.printStackTrace()
                         ApplicationUtil.print(this, "添加插件时发生未知错误，原因是：" + e.message)
                     }

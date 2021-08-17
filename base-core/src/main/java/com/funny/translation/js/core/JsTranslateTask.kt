@@ -22,6 +22,10 @@ class JsTranslateTask(
 ) :
     CoreTranslationTask(sourceString, sourceLanguage, targetLanguage), JsInterface {
 
+    init {
+        result = TranslationResult(engineKind)
+    }
+
     override fun getBasicText(url: String): String {
         val obj = INVOCABLE.invokeMethod(jsEngine.funnyJS, "getBasicText", url)
         //Log.d(TAG, "getBasicText: ${obj is String}")
@@ -44,7 +48,7 @@ class JsTranslateTask(
     override val isOffline: Boolean
         get() =
             try {
-                jsEngine.evalFunnyJSFunction("isOffline") as Boolean
+                INVOCABLE.invokeMethod(jsEngine.funnyJS,"isOffline") as Boolean
             } catch (e: Exception) {
                 true
             }
@@ -88,7 +92,7 @@ class JsTranslateTask(
             put("sourceLanguage", sourceLanguage)
             put("targetLanguage", targetLanguage)
             put("sourceString", sourceString)
-            put("result", TranslationResult(engineKind))
+            put("result", result)
         }
         jsEngine.eval()
     }

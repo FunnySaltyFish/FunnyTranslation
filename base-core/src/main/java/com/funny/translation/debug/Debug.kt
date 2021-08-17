@@ -10,9 +10,10 @@ object Debug {
 
     fun log(
         text : CharSequence,
-        tempSource : String?= null
+        tempSource : String?= null,
+        print : Boolean = true
     ){
-        targets.forEach { it.appendLog("[${tempSource?:it.source}] $text") }
+        targets.forEach { if(print) it.appendLog("[${tempSource?:it.source}] $text") }
     }
 
     fun clear(){

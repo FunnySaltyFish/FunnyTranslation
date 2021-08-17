@@ -1,5 +1,8 @@
 package com.funny.translation.trans
 
+import androidx.annotation.Keep
+
+@Keep
 data class TranslationResult(
     var engineKind: Short,
     var basicResult: Translation = EmptyTranslation,
@@ -11,6 +14,7 @@ data class TranslationResult(
     }
 }
 
+@Keep
 data class Translation(
     var trans: String,
     var phoneticNotation: String? = null,//注音
