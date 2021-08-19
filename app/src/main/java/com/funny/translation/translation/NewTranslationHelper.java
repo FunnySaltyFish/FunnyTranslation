@@ -13,12 +13,14 @@ import java.util.concurrent.Executors;
 
 public class NewTranslationHelper {
     private static NewTranslationHelper instance;
-    private final ExecutorService mThreadPool = Executors.newFixedThreadPool(8);
+    private final ExecutorService mThreadPool = Executors.newFixedThreadPool(4);
     private final HashMap<Short, Long> mLastTranslate = new HashMap<>();
     private PoolingThread mThread;
     private final LinkedList<CoreTranslationTask> mTranslateList = new LinkedList<>();
     private OnTranslateListener listener;
     private short mode = Consts.MODE_NORMAL;//翻译模式
+
+    private final Object lock = new Object();
 
 
     private boolean mThreadFlag = true;
@@ -73,6 +75,7 @@ public class NewTranslationHelper {
 
     public void finish(){
         mThreadFlag = false;
+        mThreadPool.shutdown();
     }
 
     public void stopTasks(){
@@ -97,26 +100,29 @@ public class NewTranslationHelper {
             try {
                 while (mThreadFlag) {// 永不停息
                     if (!mTranslateList.isEmpty()) {
-                        CoreTranslationTask currentTask = mTranslateList.removeFirst();
-                        short type = currentTask.getEngineKind();
-                        if (currentTime() - mLastTranslate.get(type) >= getSleepTime(currentTask)) {
-                            mThreadPool.execute(new Runnable() {
-                                @Override
-                                public void run() {
+                        synchronized (lock){
+                            CoreTranslationTask currentTask = mTranslateList.removeFirst();
+                            short type = currentTask.getEngineKind();
+                            if (currentTime() - mLastTranslate.get(type) >= getSleepTime(currentTask)) {
+                                mThreadPool.execute(() -> {
                                     try{
                                         translate(currentTask);
                                         listener.finishOne(currentTask,null);
-                                    }catch(Exception e){
+                                    }catch (TranslationException e){
+                                        currentTask.result.setBasicResult(e.getMessage());
+                                        listener.finishOne(currentTask,e);
+                                    } catch(Exception e){
+                                        currentTask.result.setBasicResult(e.getLocalizedMessage() == null?"":e.getLocalizedMessage());
                                         listener.finishOne(currentTask,e);
                                     }finally {
                                         mProgress++;
                                         if(mProgress == mTotalProgress)listener.finishAll();
                                     }
-                                }
-                            });
-                            mLastTranslate.put(type, currentTime());
-                        } else {
-                            mTranslateList.addLast(currentTask);
+                                });
+                                mLastTranslate.put(type, currentTime());
+                            } else {
+                                mTranslateList.addLast(currentTask);
+                            }
                         }
                     }
 
@@ -145,4 +151,6 @@ public class NewTranslationHelper {
             else return task.getEngineKind() == Consts.ENGINE_BAIDU_NORMAL ? Consts.BAIDU_SLEEP_TIME : 50;
         }
     }
+
+
 }

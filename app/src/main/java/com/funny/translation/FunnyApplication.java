@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.danikula.videocache.file.FileNameGenerator;
 import com.funny.translation.bean.FunnyUncaughtExceptionHandler;
+import com.funny.translation.helper.DataStoreUtils;
 import com.funny.translation.utils.FileUtil;
 import com.funny.translation.utils.StringUtil;
 import com.hjq.toast.ToastUtils;
@@ -31,6 +32,7 @@ public class FunnyApplication extends Application
 		FunnyUncaughtExceptionHandler funnyUncaughtExceptionHandler = FunnyUncaughtExceptionHandler.getInstance();
 		funnyUncaughtExceptionHandler.init(getFunnyContext());
 		ToastUtils.init(this);
+		DataStoreUtils.INSTANCE.init(this);
 		initActivityManager();
 //		EasyHttp.init(this);
 //		EasyHttp.getInstance().debug("EasyHttp",true);

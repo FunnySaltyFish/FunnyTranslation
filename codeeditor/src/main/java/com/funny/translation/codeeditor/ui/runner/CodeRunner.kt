@@ -80,7 +80,7 @@ fun CodeRunnerText(
     val code = activityCodeViewModel.codeState.value
     LaunchedEffect(key1 = code){
         //Log.d(TAG, "CodeRunnerText: $code")
-        viewModel.initJs(code.toString())
+        viewModel.initJs(activityCodeViewModel,code.toString())
     }
     val output = viewModel.outputDebug.observeAsState("")
     Text(

@@ -1,8 +1,9 @@
 package com.funny.translation.codeeditor.ui.editor
 
-import android.Manifest
 import android.graphics.Typeface
+import android.net.Uri
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -39,7 +40,6 @@ import io.github.rosemoe.editor.widget.CodeEditor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 @Composable
 fun ComposeCodeEditor(
@@ -51,6 +51,7 @@ fun ComposeCodeEditor(
     val context = LocalContext.current
     val confirmOpenFile = remember { mutableStateOf(false) }
     val settingArgumentsDialog = remember { mutableStateOf(false) }
+    var confirmLeave = remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -60,7 +61,8 @@ fun ComposeCodeEditor(
         try {
             val text = it.readText(context)
             activityViewModel.codeState.value = Content(text)
-        } catch (e: IOException) {
+            activityViewModel.openFileUri = it
+        } catch (e: Exception) {
             activityViewModel.codeState.value = Content("打开文件失败！${e.localizedMessage}")
         } finally {
             viewModel.textChanged.value = true
@@ -77,15 +79,14 @@ fun ComposeCodeEditor(
 //
 //        }
 
-    val fileCreatorLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(),
-    ) { uri ->
-        Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
+    fun saveFile(uri: Uri){
         scope.launch {
             try {
                 withContext(Dispatchers.IO) {
                     uri.writeText(context, activityViewModel.codeState.value.toString())
                 }
+                activityViewModel.openFileUri = uri
+                viewModel.hasSaved = true
                 scaffoldState.snackbarHostState.showSnackbar("保存完成")
             } catch (e: Exception) {
                 scaffoldState.snackbarHostState.showSnackbar("发生错误，保存失败！")
@@ -93,9 +94,38 @@ fun ComposeCodeEditor(
         }
     }
 
+    val fileCreatorLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument(),
+    ) { uri ->
+        Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
+        saveFile(uri)
+    }
+
     val sourceString   = activityViewModel.sourceString.observeAsState()
     val sourceLanguage = activityViewModel.sourceLanguage.observeAsState()
     val targetLanguage = activityViewModel.targetLanguage.observeAsState()
+
+//    DisposableEffect(key1 = context){
+//        onDispose {
+//            if(!viewModel.hasSaved){
+//                confirmLeave.value = true
+//            }
+//        }
+//    }
+
+    fun finish(){
+        (context as ComponentActivity).finish()
+    }
+
+//    BackButtonHandler {
+//        if(!viewModel.hasSaved){
+//            confirmLeave.value = true
+//        }else{
+//            val activity = context as ComponentActivity
+//            //activity.onBackPressedDispatcher.
+//            //finish()
+//        }
+//    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -108,7 +138,13 @@ fun ComposeCodeEditor(
                 },
                 saveAction = {
                     //permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    fileCreatorLauncher.launch("new_plugin.js")
+                    //如果当前打开的是默认文件
+                    if(activityViewModel.openFileUri.encodedPath.isNullOrBlank()){
+                        fileCreatorLauncher.launch("new_plugin_${System.currentTimeMillis()}.js")
+                    } else { //已经打开了文件
+                        if(!viewModel.hasSaved)saveFile(uri = activityViewModel.openFileUri)
+                    }
+
                 },
                 undoAction = {
                     viewModel.shouldUndo.value = true
@@ -120,7 +156,7 @@ fun ComposeCodeEditor(
                     viewModel.updateEditorColorScheme(it)
                 },
                 openFileAction = {
-                    if (viewModel.hasSaved.value == false) {
+                    if (!viewModel.hasSaved) {
                         confirmOpenFile.value = true
                     } else {
                         filePickerLauncher.launch(
@@ -157,6 +193,10 @@ fun ComposeCodeEditor(
                 }
             )
 
+            SimpleDialog(openDialog = confirmLeave, title ="提示",message = "当前文件尚未保存，您确定要离开吗？",confirmButtonAction = {
+                finish()
+            })
+
             if(settingArgumentsDialog.value){
                 AlertDialog(
                     onDismissRequest = {  },
@@ -171,6 +211,7 @@ fun ComposeCodeEditor(
                                 value = sourceString.value!!,
                                 onValueChange = { value ->
                                     activityViewModel.sourceString.value = value
+                                    //JsConfig.SCRIPT_ENGINE.put("sourceString",value)
                                 },
                                 label = { Text("翻译文本") },
                                 placeholder = { Text( sourceString.value!!) }
@@ -181,6 +222,7 @@ fun ComposeCodeEditor(
                                 initialData = findLanguageById(sourceLanguage.value!!).name,
                                 selectAction = { index ->
                                     activityViewModel.sourceLanguage.value = index
+                                    //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
                                 },
                                 label = "源语言"
                             )
@@ -190,6 +232,7 @@ fun ComposeCodeEditor(
                                 initialData = findLanguageById(targetLanguage.value!!).name,
                                 selectAction = { index ->
                                     activityViewModel.targetLanguage.value = index
+                                    //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
                                 },
                                 label = "目标语言"
                             )
@@ -224,7 +267,7 @@ fun CodeEditorTopBar(
     }
     TopAppBar(
         title = {
-            Text("你好")
+            Text("编辑代码")
         },
         modifier = Modifier.fillMaxWidth(),
         actions = {
@@ -311,8 +354,15 @@ fun Editor(
         editor.createNewSymbolChannel()
     }
     val codeText = activityViewModel.codeState
-    Column {
 
+    fun updateEditorText(){
+        editor.text.let {
+            codeText.value = it
+        }
+        viewModel.hasSaved = false
+    }
+
+    Column {
 
         DisposableEffect(key1 = editor) {
             onDispose {
@@ -349,9 +399,7 @@ fun Editor(
                             deletedContent: CharSequence?
                         ) {
                             //Log.d(TAG, "afterDelete:")
-                            editor?.text?.let {
-                                codeText.value = it
-                            }
+                            updateEditorText()
                         }
 
                         override fun afterInsert(
@@ -364,9 +412,7 @@ fun Editor(
                             insertedContent: CharSequence?
                         ) {
                             //Log.d(TAG, "afterInsert:")
-                            editor?.text?.let {
-                                codeText.value = it
-                            }
+                            updateEditorText()
                         }
 
                         override fun beforeReplace(editor: CodeEditor?, content: CharSequence?) {}
