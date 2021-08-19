@@ -1,7 +1,9 @@
 package com.funny.translation.translation
 
 import android.net.Uri
+import android.util.Log
 import com.funny.translation.bean.Consts
+import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.trans.TranslationResult
 import org.json.JSONArray
@@ -16,72 +18,36 @@ class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targ
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
     ) {
+
+    companion object{
+        private const val TAG = "TransGoogle"
+    }
+
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
-        var out: PrintWriter? = null
-        var `in`: BufferedReader? = null
-        var result = ""
-        try {
+        return try {
             val engineKind = engineKind
             val from = Consts.LANGUAGES[sourceLanguage.toInt()][engineKind.toInt()]
             val to = Consts.LANGUAGES[targetLanguage.toInt()][engineKind.toInt()]
-            val realUrl = URL(
-                String.format(
-                    "https://translate.google.cn/translate_a/single?client=webapp&sl=%s&tl=%s&hl=%s&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=%s&q=%s",
-                    from,
-                    to,
-                    to,
-                    FunnyGoogleApi.tk(sourceString, "439500.3343569631"),
-                    Uri.encode(sourceString)
-                )
+            val realUrl = String.format(
+                "https://translate.google.cn/translate_a/single?client=webapp&sl=%s&tl=%s&hl=%s&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=btn&ssel=5&tsel=5&kc=0&tk=%s&q=%s",
+                from,
+                to,
+                to,
+                FunnyGoogleApi.tk(sourceString, "439500.3343569631"),
+                Uri.encode(sourceString)
             )
-            // 打开和URL之间的连接
-            val conn = realUrl.openConnection()
-            // 设置通用的请求属性
-            conn.setRequestProperty("accept", "*/*")
-            conn.setRequestProperty("connection", "Keep-Alive")
-            conn.setRequestProperty(
-                "user-agent",
-                "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)"
-            )
-
-            // 发送POST请求必须设置如下两行
-            conn.doOutput = true
-            conn.doInput = true
-            //1.获取URLConnection对象对应的输出流
-            out = PrintWriter(conn.getOutputStream())
-            //2.中文有乱码的需要将PrintWriter改为如下
-            //out=new OutputStreamWriter(conn.getOutputStream(),"UTF-8")
-            // 发送请求参数
-            val param = ""
-            out.print(param)
-            // flush输出流的缓冲
-            out.flush()
-            // 定义BufferedReader输入流来读取URL的响应
-            `in` = BufferedReader(InputStreamReader(conn.getInputStream()))
-            var line: String
-            while (`in`.readLine().also { line = it } != null) {
-                result += line
+            val headers = HashMap<String,String>().apply {
+                put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.73")
             }
-            //System.out.println("result:"+result);
+            val html = OkHttpUtils.get(realUrl,headers)
+            //Log.d(TAG, "getBasicText: $html")
+            html
         } catch (e: Exception) {
             println("发送 POST 请求出现异常！$e")
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_POST)
         } //使用finally块来关闭输出流、输入流
-        finally {
-            try {
-                out?.close()
-                `in`?.close()
-            } catch (ex: IOException) {
-                ex.printStackTrace()
-                throw TranslationException(Consts.ERROR_IO)
-            }
-        }
-        //result=formatResult(result);
-        //System.out.println(result);
-        //System.out.println("post推送结果："+result);
-        return result
     }
 
     @Throws(TranslationException::class)
@@ -143,16 +109,4 @@ class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targ
         get() = false
     override val engineKind: Short
         get() = Consts.ENGINE_GOOGLE
-
-    companion object {
-        fun showArray(arr: Array<Array<String?>>) {
-            for (arr1 in arr) {
-                for (str in arr1) {
-                    print(str)
-                    print(" ")
-                }
-                println("")
-            }
-        }
-    }
 }

@@ -5,3 +5,4 @@ include ':editor'
 include ":language-base"
 include ":language-universal"
 include ':base-core'
+include ':translate'

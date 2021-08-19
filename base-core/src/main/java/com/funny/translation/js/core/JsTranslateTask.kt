@@ -7,6 +7,7 @@ import com.funny.translation.js.config.JsConfig.Companion.JS_ENGINE_KIND
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.extentions.messageWithDetail
 import com.funny.translation.trans.CoreTranslationTask
+import com.funny.translation.trans.Language
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.trans.TranslationResult
 import java.lang.Exception
@@ -20,7 +21,7 @@ class JsTranslateTask(
     sourceLanguage: Short,
     targetLanguage: Short
 ) :
-    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage), JsInterface {
+    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) {
 
     init {
         result = TranslationResult(engineKind)
@@ -88,11 +89,14 @@ class JsTranslateTask(
 
     private fun eval() {
         with(SCRIPT_ENGINE) {
-            put("funny", this@JsTranslateTask)
+            put("funny", jsEngine)
             put("sourceLanguage", sourceLanguage)
             put("targetLanguage", targetLanguage)
             put("sourceString", sourceString)
             put("result", result)
+            Language.values().forEach {
+                put("LANGUAGE_${it.name}",it.id)
+            }
         }
         jsEngine.eval()
     }

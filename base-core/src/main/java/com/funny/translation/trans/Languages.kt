@@ -1,5 +1,8 @@
 package com.funny.translation.trans
 
+import androidx.annotation.Keep
+
+@Keep
 enum class Language(val id : Int) {
     AUTO(0),
     CHINESE(1),

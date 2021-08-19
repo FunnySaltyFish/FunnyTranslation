@@ -1,11 +1,8 @@
 package com.funny.translation.codeeditor.ui.editor
 
 import android.app.Application
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.funny.translation.codeeditor.base.BaseViewModel
-import com.funny.translation.trans.Language
 import io.github.rosemoe.editor.widget.EditorColorScheme
 import io.github.rosemoe.editor.widget.schemes.*
 
@@ -37,14 +34,14 @@ class CodeEditorViewModel(application: Application) : BaseViewModel(application)
         EditorSchemes.LIGHT
     )
 
-    val hasSaved = MutableLiveData(false)
+    var hasSaved = true
     val shouldUndo = MutableLiveData(false)
     val shouldRedo = MutableLiveData(false)
 
-    val openFileUri = MutableLiveData(
-        Uri.parse("android.resource://com.funny.translation/raw/js_template.js")
-    )
 
+    /**
+     * 打开文件时设为true，用于手动更新text
+     */
     val textChanged = MutableLiveData(false)
 
     fun updateEditorColorScheme(newColorScheme: EditorSchemes){
