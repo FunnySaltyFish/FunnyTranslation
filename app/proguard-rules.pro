@@ -36,6 +36,7 @@
 #工具类
 -keep class com.funny.translation.network.OkHttpUtils {*;}
 -keep class com.funny.translation.trans.TranslationResult {*;}
+-keep class com.funny.translation.trans.Language {*;}
 
 #Debug保留
 -keep class com.funny.translation.debug.** {*;}

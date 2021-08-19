@@ -1,10 +1,14 @@
 package com.funny.translation.codeeditor.vm
 
 import android.app.Application
+import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.codeeditor.extensions.readAssets
+import com.funny.translation.helper.DataStoreUtils
+import com.funny.translation.helper.readText
+import com.funny.translation.js.config.DataStoreConfig
 import com.funny.translation.trans.Language
 import io.github.rosemoe.editor.text.Content
 
@@ -16,7 +20,15 @@ class ActivityCodeViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     private val _initialCode by lazy {
-        context.readAssets("js_template.js")
+        try{
+            //val path = openFileUri.encodedPath
+            //if(path.isNullOrEmpty())
+            context.readAssets("js_template.js")
+            //else openFileUri.readText(context)
+        }catch (e : Exception){
+            "读取文件失败！${e.message}"
+        }
+
 //        var text = ""
 //        val job = viewModelScope.launch(Dispatchers.IO) {
 //            Log.d(TAG, "launched")
@@ -26,6 +38,10 @@ class ActivityCodeViewModel(application: Application) : BaseViewModel(applicatio
 //
 //        text
     }
+
+    var openFileUri: Uri =
+        Uri.parse("")
+
 
     val sourceString = MutableLiveData("你好")
     val sourceLanguage = MutableLiveData(Language.CHINESE.id)

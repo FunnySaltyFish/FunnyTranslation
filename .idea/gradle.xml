@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/language-base" />
             <option value="$PROJECT_DIR$/language-universal" />
             <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/translate" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

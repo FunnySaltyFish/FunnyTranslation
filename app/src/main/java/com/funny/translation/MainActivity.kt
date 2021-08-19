@@ -94,7 +94,9 @@ class MainActivity : BaseActivity() {
     lateinit var wordCompleteAdapter: WordCompleteAdapter
     lateinit var helper: NewTranslationHelper
     val onTranslateListener: OnTranslateListener = object : OnTranslateListener {
-        override fun finishOne(task: CoreTranslationTask, e: Exception) {
+        override fun finishOne(task: CoreTranslationTask, e: Exception?) {
+            e?.printStackTrace()
+
             val msg = handler.obtainMessage()
             msg.what = Consts.MESSAGE_FINISH_CURRENT_TASK
             msg.obj = task
@@ -149,7 +151,7 @@ class MainActivity : BaseActivity() {
 
         //Debug
         //this.finish();
-        moveToActivity(CodeEditorActivity::class.java)
+        //moveToActivity(CodeEditorActivity::class.java)
 
 //		Debug.stopMethodTracing();
     }

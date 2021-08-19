@@ -119,7 +119,10 @@ fun ComposeSpinner(
             )
         }
         Spacer(
-            modifier = Modifier.matchParentSize().background(Color.Transparent).padding(10.dp)
+            modifier = Modifier
+                .matchParentSize()
+                .background(Color.Transparent)
+                .padding(10.dp)
                 .clickable(
                     onClick = { isOpen.value = true }
                 )
