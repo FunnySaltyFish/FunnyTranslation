@@ -13,14 +13,11 @@ import com.funny.translation.js.core.JsTranslateTask;
 import com.funny.translation.trans.CoreTranslationTask;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class NewResultAdapter extends BaseQuickAdapter<CoreTranslationTask, NewResultAdapter.ResultContentHolder> {
     private final StringBuilder sb = new StringBuilder();
-    public NewResultAdapter(int layoutResId, @Nullable List<CoreTranslationTask> data) {
-        super(layoutResId, data);
+    public NewResultAdapter(int layoutResId) {
+        super(layoutResId);
     }
 
     @Override

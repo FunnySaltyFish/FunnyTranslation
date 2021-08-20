@@ -5,11 +5,11 @@ abstract class CoreTranslationTask(
     var sourceLanguage: Short,
     var targetLanguage: Short
 ) {
-    lateinit var result: TranslationResult
+    val result = TranslationResult()
     @Throws(TranslationException::class)
     abstract fun getBasicText(url: String): String
     @Throws(TranslationException::class)
-    abstract fun getFormattedResult(basicText: String): TranslationResult
+    abstract fun getFormattedResult(basicText: String): Unit
     abstract fun madeURL(): String
     abstract val isOffline: Boolean
     abstract val engineKind: Short

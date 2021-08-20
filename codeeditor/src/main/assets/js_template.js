@@ -24,7 +24,6 @@ let FunnyJS = {
 	"getBasicText":function(url){return "";},
 	"getFormattedResult":function(text){
         result.setBasicResult(text);
-        return result;
 	}
 }
 /*FunnyTranslation JS Engine End*/

@@ -1,5 +1,7 @@
 package com.funny.translation.translation;
 
+import android.util.Log;
+
 import com.funny.translation.bean.Consts;
 import com.funny.translation.js.core.JsTranslateTask;
 import com.funny.translation.trans.CoreTranslationTask;
@@ -66,24 +68,23 @@ public class NewTranslationHelper {
         }
 
 
-
     }
 
     public void setMode(short mode) {
         this.mode = mode;
     }
 
-    public void finish(){
+    public void finish() {
         mThreadFlag = false;
         mThreadPool.shutdown();
     }
 
-    public void stopTasks(){
+    public void stopTasks() {
         mTranslateList.clear();
     }
 
-    public int getProgress(){
-        return mProgress * 100 / mTotalProgress ;
+    public int getProgress() {
+        return mProgress * 100 / mTotalProgress;
     }
 
     public boolean isTranslating() {
@@ -100,27 +101,32 @@ public class NewTranslationHelper {
             try {
                 while (mThreadFlag) {// 永不停息
                     if (!mTranslateList.isEmpty()) {
-                        synchronized (lock){
-                            CoreTranslationTask currentTask = mTranslateList.removeFirst();
-                            short type = currentTask.getEngineKind();
-                            if (currentTime() - mLastTranslate.get(type) >= getSleepTime(currentTask)) {
-                                mThreadPool.execute(() -> {
-                                    try{
-                                        translate(currentTask);
-                                        listener.finishOne(currentTask,null);
-                                    }catch (TranslationException e){
-                                        currentTask.result.setBasicResult(e.getMessage());
-                                        listener.finishOne(currentTask,e);
-                                    } catch(Exception e){
-                                        currentTask.result.setBasicResult(e.getLocalizedMessage() == null?"":e.getLocalizedMessage());
-                                        listener.finishOne(currentTask,e);
-                                    }finally {
-                                        mProgress++;
-                                        if(mProgress == mTotalProgress)listener.finishAll();
-                                    }
-                                });
+                        CoreTranslationTask currentTask = getATask();
+                        short type = currentTask.getEngineKind();
+                        if (currentTime() - mLastTranslate.get(type) >= getSleepTime(currentTask)) {
+                            mThreadPool.execute(() -> {
+                                try {
+                                    //Log.d("NewTH", "run: beforeTrans:"+currentTask.result);
+                                    translate(currentTask);
+                                    Log.d("NewTH", "run: afterTrans:"+currentTask.getResult());
+                                    listener.finishOne(currentTask, null);
+                                } catch (TranslationException e) {
+                                    currentTask.getResult().setBasicResult(e.getMessage());
+                                    listener.finishOne(currentTask, e);
+                                } catch (Exception e) {
+                                    currentTask.getResult().setBasicResult(e.getLocalizedMessage() == null ? "" : e.getLocalizedMessage());
+                                    listener.finishOne(currentTask, e);
+                                } finally {
+                                    mProgress++;
+                                    if (mProgress == mTotalProgress) listener.finishAll();
+                                }
+                            });
+
+                            synchronized (lock) {
                                 mLastTranslate.put(type, currentTime());
-                            } else {
+                            }
+                        } else {
+                            synchronized (lock) {
                                 mTranslateList.addLast(currentTask);
                             }
                         }
@@ -146,9 +152,16 @@ public class NewTranslationHelper {
             return System.currentTimeMillis();
         }
 
-        private long getSleepTime(CoreTranslationTask task){
-            if(task.isOffline())return 1;
-            else return task.getEngineKind() == Consts.ENGINE_BAIDU_NORMAL ? Consts.BAIDU_SLEEP_TIME : 50;
+        private CoreTranslationTask getATask(){
+            synchronized (lock){
+                return mTranslateList.removeFirst();
+            }
+        }
+
+        private long getSleepTime(CoreTranslationTask task) {
+            if (task.isOffline()) return 1;
+            else
+                return task.getEngineKind() == Consts.ENGINE_BAIDU_NORMAL ? Consts.BAIDU_SLEEP_TIME : 50;
         }
     }
 
