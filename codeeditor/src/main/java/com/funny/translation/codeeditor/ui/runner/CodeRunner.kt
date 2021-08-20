@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,9 +32,11 @@ fun ComposeCodeRunner(
 ){
     val viewModel : CodeRunnerViewModel = viewModel()
     val verticalScrollState = rememberScrollState()
-    val horizontalScrollState = rememberScrollState()
-    SideEffect {
+    DisposableEffect(key1 = TAG){
         Debug.addTarget(DefaultDebugTarget)
+        onDispose {
+            Debug.removeTarget(DefaultDebugTarget)
+        }
     }
     Scaffold(
         topBar = { CodeRunnerTopBar(
@@ -47,8 +50,7 @@ fun ComposeCodeRunner(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(8.dp)
-                .verticalScroll(verticalScrollState)
-                .horizontalScroll(horizontalScrollState),
+                .verticalScroll(verticalScrollState),
             viewModel = viewModel,
             activityCodeViewModel = activityCodeViewModel
         )
@@ -86,6 +88,5 @@ fun CodeRunnerText(
     Text(
         output.value,
         modifier = modifier,
-        softWrap = false
     )
 }

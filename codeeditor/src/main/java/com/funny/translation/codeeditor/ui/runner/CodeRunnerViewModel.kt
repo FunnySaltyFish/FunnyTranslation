@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.debug.Debug
+import com.funny.translation.helper.coroutine.Coroutine
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.core.JsTranslateTask
@@ -32,7 +33,9 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
                         targetLanguage = activityCodeViewModel.targetLanguage.value!!.toShort(),
                         sourceString = activityCodeViewModel.sourceString.value!!
                     )
-                    jsTranslateTask.translate()
+                    Coroutine.async {
+                        jsTranslateTask.translate()
+                    }
                 },
                 onError = {
 

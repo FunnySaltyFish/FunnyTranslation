@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 @Keep
 object OkHttpUtils {
-    private val okHttpClient by lazy {
+    val okHttpClient by lazy {
         OkHttpClient
             .Builder()
             .connectTimeout(10,TimeUnit.SECONDS)
