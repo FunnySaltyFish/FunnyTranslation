@@ -24,8 +24,7 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Short, target
     }
 
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
-        val translationResult = TranslationResult(Consts.ENGINE_BAIDU_NORMAL)
+    override fun getFormattedResult(basicText: String) {
         try {
             val sb = StringBuilder()
             val all = JSONObject(basicText)
@@ -40,7 +39,7 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Short, target
                 sb.append("\n")
             }
             sb.deleteCharAt(sb.length - 1)
-            translationResult.setBasicResult(sb.toString())
+            result.setBasicResult(sb.toString())
         } catch (e: JSONException) {
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_JSON)
@@ -48,7 +47,6 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Short, target
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_UNKNOWN)
         }
-        return translationResult
     }
 
     override fun madeURL(): String {

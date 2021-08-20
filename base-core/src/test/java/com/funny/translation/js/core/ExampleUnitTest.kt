@@ -27,6 +27,12 @@ class ExampleUnitTest : JsInterface{
         assertEquals(4, 2 + 2)
     }
 
+    @Test
+    fun resultText(){
+        //为什么属性会被复用？？？？？
+
+    }
+
     lateinit var obj : NativeObject
     lateinit var invocable : Invocable
 

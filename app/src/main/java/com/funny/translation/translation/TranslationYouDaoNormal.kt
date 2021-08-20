@@ -3,7 +3,6 @@ package com.funny.translation.translation
 import com.funny.translation.bean.Consts
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
 import com.funny.translation.utils.StringUtil
 import org.json.JSONException
 import org.json.JSONObject
@@ -13,6 +12,7 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
     ) {
+
     companion object{
         private const val TAG = "TranslationYouDaoNormal"
     }
@@ -66,8 +66,8 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
     }
 
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
-       try {
+    override fun getFormattedResult(basicText: String) {
+        try {
             val sb = StringBuilder()
             val all = JSONObject(basicText)
             if (all.has("errorCode") && all.getInt("errorCode") > 0) { //出错
@@ -88,8 +88,9 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
                 }
             }
             sb.deleteCharAt(sb.length - 1)
-            result.setBasicResult(sb.toString())
 
+            println(result)
+            result.setBasicResult(sb.toString())
         } catch (e: JSONException) {
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_JSON)
@@ -100,7 +101,6 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_UNKNOWN)
         }
-        return result
     }
 
     override fun madeURL(): String {

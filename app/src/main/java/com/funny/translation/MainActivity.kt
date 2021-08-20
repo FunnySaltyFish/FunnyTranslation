@@ -41,9 +41,10 @@ import com.billy.android.swipe.listener.SimpleSwipeListener
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.funny.translation.bean.Consts
 import com.funny.translation.bean.LanguageBean
-import com.funny.translation.codeeditor.CodeEditorActivity
+import com.funny.translation.codeeditor.extensions.readAssets
 import com.funny.translation.db.DBEnglishWordsUtils
 import com.funny.translation.db.DBJSUtils
+import com.funny.translation.helper.showMessageDialog
 import com.funny.translation.js.JSLanguageBean
 import com.funny.translation.js.JSUtils
 import com.funny.translation.js.JsEngine
@@ -89,7 +90,6 @@ class MainActivity : BaseActivity() {
     lateinit var leftSlidingConsumer: SlidingConsumer
     lateinit var swipeListener: SimpleSwipeListener
     val tasks: ArrayList<CoreTranslationTask> by lazy{ arrayListOf() }
-    val finishTasks: ArrayList<CoreTranslationTask> by lazy{ arrayListOf() }
     lateinit var resultAdapter: NewResultAdapter
     lateinit var wordCompleteAdapter: WordCompleteAdapter
     lateinit var helper: NewTranslationHelper
@@ -100,7 +100,8 @@ class MainActivity : BaseActivity() {
             val msg = handler.obtainMessage()
             msg.what = Consts.MESSAGE_FINISH_CURRENT_TASK
             msg.obj = task
-            Log.d(TAG, "finishOne: " + helper.progress)
+            //没问题
+            //Log.d(TAG, "finishOne: " + helper.progress +"result:${task.result}")
             msg.arg1 = helper.progress
             handler.sendMessage(msg)
         }
@@ -118,12 +119,9 @@ class MainActivity : BaseActivity() {
     lateinit var dbJSUtils: DBJSUtils
     var curBackTime: Long = 0
     var firstBackTime: Long = 0
-    var tipDialog: AlertDialog? = null
     var isBackground = false //Activity是否处于后台
     val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
-//		Date date = new Date(System.currentTimeMillis());
-//		Debug.startMethodTracing(date.toString().replaceAll(" ", "_"));
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme_NoActionBar)
         re = resources
@@ -152,8 +150,6 @@ class MainActivity : BaseActivity() {
         //Debug
         //this.finish();
         //moveToActivity(CodeEditorActivity::class.java)
-
-//		Debug.stopMethodTracing();
     }
 
     private fun initJsEngine() {
@@ -208,13 +204,19 @@ class MainActivity : BaseActivity() {
                             if (outputRecyclerView.adapter !is NewResultAdapter) outputRecyclerView.adapter =
                                 resultAdapter
                             val currentFinishTask = obj as CoreTranslationTask
+                            //这里也没问题
+                            //Log.d(TAG, "handleMessage: receive a data:${currentFinishTask.result.basicResult.hashCode()}")
+
                             resultAdapter.addData(currentFinishTask)
                             translateProgress.progress = msg.arg1
+                            //接收完数据后原来的那个被改了
                         }
                     }
                     Consts.MESSAGE_FINISH_ALL_TASKS -> {
                         translateProgress.visibility = View.INVISIBLE
                         translateButton.visibility = View.VISIBLE
+
+                        Log.d(TAG, "handleMessage: finish_all_tasks")
                     }
                     0x101 -> ApplicationUtil.print(
                         this@MainActivity,
@@ -292,7 +294,7 @@ class MainActivity : BaseActivity() {
         inputText.setClickable(true)
         inputText.setFocusable(true)
         outputRecyclerView = findViewById(R.id.widget_main_recycler_view)
-        resultAdapter = NewResultAdapter(R.layout.view_result_content, finishTasks)
+        resultAdapter = NewResultAdapter(R.layout.view_result_content)
         val footerView = LayoutInflater.from(this).inflate(R.layout.view_result_space, null)
         resultAdapter.addFooterView(footerView)
         resultAdapter.addChildClickViewIds(
@@ -300,11 +302,10 @@ class MainActivity : BaseActivity() {
             R.id.view_result_content_speak_button
         )
         resultAdapter.setOnItemChildClickListener { adapter: BaseQuickAdapter<*, *>, view: View, position: Int ->
-            val resultAdapter = adapter as NewResultAdapter
-            val task = resultAdapter.getItem(position)
+            val task = (adapter as NewResultAdapter).data[position]
             when (view.id) {
                 R.id.view_result_content_copy_button -> {
-                    val text = Objects.requireNonNull(task.result).basicResult.trans
+                    val text = task.result.basicResult.trans
                     ApplicationUtil.copyToClipboard(this@MainActivity, text)
                     ApplicationUtil.print(
                         this@MainActivity,
@@ -800,15 +801,15 @@ class MainActivity : BaseActivity() {
 
     private fun initTasks(content: String) {
         tasks.clear()
-        finishTasks.clear()
 
-        resultAdapter.setList(finishTasks)
+        resultAdapter.data.clear()
+
         val source = getCheckedList(sourceList)[0].userData
         var task: BasicTranslationTask
         for (target in getCheckedList(targetList)) {
             for (engine in getCheckedList(engineList)) {
                 task = when (engine.userData) {
-                    Consts.ENGINE_JINSHAN ->                        //task = new TranslationYouDaoEasy(helper,content,source,target.getUserData(),ENGINE_YOUDAO_EASY);
+                    Consts.ENGINE_JINSHAN ->
                         TranslationJinshanEasy(content, source, target.userData)
                     Consts.ENGINE_YOUDAO_NORMAL -> TranslationYouDaoNormal(
                         content,
@@ -905,15 +906,16 @@ class MainActivity : BaseActivity() {
 
     private fun createDialogs() {
         if (ApplicationUtil.isFirstOpen(this)) {
-            tipDialog = AlertDialog.Builder(this)
-                .setTitle("Welcome")
-                .setMessage(ApplicationUtil.getTextFromAssets(this, "introduction.txt"))
-                .setPositiveButton("我知道啦") { p1, p2 -> // TODO: Implement this method
+            showMessageDialog(
+                title = "Welcome",
+                message = readAssets("introduction.md"),
+                isMarkdown = true,
+                positiveText = "我知道了",
+                positiveAction = {
                     ApplicationUtil.print(this@MainActivity, "愉快玩耍吧！")
-                }
-                .setNegativeButton("找作者") { p1, p2 -> // TODO: Implement this method
-//						ApplicationUtil.copyToClipboard(MainActivity.this,"https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png");
-//						ApplicationUtil.print(MainActivity.this,"网址已保存在剪贴板里喽！");
+                },
+                negativeText = "找作者",
+                negativeAction = {
                     val url =
                         "https://imgconvert.csdnimg.cn/aHR0cHM6Ly9hZTAxLmFsaWNkbi5jb20va2YvSGJmZmU2OWQyNTE0ZDRhZjhhZDBmYzgwNjY4YzU3ZDU0US5wbmc?x-oss-process=image/format,png"
                     val url2 = "https://i.loli.net/2020/04/05/PBtK4pv5nR6Cdme.png"
@@ -927,8 +929,7 @@ class MainActivity : BaseActivity() {
                     intent.data = uri
                     this@MainActivity.startActivity(intent)
                 }
-                .create()
-                .also { it.show() }
+            )
         }
     }
 
@@ -963,9 +964,6 @@ class MainActivity : BaseActivity() {
     //判断本软件是否处于空闲状态
     val isFree: Boolean
         get() { //判断本软件是否处于空闲状态
-            if (tipDialog != null && tipDialog?.isShowing != false) {
-                return false
-            }
             return !(isFinishing || isDestroyed || isBackground)
         }
 

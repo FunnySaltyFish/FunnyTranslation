@@ -15,6 +15,7 @@ import com.funny.translation.db.DBJSUtils.deleteJS
 import com.funny.translation.db.DBJSUtils.insertJS
 import com.funny.translation.db.DBJSUtils.nextID
 import com.funny.translation.db.DBJSUtils.queryAllJS
+import com.funny.translation.helper.showMessageDialog
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.utils.ApplicationUtil
@@ -28,7 +29,6 @@ class JSManageActivity : BaseActivity() {
     lateinit var adapter: JSManageAdapter
     var btnImportFromLocal: FloatingActionButton? = null
     var btnNewFile: FloatingActionButton? = null
-    var jsDetailDialog: AlertDialog? = null
     var deleteJSDialog: AlertDialog? = null
     val TAG = "JSManageActivity"
     var hasChanged = false
@@ -89,12 +89,15 @@ class JSManageActivity : BaseActivity() {
     }
 
     private fun showJSDetailDialog(jsBean: JsBean) {
-        jsDetailDialog = AlertDialog.Builder(this@JSManageActivity)
-            .setTitle(jsBean.fileName)
-            .setMessage(java.lang.String.format("关于：\n%s", jsBean.description))
-            .setNegativeButton("删除") { _, _ -> showDeleteJSDialog(jsBean) }
-            .create()
-        jsDetailDialog?.show()
+        showMessageDialog(
+            jsBean.fileName,
+            "关于：\n${jsBean.description.replace("[Markdown]","")}",
+            jsBean.description.startsWith("[Markdown]"),
+            negativeText = "删除",
+            negativeAction = {
+                showDeleteJSDialog(jsBean)
+            }
+        )
     }
 
     private fun showDeleteJSDialog(jsBean: JsBean) {
