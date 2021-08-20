@@ -1,18 +1,12 @@
 package com.funny.translation.translation
 
 import android.net.Uri
-import android.util.Log
 import com.funny.translation.bean.Consts
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.trans.TranslationResult
 import org.json.JSONArray
 import org.json.JSONException
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.io.PrintWriter
-import java.net.URL
 
 class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targetLanguage: Short) :
     BasicTranslationTask(
@@ -51,8 +45,7 @@ class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targ
     }
 
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
-        val result = TranslationResult(Consts.ENGINE_GOOGLE)
+    override fun getFormattedResult(basicText: String) {
         try {
             val all = JSONArray(basicText)
             val sb = StringBuilder()
@@ -98,7 +91,6 @@ class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targ
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_JSON)
         }
-        return result
     }
 
     override fun madeURL(): String {

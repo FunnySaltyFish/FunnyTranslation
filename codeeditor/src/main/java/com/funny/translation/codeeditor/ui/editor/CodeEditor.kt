@@ -24,6 +24,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.funny.translation.codeeditor.R
+import com.funny.translation.codeeditor.extensions.openUrl
 import com.funny.translation.codeeditor.ui.Screen
 import com.funny.translation.codeeditor.ui.base.ComposeSpinner
 import com.funny.translation.codeeditor.ui.base.ExpandableDropdownItem
@@ -51,7 +52,7 @@ fun ComposeCodeEditor(
     val context = LocalContext.current
     val confirmOpenFile = remember { mutableStateOf(false) }
     val settingArgumentsDialog = remember { mutableStateOf(false) }
-    var confirmLeave = remember { mutableStateOf(false) }
+    val confirmLeave = remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -82,8 +83,11 @@ fun ComposeCodeEditor(
     fun saveFile(uri: Uri){
         scope.launch {
             try {
-                withContext(Dispatchers.IO) {
-                    uri.writeText(context, activityViewModel.codeState.value.toString())
+                withContext(Dispatchers.Default) {
+                    uri.writeText(
+                        context,
+                        activityViewModel.codeState.value.toString()
+                    )
                 }
                 activityViewModel.openFileUri = uri
                 viewModel.hasSaved = true
@@ -159,15 +163,14 @@ fun ComposeCodeEditor(
                     if (!viewModel.hasSaved) {
                         confirmOpenFile.value = true
                     } else {
-                        filePickerLauncher.launch(
-                            arrayOf(
-                                "application/javascript",
-                            )
-                        )
+                        filePickerLauncher.launch(arrayOf("application/javascript"))
                     }
                 },
                 setArgumentsAction = {
                     settingArgumentsDialog.value = true
+                },
+                openPluginDocumentAction = {
+                    context.openUrl("https://www.yuque.com/funnysaltyfish/vzmuud")
                 }
             )
         },
@@ -261,6 +264,7 @@ fun CodeEditorTopBar(
     schemeAction: (EditorSchemes) -> Unit,
     setArgumentsAction : () -> Unit,
     openFileAction: () -> Unit,
+    openPluginDocumentAction : ()->Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -320,6 +324,12 @@ fun CodeEditorTopBar(
                     expanded = false
                 }) {
                     Text(text = stringResource(id = R.string.set_debug_arguments))
+                }
+                DropdownMenuItem(onClick = {
+                    openPluginDocumentAction()
+                    expanded = false
+                }) {
+                    Text(text = stringResource(id = R.string.open_plugin_document))
                 }
             }
         }

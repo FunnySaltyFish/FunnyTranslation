@@ -4,13 +4,17 @@ import androidx.annotation.Keep
 
 @Keep
 data class TranslationResult(
-    var engineKind: Short,
-    var basicResult: Translation = EmptyTranslation,
+    var engineKind: Short = 0,
+    var basicResult: Translation = Translation(""),
     var sourceString: String = "",
     val details: ArrayList<Translation>? = null
 ) {
+
     fun setBasicResult(text: String) {
+        //Log.d("result[$engineKind][hashCode:${hashCode()}]", "setBasicResult: oldText is ${this.basicResult.trans},  newText is $text")
         basicResult.trans = text
+
+        //该方法调用次数正常
     }
 }
 
@@ -21,4 +25,5 @@ data class Translation(
     var partOfSpeech: String? = null //词性
 )
 
+//艹，就因为这个折腾了一天
 val EmptyTranslation = Translation("")

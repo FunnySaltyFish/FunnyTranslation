@@ -43,6 +43,8 @@ dependencies {
     //JS rhino
     api 'com.github.gedoor:rhino-android:1.6'
 
+    implementation "io.noties.markwon:core:4.6.2"
+
     //FileUtils
     // 核心库必选(Core library required)
     //api 'com.github.javakam:file.core:1.6.2@aar'

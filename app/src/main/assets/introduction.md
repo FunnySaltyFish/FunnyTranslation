@@ -1,13 +1,20 @@
-v2.0.0 beta-4：
-◆你关注的更新
-—优化 大幅度提升翻译项较多时的翻译速度
-—修复 插件调试页面内容显示不完整问题
+## 更新说明
+v2.0.0 beta-5：
+◆你不一定关注的更新
+—重构 全新的代码编辑器
+——使用Jetpack Compose重构
+——支持文件打开、保存
+——支持即时调试、参数模拟
+——支持切换多种主题
+——精简API，简化插件编写
+—重构 部分代码转为kotlin编写
 —修复 因混淆导致的OkHttpUtil不可用问题
 
 ◆其他
 —这两个版本相隔很久，原因很复杂。我本意用kotlin重写部分内容，写着写着感觉不搭；于是萌生全部用kotlin+MVVM重写的念头；后来又想用Jetpack Compose写页面，然后到最后又放弃了。
 —无语子
 
+## 软件说明
 ◆欢迎使用本软件
 Q：为什么会有本软件？
 A：很多时候面对翻译工作，因为各种原因，我们总是需要机器翻译。这时候如何找到一家正确而精准的翻译引擎，往往成为令人头疼的问题。于是乎，我就诞生了！
@@ -42,20 +49,21 @@ A：哈，谢谢支持！
 *：目前支持 金山翻译(简版) 有道翻译(标准版) 百度翻译(标准版) 谷歌翻译(标准)。持续更新中
 **：因接口限制，部分语言翻译方向暂不可用
 
-——分——割——
+## 鸣谢
 ●鸣谢以下开源库：
-—Android Jetpack Library(https://developer.android.google.cn/jetpack/)
-—SmartSwipe(https://github.com/luckybilly/SmartSwipe/)
-—EditTextField(https://github.com/opprime/EditTextField)
-—AndroidVideoCache(https://github.com/danikula/AndroidVideoCache)
-—CircleProgress(https://github.com/lzyzsd/CircleProgress/)
-—OkHttp3(https://github.com/square/okhttp)
-—BaseRecyclerViewAdapterHelper(https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
-—android-floating-action-button(https://github.com/zendesk/android-floating-action-button)
--legado(https://github.com/gedoor/legado/)
-—CodeEditor(https://github.com/Rosemoe/CodeEditor/)
--FileOperator(https://github.com/javakam/FileOperator)
+ -[Android Jetpack Library](https://developer.android.google.cn/jetpack/)
+ -[SmartSwipe](https://github.com/luckybilly/SmartSwipe/)
+ -[EditTextField](https://github.com/opprime/EditTextField)
+ -[AndroidVideoCache](https://github.com/danikula/AndroidVideoCache)
+ -[CircleProgress](https://github.com/lzyzsd/CircleProgress/)
+ -[OkHttp3](https://github.com/square/okhttp)
+ -[BaseRecyclerViewAdapterHelper](https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
+ -[android-floating-action-button](https://github.com/zendesk/android-floating-action-button)
+ -[legado](https://github.com/gedoor/legado/)
+ -[CodeEditor](https://github.com/Rosemoe/CodeEditor/)
+ -[FileOperator](https://github.com/javakam/FileOperator)
 
+## 版权
 Copyright@FunnySaltyFish
 2020-2021
 All Rights Reserved

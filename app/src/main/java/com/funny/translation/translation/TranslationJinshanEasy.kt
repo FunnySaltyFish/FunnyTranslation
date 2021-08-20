@@ -49,8 +49,7 @@ class TranslationJinshanEasy(sourceString: String?, sourceLanguage: Short, targe
     //    }
     //版本 2
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
-        val result = TranslationResult(engineKind)
+    override fun getFormattedResult(basicText: String) {
         try {
             val all = JSONObject(basicText)
             if (all.getInt("status") == 1) {
@@ -78,7 +77,6 @@ class TranslationJinshanEasy(sourceString: String?, sourceLanguage: Short, targe
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_JSON)
         }
-        return result
     }
 
     //版本 1

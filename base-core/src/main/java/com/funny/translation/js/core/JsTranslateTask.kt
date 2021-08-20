@@ -23,22 +23,18 @@ class JsTranslateTask(
 ) :
     CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) {
 
-    init {
-        result = TranslationResult(engineKind)
-    }
-
     override fun getBasicText(url: String): String {
         val obj = INVOCABLE.invokeMethod(jsEngine.funnyJS, "getBasicText", url)
         //Log.d(TAG, "getBasicText: ${obj is String}")
         return obj as String
     }
 
-    override fun getFormattedResult(basicText: String): TranslationResult {
-        return INVOCABLE.invokeMethod(
+    override fun getFormattedResult(basicText: String) {
+        INVOCABLE.invokeMethod(
             jsEngine.funnyJS,
             "getFormattedResult",
             basicText
-        ) as TranslationResult
+        )
     }
 
     override fun madeURL(): String {
@@ -61,7 +57,7 @@ class JsTranslateTask(
 
     override fun translate(mode: Short) {
         fun String.emptyString() = if (this.isEmpty()) " [空字符串]" else this
-
+        result.engineKind = engineKind
         try {
             eval()
             Debug.log("开始执行 madeURL 方法……")
@@ -71,7 +67,7 @@ class JsTranslateTask(
             val basicText = getBasicText(url)
             Debug.log("成功！basicText：${basicText.emptyString()}")
             Debug.log("开始执行 getFormattedResult 方法……")
-            result = getFormattedResult(basicText)
+            getFormattedResult(basicText)
             Debug.log("成功！result:$result")
 
             Debug.log("插件执行完毕！")

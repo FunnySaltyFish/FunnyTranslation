@@ -3,9 +3,7 @@ package com.funny.translation.translation
 import androidx.preference.PreferenceManager
 import com.funny.translation.FunnyApplication
 import com.funny.translation.bean.Consts
-import com.funny.translation.trans.Translation
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
 import com.funny.translation.utils.FunnyBiggerText
 
 class TranslationBiggerText(sourceString: String?, sourceLanguage: Short, targetLanguage: Short) :
@@ -18,22 +16,20 @@ class TranslationBiggerText(sourceString: String?, sourceLanguage: Short, target
     }
 
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
+    override fun getFormattedResult(basicText: String) {
         val performance =
             PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext())
                 .getString("preference_bigger_text_performance", "1")!!.toInt()
         FunnyBiggerText.fillChar =
             PreferenceManager.getDefaultSharedPreferences(FunnyApplication.getFunnyContext())
                 .getString("preference_bigger_text_fill_char", "")
-        var str: String? = ""
-        when (performance) {
-            0 -> str = FunnyBiggerText.drawWideString(FunnyApplication.getFunnyContext(), basicText)
-            1 -> str =
-                FunnyBiggerText.drawMiddleString(FunnyApplication.getFunnyContext(), basicText)
-            2 -> str =
-                FunnyBiggerText.drawNarrowString(FunnyApplication.getFunnyContext(), basicText)
+        val str = when (performance) {
+            0 -> FunnyBiggerText.drawWideString(FunnyApplication.getFunnyContext(), basicText)
+            1 -> FunnyBiggerText.drawMiddleString(FunnyApplication.getFunnyContext(), basicText)
+            2 -> FunnyBiggerText.drawNarrowString(FunnyApplication.getFunnyContext(), basicText)
+            else -> basicText
         }
-        return TranslationResult(engineKind, Translation(str!!), sourceString, null)
+        result.setBasicResult(str)
     }
 
     override fun madeURL(): String {

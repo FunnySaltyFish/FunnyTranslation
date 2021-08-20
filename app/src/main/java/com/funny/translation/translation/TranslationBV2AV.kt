@@ -35,14 +35,12 @@ class TranslationBV2AV(sourceString: String?, sourceLanguage: Short, targetLangu
     }
 
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
-        val result = TranslationResult(engineKind)
+    override fun getFormattedResult(basicText: String) {
         if (basicText != "") {
             result.setBasicResult(basicText)
         } else {
             throw TranslationException(Consts.ERROR_NO_BV_OR_AV)
         }
-        return result
     }
 
     override fun madeURL(): String {

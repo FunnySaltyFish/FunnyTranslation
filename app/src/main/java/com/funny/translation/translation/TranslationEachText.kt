@@ -1,9 +1,7 @@
 package com.funny.translation.translation
 
 import com.funny.translation.bean.Consts
-import com.funny.translation.trans.Translation
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
 import com.funny.translation.utils.FunnyEachText
 import com.funny.translation.utils.StringUtil
 import org.json.JSONException
@@ -20,10 +18,10 @@ class TranslationEachText(sourceString: String?, sourceLanguage: Short, targetLa
     }
 
     @Throws(TranslationException::class)
-    override fun getFormattedResult(basicText: String): TranslationResult {
+    override fun getFormattedResult(basicText: String) {
         val chinese = StringUtil.extraChinese(basicText)
         val words: JSONObject?
-        return try {
+        try {
             words = FunnyEachText.getWords()
             val stringBuilder = StringBuilder()
             for (element in chinese) {
@@ -33,7 +31,7 @@ class TranslationEachText(sourceString: String?, sourceLanguage: Short, targetLa
                 }
                 stringBuilder.append(" ")
             }
-            TranslationResult(engineKind, Translation(stringBuilder.toString()), sourceString, null)
+            result.setBasicResult(stringBuilder.toString())
         } catch (e: IOException) {
             e.printStackTrace()
             throw TranslationException(Consts.ERROR_IO)

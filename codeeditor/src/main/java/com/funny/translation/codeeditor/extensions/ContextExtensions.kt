@@ -11,9 +11,11 @@ import android.net.Uri
 import android.os.BatteryManager
 import android.preference.PreferenceManager
 import android.provider.Settings
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -252,3 +254,4 @@ val Context.channel: String
         }
         return ""
     }
+
