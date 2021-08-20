@@ -20,6 +20,8 @@ interface JsInterface {
         headersMap : HashMap<String,String>? = null
     ) = OkHttpUtils.getRaw(url = url,headersMap = headersMap)
 
+    fun getOkHttpClient() = OkHttpUtils.okHttpClient
+
     fun log(obj : Any){
         val logStr = when(obj){
             is NativeArray -> obj.show

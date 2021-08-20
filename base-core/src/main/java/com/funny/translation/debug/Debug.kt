@@ -8,6 +8,10 @@ object Debug {
         }
     }
 
+    fun removeTarget(target : DebugTarget){
+        targets.remove(target)
+    }
+
     fun log(
         text : CharSequence,
         tempSource : String?= null,
