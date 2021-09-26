@@ -54,7 +54,7 @@ public class NewTranslationHelper {
 
         mLastTranslate.clear();
         for (CoreTranslationTask translationTask : translationTasks) {
-            short type = translationTask.getEngineKind();
+            short type = translationTask.getEngineName();
             if (!mLastTranslate.containsKey(type))
                 mLastTranslate.put(type, 0L);
         }
@@ -102,13 +102,14 @@ public class NewTranslationHelper {
                 while (mThreadFlag) {// 永不停息
                     if (!mTranslateList.isEmpty()) {
                         CoreTranslationTask currentTask = getATask();
-                        short type = currentTask.getEngineKind();
+                        short type = currentTask.getEngineName();
                         if (currentTime() - mLastTranslate.get(type) >= getSleepTime(currentTask)) {
                             mThreadPool.execute(() -> {
                                 try {
                                     //Log.d("NewTH", "run: beforeTrans:"+currentTask.result);
                                     translate(currentTask);
-                                    Log.d("NewTH", "run: afterTrans:"+currentTask.getResult());
+                                    mProgress++;
+                                    //Log.d("NewTH", "run: afterTrans:"+currentTask.getResult());
                                     listener.finishOne(currentTask, null);
                                 } catch (TranslationException e) {
                                     currentTask.getResult().setBasicResult(e.getMessage());
@@ -117,7 +118,7 @@ public class NewTranslationHelper {
                                     currentTask.getResult().setBasicResult(e.getLocalizedMessage() == null ? "" : e.getLocalizedMessage());
                                     listener.finishOne(currentTask, e);
                                 } finally {
-                                    mProgress++;
+
                                     if (mProgress == mTotalProgress) listener.finishAll();
                                 }
                             });
@@ -161,7 +162,7 @@ public class NewTranslationHelper {
         private long getSleepTime(CoreTranslationTask task) {
             if (task.isOffline()) return 1;
             else
-                return task.getEngineKind() == Consts.ENGINE_BAIDU_NORMAL ? Consts.BAIDU_SLEEP_TIME : 50;
+                return task.getEngineName() == Consts.ENGINE_BAIDU_NORMAL ? Consts.BAIDU_SLEEP_TIME : 50;
         }
     }
 

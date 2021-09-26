@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../Environment/AndroidSdk/icons/material/materialicons/save/baseline_save_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../Environment/AndroidSdk/icons/material/materialicons/content_copy/baseline_content_copy_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,7 +33,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_save" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_copy_content" />
                             <entry key="sourceFile" value="D:\projects\AppProjects\Mine\FunnyTranslation" />
                           </map>
                         </option>

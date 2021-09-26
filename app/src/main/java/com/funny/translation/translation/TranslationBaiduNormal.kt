@@ -15,7 +15,7 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Short, target
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
         //Log.i(TAG,String.format("正在使用百度翻译！用的appid是%s",Consts.BAIDU_APP_ID));
-        val engineKind = engineKind
+        val engineKind = engineName
         val api = BaiduTransApi.getBaiduTransApi(Consts.BAIDU_APP_ID, Consts.BAIDU_SECURITY_KEY)
         val from = Consts.LANGUAGES[sourceLanguage.toInt()][engineKind.toInt()]
         val to = Consts.LANGUAGES[targetLanguage.toInt()][engineKind.toInt()]
@@ -56,6 +56,6 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Short, target
     override val isOffline: Boolean
         get() = false
 
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_BAIDU_NORMAL
 }

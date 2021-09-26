@@ -18,6 +18,7 @@ import com.funny.translation.db.DBJSUtils.queryAllJS
 import com.funny.translation.helper.showMessageDialog
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
+import com.funny.translation.js.config.JsConfig
 import com.funny.translation.utils.ApplicationUtil
 import com.funny.translation.utils.FileUtil
 import com.funny.translation.widget.JSManageAdapter
@@ -93,10 +94,11 @@ class JSManageActivity : BaseActivity() {
             jsBean.fileName,
             "关于：\n${jsBean.description.replace("[Markdown]","")}",
             jsBean.description.startsWith("[Markdown]"),
-            negativeText = "删除",
-            negativeAction = {
+            positiveText = "删除",
+            positiveAction = {
                 showDeleteJSDialog(jsBean)
-            }
+            },
+            negativeText = ""
         )
     }
 
@@ -140,10 +142,15 @@ class JSManageActivity : BaseActivity() {
                         val jsEngine = JsEngine(jsBean)
                         jsEngine.loadBasicConfigurations(
                             {
-                                adapter.addData(jsEngine.jsBean)
-                                insertJS(jsEngine.jsBean)
-                                hasChanged = true
-                                ApplicationUtil.print(this, "添加成功！")
+                                Log.d(TAG, "onActivityResult: min:${jsBean.minSupportVersion} max:${jsBean.maxSupportVersion}")
+                                if(jsBean.minSupportVersion>=JsConfig.JS_ENGINE_VERSION&&jsBean.maxSupportVersion<=JsConfig.JS_ENGINE_VERSION){
+                                    adapter.addData(jsEngine.jsBean)
+                                    insertJS(jsEngine.jsBean)
+                                    hasChanged = true
+                                    ApplicationUtil.print(this, "添加成功！")
+                                }else{
+                                    ApplicationUtil.print("插件版本与软件核心不兼容，请与开发者联系解决！")
+                                }
                             },{
                                 ApplicationUtil.print("插件加载时出错！请联系插件开发者解决！")
                             }

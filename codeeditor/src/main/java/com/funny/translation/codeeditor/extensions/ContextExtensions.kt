@@ -174,28 +174,6 @@ fun Context.sendMail(mail: String) {
     }
 }
 
-fun Context.readAssets(fileName : String) : String{
-    var ins : InputStream? = null
-    return try {
-        ins = assets.open(fileName)
-        String(ins.readBytes())
-    }catch (e:Exception){
-        ""
-    }finally {
-        try {
-            ins?.close()
-        }catch (e:Exception){
-            e.printStackTrace()
-        }
-    }
-}
-
-fun Context.getActivity(): AppCompatActivity? = when (this) {
-    is AppCompatActivity -> this
-    is ContextWrapper -> baseContext.getActivity()
-    else -> null
-}
-
 /**
  * 系统是否暗色主题
  */
@@ -219,29 +197,6 @@ val Context.externalFiles: File
 
 val Context.externalCache: File
     get() = this.externalCacheDir ?: this.cacheDir
-
-fun Context.openUrl(url: String) {
-    openUrl(Uri.parse(url))
-}
-
-fun Context.openUrl(uri: Uri) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = uri
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    if (intent.resolveActivity(packageManager) != null) {
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            toastOnUi(e.localizedMessage ?: "open url error")
-        }
-    } else {
-        try {
-            startActivity(Intent.createChooser(intent, "请选择浏览器"))
-        } catch (e: Exception) {
-            toastOnUi(e.localizedMessage ?: "open url error")
-        }
-    }
-}
 
 val Context.channel: String
     get() {

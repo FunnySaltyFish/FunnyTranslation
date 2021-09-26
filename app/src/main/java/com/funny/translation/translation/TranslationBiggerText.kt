@@ -38,6 +38,6 @@ class TranslationBiggerText(sourceString: String?, sourceLanguage: Short, target
 
     override val isOffline: Boolean
         get() = true
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_BIGGER_TEXT
 }
