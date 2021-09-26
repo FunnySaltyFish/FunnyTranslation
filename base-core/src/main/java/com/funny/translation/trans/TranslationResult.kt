@@ -11,7 +11,7 @@ import androidx.annotation.Keep
  */
 @Keep
 data class TranslationResult(
-    var engineKind: Short = 0,
+    var engineName: String = "",
     var basicResult: Translation = Translation(""),
     var sourceString: String = "",
     val details: ArrayList<Translation>? = null

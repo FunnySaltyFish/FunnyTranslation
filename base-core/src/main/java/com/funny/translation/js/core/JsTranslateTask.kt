@@ -9,7 +9,6 @@ import com.funny.translation.js.extentions.messageWithDetail
 import com.funny.translation.trans.CoreTranslationTask
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
 import java.lang.Exception
 import javax.script.ScriptException
 
@@ -51,13 +50,13 @@ class JsTranslateTask(
             }
 
 
-    override val engineKind: Short
+    override val engineName: String
         get() = JS_ENGINE_KIND
 
 
     override fun translate(mode: Short) {
         fun String.emptyString() = if (this.isEmpty()) " [空字符串]" else this
-        result.engineKind = engineKind
+        result.engineName = engineName
         try {
             eval()
             Debug.log("开始执行 madeURL 方法……")

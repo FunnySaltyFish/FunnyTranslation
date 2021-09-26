@@ -1,9 +1,11 @@
 package com.funny.translation.trans
 
+import android.content.res.Resources
 import androidx.annotation.Keep
+import com.funny.translation.jsBean.core.R
 
 @Keep
-enum class Language(val id : Int) {
+enum class Language(val id : Int,var displayText : String = "") {
     AUTO(0),
     CHINESE(1),
     ENGLISH(2),
@@ -17,3 +19,18 @@ enum class Language(val id : Int) {
 }
 
 fun findLanguageById(id : Int) = Language.values().filter { it.id == id }[0]
+
+fun getAllLanguages() = Language.values()
+
+fun initLanguageDisplay(resources : Resources){
+    Language.AUTO.displayText = resources.getString(R.string.language_auto)
+    Language.CHINESE.displayText = resources.getString(R.string.language_chinese)
+    Language.ENGLISH.displayText = resources.getString(R.string.language_english)
+    Language.JAPANESE.displayText = resources.getString(R.string.language_japanese)
+    Language.KOREAN.displayText = resources.getString(R.string.language_korean)
+    Language.FRENCH.displayText = resources.getString(R.string.language_french)
+    Language.RUSSIAN.displayText = resources.getString(R.string.language_russian)
+    Language.GERMANY.displayText = resources.getString(R.string.language_germany)
+    Language.WENYANWEN.displayText = resources.getString(R.string.language_wenyanwen)
+    Language.THAI.displayText = resources.getString(R.string.language_thai)
+}

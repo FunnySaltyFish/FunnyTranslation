@@ -52,4 +52,8 @@ class ActivityCodeViewModel(application: Application) : BaseViewModel(applicatio
             return Language.values().map { it.name }
         }
 
+    fun updateCode(str : String){
+        codeState.value = Content(str)
+    }
+
 }

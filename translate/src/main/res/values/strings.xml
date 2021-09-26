@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clear_content">清空输入内容</string>
+    <string name="app_name">FunnyTranslation</string>
+    <string name="exchange">语言互换</string>
+    <string name="copy_content">复制结果</string>
+    <string name="speak">朗读</string>
+    <string name="expand">展开</string>
+    <string name="nav_main">翻译</string>
+    <string name="nav_settings">设置</string>
+    <string name="nav_plugin">插件</string>
+
+    <string name="engine">翻译引擎</string>
+    <string name="engine_baidu">百度翻译</string>
+    <string name="engine_youdao_easy">有道翻译(简版)</string>
+    <string name="engine_youdao_normal">有道翻译(标准版)</string>
+    <string name="engine_jinshan">金山翻译</string>
+    <string name="engine_google">谷歌翻译</string>
+    <string name="error_result">翻译错误</string>
+</resources>

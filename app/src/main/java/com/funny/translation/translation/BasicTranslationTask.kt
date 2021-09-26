@@ -1,30 +1,29 @@
 package com.funny.translation.translation
 
 import com.funny.translation.bean.Consts
-import com.funny.translation.trans.CoreTranslationTask
-import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
+import com.funny.translation.trans.*
 import com.funny.translation.utils.StringUtil
 import java.lang.StringBuilder
 
 
-abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Short, targetLanguage : Short) :
-    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) {
+abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Int, targetLanguage : Int) :
+    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) , TranslationEngine {
 
     @Throws(TranslationException::class)
     override fun translate(mode: Short) {
         val url = madeURL()
         var processedString: String? = null
-        this.result.engineKind = engineKind
+        this.result.engineName = name
 
         try {
-            if (mode === Consts.MODE_EACH_TEXT && sourceLanguage !== Consts.LANGUAGE_CHINESE) {
-                throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)
-            }
-            if (engineKind == Consts.ENGINE_BIGGER_TEXT && !StringUtil.isValidContent(StringUtil.extraChinese(sourceString))
-            ) {
-                throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)
-            }
+            TODO("某种引擎不支持某语言的处理")
+//            if (mode === Consts.MODE_EACH_TEXT && sourceLanguage !== Consts.LANGUAGE_CHINESE) {
+//                throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)
+//            }
+//            if (engineName == Consts.ENGINE_BIGGER_TEXT && !StringUtil.isValidContent(StringUtil.extraChinese(sourceString))
+//            ) {
+//                throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)
+//            }
             processedString = getProcessedString(sourceString, mode)
             //Log.i(TAG,"获取到的processedString是"+processedString);
             this.result.sourceString = processedString

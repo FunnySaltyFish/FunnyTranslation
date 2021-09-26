@@ -2,19 +2,22 @@ package com.funny.translation.trans
 
 abstract class CoreTranslationTask(
     var sourceString: String,
-    var sourceLanguage: Short,
-    var targetLanguage: Short
+    var sourceLanguage: Language,
+    var targetLanguage: Language
 ) {
     val result = TranslationResult()
+    abstract val languageMapping : Map<Language, String>
+    abstract val supportLanguages: List<Language>
+    abstract val name : String
     @Throws(TranslationException::class)
     abstract fun getBasicText(url: String): String
     @Throws(TranslationException::class)
     abstract fun getFormattedResult(basicText: String): Unit
     abstract fun madeURL(): String
     abstract val isOffline: Boolean
-    abstract val engineKind: Short
+
     @Throws(TranslationException::class)
-    abstract fun translate(mode: Short = 0)
+    abstract fun translate(mode: Int = 0)
 
     companion object {
         private const val TAG = "BasicTranslationTask"
