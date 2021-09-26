@@ -47,6 +47,6 @@ class TranslationEachText(sourceString: String?, sourceLanguage: Short, targetLa
 
     override val isOffline: Boolean
         get() = true
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_EACH_TEXT
 }

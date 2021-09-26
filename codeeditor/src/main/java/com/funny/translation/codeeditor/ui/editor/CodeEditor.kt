@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -24,12 +25,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.funny.translation.codeeditor.R
-import com.funny.translation.codeeditor.extensions.openUrl
 import com.funny.translation.codeeditor.ui.Screen
 import com.funny.translation.codeeditor.ui.base.ComposeSpinner
 import com.funny.translation.codeeditor.ui.base.ExpandableDropdownItem
 import com.funny.translation.codeeditor.ui.base.SimpleDialog
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
+import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readText
 import com.funny.translation.helper.writeText
 import com.funny.translation.trans.findLanguageById
@@ -102,34 +103,26 @@ fun ComposeCodeEditor(
         contract = ActivityResultContracts.CreateDocument(),
     ) { uri ->
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
-        saveFile(uri)
+        uri?.let {
+            saveFile(it)
+        }
     }
 
     val sourceString   = activityViewModel.sourceString.observeAsState()
     val sourceLanguage = activityViewModel.sourceLanguage.observeAsState()
     val targetLanguage = activityViewModel.targetLanguage.observeAsState()
 
-//    DisposableEffect(key1 = context){
-//        onDispose {
-//            if(!viewModel.hasSaved){
-//                confirmLeave.value = true
-//            }
-//        }
-//    }
-
     fun finish(){
         (context as ComponentActivity).finish()
     }
 
-//    BackButtonHandler {
-//        if(!viewModel.hasSaved){
-//            confirmLeave.value = true
-//        }else{
-//            val activity = context as ComponentActivity
-//            //activity.onBackPressedDispatcher.
-//            //finish()
-//        }
-//    }
+    BackHandler(enabled = navController.previousBackStackEntry == null) {
+        if(!viewModel.hasSaved){
+            confirmLeave.value = true
+        }else{
+            finish()
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -171,7 +164,7 @@ fun ComposeCodeEditor(
                 },
                 openPluginDocumentAction = {
                     context.openUrl("https://www.yuque.com/funnysaltyfish/vzmuud")
-                }
+                },
             )
         },
         modifier = Modifier.fillMaxWidth(),

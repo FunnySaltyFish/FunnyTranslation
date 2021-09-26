@@ -316,7 +316,7 @@ class MainActivity : BaseActivity() {
                     )
                 }
                 R.id.view_result_content_speak_button -> {
-                    val engineKind = task.engineKind
+                    val engineKind = task.engineName
                     if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
                         ApplicationUtil.print(this@MainActivity, "当前引擎的翻译结果不支持朗读哦~")
                         return@setOnItemChildClickListener
@@ -803,6 +803,7 @@ class MainActivity : BaseActivity() {
         tasks.clear()
 
         resultAdapter.data.clear()
+        resultAdapter.notifyDataSetChanged()
 
         val source = getCheckedList(sourceList)[0].userData
         var task: BasicTranslationTask

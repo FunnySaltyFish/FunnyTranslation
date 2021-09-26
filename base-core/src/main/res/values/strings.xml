@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_auto">自动选择</string>
+    <string name="language_chinese">中文(简体)</string>
+    <string name="language_english">英语</string>
+    <string name="language_japanese">日本语</string>
+    <string name="language_korean">韩语</string>
+    <string name="language_french">法语</string>
+    <string name="language_russian">俄语</string>
+    <string name="language_germany">德语</string>
+    <string name="language_wenyanwen">文言文(仅百度)</string>
+    <string name="language_thai">泰语</string>
+</resources>

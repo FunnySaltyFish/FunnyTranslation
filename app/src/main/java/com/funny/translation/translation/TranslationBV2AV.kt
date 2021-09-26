@@ -49,6 +49,6 @@ class TranslationBV2AV(sourceString: String?, sourceLanguage: Short, targetLangu
 
     override val isOffline: Boolean
         get() = true
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_BV_TO_AV
 }

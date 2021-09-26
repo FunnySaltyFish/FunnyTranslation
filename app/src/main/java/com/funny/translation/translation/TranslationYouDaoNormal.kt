@@ -20,7 +20,7 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
         return try {
-            val engineKind = engineKind
+            val engineKind = engineName
             // 发送请求参数
             val from = Consts.LANGUAGES[sourceLanguage.toInt()][engineKind.toInt()]
             val to = Consts.LANGUAGES[targetLanguage.toInt()][engineKind.toInt()]
@@ -109,6 +109,6 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
 
     override val isOffline: Boolean
         get() = false
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_YOUDAO_NORMAL
 }

@@ -4,7 +4,6 @@ import android.util.Log
 import com.funny.translation.bean.Consts
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -118,7 +117,7 @@ class TranslationJinshanEasy(sourceString: String?, sourceLanguage: Short, targe
     private val client = 6
     private val key = 1000006
     override fun madeURL(): String {
-        val engineKind = engineKind
+        val engineKind = engineName
         val from = Consts.LANGUAGES[sourceLanguage.toInt()][engineKind.toInt()]
         val to = Consts.LANGUAGES[targetLanguage.toInt()][engineKind.toInt()]
         var url = ""
@@ -173,6 +172,6 @@ class TranslationJinshanEasy(sourceString: String?, sourceLanguage: Short, targe
         }
     }
 
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_JINSHAN
 }

@@ -24,11 +24,11 @@ public class NewResultAdapter extends BaseQuickAdapter<CoreTranslationTask, NewR
     protected void convert(@NotNull ResultContentHolder rcHolder, CoreTranslationTask task) {
         //设置翻译引擎的样子
         sb.setLength(0);
-        if(task.getEngineKind() == JsConfig.JS_ENGINE_KIND){
+        if(task.getEngineName() == JsConfig.JS_ENGINE_KIND){
             JsTranslateTask jsTranslateTask = (JsTranslateTask)task;
             sb.append(jsTranslateTask.getJsEngine().getJsBean().getFileName());
         }else{
-            sb.append(Consts.ENGINE_NAMES[task.getEngineKind()]);
+            sb.append(Consts.ENGINE_NAMES[task.getEngineName()]);
         }
 
         sb.append("  ");
@@ -39,7 +39,7 @@ public class NewResultAdapter extends BaseQuickAdapter<CoreTranslationTask, NewR
         rcHolder.engine.setText(sb.toString());
 
 
-        if (task.getEngineKind()==Consts.ENGINE_BIGGER_TEXT){//缩小字符
+        if (task.getEngineName()==Consts.ENGINE_BIGGER_TEXT){//缩小字符
             rcHolder.text.setTextSize(8);
         }else{
             rcHolder.text.setTextSize(16);

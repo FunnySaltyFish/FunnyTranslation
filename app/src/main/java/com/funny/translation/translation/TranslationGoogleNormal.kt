@@ -4,7 +4,6 @@ import android.net.Uri
 import com.funny.translation.bean.Consts
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
 import org.json.JSONArray
 import org.json.JSONException
 
@@ -20,7 +19,7 @@ class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targ
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
         return try {
-            val engineKind = engineKind
+            val engineKind = engineName
             val from = Consts.LANGUAGES[sourceLanguage.toInt()][engineKind.toInt()]
             val to = Consts.LANGUAGES[targetLanguage.toInt()][engineKind.toInt()]
             val realUrl = String.format(
@@ -99,6 +98,6 @@ class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Short, targ
 
     override val isOffline: Boolean
         get() = false
-    override val engineKind: Short
+    override val engineName: String
         get() = Consts.ENGINE_GOOGLE
 }

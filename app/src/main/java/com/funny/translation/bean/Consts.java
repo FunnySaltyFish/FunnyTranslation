@@ -68,15 +68,15 @@ public class Consts
 	public static String[][] LANGUAGES={
 		//有道翻译 简版（已弃用，改为金山）/标准 百度翻译 标准 谷歌(短)
 		{"auto","auto","auto","auto"},
-		{"zh","zh-CHS","zh","zh-CN"},
-		{"en-US","en","en","en"},
-		{"ja","ja","jp","ja"},
-		{"ko","ko","kor","ko"},
-		{"fr","fr","fra","fr"},
-		{"ru","ru","ru","ru"},
-		{"de","de","de","de"},
-		{"zh","zh-CHS","wyw","zh-CN"},
-		{"th","th","th","th"}
+		{"zh","zh-CHS","zh",   "zh-CN"},
+		{"en-US","en", "en",   "en"},
+		{"ja","ja",    "jp",   "ja"},
+		{"ko","ko",    "kor",  "ko"},
+		{"fr","fr",    "fra",  "fr"},
+		{"ru","ru",    "ru",   "ru"},
+		{"de","de",    "de",   "de"},
+		{"zh","zh-CHS","wyw",  "zh-CN"},
+		{"th","th",    "th",   "th"}
 	};
 	
 	public final static short CHECK_SINGLE=0;
