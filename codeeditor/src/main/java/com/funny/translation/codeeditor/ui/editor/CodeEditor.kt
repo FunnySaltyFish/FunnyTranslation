@@ -33,6 +33,7 @@ import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readText
 import com.funny.translation.helper.writeText
+import com.funny.translation.trans.allLanguages
 import com.funny.translation.trans.findLanguageById
 import io.github.rosemoe.editor.interfaces.EditorEventListener
 import io.github.rosemoe.editor.langs.desc.JavaScriptDescription
@@ -215,9 +216,9 @@ fun ComposeCodeEditor(
                             Spacer(Modifier.height(8.dp))
                             ComposeSpinner(
                                 data = activityViewModel.allLanguageNames,
-                                initialData = findLanguageById(sourceLanguage.value!!).name,
+                                initialData = sourceLanguage.value!!.name,
                                 selectAction = { index ->
-                                    activityViewModel.sourceLanguage.value = index
+                                    activityViewModel.sourceLanguage.value = allLanguages[index]
                                     //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
                                 },
                                 label = "源语言"
@@ -225,9 +226,9 @@ fun ComposeCodeEditor(
                             Spacer(Modifier.height(8.dp))
                             ComposeSpinner(
                                 data = activityViewModel.allLanguageNames,
-                                initialData = findLanguageById(targetLanguage.value!!).name,
+                                initialData = targetLanguage.value!!.name,
                                 selectAction = { index ->
-                                    activityViewModel.targetLanguage.value = index
+                                    activityViewModel.targetLanguage.value = allLanguages[index]
                                     //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
                                 },
                                 label = "目标语言"

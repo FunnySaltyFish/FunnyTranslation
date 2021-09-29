@@ -8,6 +8,7 @@ import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.core.JsInterface
 import com.funny.translation.js.extentions.messageWithDetail
+import com.funny.translation.trans.allLanguages
 import org.mozilla.javascript.NativeObject
 import org.mozilla.javascript.RhinoException
 import java.util.*
@@ -90,6 +91,7 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                 maxSupportVersion = (funnyJS["maxSupportVersion"] as Double).toInt()
                 debugMode = funnyJS["debugMode"] as Boolean
                 this.isOffline = funnyJS["isOffline"] as Boolean
+                supportLanguages = getFunnyOrDefault("supportLanguage", allLanguages)
                 //Debug.log(funnyJS.toString())
             }
         }.onSuccess {
@@ -108,6 +110,14 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                 is Exception -> Debug.log("加载插件时出错！${e.message}")
             }
             onError(e)
+        }
+    }
+
+    private fun<T> getFunnyOrDefault(key : String , default : T) : T{
+        return try{
+            funnyJS[key] as T
+        }catch (e : Exception){
+            default
         }
     }
 

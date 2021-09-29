@@ -34,6 +34,12 @@ object StringUtil {
         return matcher.matches()
     }
 
+    fun isNumber(str: String): Boolean {
+        val p = Pattern.compile("^\\d+$")
+        val m = p.matcher(str)
+        return m.matches()
+    }
+
     fun findAv(str: String): Long { //返回数字
         val p = Pattern.compile("av(\\d+)", Pattern.CASE_INSENSITIVE)
         val m = p.matcher(str)

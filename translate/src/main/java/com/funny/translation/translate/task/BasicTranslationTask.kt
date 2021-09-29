@@ -21,7 +21,7 @@ abstract class BasicTranslationTask(
         result.engineName = name
 
         try {
-            TODO("某个语言不支持")
+            //TODO("某个语言不支持")
 //            if (engineName == Consts.ENGINE_BIGGER_TEXT && (StringUtil.extraChinese(sourceString))
 //            ) {
 //                throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)

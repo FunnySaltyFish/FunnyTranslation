@@ -29,8 +29,8 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
                 onSuccess = {
                     val jsTranslateTask = JsTranslateTask(
                         jsEngine = this,
-                        sourceLanguage = activityCodeViewModel.sourceLanguage.value!!.toShort(),
-                        targetLanguage = activityCodeViewModel.targetLanguage.value!!.toShort(),
+                        sourceLanguage = activityCodeViewModel.sourceLanguage.value!!,
+                        targetLanguage = activityCodeViewModel.targetLanguage.value!!,
                         sourceString = activityCodeViewModel.sourceString.value!!
                     )
                     Coroutine.async {

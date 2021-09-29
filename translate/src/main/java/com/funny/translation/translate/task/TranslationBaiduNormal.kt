@@ -38,7 +38,7 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Language, tar
         val from = languageMapping[sourceLanguage]
         val to = languageMapping[targetLanguage]
         //Log.i(TAG,"baidu api获取到的基本result是"+transResult);
-        return api.getTransResult(sourceString, from, to)
+        return api.getTransResult(sourceString, from!!, to!!)
     }
 
     @Throws(TranslationException::class)
@@ -75,8 +75,5 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Language, tar
         get() = false
 
     override val name: String
-        get() = FunnyApplication.ctx.resources.getString(R.string.engine_baidu)
-
-    override val id: Int
-        get() = 1
+        get() = FunnyApplication.resources.getString(R.string.engine_baidu)
 }
