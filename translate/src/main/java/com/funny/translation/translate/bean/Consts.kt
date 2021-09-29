@@ -17,11 +17,11 @@ object Consts {
     const val MODE_EACH_LINE = 1
 
     //百度翻译常量
-    var DEFAULT_BAIDU_APP_ID: String = RC4.decry_RC4("785ebf34dc6aa09ffc4f5726d7bcb14f3f", "27420")
-    var DEFAULT_BAIDU_SECURITY_KEY: String = RC4.decry_RC4("0e36da569e6dd8e3a831377988e8b5373ab87173", "27420")
-    var DEFAULT_BAIDU_SLEEP_TIME = 1000L
+    private val DEFAULT_BAIDU_APP_ID: String = RC4.decry_RC4("785ebf34dc6aa09ffc4f5726d7bcb14f3f", "27420")
+    private val DEFAULT_BAIDU_SECURITY_KEY: String = RC4.decry_RC4("0e36da569e6dd8e3a831377988e8b5373ab87173", "27420")
+    const val DEFAULT_BAIDU_SLEEP_TIME = 1000L
 
-    var BAIDU_APP_ID = ""
-    var BAIDU_SECURITY_KEY = ""
+    var BAIDU_APP_ID = DEFAULT_BAIDU_APP_ID
+    var BAIDU_SECURITY_KEY = DEFAULT_BAIDU_SECURITY_KEY
     var BAIDU_SLEEP_TIME = DEFAULT_BAIDU_SLEEP_TIME
 }

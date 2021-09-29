@@ -41,7 +41,6 @@ import com.billy.android.swipe.listener.SimpleSwipeListener
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.funny.translation.bean.Consts
 import com.funny.translation.bean.LanguageBean
-import com.funny.translation.codeeditor.extensions.readAssets
 import com.funny.translation.db.DBEnglishWordsUtils
 import com.funny.translation.db.DBJSUtils
 import com.funny.translation.helper.showMessageDialog

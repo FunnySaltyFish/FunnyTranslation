@@ -38,6 +38,7 @@ fun AppNavigation() {
                 ) { screen ->
                     currentScreen = screen
                     navController.navigate(currentScreen.route){
+
                         launchSingleTop = true
                     }
                 }

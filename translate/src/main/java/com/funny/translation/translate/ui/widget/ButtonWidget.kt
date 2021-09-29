@@ -22,9 +22,10 @@ import com.funny.translation.translate.R
 fun RoundCornerButton(
     text : String,
     onClick : ()->Unit = {},
-    background : Color = MaterialTheme.colors.secondary
+    background : Color = MaterialTheme.colors.secondary,
+    modifier: Modifier = Modifier
 ) {
-    Button(onClick = onClick, shape = CircleShape, colors = buttonColors(backgroundColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
+    Button(onClick = onClick, shape = CircleShape, modifier=modifier, colors = buttonColors(backgroundColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
         Text(text = text, color = Color.White)
     }
 }

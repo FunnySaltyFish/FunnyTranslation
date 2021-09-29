@@ -89,7 +89,7 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Short, targ
             }
             sb.deleteCharAt(sb.length - 1)
 
-            println(result)
+//            println(result)
             result.setBasicResult(sb.toString())
         } catch (e: JSONException) {
             e.printStackTrace()

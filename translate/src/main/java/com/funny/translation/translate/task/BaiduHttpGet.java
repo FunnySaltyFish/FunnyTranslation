@@ -1,7 +1,7 @@
 package com.funny.translation.translate.task;
 
-import com.funny.translation.bean.Consts;
 import com.funny.translation.trans.TranslationException;
+import com.funny.translation.translate.bean.Consts;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -70,13 +70,11 @@ class BaiduHttpGet {
         } catch (MalformedURLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new TranslationException(Consts.ERROR_ILLEGAL_DATA);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
+        } catch (IOException | KeyManagementException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return "";
     }
 
     public static String getUrlWithQueryString(String url, Map<String, String> params) {

@@ -1,5 +1,7 @@
 package com.funny.translation.js.bean
 
+import com.funny.translation.trans.Language
+
 data class JsBean(
     var id : Int = 0,
     var fileName : String = "Plugin",
@@ -11,5 +13,6 @@ data class JsBean(
     var minSupportVersion : Int = 2,
     var maxSupportVersion : Int = 2,
     var isOffline : Boolean = false,
-    var debugMode : Boolean = true
+    var debugMode : Boolean = true,
+    var supportLanguages: List<Language> = arrayListOf()
 )

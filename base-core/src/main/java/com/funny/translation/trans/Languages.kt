@@ -20,7 +20,7 @@ enum class Language(val id : Int,var displayText : String = "") {
 
 fun findLanguageById(id : Int) = Language.values().filter { it.id == id }[0]
 
-fun getAllLanguages() = Language.values()
+val allLanguages get() = Language.values().asList()
 
 fun initLanguageDisplay(resources : Resources){
     Language.AUTO.displayText = resources.getString(R.string.language_auto)

@@ -17,10 +17,19 @@ private const val TAG = "JsTranslateTask"
 class JsTranslateTask(
     val jsEngine: JsEngine,
     sourceString: String,
-    sourceLanguage: Short,
-    targetLanguage: Short
+    sourceLanguage: Language,
+    targetLanguage: Language
 ) :
     CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) {
+
+    override val languageMapping: Map<Language, String>
+        get() = mapOf()
+
+    override val supportLanguages: List<Language>
+        get() = TODO("Not yet implemented")
+
+    override val name: String
+        get() = jsEngine.jsBean.fileName
 
     override fun getBasicText(url: String): String {
         val obj = INVOCABLE.invokeMethod(jsEngine.funnyJS, "getBasicText", url)
@@ -49,14 +58,9 @@ class JsTranslateTask(
                 true
             }
 
-
-    override val engineName: String
-        get() = JS_ENGINE_KIND
-
-
-    override fun translate(mode: Short) {
+    override fun translate(mode: Int) {
         fun String.emptyString() = if (this.isEmpty()) " [空字符串]" else this
-        result.engineName = engineName
+        result.engineName = name
         try {
             eval()
             Debug.log("开始执行 madeURL 方法……")

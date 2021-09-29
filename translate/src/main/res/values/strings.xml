@@ -17,4 +17,7 @@
     <string name="engine_jinshan">金山翻译</string>
     <string name="engine_google">谷歌翻译</string>
     <string name="error_result">翻译错误</string>
+    <string name="engine_bv2av">BvToAv</string>
+    <string name="engine_each_text">逐字翻译</string>
+    <string name="translate">翻译</string>
 </resources>
