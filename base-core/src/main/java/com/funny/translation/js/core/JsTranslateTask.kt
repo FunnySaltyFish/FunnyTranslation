@@ -3,17 +3,16 @@ package com.funny.translation.js.core
 import com.funny.translation.debug.Debug
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
-import com.funny.translation.js.config.JsConfig.Companion.JS_ENGINE_KIND
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.extentions.messageWithDetail
 import com.funny.translation.trans.*
 import java.lang.Exception
 import javax.script.ScriptException
+import kotlin.reflect.KClass
 
 private const val TAG = "JsTranslateTask"
 
-class JsEngine : TranslationEngine {
-
+class JsTranslationEngine : TranslationEngine {
     override val name: String
         get() = TODO("Not yet implemented")
     override val supportLanguages: List<Language>
@@ -23,6 +22,8 @@ class JsEngine : TranslationEngine {
     override var selected: Boolean
         get() = TODO("Not yet implemented")
         set(value) {}
+    override val taskClass: KClass<out CoreTranslationTask>
+        get() = JsTranslateTask::class
 }
 
 class JsTranslateTask(
@@ -30,8 +31,8 @@ class JsTranslateTask(
     sourceString: String,
     sourceLanguage: Language,
     targetLanguage: Language
-) :
-    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) {
+):
+    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage){
 
     override val languageMapping: Map<Language, String>
         get() = mapOf()
@@ -43,6 +44,9 @@ class JsTranslateTask(
 
     override val name: String
         get() = jsEngine.jsBean.fileName
+
+    override val taskClass: KClass<out CoreTranslationTask>
+        get() = this::class
 
     override fun getBasicText(url: String): String {
         val obj = INVOCABLE.invokeMethod(jsEngine.funnyJS, "getBasicText", url)

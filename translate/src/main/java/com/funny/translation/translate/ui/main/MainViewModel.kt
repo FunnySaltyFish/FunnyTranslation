@@ -4,18 +4,20 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.translation.trans.CoreTranslationTask
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
+import com.funny.translation.js.JsEngine
+import com.funny.translation.js.bean.JsBean
+import com.funny.translation.js.core.JsTranslateTask
+import com.funny.translation.trans.*
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
+import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.task.TranslationBaiduNormal
 import com.funny.translation.translate.task.TranslationYouDaoNormal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.coroutineContext
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
@@ -24,19 +26,18 @@ class MainViewModel : ViewModel() {
     val targetLanguage : MutableLiveData<Language> = MutableLiveData(Language.CHINESE)
     val translateMode : MutableLiveData<Int> = MutableLiveData(0)
 
-    val selectedEngines : MutableLiveData<ArrayList<CoreTranslationTask>> = MutableLiveData(arrayListOf(
-        TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
-        TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
-    ))
+    val selectedEngines : List<TranslationEngine>
+        get() = allEngines.value!!.filter { it.selected }
 
-    val allEngines : MutableLiveData<ArrayList<CoreTranslationTask>> = MutableLiveData(
+    val allEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData(
         arrayListOf(
-            TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
-            TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
-            TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
-            TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
-            TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
-            TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+            TranslationEngines.BaiduNormal,
+            TranslationEngines.Youdao,
+            TranslationEngines.Jinshan,
+
+            TranslationEngines.BiggerText,
+            TranslationEngines.EachText,
+            TranslationEngines.Bv2Av
         )
     )
 
@@ -45,7 +46,7 @@ class MainViewModel : ViewModel() {
 
     val progress : MutableLiveData<Int> = MutableLiveData(0)
     val totalProgress : Int
-        get() = selectedEngines.value!!.map { support(it.supportLanguages) }.size
+        get() = selectedEngines.map { support(it.supportLanguages) }.size
 
     var translateJob : Job? = null
 
@@ -55,17 +56,24 @@ class MainViewModel : ViewModel() {
         progress.value = 0
 
         translateJob = viewModelScope.launch {
-            selectedEngines.value!!.forEach {
+            selectedEngines.forEach {
                 if (support(it.supportLanguages)) {
+                    val task = if (it is TranslationEngines){
+                        it.createTask(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
+                    }else{
+                        val jsEngine = JsEngine(
+                            JsBean()
+                        )
+                        JsTranslateTask(jsEngine,translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
+                    }
                     try {
-                        it.sourceString = translateText.value!!
                         withContext(Dispatchers.IO) {
-                            it.translate(translateMode.value!!)
-                            Log.d(TAG, "translate : ${progress.value} ${it.result}")
+                            task.translate(translateMode.value!!)
+                            Log.d(TAG, "translate : ${progress.value} ${task.result}")
                         }
-                        updateTranslateResult(it.result)
+                        updateTranslateResult(task.result)
                     } catch (e: TranslationException) {
-                        with(it.result) {
+                        with(task.result) {
                             setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
                             updateTranslateResult(this)
                         }

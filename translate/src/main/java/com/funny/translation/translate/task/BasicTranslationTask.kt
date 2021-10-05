@@ -4,11 +4,8 @@ import com.funny.translation.trans.*
 import com.funny.translation.translate.bean.Consts
 
 
-abstract class BasicTranslationTask(
-    sourceString: String,
-    sourceLanguage: Language, targetLanguage: Language
-) :
-    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage){
+abstract class BasicTranslationTask() :
+    CoreTranslationTask(){
 
     @Throws(TranslationException::class)
     override fun translate(mode: Int) {

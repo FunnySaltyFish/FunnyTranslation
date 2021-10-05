@@ -10,10 +10,8 @@ import com.funny.translation.translate.engine.TranslationEngines
 import org.json.JSONArray
 import org.json.JSONException
 
-class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
-    BasicTranslationTask(
-        sourceString!!, sourceLanguage, targetLanguage
-    ) , TranslationEngine by TranslationEngines.GoogleNormal{
+class TranslationGoogleNormal() :
+    BasicTranslationTask(), TranslationEngine by TranslationEngines.GoogleNormal{
 
     companion object{
         private const val TAG = "TransGoogle"

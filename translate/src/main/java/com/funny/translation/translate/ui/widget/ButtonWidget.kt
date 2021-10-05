@@ -8,6 +8,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.Icons
@@ -49,12 +50,13 @@ fun SelectableChip(
     val border = if (selected) BorderStroke(0.dp, Color.Transparent) else BorderStroke(1.dp, textColor)
     Button(
         onClick = onClick,
-        shape = CircleShape,
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier,
         border = border,
-        colors = buttonColors(contentColor = textColor, backgroundColor = background)
+        colors = buttonColors(contentColor = textColor, backgroundColor = background),
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
     ) {
-        Text(text, color = textColor, fontSize = 14.sp)
+        Text(text, color = textColor, fontSize = 12.sp)
     }
 }
 

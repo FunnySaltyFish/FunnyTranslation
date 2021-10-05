@@ -8,10 +8,8 @@ import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.FunnyBiggerText
 
-class TranslationBiggerText(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
-    BasicTranslationTask(
-        sourceString!!, sourceLanguage, targetLanguage
-    ) , TranslationEngine by TranslationEngines.BiggerText{
+class TranslationBiggerText() :
+    BasicTranslationTask(), TranslationEngine by TranslationEngines.BiggerText{
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {

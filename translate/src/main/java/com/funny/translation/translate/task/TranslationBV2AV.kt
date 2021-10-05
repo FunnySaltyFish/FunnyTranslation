@@ -3,18 +3,13 @@ package com.funny.translation.translate.task
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.allLanguages
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.FunnyBvToAv
 import com.funny.translation.translate.utils.StringUtil
 
-class TranslationBV2AV(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
-    BasicTranslationTask(
-        sourceString!!, sourceLanguage, targetLanguage
-    ) , TranslationEngine by TranslationEngines.Bv2Av{
+class TranslationBV2AV() :
+    BasicTranslationTask(), TranslationEngine by TranslationEngines.Bv2Av{
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
