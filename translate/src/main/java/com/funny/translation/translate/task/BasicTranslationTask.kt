@@ -10,10 +10,6 @@ abstract class BasicTranslationTask(
 ) :
     CoreTranslationTask(sourceString, sourceLanguage, targetLanguage){
 
-    override val supportLanguages: List<Language>
-        get() = languageMapping.map { it.key }
-
-
     @Throws(TranslationException::class)
     override fun translate(mode: Int) {
         val url = madeURL()

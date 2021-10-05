@@ -2,10 +2,12 @@ package com.funny.translation.translate.task
 
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.Language
+import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.extentions.md5
 import org.json.JSONException
 import org.json.JSONObject
@@ -14,24 +16,11 @@ import kotlin.math.roundToInt
 class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
-    ) {
+    ) , TranslationEngine by TranslationEngines.Youdao{
 
     companion object{
         private const val TAG = "TranslationYouDaoNormal"
     }
-
-    override val languageMapping: Map<Language, String>
-        get() = mapOf(
-            Language.AUTO to "auto",
-            Language.CHINESE to "zh",
-            Language.ENGLISH to "en-US",
-            Language.JAPANESE to "ja",
-            Language.KOREAN to "ko",
-            Language.FRENCH to "fr",
-            Language.RUSSIAN to "ru",
-            Language.GERMANY to "de",
-            Language.THAI to "th"
-        )
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
@@ -124,7 +113,4 @@ class TranslationYouDaoNormal(sourceString: String?, sourceLanguage: Language, t
 
     override val isOffline: Boolean
         get() = false
-
-    override val name: String
-        get() = FunnyApplication.resources.getString(R.string.engine_youdao_normal)
 }

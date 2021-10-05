@@ -131,7 +131,12 @@ fun ComposeCodeEditor(
             CodeEditorTopBar(
                 debugAction = {
                     navController.navigate(Screen.ScreenCodeRunner.route) {
+                        //当底部导航导航到在非首页的页面时，执行手机的返回键 回到首页
+                        popUpTo(navController.graph.startDestinationId){saveState = true}
+                        //从名字就能看出来 跟activity的启动模式中的SingleTop模式一样 避免在栈顶创建多个实例
                         launchSingleTop = true
+                        //切换状态的时候保存页面状态
+                        restoreState = true
                     }
                 },
                 saveAction = {

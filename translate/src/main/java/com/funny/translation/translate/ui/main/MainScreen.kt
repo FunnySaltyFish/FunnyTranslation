@@ -3,42 +3,40 @@ package com.funny.translation.translate.ui.main
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
-import com.funny.cmaterialcolors.MaterialColors.Companion.GreenA200
+import com.funny.translation.trans.CoreTranslationTask
 import com.funny.translation.trans.Translation
+import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationResult
 import com.funny.translation.translate.R
+import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.task.TranslationBaiduNormal
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
-import com.funny.translation.translate.ui.widget.ExchangeButton
-import com.funny.translation.translate.ui.widget.ExpandMoreButton
-import com.funny.translation.translate.ui.widget.InputText
-import com.funny.translation.translate.ui.widget.RoundCornerButton
+import com.funny.translation.translate.ui.widget.*
 
 private const val TAG = "MainScreen"
 
@@ -53,11 +51,17 @@ fun MainScreen() {
 
     val resultList by vm.resultList.observeAsState()
     val translateProgress by vm.progress.observeAsState()
+
+    val allEngines by vm.allEngines.observeAsState()
     Column(
         modifier = Modifier
             .padding(16.dp, 12.dp)
             .fillMaxSize()
     ) {
+        EngineSelect(
+            allEngines!!
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
@@ -96,16 +100,43 @@ fun PreviewTransItem(
     )
 }
 
+@ExperimentalAnimationApi
+@Composable
+fun EngineSelect(
+    tasks : ArrayList<CoreTranslationTask> = arrayListOf(),
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        var expanded by remember {
+            mutableStateOf(false)
+        }
+        Box(modifier = Modifier
+            .apply { if (!expanded) height(40.dp) else wrapContentHeight() }
+            .fillMaxWidth()
+            .animateContentSize()
+        ){
+            LazyRow(
+                horizontalArrangement = spacedBy(8.dp),
+            ) {
+                itemsIndexed(tasks){ index, task ->
+                    //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
+                    var selected : Boolean by remember {
+                        mutableStateOf(task.selected)
+                    }
+                    SelectableChip(selected = selected, text = task.name) {
+                        tasks[index].selected = !task.selected
+                        selected = !selected
+                        //updateView(tasks)
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun TranslationList(
     resultList: List<TranslationResult>
 ) {
-//    Box(modifier = Modifier
-//        .fillMaxWidth()
-//        .background(color = MaterialTheme.colors.primary, shape = RoundedCornerShape(8.dp))
-//        .padding(12.dp)){
-//
-//    }
     val size = resultList.size
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -118,16 +149,6 @@ fun TranslationList(
                 else -> RoundCornerConfig.None
             })
         }
-//
-//        item {
-//            PreviewTransItem(RoundCornerConfig.Top)
-//        }
-//        item {
-//            Spacer(modifier = Modifier.height(2.dp))
-//        }
-//        item {
-//            PreviewTransItem(RoundCornerConfig.Bottom)
-//        }
     }
 }
 
@@ -141,26 +162,11 @@ fun MainAppbar() {
 }
 
 @Composable
-@Preview
-fun TranslateButtonPre() {
-    TranslateButton(50) {
-
-    }
-}
-
-@Composable
 fun TranslateButton(
     progress : Int = 100,
     onClick : ()->Unit
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
-//        if(progress>0){
-//            Box(modifier = Modifier
-//                .fillMaxWidth(progress / 100f)
-//                .height(48.dp)
-//                .clip(CircleShape)
-//                .background(MaterialTheme.colors.primary))
-//        }
         Button(onClick = onClick, shape = CircleShape, modifier=Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent
         ), contentPadding = PaddingValues(0.dp)) {
@@ -172,7 +178,7 @@ fun TranslateButton(
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.primary)
                     )
-                Text(text = "翻译", color = Color.White, modifier = Modifier.align(Alignment.Center), fontSize = 22.sp)
+                Text(text = stringResource(id = R.string.translate), color = Color.White, modifier = Modifier.align(Alignment.Center), fontSize = 22.sp)
             }
         }
     }

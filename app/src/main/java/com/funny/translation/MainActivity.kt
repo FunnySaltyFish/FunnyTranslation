@@ -54,12 +54,14 @@ import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.core.JsTranslateTask
 import com.funny.translation.thread.UpdateThread
 import com.funny.translation.trans.CoreTranslationTask
+import com.funny.translation.trans.Language
 import com.funny.translation.translation.*
 import com.funny.translation.utils.*
 import com.funny.translation.widget.*
 import com.funny.translation.widget.DrawerAdapter.DrawerItemNormal
 import com.github.lzyzsd.circleprogress.CircleProgress
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : BaseActivity() {
     var re: Resources? = null
@@ -315,20 +317,20 @@ class MainActivity : BaseActivity() {
                     )
                 }
                 R.id.view_result_content_speak_button -> {
-                    val engineKind = task.engineName
-                    if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
-                        ApplicationUtil.print(this@MainActivity, "当前引擎的翻译结果不支持朗读哦~")
-                        return@setOnItemChildClickListener
-                    }
+                    //val engineKind = task
+//                    if (engineKind == Consts.ENGINE_BV_TO_AV || engineKind == Consts.ENGINE_BIGGER_TEXT || engineKind == Consts.ENGINE_EACH_TEXT) {
+//                        ApplicationUtil.print(this@MainActivity, "当前引擎的翻译结果不支持朗读哦~")
+//                        return@setOnItemChildClickListener
+//                    }
                     val TTSEngine = checkedTTSEngine
                     var targetLanguage = task.targetLanguage
-                    if (targetLanguage == Consts.LANGUAGE_WENYANWEN) {
-                        targetLanguage = Consts.LANGUAGE_CHINESE
+                    if (targetLanguage.id == Consts.LANGUAGE_WENYANWEN.toInt()) {
+                        targetLanguage = Language.CHINESE
                     }
                     TTSUtil.speak(
                         this@MainActivity,
                         task.result.basicResult.trans,
-                        targetLanguage,
+                        targetLanguage.id.toShort(),
                         TTSEngine
                     )
                 }

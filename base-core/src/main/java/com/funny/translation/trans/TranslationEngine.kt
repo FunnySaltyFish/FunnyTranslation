@@ -2,9 +2,11 @@ package com.funny.translation.trans
 
 interface TranslationEngine {
     val name : String
-    val id : Int
     val supportLanguages: List<Language>
+    val languageMapping : Map<Language , String>
+    var selected : Boolean
 }
+
 //sealed class TranslationEngine(
 //        val name: String = "",
 //        val id: Int = 0,
@@ -26,6 +28,3 @@ interface TranslationEngine {
 //    }
 //}
 //
-//class EngineBaidu() : TranslationEngine()
-//class EngineJinshan() : TranslationEngine()
-//class EngineGoogle() : TranslationEngine()

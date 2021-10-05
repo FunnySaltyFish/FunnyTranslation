@@ -1,27 +1,20 @@
 package com.funny.translation.translate.task
 
 import com.funny.translation.trans.Language
+import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.trans.allLanguages
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.FunnyBvToAv
 import com.funny.translation.translate.utils.StringUtil
 
 class TranslationBV2AV(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
-    ) {
-
-    override val languageMapping: Map<Language, String>
-        get() = TODO("Not yet implemented")
-
-    override val supportLanguages: List<Language>
-        get() = allLanguages
-
-    override val name: String
-        get() = FunnyApplication.resources.getString(R.string.engine_bv2av)
+    ) , TranslationEngine by TranslationEngines.Bv2Av{
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
@@ -39,7 +32,7 @@ class TranslationBV2AV(sourceString: String?, sourceLanguage: Language, targetLa
             } else {
                 var bv: String?
                 if (StringUtil.findBv(inputText).also { bv = it } != "") {
-                    result = FunnyBvToAv.dec(bv)
+                    result = FunnyBvToAv.dec(bv!!)
                 }
             }
         }

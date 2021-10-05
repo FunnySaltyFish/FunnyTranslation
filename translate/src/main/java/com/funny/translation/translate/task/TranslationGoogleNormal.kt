@@ -3,37 +3,21 @@ package com.funny.translation.translate.task
 import android.net.Uri
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.Language
+import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.engine.TranslationEngines
 import org.json.JSONArray
 import org.json.JSONException
 
 class TranslationGoogleNormal(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
-    ) {
+    ) , TranslationEngine by TranslationEngines.GoogleNormal{
 
     companion object{
         private const val TAG = "TransGoogle"
     }
-
-    override val languageMapping: Map<Language, String>
-        get() = mapOf(
-            Language.AUTO to "auto",
-            Language.CHINESE to "zh-CN",
-            Language.ENGLISH to "en",
-            Language.JAPANESE to "ja",
-            Language.KOREAN to "ko",
-            Language.FRENCH to "fr",
-            Language.RUSSIAN to "ru",
-            Language.GERMANY to "de",
-            Language.THAI to "th"
-        )
-
-    override val name: String
-        get() = FunnyApplication.resources.getString(R.string.engine_google)
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
