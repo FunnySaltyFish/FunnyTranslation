@@ -29,6 +29,17 @@ class MainViewModel : ViewModel() {
         TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
     ))
 
+    val allEngines : MutableLiveData<ArrayList<CoreTranslationTask>> = MutableLiveData(
+        arrayListOf(
+            TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+            TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+            TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+            TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+            TranslationBaiduNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+            TranslationYouDaoNormal(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!),
+        )
+    )
+
     val resultList : MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
     private val _resultList : ArrayList<TranslationResult> = arrayListOf()
 

@@ -6,13 +6,24 @@ import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
 import com.funny.translation.js.config.JsConfig.Companion.JS_ENGINE_KIND
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.extentions.messageWithDetail
-import com.funny.translation.trans.CoreTranslationTask
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.TranslationException
+import com.funny.translation.trans.*
 import java.lang.Exception
 import javax.script.ScriptException
 
 private const val TAG = "JsTranslateTask"
+
+class JsEngine : TranslationEngine {
+
+    override val name: String
+        get() = TODO("Not yet implemented")
+    override val supportLanguages: List<Language>
+        get() = TODO("Not yet implemented")
+    override val languageMapping: Map<Language, String>
+        get() = TODO("Not yet implemented")
+    override var selected: Boolean
+        get() = TODO("Not yet implemented")
+        set(value) {}
+}
 
 class JsTranslateTask(
     val jsEngine: JsEngine,
@@ -25,8 +36,10 @@ class JsTranslateTask(
     override val languageMapping: Map<Language, String>
         get() = mapOf()
 
+    override var selected: Boolean = false
+
     override val supportLanguages: List<Language>
-        get() = TODO("Not yet implemented")
+        get() = allLanguages
 
     override val name: String
         get() = jsEngine.jsBean.fileName

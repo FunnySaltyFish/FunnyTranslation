@@ -143,7 +143,7 @@ class JSManageActivity : BaseActivity() {
                         jsEngine.loadBasicConfigurations(
                             {
                                 Log.d(TAG, "onActivityResult: min:${jsBean.minSupportVersion} max:${jsBean.maxSupportVersion}")
-                                if(jsBean.minSupportVersion>=JsConfig.JS_ENGINE_VERSION&&jsBean.maxSupportVersion<=JsConfig.JS_ENGINE_VERSION){
+                                if(jsBean.minSupportVersion<=JsConfig.JS_ENGINE_VERSION&&jsBean.maxSupportVersion>=JsConfig.JS_ENGINE_VERSION){
                                     adapter.addData(jsEngine.jsBean)
                                     insertJS(jsEngine.jsBean)
                                     hasChanged = true

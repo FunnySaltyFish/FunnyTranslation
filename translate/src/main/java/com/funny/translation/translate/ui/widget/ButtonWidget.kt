@@ -1,6 +1,10 @@
 package com.funny.translation.translate.ui.widget
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +19,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.funny.translation.translate.R
 
 
@@ -27,6 +32,29 @@ fun RoundCornerButton(
 ) {
     Button(onClick = onClick, shape = CircleShape, modifier=modifier, colors = buttonColors(backgroundColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
         Text(text = text, color = Color.White)
+    }
+}
+
+@ExperimentalAnimationApi
+@Composable
+fun SelectableChip(
+    selected : Boolean = false,
+    text: String = "",
+    onClick: () -> Unit
+) {
+    //AnimatedVisibility(visible = selected) {
+    //val contentColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onSurface)
+    val background by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.secondary else MaterialTheme.colors.surface)
+    val textColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.secondary)
+    val border = if (selected) BorderStroke(0.dp, Color.Transparent) else BorderStroke(1.dp, textColor)
+    Button(
+        onClick = onClick,
+        shape = CircleShape,
+        modifier = Modifier,
+        border = border,
+        colors = buttonColors(contentColor = textColor, backgroundColor = background)
+    ) {
+        Text(text, color = textColor, fontSize = 14.sp)
     }
 }
 

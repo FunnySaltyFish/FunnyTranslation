@@ -6,7 +6,7 @@ import com.funny.translation.bean.Consts
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.utils.FunnyBiggerText
 
-class TranslationBiggerText(sourceString: String?, sourceLanguage: Int, targetLanguage: Int) :
+class TranslationBiggerText(sourceString: String?, sourceLanguage: Short, targetLanguage: Short) :
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
     ) {

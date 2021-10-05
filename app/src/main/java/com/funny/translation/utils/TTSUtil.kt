@@ -9,6 +9,7 @@ import android.os.Handler
 import com.funny.translation.thread.InternetTTSThread
 import com.funny.translation.MainActivity
 import com.funny.translation.bean.Consts
+import com.funny.translation.trans.Language
 import java.lang.Exception
 import java.util.*
 

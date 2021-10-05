@@ -1,10 +1,12 @@
 package com.funny.translation.translate.task
 
 import com.funny.translation.trans.Language
+import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.FunnyEachText
 import com.funny.translation.translate.utils.StringUtil
 import org.json.JSONException
@@ -13,16 +15,7 @@ import java.io.IOException
 class TranslationEachText(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
     BasicTranslationTask(
         sourceString!!, sourceLanguage, targetLanguage
-    ) {
-
-    override val languageMapping: Map<Language, String>
-        get() = mapOf()
-
-    override val name: String
-        get() = FunnyApplication.resources.getString(R.string.engine_each_text)
-
-    override val supportLanguages: List<Language>
-        get() = arrayListOf(Language.CHINESE, Language.ENGLISH)
+    ) , TranslationEngine by TranslationEngines.EachText{
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {

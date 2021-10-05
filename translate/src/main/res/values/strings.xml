@@ -20,4 +20,6 @@
     <string name="engine_bv2av">BvToAv</string>
     <string name="engine_each_text">逐字翻译</string>
     <string name="translate">翻译</string>
+    <string name="snack_quit">再次点击以退出</string>
+    <string name="engine_bigger_text">字符放大</string>
 </resources>

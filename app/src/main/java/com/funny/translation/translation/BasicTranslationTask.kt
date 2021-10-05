@@ -6,7 +6,7 @@ import com.funny.translation.utils.StringUtil
 import java.lang.StringBuilder
 
 
-abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Int, targetLanguage : Int) :
+abstract class BasicTranslationTask(sourceString: String,sourceLanguage : Short, targetLanguage : Short) :
     CoreTranslationTask(sourceString, sourceLanguage, targetLanguage) , TranslationEngine {
 
     @Throws(TranslationException::class)

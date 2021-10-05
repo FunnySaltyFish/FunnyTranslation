@@ -1,10 +1,10 @@
 package com.funny.translation.translate.task
 
 import com.funny.translation.trans.Language
+import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.StringUtil
 import org.json.JSONException
 import org.json.JSONObject
@@ -12,24 +12,10 @@ import org.json.JSONObject
 class TranslationBaiduNormal(sourceString: String, sourceLanguage: Language, targetLanguage: Language) :
     BasicTranslationTask(
         sourceString, sourceLanguage, targetLanguage
-    ) {
+    ) , TranslationEngine by TranslationEngines.BaiduNormal {
     companion object{
         var TAG = "BaiduTranslation"
     }
-
-    override val languageMapping: Map<Language, String>
-        get() = mapOf(
-            Language.AUTO to "auto",
-            Language.CHINESE to "zh",
-            Language.ENGLISH to "en",
-            Language.JAPANESE to "jp",
-            Language.KOREAN to "kor",
-            Language.FRENCH to "fra",
-            Language.RUSSIAN to "ru",
-            Language.GERMANY to "de",
-            Language.WENYANWEN to "wyw",
-            Language.THAI to "th"
-        )
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
@@ -73,7 +59,4 @@ class TranslationBaiduNormal(sourceString: String, sourceLanguage: Language, tar
 
     override val isOffline: Boolean
         get() = false
-
-    override val name: String
-        get() = FunnyApplication.resources.getString(R.string.engine_baidu)
 }
