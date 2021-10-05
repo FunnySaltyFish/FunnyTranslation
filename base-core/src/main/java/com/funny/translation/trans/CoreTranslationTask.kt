@@ -1,9 +1,9 @@
 package com.funny.translation.trans
 
 abstract class CoreTranslationTask(
-    var sourceString: String,
-    var sourceLanguage: Language,
-    var targetLanguage: Language
+    var sourceString: String = "",
+    var sourceLanguage: Language = Language.AUTO,
+    var targetLanguage: Language = Language.ENGLISH
 ) : TranslationEngine {
     val result = TranslationResult()
 //    abstract val languageMapping : Map<Language, String>

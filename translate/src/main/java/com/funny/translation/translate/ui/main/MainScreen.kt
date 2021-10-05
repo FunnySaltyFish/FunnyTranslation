@@ -4,12 +4,10 @@ import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,8 +31,6 @@ import com.funny.translation.trans.Translation
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationResult
 import com.funny.translation.translate.R
-import com.funny.translation.translate.engine.TranslationEngines
-import com.funny.translation.translate.task.TranslationBaiduNormal
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 
@@ -42,7 +38,6 @@ private const val TAG = "MainScreen"
 
 @ExperimentalAnimationApi
 @Composable
-//@Preview
 fun MainScreen() {
     val vm : MainViewModel = viewModel()
     val transText by vm.translateText.observeAsState("")
@@ -58,10 +53,12 @@ fun MainScreen() {
             .padding(16.dp, 12.dp)
             .fillMaxSize()
     ) {
+        Spacer(modifier = Modifier.height(4.dp))
+
         EngineSelect(
             allEngines!!
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
@@ -103,27 +100,27 @@ fun PreviewTransItem(
 @ExperimentalAnimationApi
 @Composable
 fun EngineSelect(
-    tasks : ArrayList<CoreTranslationTask> = arrayListOf(),
+    engines : ArrayList<TranslationEngine> = arrayListOf(),
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        var expanded by remember {
-            mutableStateOf(false)
-        }
+//        var expanded by remember {
+//            mutableStateOf(false)
+//        }
         Box(modifier = Modifier
-            .apply { if (!expanded) height(40.dp) else wrapContentHeight() }
+            //.apply { if (!expanded) height(40.dp) else wrapContentHeight() }
             .fillMaxWidth()
             .animateContentSize()
         ){
             LazyRow(
                 horizontalArrangement = spacedBy(8.dp),
             ) {
-                itemsIndexed(tasks){ index, task ->
+                itemsIndexed(engines){ index, task ->
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                     var selected : Boolean by remember {
                         mutableStateOf(task.selected)
                     }
                     SelectableChip(selected = selected, text = task.name) {
-                        tasks[index].selected = !task.selected
+                        engines[index].selected = !task.selected
                         selected = !selected
                         //updateView(tasks)
                     }

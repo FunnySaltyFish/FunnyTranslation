@@ -9,10 +9,8 @@ import com.funny.translation.translate.utils.StringUtil
 import org.json.JSONException
 import org.json.JSONObject
 
-class TranslationBaiduNormal(sourceString: String, sourceLanguage: Language, targetLanguage: Language) :
-    BasicTranslationTask(
-        sourceString, sourceLanguage, targetLanguage
-    ) , TranslationEngine by TranslationEngines.BaiduNormal {
+class TranslationBaiduNormal :
+    BasicTranslationTask(), TranslationEngine by TranslationEngines.BaiduNormal {
     companion object{
         var TAG = "BaiduTranslation"
     }

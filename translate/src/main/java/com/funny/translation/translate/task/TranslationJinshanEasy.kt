@@ -16,10 +16,8 @@ import java.net.URLEncoder
 import java.security.MessageDigest
 import java.util.*
 
-class TranslationJinshanEasy(sourceString: String?, sourceLanguage: Language, targetLanguage: Language) :
-    BasicTranslationTask(
-        sourceString!!, sourceLanguage, targetLanguage
-    ) , TranslationEngine by TranslationEngines.Jinshan {
+class TranslationJinshanEasy() :
+    BasicTranslationTask(), TranslationEngine by TranslationEngines.Jinshan {
 
     companion object{
         const val TAG = "TranslationJinshanEasy"
