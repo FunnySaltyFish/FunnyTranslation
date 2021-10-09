@@ -97,7 +97,13 @@ fun AppNavigation() {
                 startDestination = TranslateScreen.MainScreen.route
             ) {
                 composable(TranslateScreen.MainScreen.route) {
-                    MainScreen()
+                    MainScreen(
+                        showSnackbar = { str ->
+                            scope.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(str)
+                            }
+                        }
+                    )
                 }
                 composable(TranslateScreen.SettingScreen.route) {
                     SettingsScreen()

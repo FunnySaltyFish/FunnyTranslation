@@ -4,11 +4,14 @@ import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -17,28 +20,33 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
-import com.funny.translation.trans.CoreTranslationTask
-import com.funny.translation.trans.Translation
-import com.funny.translation.trans.TranslationEngine
-import com.funny.translation.trans.TranslationResult
+import com.funny.translation.trans.*
+import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.translate.utils.AudioPlayer
+import com.funny.translation.translate.utils.ClipBoardUtil
+import kotlinx.coroutines.launch
 
 private const val TAG = "MainScreen"
 
 @ExperimentalAnimationApi
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    showSnackbar : (String) -> Unit,
+) {
     val vm : MainViewModel = viewModel()
     val transText by vm.translateText.observeAsState("")
     val sourceLanguage by vm.sourceLanguage.observeAsState()
@@ -48,53 +56,58 @@ fun MainScreen() {
     val translateProgress by vm.progress.observeAsState()
 
     val allEngines by vm.allEngines.observeAsState()
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .padding(16.dp, 12.dp)
             .fillMaxSize()
+            .scrollable(scrollState, Orientation.Vertical)
     ) {
         Spacer(modifier = Modifier.height(4.dp))
 
-        EngineSelect(
-            allEngines!!
-        )
+        EngineSelect(allEngines!!)
         Spacer(modifier = Modifier.height(12.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            RoundCornerButton(text = sourceLanguage!!.displayText)
+            LanguageSelect(
+                language = sourceLanguage!!,
+                languages = allLanguages,
+                updateLanguage = {
+                    vm.sourceLanguage.value = it
+                }
+            )
             ExchangeButton {
                 Log.d(TAG, "MainScreen: clicked")
+                val temp = sourceLanguage
+                vm.sourceLanguage.value = targetLanguage
+                vm.targetLanguage.value = temp
             }
-            RoundCornerButton(text = targetLanguage!!.displayText)
+            LanguageSelect(
+                language = targetLanguage!!,
+                languages = allLanguages,
+                offset = DpOffset(220.dp,8.dp),
+                updateLanguage = {
+                    vm.targetLanguage.value = it
+                }
+            )
         }
         Spacer(modifier = Modifier.height(12.dp))
         InputText(text = transText, updateText = { vm.translateText.value = it })
         Spacer(modifier = Modifier.height(12.dp))
         TranslateButton(translateProgress!!) {
+            if (vm.selectedEngines.isEmpty()){
+                showSnackbar( FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
+                return@TranslateButton
+            }
             vm.translate()
         }
         Spacer(modifier = Modifier.height(18.dp))
-        TranslationList(resultList!!)
+        TranslationList(resultList!!, showSnackbar)
     }
 
-}
-
-@Composable
-fun PreviewTransItem(
-    roundCornerConfig: RoundCornerConfig
-) {
-    TranslationItem(
-        result = TranslationResult(
-            "呵呵翻译",
-            Translation("哈哈阿萨德很骄傲大结局氨基酸看大家艾克"),
-            "源语言",
-            details = arrayListOf()
-        ),
-        roundCornerConfig = roundCornerConfig
-    )
 }
 
 @ExperimentalAnimationApi
@@ -131,12 +144,39 @@ fun EngineSelect(
 }
 
 @Composable
+fun LanguageSelect(
+    language : Language,
+    languages : List<Language>,
+    offset: DpOffset = DpOffset(2.dp,8.dp),
+    updateLanguage : (Language)->Unit,
+
+) {
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+    RoundCornerButton(text = language.displayText){
+        expanded = true
+    }
+    DropdownMenu(expanded = expanded , onDismissRequest = { expanded = false }, offset = offset) {
+        languages.forEach {
+            DropdownMenuItem(onClick = {
+                updateLanguage(it)
+                expanded = false
+            }) {
+                Text(it.displayText)
+            }
+        }
+    }
+}
+
+@Composable
 fun TranslationList(
-    resultList: List<TranslationResult>
+    resultList: List<TranslationResult>,
+    showSnackbar: (String) -> Unit
 ) {
     val size = resultList.size
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = spacedBy(4.dp)
     ) {
         itemsIndexed(resultList, key = {i,r->r.engineName}){ index, result->
             //Log.d(TAG, "TranslationList: $result")
@@ -144,7 +184,7 @@ fun TranslationList(
                 0 ->  if (size==1) RoundCornerConfig.All else RoundCornerConfig.Top
                 size-1 -> RoundCornerConfig.Bottom
                 else -> RoundCornerConfig.None
-            })
+            },showSnackbar = showSnackbar)
         }
     }
 }
@@ -185,7 +225,8 @@ fun TranslateButton(
 @Composable
 fun TranslationItem(
     result: TranslationResult,
-    roundCornerConfig: RoundCornerConfig
+    roundCornerConfig: RoundCornerConfig,
+    showSnackbar: (String) -> Unit
 ) {
     val cornerSize = 16.dp
     val shape = when (roundCornerConfig) {
@@ -219,7 +260,10 @@ fun TranslationItem(
             Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
                 IconButton(
-                    onClick = { /*TODO*/ }, modifier = Modifier
+                    onClick = {
+                        ClipBoardUtil.copy(FunnyApplication.ctx, result.basicResult.trans)
+                        showSnackbar(FunnyApplication.resources.getString(R.string.snack_finish_copy))
+                    }, modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.secondary)
@@ -232,7 +276,12 @@ fun TranslationItem(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(
-                    onClick = { /*TODO*/ }, modifier = Modifier
+                    onClick = {
+                         AudioPlayer.play(result.basicResult.trans.trim(), result.targetLanguage!!
+                         ) {
+                             showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
+                         }
+                    }, modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.secondary)

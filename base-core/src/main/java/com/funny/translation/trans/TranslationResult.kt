@@ -14,7 +14,8 @@ data class TranslationResult(
     var engineName: String = "",
     var basicResult: Translation = Translation(""),
     var sourceString: String = "",
-    val details: ArrayList<Translation>? = null
+    val details: ArrayList<Translation>? = null,
+    var targetLanguage: Language? = Language.AUTO
 ) {
     /**
      * 设置 basicResult 的 trans 为 text

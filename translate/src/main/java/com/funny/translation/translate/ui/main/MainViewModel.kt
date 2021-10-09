@@ -50,8 +50,14 @@ class MainViewModel : ViewModel() {
 
     var translateJob : Job? = null
 
+    init {
+        TranslationEngines.BaiduNormal.selected = true
+        TranslationEngines.Youdao.selected = true
+    }
+
     fun translate(){
         if(translateJob?.isActive==true)return
+        if(translateText.value!!.isEmpty())return
         _resultList.clear()
         progress.value = 0
 
@@ -67,10 +73,13 @@ class MainViewModel : ViewModel() {
                         JsTranslateTask(jsEngine,translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
                     }
                     try {
+                        task.result.targetLanguage = targetLanguage.value!!
+
                         withContext(Dispatchers.IO) {
                             task.translate(translateMode.value!!)
                             Log.d(TAG, "translate : ${progress.value} ${task.result}")
                         }
+
                         updateTranslateResult(task.result)
                     } catch (e: TranslationException) {
                         with(task.result) {

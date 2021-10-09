@@ -22,4 +22,7 @@
     <string name="translate">翻译</string>
     <string name="snack_quit">再次点击以退出</string>
     <string name="engine_bigger_text">字符放大</string>
+    <string name="snack_no_engine_selected">未选中任何翻译引擎！</string>
+    <string name="snack_finish_copy">已复制结果到剪切板！</string>
+    <string name="snack_speak_error">朗读过程发生错误！</string>
 </resources>
