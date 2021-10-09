@@ -34,6 +34,7 @@ fun InputText(
             .fillMaxWidth()
             .background(MaterialTheme.colors.surface, shape = RoundedCornerShape(16.dp)),
         textStyle = TextStyle(fontSize = 18.sp),
+        maxLines = 6,
         decorationBox = { innerTextField ->
             Row{
                 Box(

@@ -1,5 +1,7 @@
 package com.funny.translation.translate.ui.widget
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
@@ -17,19 +19,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.translation.translate.R
 
-
 @Composable
 fun RoundCornerButton(
     text : String,
-    onClick : ()->Unit = {},
+    modifier: Modifier = Modifier,
     background : Color = MaterialTheme.colors.secondary,
-    modifier: Modifier = Modifier
+    onClick : ()->Unit = {}
 ) {
     Button(onClick = onClick, shape = CircleShape, modifier=modifier, colors = buttonColors(backgroundColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
         Text(text = text, color = Color.White)

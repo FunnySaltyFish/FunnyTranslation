@@ -19,15 +19,12 @@ fun ExpandableDropdownItem(
     var expanded by remember {
         mutableStateOf(false)
     }
-    //AnimatedVisibility(visible = itemVisible) {
     DropdownMenuItem(onClick = {
         expanded = true
-        //itemVisible = false
         requestDismiss()
     }) {
         Text(text = text)
     }
-    //}
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false }
