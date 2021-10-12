@@ -28,11 +28,8 @@ class JsTranslationEngine : TranslationEngine {
 
 class JsTranslateTask(
     val jsEngine: JsEngine,
-    sourceString: String,
-    sourceLanguage: Language,
-    targetLanguage: Language
 ):
-    CoreTranslationTask(sourceString, sourceLanguage, targetLanguage){
+    CoreTranslationTask(){
 
     override val languageMapping: Map<Language, String>
         get() = mapOf()
