@@ -17,7 +17,6 @@ import com.funny.translation.translate.engine.TranslationEngines
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,13 +43,14 @@ class MainViewModel : ViewModel() {
         )
     )
 
-    val jsEngines : MutableLiveData<List<JsTranslateTask>> = MutableLiveData(appDB.jsDao.getAllJs().value?.map {
-        JsTranslateTask(jsEngine = JsEngine(jsBean = it))
-    })
+    val jsEngines : Flow<List<JsTranslateTask>> = appDB.jsDao.getAllJs().map { list ->
+        list.map {
+            JsTranslateTask(jsEngine = JsEngine(jsBean = it))
+        }
+    }
 
     //val jsEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData()
-    private val allEngines : ArrayList<TranslationEngine>
-        get() = bindEngines.value!!.apply { addAll(jsEngines.value?: arrayListOf()) }
+    var allEngines : ArrayList<TranslationEngine> = bindEngines.value!!
 
     val resultList : MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
     private val _resultList : ArrayList<TranslationResult> = arrayListOf()
@@ -94,6 +94,13 @@ class MainViewModel : ViewModel() {
 
                         updateTranslateResult(task.result)
                     } catch (e: TranslationException) {
+                        with(task.result) {
+                            setBasicResult(
+                                "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
+                            )
+                            updateTranslateResult(this)
+                        }
+                    } catch (e : Exception){
                         with(task.result) {
                             setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
                             updateTranslateResult(this)

@@ -22,14 +22,16 @@ object FunnyEachText {
     }
 
     @get:Throws(IOException::class, JSONException::class)
-    val words: JSONObject
-        get() {
-            if (WORDS == null) {
-                Coroutine.async {
-                    init(FunnyApplication.ctx)
-                }
-
-            }
-            return WORDS!!
-        }
+    val words: JSONObject by lazy{
+        val assetsData: String = FunnyApplication.ctx.readAssets("words.json")
+        JSONObject(String(assetsData.toByteArray(), StandardCharsets.UTF_8))
+    }
+//        get() {
+//            if (WORDS == null) {
+//                Coroutine.async {
+//                    init(FunnyApplication.ctx)
+//                }
+//            }
+//            return WORDS!!
+//        }
 }

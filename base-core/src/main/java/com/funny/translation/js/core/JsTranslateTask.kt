@@ -77,6 +77,7 @@ class JsTranslateTask(
         result.engineName = name
         try {
             eval()
+            Debug.log("sourceString:$sourceString $sourceLanguage -> $targetLanguage ")
             Debug.log("开始执行 madeURL 方法……")
             val url = madeURL()
             Debug.log("成功！url：${url.emptyString()}")
@@ -103,8 +104,8 @@ class JsTranslateTask(
     private fun eval() {
         with(SCRIPT_ENGINE) {
             put("funny", jsEngine)
-            put("sourceLanguage", sourceLanguage)
-            put("targetLanguage", targetLanguage)
+            put("sourceLanguage", sourceLanguage.id)
+            put("targetLanguage", targetLanguage.id)
             put("sourceString", sourceString)
             put("result", result)
             Language.values().forEach {
