@@ -9,7 +9,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/editor/FunnyTranslation.editor.iml" filepath="$PROJECT_DIR$/.idea/modules/editor/FunnyTranslation.editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/language-base/FunnyTranslation.language-base.iml" filepath="$PROJECT_DIR$/.idea/modules/language-base/FunnyTranslation.language-base.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/language-universal/FunnyTranslation.language-universal.iml" filepath="$PROJECT_DIR$/.idea/modules/language-universal/FunnyTranslation.language-universal.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/FunnyTranslation.library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/FunnyTranslation.library.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/translate/FunnyTranslation.translate.iml" filepath="$PROJECT_DIR$/.idea/modules/translate/FunnyTranslation.translate.iml" />
     </modules>
   </component>

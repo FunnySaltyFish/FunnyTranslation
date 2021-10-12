@@ -16,7 +16,6 @@
             <option value="$PROJECT_DIR$/editor" />
             <option value="$PROJECT_DIR$/language-base" />
             <option value="$PROJECT_DIR$/language-universal" />
-            <option value="$PROJECT_DIR$/library" />
             <option value="$PROJECT_DIR$/translate" />
           </set>
         </option>

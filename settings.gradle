@@ -1,4 +1,3 @@
-include ':library'
 include ':codeeditor'
 include ':editor'
 include ":language-base"

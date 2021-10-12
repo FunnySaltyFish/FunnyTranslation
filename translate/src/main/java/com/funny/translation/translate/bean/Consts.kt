@@ -1,6 +1,6 @@
 package com.funny.translation.translate.bean
 
-import com.funny.translation.translate.utils.RC4
+import com.funny.translation.translate.utils.PropertyUtil
 
 object Consts {
     //错误常量
@@ -16,9 +16,11 @@ object Consts {
 
     const val MODE_EACH_LINE = 1
 
-    //百度翻译常量
-    private val DEFAULT_BAIDU_APP_ID: String = RC4.decry_RC4("785ebf34dc6aa09ffc4f5726d7bcb14f3f", "27420")
-    private val DEFAULT_BAIDU_SECURITY_KEY: String = RC4.decry_RC4("0e36da569e6dd8e3a831377988e8b5373ab87173", "27420")
+    // 百度翻译常量
+    // 为避免不必要的麻烦，开源部分不包含此部分，请您谅解
+    // 您可以访问 https://api.fanyi.baidu.com/ 免费注册该项服务
+    private val DEFAULT_BAIDU_APP_ID: String = PropertyUtil.getSecureData("BAIDU_APP_ID")
+    private val DEFAULT_BAIDU_SECURITY_KEY: String = PropertyUtil.getSecureData("BAIDU_APP_KEY")
     const val DEFAULT_BAIDU_SLEEP_TIME = 1000L
 
     var BAIDU_APP_ID = DEFAULT_BAIDU_APP_ID
