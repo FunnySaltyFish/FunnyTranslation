@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 24,
-      "versionName": "2.0.0 beta-6",
-      "outputFile": "app-release.apk"
+      "versionCode": 22,
+      "versionName": "2.1.0 探索版01",
+      "outputFile": "translate-release.apk"
     }
   ],
   "elementType": "File"

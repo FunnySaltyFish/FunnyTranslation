@@ -59,7 +59,7 @@ fun MainScreen(
     val translateProgress by vm.progress.observeAsState()
 
     val bindEngines by vm.bindEngines.observeAsState()
-    val jsEngines by vm.jsEngines.observeAsState()
+    val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
 
 //    LaunchedEffect(key1 = jsEngines){
 //        val temp = arrayListOf<TranslationEngine>()
@@ -76,7 +76,15 @@ fun MainScreen(
     ) {
         Spacer(modifier = Modifier.height(4.dp))
 
-        EngineSelect(bindEngines!!, jsEngines?: arrayListOf())
+        // 这里的实现很不优雅，强行更改了viewModel的allEngines，
+        // 主要是 Flow 用的不熟
+
+        EngineSelect(bindEngines!!, jsEngines?: arrayListOf(), updateJsEngine = {
+            val temp = arrayListOf<TranslationEngine>()
+            temp.addAll(bindEngines!!)
+            temp.addAll(jsEngines)
+            vm.allEngines = temp
+        })
         Spacer(modifier = Modifier.height(12.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
@@ -125,7 +133,8 @@ fun MainScreen(
 @Composable
 fun EngineSelect(
     bindEngines: ArrayList<TranslationEngine> = arrayListOf(),
-    jsEngines: List<TranslationEngine> = arrayListOf()
+    jsEngines: List<TranslationEngine> = arrayListOf(),
+    updateJsEngine : () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 //        var expanded by remember {
@@ -159,6 +168,7 @@ fun EngineSelect(
                     jsEngines[index].selected = !task.selected
                     selected = !selected
                     //updateView(tasks)
+                    updateJsEngine()
                 }
             }
         }

@@ -25,4 +25,6 @@
     <string name="snack_no_engine_selected">未选中任何翻译引擎！</string>
     <string name="snack_finish_copy">已复制结果到剪切板！</string>
     <string name="snack_speak_error">朗读过程发生错误！</string>
+    <string name="comming_soon">正在建设中</string>
+    <string name="sponser">赞助</string>
 </resources>
