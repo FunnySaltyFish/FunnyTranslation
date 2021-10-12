@@ -20,6 +20,11 @@
       <excludeFolder url="file://$MODULE_DIR$/../../FunnyTransCompose/.idea/modules" />
       <excludeFolder url="file://$MODULE_DIR$/../../FunnyTransCompose/app/build" />
       <excludeFolder url="file://$MODULE_DIR$/../../FunnyTransCompose/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/jscore" />
+      <excludeFolder url="file://$MODULE_DIR$/translate" />
+      <excludeFolder url="file://$MODULE_DIR$/../inspectionProfiles" />
+      <excludeFolder url="file://$MODULE_DIR$/../../app/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../library/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
