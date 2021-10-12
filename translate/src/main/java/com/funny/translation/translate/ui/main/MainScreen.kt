@@ -20,7 +20,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -32,13 +31,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.trans.*
+import com.funny.translation.translate.ActivityViewModel
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
-import kotlinx.coroutines.launch
 
 private const val TAG = "MainScreen"
 
@@ -46,8 +45,12 @@ private const val TAG = "MainScreen"
 @Composable
 fun MainScreen(
     showSnackbar : (String) -> Unit,
+    activityViewModel: ActivityViewModel
 ) {
     val vm : MainViewModel = viewModel()
+
+    val scrollState = rememberScrollState()
+
     val transText by vm.translateText.observeAsState("")
     val sourceLanguage by vm.sourceLanguage.observeAsState()
     val targetLanguage by vm.targetLanguage.observeAsState()
@@ -55,8 +58,16 @@ fun MainScreen(
     val resultList by vm.resultList.observeAsState()
     val translateProgress by vm.progress.observeAsState()
 
-    val allEngines by vm.allEngines.observeAsState()
-    val scrollState = rememberScrollState()
+    val bindEngines by vm.bindEngines.observeAsState()
+    val jsEngines by vm.jsEngines.observeAsState()
+
+//    LaunchedEffect(key1 = jsEngines){
+//        val temp = arrayListOf<TranslationEngine>()
+//        temp.addAll(bindEngines!!)
+//        temp.addAll(jsEngines)
+//        vm.allEngines = temp
+//    }
+
     Column(
         modifier = Modifier
             .padding(16.dp, 12.dp)
@@ -65,7 +76,7 @@ fun MainScreen(
     ) {
         Spacer(modifier = Modifier.height(4.dp))
 
-        EngineSelect(allEngines!!)
+        EngineSelect(bindEngines!!, jsEngines?: arrayListOf())
         Spacer(modifier = Modifier.height(12.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
@@ -113,30 +124,41 @@ fun MainScreen(
 @ExperimentalAnimationApi
 @Composable
 fun EngineSelect(
-    engines : ArrayList<TranslationEngine> = arrayListOf(),
+    bindEngines: ArrayList<TranslationEngine> = arrayListOf(),
+    jsEngines: List<TranslationEngine> = arrayListOf()
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 //        var expanded by remember {
 //            mutableStateOf(false)
 //        }
-        Box(modifier = Modifier
-            //.apply { if (!expanded) height(40.dp) else wrapContentHeight() }
-            .fillMaxWidth()
-            .animateContentSize()
-        ){
-            LazyRow(
-                horizontalArrangement = spacedBy(8.dp),
-            ) {
-                itemsIndexed(engines){ index, task ->
-                    //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
-                    var selected : Boolean by remember {
-                        mutableStateOf(task.selected)
-                    }
-                    SelectableChip(selected = selected, text = task.name) {
-                        engines[index].selected = !task.selected
-                        selected = !selected
-                        //updateView(tasks)
-                    }
+
+        LazyRow(
+            horizontalArrangement = spacedBy(8.dp),
+        ) {
+            itemsIndexed(bindEngines) { index, task ->
+                //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
+                var selected: Boolean by remember {
+                    mutableStateOf(task.selected)
+                }
+                SelectableChip(selected = selected, text = task.name) {
+                    bindEngines[index].selected = !task.selected
+                    selected = !selected
+                    //updateView(tasks)
+                }
+            }
+        }
+        LazyRow(
+            horizontalArrangement = spacedBy(8.dp),
+        ) {
+            itemsIndexed(jsEngines) { index, task ->
+                //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
+                var selected: Boolean by remember {
+                    mutableStateOf(task.selected)
+                }
+                SelectableChip(selected = selected, text = task.name) {
+                    jsEngines[index].selected = !task.selected
+                    selected = !selected
+                    //updateView(tasks)
                 }
             }
         }
@@ -178,7 +200,7 @@ fun TranslationList(
     LazyColumn(
         verticalArrangement = spacedBy(4.dp)
     ) {
-        itemsIndexed(resultList, key = {i,r->r.engineName}){ index, result->
+        itemsIndexed(resultList, key = { _, r->r.engineName}){ index, result->
             //Log.d(TAG, "TranslationList: $result")
             TranslationItem(result = result, roundCornerConfig = when (index){
                 0 ->  if (size==1) RoundCornerConfig.All else RoundCornerConfig.Top
@@ -187,15 +209,6 @@ fun TranslationList(
             },showSnackbar = showSnackbar)
         }
     }
-}
-
-@Composable
-fun MainAppbar() {
-    TopAppBar(
-        title = {
-            Text(text = stringResource(id = R.string.app_name))
-        }
-    )
 }
 
 @Composable

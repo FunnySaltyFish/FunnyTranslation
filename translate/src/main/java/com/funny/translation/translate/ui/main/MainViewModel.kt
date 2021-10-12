@@ -5,19 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.js.JsEngine
-import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.core.JsTranslateTask
-import com.funny.translation.trans.*
+import com.funny.translation.trans.Language
+import com.funny.translation.trans.TranslationEngine
+import com.funny.translation.trans.TranslationException
+import com.funny.translation.trans.TranslationResult
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
+import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
-import com.funny.translation.translate.task.TranslationBaiduNormal
-import com.funny.translation.translate.task.TranslationYouDaoNormal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.coroutineContext
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
@@ -27,9 +30,9 @@ class MainViewModel : ViewModel() {
     val translateMode : MutableLiveData<Int> = MutableLiveData(0)
 
     val selectedEngines : List<TranslationEngine>
-        get() = allEngines.value!!.filter { it.selected }
+        get() = allEngines.filter { it.selected }
 
-    val allEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData(
+    val bindEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData(
         arrayListOf(
             TranslationEngines.BaiduNormal,
             TranslationEngines.Youdao,
@@ -41,11 +44,19 @@ class MainViewModel : ViewModel() {
         )
     )
 
+    val jsEngines : MutableLiveData<List<JsTranslateTask>> = MutableLiveData(appDB.jsDao.getAllJs().value?.map {
+        JsTranslateTask(jsEngine = JsEngine(jsBean = it))
+    })
+
+    //val jsEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData()
+    private val allEngines : ArrayList<TranslationEngine>
+        get() = bindEngines.value!!.apply { addAll(jsEngines.value?: arrayListOf()) }
+
     val resultList : MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
     private val _resultList : ArrayList<TranslationResult> = arrayListOf()
 
     val progress : MutableLiveData<Int> = MutableLiveData(0)
-    val totalProgress : Int
+    private val totalProgress : Int
         get() = selectedEngines.map { support(it.supportLanguages) }.size
 
     var translateJob : Job? = null
@@ -67,10 +78,11 @@ class MainViewModel : ViewModel() {
                     val task = if (it is TranslationEngines){
                         it.createTask(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
                     }else{
-                        val jsEngine = JsEngine(
-                            JsBean()
-                        )
-                        JsTranslateTask(jsEngine,translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
+                        val jsTask = it as JsTranslateTask
+                        jsTask.sourceString = translateText.value!!
+                        jsTask.sourceLanguage = sourceLanguage.value!!
+                        jsTask.targetLanguage = targetLanguage.value!!
+                        jsTask
                     }
                     try {
                         task.result.targetLanguage = targetLanguage.value!!

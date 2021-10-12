@@ -24,24 +24,26 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
     fun initJs(activityCodeViewModel: ActivityCodeViewModel,code: String) {
         val jsBean = JsBean(999, code = code)
         //Log.d(TAG, "initJs: code:$code")
-        jsEngine = JsEngine(jsBean).apply {
-            loadBasicConfigurations(
-                onSuccess = {
-                    val jsTranslateTask = JsTranslateTask(
-                        jsEngine = this,
-                        sourceLanguage = activityCodeViewModel.sourceLanguage.value!!,
-                        targetLanguage = activityCodeViewModel.targetLanguage.value!!,
-                        sourceString = activityCodeViewModel.sourceString.value!!
-                    )
-                    Coroutine.async {
+        viewModelScope.launch(Dispatchers.IO) {
+            jsEngine = JsEngine(jsBean).apply {
+                loadBasicConfigurations(
+                    onSuccess = {
+                        val jsTranslateTask = JsTranslateTask(
+                            jsEngine = this,
+                        ).apply {
+                            sourceLanguage = activityCodeViewModel.sourceLanguage.value!!
+                            targetLanguage = activityCodeViewModel.targetLanguage.value!!
+                            sourceString = activityCodeViewModel.sourceString.value!!
+                        }
                         jsTranslateTask.translate()
-                    }
-                },
-                onError = {
+                    },
+                    onError = {
 
-                }
-            )
+                    }
+                )
+            }
         }
+
     }
 
     init {
