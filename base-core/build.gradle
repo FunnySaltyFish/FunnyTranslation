@@ -1,0 +1,70 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 30
+    buildToolsVersion Versions.buildToolsVersion
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    //androidx.core
+    // api 'androidx.core:core-ktx:1.6.0'
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"
+
+    //OkHttp
+    api "com.squareup.okhttp3:okhttp:4.9.1"
+
+    //Gson
+    api 'com.google.code.gson:gson:2.8.8'
+
+    //JS rhino
+    api 'com.github.gedoor:rhino-android:1.6'
+
+    implementation "io.noties.markwon:core:4.6.2"
+    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.3.1'
+
+    def room_version = Versions.roomVersion
+    api "androidx.room:room-runtime:$room_version"
+    api "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    api 'androidx.annotation:annotation:1.2.0'
+
+    def coroutines_version = '1.5.1'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
+    def datastore_version = "1.0.0"
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
