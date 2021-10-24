@@ -10,6 +10,9 @@ interface TranslationEngine {
 
     val taskClass : KClass<out CoreTranslationTask>
 }
+val TranslationEngine.selectKey
+    get() = this.name + "_SELECTED"
+
 
 //sealed class TranslationEngine(
 //        val name: String = "",

@@ -104,12 +104,12 @@ class JsTranslateTask(
     private fun eval() {
         with(SCRIPT_ENGINE) {
             put("funny", jsEngine)
-            put("sourceLanguage", sourceLanguage.id)
-            put("targetLanguage", targetLanguage.id)
+            put("sourceLanguage", sourceLanguage)
+            put("targetLanguage", targetLanguage)
             put("sourceString", sourceString)
             put("result", result)
             Language.values().forEach {
-                put("LANGUAGE_${it.name}",it.id)
+                put("LANGUAGE_${it.name}",it)
             }
         }
         jsEngine.eval()

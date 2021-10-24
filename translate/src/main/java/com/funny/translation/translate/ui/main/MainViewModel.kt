@@ -4,14 +4,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.helper.DataStoreUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTask
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.TranslationEngine
-import com.funny.translation.trans.TranslationException
-import com.funny.translation.trans.TranslationResult
+import com.funny.translation.trans.*
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
+import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +22,11 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
+    private val actualTransText : String
+        get() = translateText.value?.trim() ?: ""
 
-    val sourceLanguage : MutableLiveData<Language> = MutableLiveData(Language.ENGLISH)
-    val targetLanguage : MutableLiveData<Language> = MutableLiveData(Language.CHINESE)
+    val sourceLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataStoreUtils.getSyncData(Consts.KEY_SOURCE_LANGUAGE,Language.ENGLISH.id)))
+    val targetLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataStoreUtils.getSyncData(Consts.KEY_TARGET_LANGUAGE,Language.CHINESE.id)))
     val translateMode : MutableLiveData<Int> = MutableLiveData(0)
 
     val selectedEngines : List<TranslationEngine>
@@ -43,9 +44,11 @@ class MainViewModel : ViewModel() {
         )
     )
 
-    val jsEngines : Flow<List<JsTranslateTask>> = appDB.jsDao.getAllJs().map { list ->
+    val jsEngines : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().map { list ->
         list.map {
-            JsTranslateTask(jsEngine = JsEngine(jsBean = it))
+            JsTranslateTask(jsEngine = JsEngine(jsBean = it)).apply {
+                selected = DataStoreUtils.readBooleanData(this.selectKey, false)
+            }
         }
     }
 
@@ -62,13 +65,32 @@ class MainViewModel : ViewModel() {
     var translateJob : Job? = null
 
     init {
-        TranslationEngines.BaiduNormal.selected = true
-        TranslationEngines.Youdao.selected = true
+        bindEngines.value?.forEach {
+            it.selected = DataStoreUtils.readBooleanData(it.selectKey, false)
+        }
+
+        bindEngines.value?.find { it.selected } ?: run {
+            TranslationEngines.BaiduNormal.selected = true
+            TranslationEngines.Youdao.selected = true
+        }
+    }
+
+    fun saveData(){
+        viewModelScope.launch(Dispatchers.IO) {
+            // 保存选择的引擎
+            allEngines.forEach{
+                DataStoreUtils.putData(it.selectKey, it.selected)
+            }
+            // 保存源语言、目标语言
+            DataStoreUtils.putData(Consts.KEY_SOURCE_LANGUAGE,sourceLanguage.value!!.id)
+            DataStoreUtils.putData(Consts.KEY_TARGET_LANGUAGE,targetLanguage.value!!.id)
+            Log.d(TAG, "MainScreen: 保存选择数据完成")
+        }
     }
 
     fun translate(){
         if(translateJob?.isActive==true)return
-        if(translateText.value!!.isEmpty())return
+        if(actualTransText.isEmpty())return
         _resultList.clear()
         progress.value = 0
 
@@ -76,7 +98,7 @@ class MainViewModel : ViewModel() {
             selectedEngines.forEach {
                 if (support(it.supportLanguages)) {
                     val task = if (it is TranslationEngines){
-                        it.createTask(translateText.value!!,sourceLanguage.value!!,targetLanguage.value!!)
+                        it.createTask(actualTransText,sourceLanguage.value!!,targetLanguage.value!!)
                     }else{
                         val jsTask = it as JsTranslateTask
                         jsTask.sourceString = translateText.value!!
@@ -113,7 +135,7 @@ class MainViewModel : ViewModel() {
 
     private fun updateTranslateResult(result: TranslationResult){
         progress.value = progress.value!! + 100/totalProgress
-        Log.d(TAG, "updateTranslateResult: ${progress.value}")
+        // Log.d(TAG, "updateTranslateResult: ${progress.value}")
         _resultList.add(result)
 
         resultList.value = _resultList

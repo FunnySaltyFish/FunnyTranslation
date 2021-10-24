@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -33,7 +35,8 @@ fun InputText(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colors.surface, shape = RoundedCornerShape(16.dp)),
-        textStyle = TextStyle(fontSize = 18.sp),
+        textStyle = TextStyle(fontSize = 18.sp, color = MaterialTheme.colors.onSurface),
+        cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
         maxLines = 6,
         decorationBox = { innerTextField ->
             Row{
@@ -49,7 +52,7 @@ fun InputText(
                 //Box(modifier = Modifier.align(Alignment.Vertical.Bottom))
                 Box(modifier = Modifier.align(Alignment.Bottom)) {
                     IconButton(onClick = { updateText("") }) {
-                        Icon(Icons.Default.Delete, stringResource(id = R.string.clear_content), tint = MaterialTheme.colors.secondary)
+                        Icon(Icons.Default.Delete, stringResource(id = R.string.clear_content), tint = MaterialTheme.colors.onSurface)
                     }
                 }
             }

@@ -26,4 +26,7 @@ object Consts {
     var BAIDU_APP_ID = DEFAULT_BAIDU_APP_ID
     var BAIDU_SECURITY_KEY = DEFAULT_BAIDU_SECURITY_KEY
     var BAIDU_SLEEP_TIME = DEFAULT_BAIDU_SLEEP_TIME
+
+    const val KEY_SOURCE_LANGUAGE = "sourceLanguage"
+    const val KEY_TARGET_LANGUAGE = "targetLanguage"
 }

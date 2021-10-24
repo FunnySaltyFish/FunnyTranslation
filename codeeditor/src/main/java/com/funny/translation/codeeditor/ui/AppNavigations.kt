@@ -28,6 +28,7 @@ fun AppNavigation() {
     ){
         composable(Screen.ScreenCodeEditor.route){
             ComposeCodeEditor(navController = navController,activityViewModel = activityCodeViewModel)
+            deepLink("funny-trans://code_runner")
         }
         composable(Screen.ScreenCodeRunner.route){
             ComposeCodeRunner(navController = navController,activityCodeViewModel = activityCodeViewModel)

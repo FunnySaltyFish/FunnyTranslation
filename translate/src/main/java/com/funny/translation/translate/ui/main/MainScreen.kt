@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -22,12 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.trans.*
@@ -38,6 +44,11 @@ import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.systemBarsPadding
+import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "MainScreen"
 
@@ -48,7 +59,7 @@ fun MainScreen(
     activityViewModel: ActivityViewModel
 ) {
     val vm : MainViewModel = viewModel()
-
+    val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
     val transText by vm.translateText.observeAsState("")
@@ -61,20 +72,32 @@ fun MainScreen(
     val bindEngines by vm.bindEngines.observeAsState()
     val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
 
-//    LaunchedEffect(key1 = jsEngines){
-//        val temp = arrayListOf<TranslationEngine>()
-//        temp.addAll(bindEngines!!)
-//        temp.addAll(jsEngines)
-//        vm.allEngines = temp
-//    }
+    val lifecycleEventObserver = LifecycleEventObserver {
+        _ , event -> when(event){
+            Lifecycle.Event.ON_DESTROY -> {
+                vm.saveData()
+                Log.d(TAG, "MainScreen: 被销毁状态")
+            }
+            else -> Unit
+        }
+    }
+
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(key1 = true){
+        lifecycle.addObserver(lifecycleEventObserver)
+        onDispose {
+            vm.saveData()
+            lifecycle.removeObserver(lifecycleEventObserver)
+        }
+    }
 
     Column(
         modifier = Modifier
-            .padding(16.dp, 12.dp)
-            .fillMaxSize()
-            .scrollable(scrollState, Orientation.Vertical)
+            .systemBarsPadding()
+            .padding(horizontal = 12.dp, vertical = 12.dp)
+            .fillMaxWidth()
+            .scrollable(scrollState, Orientation.Vertical),
     ) {
-        Spacer(modifier = Modifier.height(4.dp))
 
         // 这里的实现很不优雅，强行更改了viewModel的allEngines，
         // 主要是 Flow 用的不熟
@@ -107,7 +130,6 @@ fun MainScreen(
             LanguageSelect(
                 language = targetLanguage!!,
                 languages = allLanguages,
-                offset = DpOffset(220.dp,8.dp),
                 updateLanguage = {
                     vm.targetLanguage.value = it
                 }
@@ -179,23 +201,25 @@ fun EngineSelect(
 fun LanguageSelect(
     language : Language,
     languages : List<Language>,
-    offset: DpOffset = DpOffset(2.dp,8.dp),
     updateLanguage : (Language)->Unit,
-
 ) {
     var expanded by remember {
         mutableStateOf(false)
     }
-    RoundCornerButton(text = language.displayText){
+    RoundCornerButton(text = language.displayText, onClick = {
         expanded = true
-    }
-    DropdownMenu(expanded = expanded , onDismissRequest = { expanded = false }, offset = offset) {
-        languages.forEach {
-            DropdownMenuItem(onClick = {
-                updateLanguage(it)
-                expanded = false
-            }) {
-                Text(it.displayText)
+    }){
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            languages.forEach {
+                DropdownMenuItem(onClick = {
+                    updateLanguage(it)
+                    expanded = false
+                }) {
+                    Text(it.displayText)
+                }
             }
         }
     }
@@ -218,6 +242,7 @@ fun TranslationList(
                 else -> RoundCornerConfig.None
             },showSnackbar = showSnackbar)
         }
+        item { Spacer(modifier = Modifier.height(64.dp)) }
     }
 }
 
@@ -274,10 +299,16 @@ fun TranslationItem(
         ) {
             Text(text = result.engineName , color = MaterialColors.Grey600, fontSize = 12.sp)
             Spacer(modifier = Modifier.height(4.dp))
+            val fontSize = when(result.basicResult.trans.length){
+                in 0..25 -> 24
+                in 26..50 -> 20
+                in 50..70 -> 16
+                else -> 14
+            }
             Text(
                 text = result.basicResult.trans,
-                color = MaterialTheme.colors.secondary,
-                fontSize = 24.sp,
+                color = MaterialTheme.colors.onSurface,
+                fontSize = fontSize.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -308,6 +339,11 @@ fun TranslationItem(
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.secondary)
+                        .pointerInput(Unit) {
+                            detectTapGestures(onLongPress = {
+                                AudioPlayer.pause()
+                            })
+                        }
                 ) {
                     Icon(
                         painterResource(id = R.drawable.ic_speak),

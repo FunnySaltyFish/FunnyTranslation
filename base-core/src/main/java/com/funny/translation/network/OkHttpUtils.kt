@@ -43,6 +43,18 @@ object OkHttpUtils {
         return response.body?.bytes() ?: ByteArray(0)
     }
 
+    @JvmOverloads
+    fun getResponse(
+        url : String,
+        headersMap : HashMap<String,String>? = null
+    ) : Response{
+        val requestBuilder = Request.Builder().url(url).get()
+        headersMap?.let {
+            requestBuilder.addHeaders(it)
+        }
+        return okHttpClient.newCall(requestBuilder.build()).execute()
+    }
+
     @Throws(IOException::class)
     @JvmOverloads
     fun postJSON(

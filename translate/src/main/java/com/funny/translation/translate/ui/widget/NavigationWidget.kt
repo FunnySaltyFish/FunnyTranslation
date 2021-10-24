@@ -28,8 +28,8 @@ fun CustomNavigationItem(
     isSelected : Boolean = false,
     onClick : ()->Unit
 ) {
-    val background = if (isSelected) MaterialTheme.colors.secondary.copy(alpha = 0.2f) else Color.Transparent
-    val contentColor = if (isSelected) MaterialTheme.colors.secondary else MaterialTheme.colors.onBackground
+    val background = if (isSelected) MaterialTheme.colors.surface.copy(alpha = 0.2f) else Color.Transparent
+    val contentColor = if (isSelected) MaterialTheme.colors.onSurface.copy(1.0f) else MaterialTheme.colors.onBackground
     Box(
         Modifier
             .clip(CircleShape)

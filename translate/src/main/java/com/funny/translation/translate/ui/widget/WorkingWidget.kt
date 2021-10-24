@@ -3,12 +3,11 @@ package com.funny.translation.translate.ui.widget
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
+import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -57,11 +56,16 @@ fun ComingSoon() {
                 Text("赞助")
             },
             text = {
-                Image(painter = painterResource(id = R.drawable.sponser), stringResource(id = R.string.sponser) )
+                Image(
+                    painter = painterResource(id = R.drawable.sponser),
+                    stringResource(id = R.string.sponser),
+                    modifier = Modifier.fillMaxWidth(),
+                    alignment = Alignment.Center,
+                )
             },
             buttons = {
-                Button(onClick = { supportDialog = false }, modifier = Modifier.fillMaxWidth()) {
-                    Text("关闭")
+                Button(onClick = { supportDialog = false }, modifier = Modifier.fillMaxWidth(), colors = buttonColors(backgroundColor = MaterialTheme.colors.surface)) {
+                    Text("关闭", color = MaterialTheme.colors.onSurface)
                 }
             }
         )
