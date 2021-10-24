@@ -18,7 +18,7 @@ data class JsBean(
     var author : String = "Author",
     var version : Int = 1,
     var description : String = "",
-    var enabled : Int = 0,
+    var enabled : Int = 1,
     var minSupportVersion : Int = 2,
     var maxSupportVersion : Int = 2,
     var isOffline : Boolean = false,
@@ -30,6 +30,26 @@ data class JsBean(
         $minSupportVersion,$maxSupportVersion,$isOffline,$debugMode)
         )
     """.trimIndent()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as JsBean
+
+        if (id != other.id) return false
+        if (fileName != other.fileName) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + fileName.hashCode()
+        return result
+    }
+
+
 }
 
 class LanguageListConverter{

@@ -20,6 +20,23 @@ interface JsInterface {
         headersMap : HashMap<String,String>? = null
     ) = OkHttpUtils.getRaw(url = url,headersMap = headersMap)
 
+    fun getResponse(
+        url : String,
+        headersMap : HashMap<String,String>? = null
+    ) = OkHttpUtils.getResponse(url, headersMap)
+
+    fun post(
+        url : String,
+        json : String,
+        headersMap : HashMap<String,String>? = null
+    ) = OkHttpUtils.postJSON(url, json, headersMap)
+
+    fun post(
+        url : String,
+        data : HashMap<String,String>,
+        headersMap : HashMap<String,String>? = null
+    ) = OkHttpUtils.postForm(url, data, headersMap)
+
     fun getOkHttpClient() = OkHttpUtils.okHttpClient
 
     fun log(obj : Any){

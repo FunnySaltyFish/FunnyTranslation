@@ -19,7 +19,7 @@ class JsConfig {
         const val JS_ENGINE_KIND = 9999.toShort()
 
         val DEBUG_DIVIDER = "=" * 18
-        const val JS_ENGINE_VERSION = 2
+        const val JS_ENGINE_VERSION = 3
     }
 }
 

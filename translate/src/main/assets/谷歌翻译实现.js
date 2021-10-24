@@ -4,11 +4,11 @@ let FunnyJS = {
     // 插件作者
     "author":"官方",
     // 插件描述。如果该描述是Markdown类型，请在开头添加：[Markdown]
-    "description":"在谷歌翻译被墙后提供谷歌翻译能力。",
+    "description":"在谷歌翻译暂时无法使用时提供谷歌翻译能力。",
     // 插件版本。插件的更新依赖于此
-    "version":1,
+    "version":2,
     // 最低支持的插件引擎版本
-    "minSupportVersion":2,
+    "minSupportVersion":3,
     // 最高支持的插件引擎版本
     "maxSupportVersion":999,
     // 插件名称
@@ -23,14 +23,14 @@ let FunnyJS = {
     "madeURL":function(){return "https://translate.google.cn/_/TranslateWebserverUi/data/batchexecute"},
 	"getBasicText":function(url){
     	let headers=objToHeaders(apiHeaders);
-        let from=languages[sourceLanguage];
-        let to=languages[targetLanguage];
+        let from=languages[sourceLanguage.id];
+        let to=languages[targetLanguage.id];
         let rpc=get_rpc(sourceString,from,to);
         //log(rpc);
         let data=new java.util.HashMap();
         data["f.req"]=rpc;
         
-        let text=com.funny.translation.network.OkHttpUtils.INSTANCE.postJSON(url+"?f.req="+data["f.req"],data,headers);
+        let text=funny.post(url+"?f.req="+data["f.req"],data,headers);
         //log(text);
     	return text;
     },
@@ -53,7 +53,7 @@ let FunnyJS = {
 
 //语言常量列表
 let languages = [
-	"auto","zh-CN","en","ja","ko","fr","ru","de","zh-CN","th"
+	"auto","zh-CN","en","ja","ko","fr","ru","de","zh-CN","th","pt"
 ]
 
 

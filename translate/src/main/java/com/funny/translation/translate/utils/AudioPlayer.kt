@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.funny.translation.trans.Language
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.engine.TranslationEngines
 import java.io.IOException
 
 object AudioPlayer {
@@ -43,19 +44,12 @@ object AudioPlayer {
         }
     }
 
+    fun pause(){
+        if(mediaPlayer.isPlaying) mediaPlayer.pause()
+    }
+
     private val languageMapping: Map<Language, String>
-        get() = mapOf(
-            Language.AUTO to "auto",
-            Language.CHINESE to "zh",
-            Language.ENGLISH to "en",
-            Language.JAPANESE to "jp",
-            Language.KOREAN to "kor",
-            Language.FRENCH to "fra",
-            Language.RUSSIAN to "ru",
-            Language.GERMANY to "de",
-            Language.WENYANWEN to "zh",
-            Language.THAI to "th"
-        )
+        get() = TranslationEngines.BaiduNormal.languageMapping
 
     private fun getUrl(word: String, language: Language) = String.format(
         "https://fanyi.baidu.com/gettts?lan=%s&text=%s&spd=3&source=wise",

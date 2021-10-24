@@ -82,10 +82,9 @@ fun ComposeCodeEditor(
 //
 //        }
 
-    fun saveFile(uri: Uri){
-        scope.launch {
+    suspend fun saveFile(uri: Uri){
             try {
-                withContext(Dispatchers.Default) {
+                withContext(Dispatchers.IO) {
                     uri.writeText(
                         context,
                         activityViewModel.codeState.value.toString()
@@ -97,7 +96,6 @@ fun ComposeCodeEditor(
             } catch (e: Exception) {
                 scaffoldState.snackbarHostState.showSnackbar("发生错误，保存失败！")
             }
-        }
     }
 
     val fileCreatorLauncher = rememberLauncherForActivityResult(
@@ -105,7 +103,9 @@ fun ComposeCodeEditor(
     ) { uri ->
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.let {
-            saveFile(it)
+            scope.launch {
+                saveFile(it)
+            }
         }
     }
 
@@ -132,7 +132,7 @@ fun ComposeCodeEditor(
                 debugAction = {
                     navController.navigate(Screen.ScreenCodeRunner.route) {
                         //当底部导航导航到在非首页的页面时，执行手机的返回键 回到首页
-                        popUpTo(navController.graph.startDestinationId){saveState = true}
+//                        popUpTo(navController.graph.startDestinationId){saveState = true}
                         //从名字就能看出来 跟activity的启动模式中的SingleTop模式一样 避免在栈顶创建多个实例
                         launchSingleTop = true
                         //切换状态的时候保存页面状态
@@ -145,7 +145,11 @@ fun ComposeCodeEditor(
                     if(activityViewModel.openFileUri.encodedPath.isNullOrBlank()){
                         fileCreatorLauncher.launch("new_plugin_${System.currentTimeMillis()}.js")
                     } else { //已经打开了文件
-                        if(!viewModel.hasSaved)saveFile(uri = activityViewModel.openFileUri)
+                        if(!viewModel.hasSaved){
+                            scope.launch {
+                                saveFile(uri = activityViewModel.openFileUri)
+                            }
+                        }
                     }
 
                 },

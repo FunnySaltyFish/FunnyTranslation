@@ -27,4 +27,11 @@
     <string name="snack_speak_error">朗读过程发生错误！</string>
     <string name="comming_soon">正在建设中</string>
     <string name="sponser">赞助</string>
+    <string name="manage_plugins">插件管理</string>
+    <string name="delete_plugin">删除</string>
+    <string name="message_confirm">确认</string>
+    <string name="message_yes">确认</string>
+    <string name="message_delete_plugin">您确定要删除此插件吗？此操作不可被恢复</string>
+    <string name="import_plugin">导入插件</string>
+    <string name="create_plugin">新建文件</string>
 </resources>

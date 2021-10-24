@@ -31,10 +31,12 @@ fun RoundCornerButton(
     text : String,
     modifier: Modifier = Modifier,
     background : Color = MaterialTheme.colors.secondary,
-    onClick : ()->Unit = {}
+    onClick : ()->Unit = {},
+    extraContent : @Composable ()->Unit
 ) {
     Button(onClick = onClick, shape = CircleShape, modifier=modifier, colors = buttonColors(backgroundColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
         Text(text = text, color = Color.White)
+        extraContent()
     }
 }
 
@@ -48,13 +50,12 @@ fun SelectableChip(
     //AnimatedVisibility(visible = selected) {
     //val contentColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onSurface)
     val background by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.secondary else MaterialTheme.colors.surface)
-    val textColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.secondary)
-    val border = if (selected) BorderStroke(0.dp, Color.Transparent) else BorderStroke(1.dp, textColor)
+    val textColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onSurface.copy(0.5f))
+    //val border = if (selected) BorderStroke(0.dp, Color.Transparent) else BorderStroke(1.dp, textColor)
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier,
-        border = border,
         colors = buttonColors(contentColor = textColor, backgroundColor = background),
         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
     ) {

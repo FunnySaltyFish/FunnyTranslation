@@ -44,7 +44,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.RUSSIAN to "ru",
                 Language.GERMANY to "de",
                 Language.WENYANWEN to "wyw",
-                Language.THAI to "th"
+                Language.THAI to "th",
+                Language.PORTUGUESE to "pt"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
@@ -65,7 +66,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.FRENCH to "fr",
                 Language.RUSSIAN to "ru",
                 Language.GERMANY to "de",
-                Language.THAI to "th"
+                Language.THAI to "th",
+                Language.PORTUGUESE to "pt"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
@@ -83,7 +85,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.FRENCH to "fr",
                 Language.RUSSIAN to "ru",
                 Language.GERMANY to "de",
-                Language.THAI to "th"
+                Language.THAI to "th",
+                Language.PORTUGUESE to "pt"
             )
 
         override val name: String
@@ -91,6 +94,28 @@ sealed class TranslationEngines : TranslationEngine{
 
         override val taskClass: KClass<out CoreTranslationTask>
             get() = TranslationGoogleNormal::class
+    }
+
+    object Youdao : TranslationEngines(){
+        override val name: String
+            get() = FunnyApplication.resources.getString(R.string.engine_youdao_normal)
+
+        override val languageMapping: Map<Language, String>
+            get() = mapOf(
+                Language.AUTO to "auto",
+                Language.CHINESE to "zh",
+                Language.ENGLISH to "en-US",
+                Language.JAPANESE to "ja",
+                Language.KOREAN to "ko",
+                Language.FRENCH to "fr",
+                Language.RUSSIAN to "ru",
+                Language.GERMANY to "de",
+                Language.THAI to "th",
+                Language.PORTUGUESE to "pt"
+            )
+
+        override val taskClass: KClass<out CoreTranslationTask>
+            get() = TranslationYouDaoNormal::class
     }
 
     object BiggerText : TranslationEngines(){
@@ -121,7 +146,7 @@ sealed class TranslationEngines : TranslationEngine{
             get() = TranslationBV2AV::class
     }
 
-    object EachText : TranslationEngines(){
+    object EachText : TranslationEngines() {
         override val languageMapping: Map<Language, String>
             get() = mapOf()
 
@@ -133,27 +158,6 @@ sealed class TranslationEngines : TranslationEngine{
 
         override val taskClass: KClass<out CoreTranslationTask>
             get() = TranslationEachText::class
-    }
-
-    object Youdao : TranslationEngines(){
-        override val name: String
-            get() = FunnyApplication.resources.getString(R.string.engine_youdao_normal)
-
-        override val languageMapping: Map<Language, String>
-            get() = mapOf(
-                Language.AUTO to "auto",
-                Language.CHINESE to "zh",
-                Language.ENGLISH to "en-US",
-                Language.JAPANESE to "ja",
-                Language.KOREAN to "ko",
-                Language.FRENCH to "fr",
-                Language.RUSSIAN to "ru",
-                Language.GERMANY to "de",
-                Language.THAI to "th"
-            )
-
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationYouDaoNormal::class
     }
 
 }
