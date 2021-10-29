@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -21,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,7 +46,9 @@ import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.systemBarsPadding
+import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "MainScreen"
@@ -84,8 +89,7 @@ fun MainScreen(
     showSnackbar: (String) -> Unit
 ) {
     val vm: MainViewModel = viewModel()
-    rememberCoroutineScope()
-    rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     val transText by vm.translateText.observeAsState("")
     val sourceLanguage by vm.sourceLanguage.observeAsState()
@@ -118,7 +122,6 @@ fun MainScreen(
 
     Column(
         modifier = Modifier
-            .systemBarsPadding()
             .padding(horizontal = 12.dp, vertical = 12.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -126,18 +129,72 @@ fun MainScreen(
         var expandEngineSelect by remember {
             mutableStateOf(false)
         }
-        AnimatedVisibility(expandEngineSelect) {
-            // 这里的实现很不优雅，强行更改了viewModel的allEngines，
-            // 主要是 Flow 用的不熟
-            EngineSelect(bindEngines!!, jsEngines, updateJsEngine = {
-                val temp = arrayListOf<TranslationEngine>()
-                temp.addAll(bindEngines!!)
-                temp.addAll(jsEngines)
-                vm.allEngines = temp
-            })
+
+        val offsetY by remember {
+            mutableStateOf(64)
         }
+        val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
+        var selectEngineHeight = 0
+        Spacer(modifier = Modifier.statusBarsHeight())
+
+        // 这里的实现很不优雅，强行更改了viewModel的allEngines，
+        // 主要是 Flow 用的不熟
+        AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
+            EngineSelect(
+                modifier = Modifier
+                    .onGloballyPositioned {
+                        selectEngineHeight = it.size.height
+                        Log.d(TAG, "MainScreen: selectEngineHeight:$selectEngineHeight")
+                    }
+                    .swipeable(
+                        state = swipeableState,
+                        anchors = mapOf(
+                            0f to ExpandState.CLOSE,
+                            128f to ExpandState.OPEN
+                        ),
+                        thresholds = { from, to ->
+                            FractionalThreshold(0.5f)
+                        },
+                        orientation = Orientation.Vertical
+                    ),
+                    //.height(swipeableState.offset.value.dp)
+                    //.offset(0.dp, swipeableState.offset.value.dp)
+
+                bindEngines!!, jsEngines, updateJsEngine = {
+                    val temp = arrayListOf<TranslationEngine>()
+                    temp.addAll(bindEngines!!)
+                    temp.addAll(jsEngines)
+                    vm.allEngines = temp
+                },
+
+            )
+        }
+
+
+//        val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+//        ModalBottomSheetLayout(sheetContent = {
+//            EngineSelect(bindEngines!!, jsEngines, updateJsEngine = {
+//                val temp = arrayListOf<TranslationEngine>()
+//                temp.addAll(bindEngines!!)
+//                temp.addAll(jsEngines)
+//                vm.allEngines = temp
+//            })
+//        }, sheetState = sheetState) {
+//            Box(modifier = Modifier
+//                .clip(CircleShape)
+//                .fillMaxWidth(0.4f)
+//                .height(8.dp)
+//                .background(MaterialTheme.colors.secondary)
+//                .clickable { scope.launch { sheetState.show() } })
+//        }
         Spacer(modifier = Modifier.height(6.dp))
-        Box(modifier = Modifier.clip(CircleShape).fillMaxWidth(0.4f).height(8.dp).background(MaterialTheme.colors.secondary).clickable { expandEngineSelect = !expandEngineSelect })
+        Box(modifier = Modifier
+            .clip(CircleShape)
+            .fillMaxWidth(0.4f)
+            .height(12.dp)
+            .background(MaterialTheme.colors.secondary)
+            .clickable { expandEngineSelect = !expandEngineSelect }
+        )
         Spacer(modifier = Modifier.height(12.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
@@ -185,13 +242,13 @@ fun MainScreen(
 @ExperimentalAnimationApi
 @Composable
 fun EngineSelect(
+    modifier: Modifier,
     bindEngines: ArrayList<TranslationEngine> = arrayListOf(),
     jsEngines: List<TranslationEngine> = arrayListOf(),
     updateJsEngine: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .padding(8.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.Start
     ) {
         Text(
@@ -438,3 +495,7 @@ fun TranslationItem(
     }
 }
 
+enum class ExpandState{
+    OPEN,
+    CLOSE
+}
