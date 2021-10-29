@@ -117,6 +117,7 @@ dependencies {
     def accompanist_version = "0.20.0"
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
 
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")

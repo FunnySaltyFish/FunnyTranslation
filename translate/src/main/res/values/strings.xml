@@ -34,4 +34,7 @@
     <string name="message_delete_plugin">您确定要删除此插件吗？此操作不可被恢复</string>
     <string name="import_plugin">导入插件</string>
     <string name="create_plugin">新建文件</string>
+    <string name="bind_engine">内置引擎</string>
+    <string name="plugin_engine">插件</string>
+    <string name="set_engine">设置引擎</string>
 </resources>

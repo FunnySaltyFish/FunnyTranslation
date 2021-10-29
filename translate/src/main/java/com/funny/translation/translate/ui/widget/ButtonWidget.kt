@@ -43,21 +43,26 @@ fun RoundCornerButton(
 @ExperimentalAnimationApi
 @Composable
 fun SelectableChip(
-    selected : Boolean = false,
+    initialSelect : Boolean = false,
     text: String = "",
     onClick: () -> Unit
 ) {
-    //AnimatedVisibility(visible = selected) {
-    //val contentColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onSurface)
+    var selected by remember {
+        mutableStateOf(initialSelect)
+    }
     val background by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.secondary else MaterialTheme.colors.surface)
     val textColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onSurface.copy(0.5f))
+
     //val border = if (selected) BorderStroke(0.dp, Color.Transparent) else BorderStroke(1.dp, textColor)
     Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
+        onClick = {
+            onClick()
+            selected = !selected
+        },
+        shape = CircleShape,
         modifier = Modifier,
         colors = buttonColors(contentColor = textColor, backgroundColor = background),
-        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(text, color = textColor, fontSize = 12.sp)
     }

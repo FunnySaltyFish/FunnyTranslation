@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
@@ -36,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"
+@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 fun AppNavigation(
@@ -108,14 +110,11 @@ fun AppNavigation(
                     startDestination = TranslateScreen.MainScreen.route
                 ) {
                     composable(TranslateScreen.MainScreen.route) {
-                        MainScreen(
-                            showSnackbar = { str ->
-                                scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(str)
-                                }
-                            },
-                            activityViewModel = activityVM
-                        )
+                        MainScreen { str ->
+                            scope.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(str)
+                            }
+                        }
                     }
                     composable(TranslateScreen.SettingScreen.route) {
                         SettingsScreen()
@@ -168,6 +167,7 @@ private fun NavController.currentScreenAsState(): MutableState<TranslateScreen> 
 }
 
 class TransActivity : ComponentActivity() {
+    @ExperimentalMaterialApi
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

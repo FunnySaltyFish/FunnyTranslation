@@ -62,7 +62,7 @@ fun CustomNavigation(
     Row(
         modifier = Modifier
             .background(MaterialTheme.colors.background)
-            .padding(8.dp)
+            .padding(start=8.dp,end=8.dp,bottom = 4.dp,top = 2.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
