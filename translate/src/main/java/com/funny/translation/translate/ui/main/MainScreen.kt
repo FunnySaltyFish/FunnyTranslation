@@ -129,64 +129,21 @@ fun MainScreen(
         var expandEngineSelect by remember {
             mutableStateOf(false)
         }
-
-        val offsetY by remember {
-            mutableStateOf(64)
-        }
         val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
-        var selectEngineHeight = 0
         Spacer(modifier = Modifier.statusBarsHeight())
-
         // 这里的实现很不优雅，强行更改了viewModel的allEngines，
         // 主要是 Flow 用的不熟
         AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
             EngineSelect(
-                modifier = Modifier
-                    .onGloballyPositioned {
-                        selectEngineHeight = it.size.height
-                        Log.d(TAG, "MainScreen: selectEngineHeight:$selectEngineHeight")
-                    }
-                    .swipeable(
-                        state = swipeableState,
-                        anchors = mapOf(
-                            0f to ExpandState.CLOSE,
-                            128f to ExpandState.OPEN
-                        ),
-                        thresholds = { from, to ->
-                            FractionalThreshold(0.5f)
-                        },
-                        orientation = Orientation.Vertical
-                    ),
-                    //.height(swipeableState.offset.value.dp)
-                    //.offset(0.dp, swipeableState.offset.value.dp)
-
+                modifier = Modifier.padding(8.dp),
                 bindEngines!!, jsEngines, updateJsEngine = {
                     val temp = arrayListOf<TranslationEngine>()
                     temp.addAll(bindEngines!!)
                     temp.addAll(jsEngines)
                     vm.allEngines = temp
                 },
-
             )
         }
-
-
-//        val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-//        ModalBottomSheetLayout(sheetContent = {
-//            EngineSelect(bindEngines!!, jsEngines, updateJsEngine = {
-//                val temp = arrayListOf<TranslationEngine>()
-//                temp.addAll(bindEngines!!)
-//                temp.addAll(jsEngines)
-//                vm.allEngines = temp
-//            })
-//        }, sheetState = sheetState) {
-//            Box(modifier = Modifier
-//                .clip(CircleShape)
-//                .fillMaxWidth(0.4f)
-//                .height(8.dp)
-//                .background(MaterialTheme.colors.secondary)
-//                .clickable { scope.launch { sheetState.show() } })
-//        }
         Spacer(modifier = Modifier.height(6.dp))
         Box(modifier = Modifier
             .clip(CircleShape)
@@ -230,7 +187,11 @@ fun MainScreen(
                 showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
                 return@TranslateButton
             }
-            vm.translate()
+            if(vm.isTranslating()) vm.translate()
+            else{
+                vm.cancel()
+                showSnackbar("当前翻译已终止")
+            }
         }
         Spacer(modifier = Modifier.height(18.dp))
         TranslationList(resultList!!, showSnackbar)

@@ -1,6 +1,6 @@
 *.iml
 *.hprof
-.gradle
+.gradle/
 /local.properties
 .DS_Store
 build/*
