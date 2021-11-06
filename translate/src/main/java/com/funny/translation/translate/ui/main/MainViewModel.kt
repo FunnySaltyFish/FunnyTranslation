@@ -13,12 +13,9 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
@@ -60,7 +57,7 @@ class MainViewModel : ViewModel() {
 
     val progress : MutableLiveData<Int> = MutableLiveData(0)
     private val totalProgress : Int
-        get() = selectedEngines.map { support(it.supportLanguages) }.size
+        get() = selectedEngines.size
 
     var translateJob : Job? = null
 
@@ -88,11 +85,19 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun cancel(){
+        translateJob?.cancel()
+        progress.value = 100
+    }
+
+    fun isTranslating() : Boolean = translateJob?.isActive ?: false
+
     fun translate(){
         if(translateJob?.isActive==true)return
         if(actualTransText.isEmpty())return
         _resultList.clear()
         progress.value = 0
+        val translateTasks = arrayListOf<Deferred<Unit>>()
 
         translateJob = viewModelScope.launch {
             selectedEngines.forEach {
@@ -108,12 +113,12 @@ class MainViewModel : ViewModel() {
                     }
                     try {
                         task.result.targetLanguage = targetLanguage.value!!
-
-                        withContext(Dispatchers.IO) {
-                            task.translate(translateMode.value!!)
-                            Log.d(TAG, "translate : ${progress.value} ${task.result}")
-                        }
-
+                        translateTasks.add(
+                            async(Dispatchers.IO){
+                                task.translate(translateMode.value!!)
+//                                Log.d(TAG, "translate : ${progress.value} ${task.result}")
+                            }
+                        )
                         updateTranslateResult(task.result)
                     } catch (e: TranslationException) {
                         with(task.result) {
@@ -128,9 +133,17 @@ class MainViewModel : ViewModel() {
                             updateTranslateResult(this)
                         }
                     }
+                }else{
+                    val result = TranslationResult(it.name).apply {
+                        setBasicResult("当前引擎暂不支持该语种！")
+                    }
+                    updateTranslateResult(result)
                 }
             }
+
+            translateTasks.awaitAll()
         }
+
     }
 
     private fun updateTranslateResult(result: TranslationResult){
