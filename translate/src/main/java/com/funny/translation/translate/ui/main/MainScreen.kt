@@ -137,10 +137,10 @@ fun MainScreen(
             EngineSelect(
                 modifier = Modifier.padding(8.dp),
                 bindEngines!!, jsEngines, updateJsEngine = {
-                    val temp = arrayListOf<TranslationEngine>()
-                    temp.addAll(bindEngines!!)
-                    temp.addAll(jsEngines)
-                    vm.allEngines = temp
+//                    val temp = arrayListOf<TranslationEngine>()
+//                    temp.addAll(bindEngines!!)
+//                    temp.addAll(jsEngines)
+//                    vm.allEngines = temp
                 },
             )
         }
@@ -187,7 +187,7 @@ fun MainScreen(
                 showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
                 return@TranslateButton
             }
-            if(vm.isTranslating()) vm.translate()
+            if(!vm.isTranslating()) vm.translate()
             else{
                 vm.cancel()
                 showSnackbar("当前翻译已终止")
@@ -254,23 +254,6 @@ fun EngineSelect(
                 }
             }
         }
-
-//        LazyRow(
-//            horizontalArrangement = spacedBy(8.dp),
-//        ) {
-//            itemsIndexed(jsEngines) { index, task ->
-//                //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
-//                var selected: Boolean by remember {
-//                    mutableStateOf(task.selected)
-//                }
-//                SelectableChip(initialSelect = selected, text = task.name) {
-//                    jsEngines[index].selected = !task.selected
-//                    selected = !selected
-//                    //updateView(tasks)
-//                    updateJsEngine()
-//                }
-//            }
-//        }
     }
 }
 

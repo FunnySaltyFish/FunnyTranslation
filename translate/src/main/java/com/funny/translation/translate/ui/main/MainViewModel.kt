@@ -14,8 +14,9 @@ import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
@@ -44,13 +45,28 @@ class MainViewModel : ViewModel() {
     val jsEngines : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().map { list ->
         list.map {
             JsTranslateTask(jsEngine = JsEngine(jsBean = it)).apply {
-                selected = DataStoreUtils.readBooleanData(this.selectKey, false)
+                this.selected = DataStoreUtils.readBooleanData(this.selectKey, false)
+                Log.d(TAG, "${this.jsEngine.jsBean.fileName} selected:$selected ")
+            }.also {
+                if(!allEngines.contains(it))allEngines.add(it)
             }
         }
     }
 
     //val jsEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData()
-    var allEngines : ArrayList<TranslationEngine> = bindEngines.value!!
+    val allEngines : ArrayList<TranslationEngine>
+        get() {
+            val temp = arrayListOf<TranslationEngine>()
+            temp.addAll(bindEngines.value!!)
+            viewModelScope.launch {
+                jsEngines.collect {
+                    temp.addAll(it)
+                }
+            }
+            return temp
+        }
+//        arrayListOf<TranslationEngine>().apply { addAll(bindEngines.value!!) } // 防止浅拷贝
+
 
     val resultList : MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
     private val _resultList : ArrayList<TranslationResult> = arrayListOf()
@@ -97,42 +113,48 @@ class MainViewModel : ViewModel() {
         if(actualTransText.isEmpty())return
         _resultList.clear()
         progress.value = 0
-        val translateTasks = arrayListOf<Deferred<Unit>>()
 
         translateJob = viewModelScope.launch {
+            createFlow().buffer().collect { task ->
+                try {
+                    task.result.targetLanguage = targetLanguage.value!!
+                    withContext(Dispatchers.IO){
+                        task.translate(translateMode.value!!)
+                    }
+                    Log.d(TAG, "translate : ${progress.value} ${task.result}")
+                    updateTranslateResult(task.result)
+                } catch (e: TranslationException) {
+                    e.printStackTrace()
+                    with(task.result) {
+                        setBasicResult(
+                            "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
+                        )
+                        updateTranslateResult(this)
+                    }
+                } catch (e: Exception) {
+                    with(task.result) {
+                        setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
+                        updateTranslateResult(this)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun createFlow() =
+        flow<CoreTranslationTask> {
             selectedEngines.forEach {
                 if (support(it.supportLanguages)) {
-                    val task = if (it is TranslationEngines){
-                        it.createTask(actualTransText,sourceLanguage.value!!,targetLanguage.value!!)
-                    }else{
+                    val task = if (it is TranslationEngines) {
+                        it.createTask(actualTransText, sourceLanguage.value!!, targetLanguage.value!!)
+                    } else {
                         val jsTask = it as JsTranslateTask
                         jsTask.sourceString = translateText.value!!
                         jsTask.sourceLanguage = sourceLanguage.value!!
                         jsTask.targetLanguage = targetLanguage.value!!
                         jsTask
                     }
-                    try {
-                        task.result.targetLanguage = targetLanguage.value!!
-                        translateTasks.add(
-                            async(Dispatchers.IO){
-                                task.translate(translateMode.value!!)
-//                                Log.d(TAG, "translate : ${progress.value} ${task.result}")
-                            }
-                        )
-                        updateTranslateResult(task.result)
-                    } catch (e: TranslationException) {
-                        with(task.result) {
-                            setBasicResult(
-                                "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
-                            )
-                            updateTranslateResult(this)
-                        }
-                    } catch (e : Exception){
-                        with(task.result) {
-                            setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
-                            updateTranslateResult(this)
-                        }
-                    }
+                    emit(task)
                 }else{
                     val result = TranslationResult(it.name).apply {
                         setBasicResult("当前引擎暂不支持该语种！")
@@ -140,11 +162,7 @@ class MainViewModel : ViewModel() {
                     updateTranslateResult(result)
                 }
             }
-
-            translateTasks.awaitAll()
         }
-
-    }
 
     private fun updateTranslateResult(result: TranslationResult){
         progress.value = progress.value!! + 100/totalProgress
