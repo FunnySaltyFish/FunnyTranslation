@@ -2,7 +2,6 @@ package com.funny.translation.translate.ui.widget
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -41,7 +40,7 @@ fun CustomNavigationItem(
             if (icon is ImageVector){
                 Icon(imageVector = icon, contentDescription = "", tint = contentColor)
             }else if( icon is Int){
-                Icon(painter = painterResource(id = icon), contentDescription = "", tint = contentColor)
+                Icon(painter = painterResource(id = icon), contentDescription = "", tint = contentColor, modifier = Modifier.size(20.dp))
             }
 
             AnimatedVisibility(visible = isSelected) {

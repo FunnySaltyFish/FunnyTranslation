@@ -32,10 +32,24 @@
 -keep class com.funny.translation.trans.TranslationResult {*;}
 -keep class com.funny.translation.trans.Language {*;}
 
+-keep class com.funny.translation.translate.engine.TranslationEngines {*;}
+-keep interface com.funny.translation.trans.TranslationEngine {*;}
+-keep class com.funny.translation.translate.bean.Consts {*;}
+
 #Debug保留
 -keep class com.funny.translation.debug.** {*;}
 
 -keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.funny.translation.translate.ui.thanks.Sponsor { *; }
 
 #抛出异常时保留代码行号，在异常分析中可以方便定位
 -keepattributes SourceFile,LineNumberTable

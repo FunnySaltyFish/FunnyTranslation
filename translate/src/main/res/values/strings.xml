@@ -37,4 +37,7 @@
     <string name="bind_engine">内置引擎</string>
     <string name="plugin_engine">插件</string>
     <string name="set_engine">设置引擎</string>
+    <string name="nav_thanks">致谢</string>
+    <string name="thanks">致谢</string>
+    <string name="join_sponsor">成为赞助者</string>
 </resources>

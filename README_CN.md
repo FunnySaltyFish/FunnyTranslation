@@ -17,15 +17,18 @@
 
 ### 截图
 
-<img src="screenshot\main.jpg" width="300"/>
+#### 运行截图
 
-<img src="screenshot\working.jpg" width="300"/>
-
+| 图片                                                         | 图片                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102032441.jpg" alt="Screenshot_2021-11-07-22-37-33-814_com.funny.tran" style="zoom:33%;" /> | <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102032313.jpg" alt="Screenshot_2021-11-07-22-39-18-201_com.funny.tran" style="zoom:33%;" /> |
+| <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102033517.jpg" alt="Screenshot_2021-11-07-22-40-16-339_com.funny.tran" style="zoom:33%;" /> | <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102033976.jpg" alt="IMG_20211107_223720" style="zoom:33%;" /> |
 
 
 ### 参与贡献
 
 项目仍处于建设阶段，十分欢迎PR，有建议可在[酷安](https://www.coolapk.com/apk/com.funny.translation)评论区或issue提出
+您可以在[爱发电](https://afdian.net/@funnysaltyfish?tab=home)支持本项目，您的任何发电记录都将永久记录在应用中！
 
 为便于您参与开发，下面简单介绍各模块功能
 
@@ -61,20 +64,19 @@
     ```
 
   - **secure_data.properties**
-  
+
   - 位于 `\translate\src\main\assets\secure_data.properties`
-  
+
   - ```bash
     // 您可以访问 https://api.fanyi.baidu.com/ 免费注册该项服务
     
     BAIDU_APP_ID=
     BAIDU_APP_KEY=
     ```
-  
-    
+
+
 
 ### 致谢
 
 - 页面设计参考自 酷安@江戸川コナン（已授权）
-- 赞助：（排序仅以时间为序，不分先后）
-  - Shen 6.66元
+- 感谢所有赞助过项目的小伙伴们！

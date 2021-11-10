@@ -30,6 +30,7 @@ import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.settings.SettingsScreen
+import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -82,7 +83,8 @@ fun AppNavigation(
                         screens = arrayOf(
                             TranslateScreen.MainScreen,
                             TranslateScreen.PluginScreen,
-                            TranslateScreen.SettingScreen
+                            TranslateScreen.SettingScreen,
+                            TranslateScreen.ThanksScreen
                         ),
                         currentScreen = currentScreen.value
                     ) { screen ->
@@ -130,6 +132,9 @@ fun AppNavigation(
                             },navController = navController
                         )
                     }
+                    composable(TranslateScreen.ThanksScreen.route) {
+                        ThanksScreen()
+                    }
                 }
             }
         }
@@ -155,6 +160,9 @@ private fun NavController.currentScreenAsState(): MutableState<TranslateScreen> 
                 }
                 destination.hierarchy.any { it.route == TranslateScreen.PluginScreen.route } -> {
                     selectedItem.value = TranslateScreen.PluginScreen
+                }
+                destination.hierarchy.any { it.route == TranslateScreen.ThanksScreen.route } -> {
+                    selectedItem.value = TranslateScreen.ThanksScreen
                 }
             }
         }

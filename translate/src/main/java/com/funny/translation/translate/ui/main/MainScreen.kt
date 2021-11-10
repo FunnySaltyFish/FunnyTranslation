@@ -6,13 +6,11 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -22,33 +20,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.translation.helper.DataStoreUtils
 import com.funny.translation.trans.*
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
+import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.statusBarsHeight
-import com.google.accompanist.insets.systemBarsPadding
-import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "MainScreen"
@@ -89,7 +82,6 @@ fun MainScreen(
     showSnackbar: (String) -> Unit
 ) {
     val vm: MainViewModel = viewModel()
-    val scope = rememberCoroutineScope()
 
     val transText by vm.translateText.observeAsState("")
     val sourceLanguage by vm.sourceLanguage.observeAsState()
@@ -101,24 +93,32 @@ fun MainScreen(
     val bindEngines by vm.bindEngines.observeAsState()
     val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
 
-    val lifecycleEventObserver = LifecycleEventObserver { _, event ->
-        when (event) {
-            Lifecycle.Event.ON_DESTROY -> {
-                vm.saveData()
-                Log.d(TAG, "MainScreen: 被销毁状态")
-            }
-            else -> Unit
-        }
+    LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
+        val temp = arrayListOf<TranslationEngine>()
+        temp.addAll(bindEngines!!)
+        temp.addAll(jsEngines)
+        vm.allEngines = temp
     }
 
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
-    DisposableEffect(key1 = true) {
-        lifecycle.addObserver(lifecycleEventObserver)
-        onDispose {
-            vm.saveData()
-            lifecycle.removeObserver(lifecycleEventObserver)
-        }
-    }
+//    val lifecycleEventObserver = LifecycleEventObserver { _, event ->
+//        when (event) {
+//            Lifecycle.Event.ON_DESTROY -> {
+//                runBlocking {
+//                    Log.d(TAG, "MainScreen: 被销毁状态")
+//                }
+//            }
+//            else -> Unit
+//        }
+//    }
+//
+//    val lifecycle = LocalLifecycleOwner.current.lifecycle
+//    DisposableEffect(key1 = true) {
+//        lifecycle.addObserver(lifecycleEventObserver)
+//        onDispose {
+//            vm.saveData()
+//            lifecycle.removeObserver(lifecycleEventObserver)
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -136,11 +136,16 @@ fun MainScreen(
         AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
             EngineSelect(
                 modifier = Modifier.padding(8.dp),
-                bindEngines!!, jsEngines, updateJsEngine = {
-//                    val temp = arrayListOf<TranslationEngine>()
-//                    temp.addAll(bindEngines!!)
-//                    temp.addAll(jsEngines)
-//                    vm.allEngines = temp
+                bindEngines!!, jsEngines,
+                updateBindEngine = {
+                    //vm.markSave()
+                },
+                updateJsEngine = {
+                    //vm.markSave()
+                    val temp = arrayListOf<TranslationEngine>()
+                    temp.addAll(bindEngines!!)
+                    temp.addAll(jsEngines)
+                    vm.allEngines = temp
                 },
             )
         }
@@ -163,6 +168,7 @@ fun MainScreen(
                 languages = allLanguages,
                 updateLanguage = {
                     vm.sourceLanguage.value = it
+                    DataStoreUtils.saveSyncIntData(Consts.KEY_SOURCE_LANGUAGE, it.id)
                 }
             )
             ExchangeButton {
@@ -170,12 +176,16 @@ fun MainScreen(
                 val temp = sourceLanguage
                 vm.sourceLanguage.value = targetLanguage
                 vm.targetLanguage.value = temp
+
+                DataStoreUtils.saveSyncIntData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
+                DataStoreUtils.saveSyncIntData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
             }
             LanguageSelect(
                 language = targetLanguage!!,
                 languages = allLanguages,
                 updateLanguage = {
                     vm.targetLanguage.value = it
+                    DataStoreUtils.saveSyncIntData(Consts.KEY_SOURCE_LANGUAGE, it.id)
                 }
             )
         }
@@ -206,6 +216,7 @@ fun EngineSelect(
     modifier: Modifier,
     bindEngines: ArrayList<TranslationEngine> = arrayListOf(),
     jsEngines: List<TranslationEngine> = arrayListOf(),
+    updateBindEngine : ()->Unit,
     updateJsEngine: () -> Unit
 ) {
     Column(
@@ -227,6 +238,8 @@ fun EngineSelect(
                 //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                 SelectableChip(initialSelect = task.selected, text = task.name) {
                     bindEngines[index].selected = !task.selected
+                    DataStoreUtils.saveSyncBooleanData(task.selectKey, task.selected)
+//                    updateBindEngine()
                 }
             }
         }
@@ -249,6 +262,7 @@ fun EngineSelect(
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                     SelectableChip(initialSelect = task.selected, text = task.name) {
                         jsEngines[index].selected = !task.selected
+                        DataStoreUtils.saveSyncBooleanData(task.selectKey, task.selected)
                         updateJsEngine()
                     }
                 }
