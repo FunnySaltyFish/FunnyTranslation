@@ -23,6 +23,13 @@ class MainViewModel : ViewModel() {
     private val actualTransText : String
         get() = translateText.value?.trim() ?: ""
 
+    private var shouldSaveData = false
+
+    /**
+     * 标记可能有数据存在改变的情况
+     */
+    fun markSave(){ shouldSaveData = true }
+
     val sourceLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataStoreUtils.getSyncData(Consts.KEY_SOURCE_LANGUAGE,Language.ENGLISH.id)))
     val targetLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataStoreUtils.getSyncData(Consts.KEY_TARGET_LANGUAGE,Language.CHINESE.id)))
     val translateMode : MutableLiveData<Int> = MutableLiveData(0)
@@ -54,18 +61,8 @@ class MainViewModel : ViewModel() {
     }
 
     //val jsEngines : MutableLiveData<ArrayList<TranslationEngine>> = MutableLiveData()
-    val allEngines : ArrayList<TranslationEngine>
-        get() {
-            val temp = arrayListOf<TranslationEngine>()
-            temp.addAll(bindEngines.value!!)
-            viewModelScope.launch {
-                jsEngines.collect {
-                    temp.addAll(it)
-                }
-            }
-            return temp
-        }
-//        arrayListOf<TranslationEngine>().apply { addAll(bindEngines.value!!) } // 防止浅拷贝
+    var allEngines : ArrayList<TranslationEngine> =
+        arrayListOf<TranslationEngine>().apply { addAll(bindEngines.value!!) } // 防止浅拷贝
 
 
     val resultList : MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
@@ -89,6 +86,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun saveData(){
+        if(!shouldSaveData)return
         viewModelScope.launch(Dispatchers.IO) {
             // 保存选择的引擎
             allEngines.forEach{
@@ -98,6 +96,7 @@ class MainViewModel : ViewModel() {
             DataStoreUtils.putData(Consts.KEY_SOURCE_LANGUAGE,sourceLanguage.value!!.id)
             DataStoreUtils.putData(Consts.KEY_TARGET_LANGUAGE,targetLanguage.value!!.id)
             Log.d(TAG, "MainScreen: 保存选择数据完成")
+            shouldSaveData = false
         }
     }
 
