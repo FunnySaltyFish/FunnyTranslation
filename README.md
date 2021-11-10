@@ -27,7 +27,8 @@
 
 ### 参与贡献
 
-项目仍处于建设阶段，十分欢迎PR，有建议可在[酷安](https://www.coolapk.com/apk/com.funny.translation)评论区或issue提出
+项目仍处于建设阶段，十分欢迎PR，有建议可在[酷安](https://www.coolapk.com/apk/com.funny.translation)评论区或issue提出  
+
 您可以在[爱发电](https://afdian.net/@funnysaltyfish?tab=home)支持本项目，您的任何发电记录都将永久记录在应用中！
 
 为便于您参与开发，下面简单介绍各模块功能
