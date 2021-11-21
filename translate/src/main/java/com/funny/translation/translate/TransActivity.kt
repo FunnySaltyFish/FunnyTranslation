@@ -1,5 +1,6 @@
 package com.funny.translation.translate
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -7,12 +8,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.trans.initLanguageDisplay
@@ -34,7 +35,6 @@ import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -72,8 +72,8 @@ fun AppNavigation(
     }
 
     ProvideWindowInsets {
-        rememberSystemUiController().setStatusBarColor(
-            Color.Transparent, darkIcons = MaterialTheme.colors.isLight)
+//        rememberSystemUiController().setStatusBarColor(
+//            Color.Transparent, darkIcons = MaterialTheme.colors.isLight)
 //        Spacer(modifier = Modifier.statusBarsHeight().fillMaxWidth())
         TransTheme {
             Scaffold(
@@ -177,6 +177,9 @@ private fun NavController.currentScreenAsState(): MutableState<TranslateScreen> 
 }
 
 class TransActivity : ComponentActivity() {
+    lateinit var activityViewModel: ActivityViewModel
+    lateinit var context : Context
+
     @ExperimentalComposeUiApi
     @ExperimentalMaterialApi
     @ExperimentalAnimationApi
@@ -185,7 +188,8 @@ class TransActivity : ComponentActivity() {
         Debug.addTarget(DefaultDebugTarget)
 
         //WindowCompat.setDecorFitsSystemWindows(window, false)
-
+        context = this
+        activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
         lifecycleScope.launch(Dispatchers.IO) {
             initLanguageDisplay(resources)
             if(appDB.jsDao.getJsCount() == 0) appDB.jsDao.insertJsList(DefaultData.getDefaultJsList(lifecycleScope))
@@ -197,6 +201,11 @@ class TransActivity : ComponentActivity() {
                     this.finish()
                 }
             )
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            activityViewModel.checkUpdate(context)
+            ApkUtil.deleteOldApk(context, "update_apk.apk")
         }
     }
 }

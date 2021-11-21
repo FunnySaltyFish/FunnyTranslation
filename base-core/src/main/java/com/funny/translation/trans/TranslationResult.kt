@@ -3,18 +3,20 @@ package com.funny.translation.trans
 import androidx.annotation.Keep
 
 /**
- * 翻译结果
- * @property engineKind Short 翻译引擎
+ *
+ * @property engineName String 翻译引擎
  * @property basicResult Translation 基本翻译结果，见[Translation]
  * @property sourceString String 源语言
- * @property details ArrayList<Translation>? 其余详细翻译结果
+ * @property detailText String? 详细翻译结果，Markdown形式
+ * @property targetLanguage Language? 目标语言
+ * @constructor
  */
 @Keep
 data class TranslationResult(
     var engineName: String = "",
     var basicResult: Translation = Translation(""),
     var sourceString: String = "",
-    val details: ArrayList<Translation>? = null,
+    val detailText : String? = null,
     var targetLanguage: Language? = Language.AUTO
 ) {
     /**

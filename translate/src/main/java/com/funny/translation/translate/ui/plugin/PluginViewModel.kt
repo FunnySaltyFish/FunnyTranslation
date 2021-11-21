@@ -40,9 +40,11 @@ class PluginViewModel : ViewModel() {
             jsEngine.loadBasicConfigurations(
                 {
                     // Log.d(TAG, "onActivityResult: min:${jsBean.minSupportVersion} max:${jsBean.maxSupportVersion}")
-                    if(jsBean.minSupportVersion<= JsConfig.JS_ENGINE_VERSION&&jsBean.maxSupportVersion>= JsConfig.JS_ENGINE_VERSION){
+                    if(jsBean.minSupportVersion <= JsConfig.JS_ENGINE_VERSION){
                         appDB.jsDao.insertJs(jsBean)
-                        successCall("添加成功！")
+                        if(JsConfig.JS_ENGINE_VERSION > jsBean.targetSupportVersion){
+                            successCall("添加成功！[请注意，插件最佳版本与当前引擎版本有所差异，可能有兼容性问题]")
+                        }else successCall("添加成功！")
                     }else{
                         failureCall("插件版本与软件核心不兼容，请与开发者联系解决！")
                     }

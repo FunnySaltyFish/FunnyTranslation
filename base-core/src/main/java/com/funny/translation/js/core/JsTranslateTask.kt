@@ -12,20 +12,6 @@ import kotlin.reflect.KClass
 
 private const val TAG = "JsTranslateTask"
 
-class JsTranslationEngine : TranslationEngine {
-    override val name: String
-        get() = TODO("Not yet implemented")
-    override val supportLanguages: List<Language>
-        get() = TODO("Not yet implemented")
-    override val languageMapping: Map<Language, String>
-        get() = TODO("Not yet implemented")
-    override var selected: Boolean
-        get() = TODO("Not yet implemented")
-        set(value) {}
-    override val taskClass: KClass<out CoreTranslationTask>
-        get() = JsTranslateTask::class
-}
-
 class JsTranslateTask(
     val jsEngine: JsEngine,
 ):

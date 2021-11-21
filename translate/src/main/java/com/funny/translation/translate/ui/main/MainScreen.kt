@@ -42,6 +42,7 @@ import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.statusBarsHeight
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import java.util.*
 
 private const val TAG = "MainScreen"
@@ -122,8 +123,8 @@ fun MainScreen(
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 12.dp)
-            .fillMaxWidth(),
+                .padding(horizontal = 12.dp, vertical = 12.dp)
+                .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         var expandEngineSelect by remember {
@@ -151,11 +152,11 @@ fun MainScreen(
         }
         Spacer(modifier = Modifier.height(6.dp))
         Box(modifier = Modifier
-            .clip(CircleShape)
-            .fillMaxWidth(0.4f)
-            .height(12.dp)
-            .background(MaterialTheme.colors.secondary)
-            .clickable { expandEngineSelect = !expandEngineSelect }
+                .clip(CircleShape)
+                .fillMaxWidth(0.4f)
+                .height(12.dp)
+                .background(MaterialTheme.colors.secondary)
+                .clickable { expandEngineSelect = !expandEngineSelect }
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(
@@ -229,8 +230,8 @@ fun EngineSelect(
         )
         FlowRow(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+                    .fillMaxWidth()
+                    .padding(8.dp),
             mainAxisSpacing = 12.dp,
             crossAxisSpacing = 8.dp
         ) {
@@ -253,8 +254,8 @@ fun EngineSelect(
             )
             FlowRow(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                        .fillMaxWidth()
+                        .padding(8.dp),
                 mainAxisSpacing = 12.dp,
                 crossAxisSpacing = 8.dp
             ) {
@@ -341,10 +342,10 @@ fun TranslateButton(
                 val p = if (progress == 0) 100 else progress
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(p / 100f)
-                        .height(48.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colors.primary)
+                            .fillMaxWidth(p / 100f)
+                            .height(48.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colors.primary)
                 )
                 Text(
                     text = stringResource(id = R.string.translate),
@@ -376,10 +377,10 @@ fun TranslationItem(
     }
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colors.surface, shape = shape)
-            .padding(12.dp)
-            .animateContentSize()
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colors.surface, shape = shape)
+                .padding(12.dp)
+                .animateContentSize()
 
     ) {
         Column(
@@ -440,13 +441,18 @@ fun TranslationItem(
                         tint = Color.White
                     )
                 }
-                result.details?.let {
+                result.detailText?.let { detail ->
+                    var expandDetail by remember {
+                        mutableStateOf(false)
+                    }
                     Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                         ExpandMoreButton {
-
+                            expandDetail = !expandDetail
+                        }
+                        if(expandDetail){
+                            MarkdownText(markdown = detail)
                         }
                     }
-
                 }
             }
         }

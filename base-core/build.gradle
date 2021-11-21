@@ -34,12 +34,17 @@ android {
 }
 
 dependencies {
-    //androidx.core
+    // androidx.core
     // api 'androidx.core:core-ktx:1.6.0'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"
 
-    //OkHttp
+    // OkHttp
     api "com.squareup.okhttp3:okhttp:4.9.1"
+
+    // 网络请求
+    def retrofit_version = "2.9.0"
+    api "com.squareup.retrofit2:retrofit:$retrofit_version"
+    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     //Gson
     api 'com.google.code.gson:gson:2.8.8'

@@ -29,4 +29,5 @@ object Consts {
 
     const val KEY_SOURCE_LANGUAGE = "sourceLanguage"
     const val KEY_TARGET_LANGUAGE = "targetLanguage"
+    const val KEY_APP_CHANNEL = "app_channel"
 }
