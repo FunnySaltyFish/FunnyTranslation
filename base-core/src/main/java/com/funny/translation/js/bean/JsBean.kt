@@ -20,7 +20,8 @@ data class JsBean(
     var description : String = "",
     var enabled : Int = 1,
     var minSupportVersion : Int = 2,
-    var maxSupportVersion : Int = 2,
+    var maxSupportVersion : Int = 999, // 自 version 4 起弃用
+    var targetSupportVersion : Int = 4,
     var isOffline : Boolean = false,
     var debugMode : Boolean = true,
     var supportLanguages: List<Language> = arrayListOf()
@@ -48,8 +49,6 @@ data class JsBean(
         result = 31 * result + fileName.hashCode()
         return result
     }
-
-
 }
 
 class LanguageListConverter{

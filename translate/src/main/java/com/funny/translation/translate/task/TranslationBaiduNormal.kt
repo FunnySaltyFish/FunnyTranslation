@@ -1,5 +1,6 @@
 package com.funny.translation.translate.task
 
+import android.util.Log
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
@@ -17,12 +18,13 @@ class TranslationBaiduNormal :
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
-        //Log.i(TAG,String.format("正在使用百度翻译！用的appid是%s",Consts.BAIDU_APP_ID));
+        Log.i(TAG,String.format("正在使用百度翻译！用的appid是%s",Consts.BAIDU_APP_ID));
         val api = BaiduTransApi.getBaiduTransApi(Consts.BAIDU_APP_ID, Consts.BAIDU_SECURITY_KEY)
         val from = languageMapping[sourceLanguage]
         val to = languageMapping[targetLanguage]
-        //Log.i(TAG,"baidu api获取到的基本result是"+transResult);
-        return api.getTransResult(sourceString, from!!, to!!)
+        val transResult = api.getTransResult(sourceString, from!!, to!!)
+        Log.i(TAG,"baidu api获取到的基本result是"+transResult);
+        return transResult
     }
 
     @Throws(TranslationException::class)

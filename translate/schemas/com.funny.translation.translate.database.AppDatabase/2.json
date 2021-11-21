@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "cd28864a7538ea636a84a0073b7568e6",
+    "identityHash": "cecb691421661b6f525dee571e4cd2b1",
     "entities": [
       {
         "tableName": "table_js",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fileName` TEXT NOT NULL, `code` TEXT NOT NULL, `author` TEXT NOT NULL, `version` INTEGER NOT NULL, `description` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `minSupportVersion` INTEGER NOT NULL, `maxSupportVersion` INTEGER NOT NULL, `isOffline` INTEGER NOT NULL, `debugMode` INTEGER NOT NULL, `supportLanguages` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fileName` TEXT NOT NULL, `code` TEXT NOT NULL, `author` TEXT NOT NULL, `version` INTEGER NOT NULL, `description` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `minSupportVersion` INTEGER NOT NULL, `maxSupportVersion` INTEGER NOT NULL, `targetSupportVersion` INTEGER NOT NULL, `isOffline` INTEGER NOT NULL, `debugMode` INTEGER NOT NULL, `supportLanguages` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -63,6 +63,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "targetSupportVersion",
+            "columnName": "targetSupportVersion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "isOffline",
             "columnName": "isOffline",
             "affinity": "INTEGER",
@@ -94,7 +100,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cd28864a7538ea636a84a0073b7568e6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cecb691421661b6f525dee571e4cd2b1')"
     ]
   }
 }

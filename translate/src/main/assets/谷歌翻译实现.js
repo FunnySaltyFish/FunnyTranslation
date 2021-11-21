@@ -6,9 +6,11 @@ let FunnyJS = {
     // 插件描述。如果该描述是Markdown类型，请在开头添加：[Markdown]
     "description":"在谷歌翻译暂时无法使用时提供谷歌翻译能力。",
     // 插件版本。插件的更新依赖于此
-    "version":2,
+    "version":3,
     // 最低支持的插件引擎版本
-    "minSupportVersion":3,
+    "minSupportVersion":4,
+    // 适合的插件引擎版本
+    "targetVersion":4,
     // 最高支持的插件引擎版本
     "maxSupportVersion":999,
     // 插件名称

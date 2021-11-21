@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdkVersion Versions.minSdkVersion
-        targetSdkVersion 30
+        targetSdkVersion Versions.targetSdkVersion
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -42,19 +42,19 @@ android {
 
 dependencies {
     //ktx
-    implementation("androidx.activity:activity-ktx:1.3.1")
+//    implementation("androidx.activity:activity-ktx:$Versions.ktxCoreVersion")
 
     //app
-    implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
-    implementation "com.google.android.material:material:${Versions.materialVersion}"
+//    implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
+//    implementation "com.google.android.material:material:${Versions.materialVersion}"
 
     def compose_version = Versions.composeVersion
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation "androidx.navigation:navigation-compose:2.4.0-alpha06"
-    implementation 'androidx.activity:activity-compose:1.3.1'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
+    implementation "androidx.navigation:navigation-compose:2.4.0-beta02"
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     implementation "com.github.FunnySaltyFish:CMaterialColors:1.0.21"

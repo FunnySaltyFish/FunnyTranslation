@@ -40,4 +40,7 @@
     <string name="nav_thanks">致谢</string>
     <string name="thanks">致谢</string>
     <string name="join_sponsor">成为赞助者</string>
+    <string name="loading_error">加载错误~</string>
+
+    <string name="dialog_new_size">新版本大小：%s</string>
 </resources>

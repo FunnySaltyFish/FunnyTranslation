@@ -91,10 +91,11 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                     description = funnyJS["description"] as String
                     fileName = funnyJS["name"] as String
                     version = (funnyJS["version"] as Double).toInt()
-                    minSupportVersion = (funnyJS["minSupportVersion"] as Double).toInt()
-                    maxSupportVersion = (funnyJS["maxSupportVersion"] as Double).toInt()
-                    debugMode = funnyJS["debugMode"] as Boolean
-                    this.isOffline = funnyJS["isOffline"] as Boolean
+                    minSupportVersion = getFunnyOrDefault("minSupportVersion", 2)
+                    maxSupportVersion = getFunnyOrDefault("maxSupportVersion", 9999)
+                    targetSupportVersion = getFunnyOrDefault("targetSupportVersion", JsConfig.JS_ENGINE_VERSION)
+                    debugMode = getFunnyOrDefault("debugMode", false)
+                    this.isOffline = getFunnyOrDefault("isOffline", false)
                     supportLanguages = getFunnyOrDefault("supportLanguage", allLanguages)
                     //Debug.log(funnyJS.toString())
                 }
@@ -118,7 +119,7 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
         }
     }
 
-    private fun<T> getFunnyOrDefault(key : String , default : T) : T{
+    private fun <T> getFunnyOrDefault(key : String , default : T) : T{
         return try{
             (funnyJS[key]?:default) as T
         }catch (e : Exception){

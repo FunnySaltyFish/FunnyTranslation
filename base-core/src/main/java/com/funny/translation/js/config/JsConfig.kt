@@ -16,10 +16,8 @@ class JsConfig {
         val INVOCABLE
             get() = SCRIPT_ENGINE as Invocable
 
-        const val JS_ENGINE_KIND = 9999.toShort()
-
         val DEBUG_DIVIDER = "=" * 18
-        const val JS_ENGINE_VERSION = 3
+        const val JS_ENGINE_VERSION = 4
     }
 }
 
