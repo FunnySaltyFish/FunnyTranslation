@@ -13,10 +13,11 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
-import java.util.*
-import kotlin.collections.ArrayList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
@@ -117,11 +118,13 @@ class MainViewModel : ViewModel() {
             createFlow().buffer().collect { task ->
                 try {
                     task.result.targetLanguage = targetLanguage.value!!
-                    withContext(Dispatchers.IO){
+                    withContext(Dispatchers.IO) {
                         task.translate(translateMode.value!!)
                     }
-                    Log.d(TAG, "translate : ${progress.value} ${task.result}")
+
                     updateTranslateResult(task.result)
+                    Log.d(TAG, "translate : ${progress.value} ${task.result}")
+
                 } catch (e: TranslationException) {
                     e.printStackTrace()
                     with(task.result) {

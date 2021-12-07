@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -44,15 +45,18 @@ fun ComposeCodeRunner(
             }
         ) }
     ) {
-        CodeRunnerText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(8.dp)
-                .verticalScroll(verticalScrollState),
-            viewModel = viewModel,
-            activityCodeViewModel = activityCodeViewModel
-        )
+        SelectionContainer {
+            CodeRunnerText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(8.dp)
+                    .verticalScroll(verticalScrollState),
+                viewModel = viewModel,
+                activityCodeViewModel = activityCodeViewModel
+            )
+        }
+
     }
 }
 

@@ -10,16 +10,24 @@
     <string name="layout_tv_replace">替换</string>
     <string name="layout_tv_replaceAll">全部替换</string>
     <string name="code_run">运行结果</string>
-    <string name="change_editor_theme">编辑器主题</string>
-    <string name="editor_theme_darcula">Darcula</string>
-    <string name="editor_theme_eclipse">Eclipse</string>
-    <string name="editor_theme_github">Github</string>
-    <string name="editor_theme_notepadxx">Notepad++</string>
-    <string name="editor_theme_vs2019">VS2019</string>
+    <string name="change_editor_theme">更改主题</string>
+    <string name="editor_theme_darcula" translatable="false">Darcula</string>
+    <string name="editor_theme_eclipse" translatable="false">Eclipse</string>
+    <string name="editor_theme_github" translatable="false">Github</string>
+    <string name="editor_theme_notepadxx" translatable="false">Notepad++</string>
+    <string name="editor_theme_vs2019" translatable="false">VS2019</string>
     <string name="open_file">打开文件</string>
     <string name="undo">撤销</string>
     <string name="redo">重做</string>
     <string name="set_debug_arguments">设置参数</string>
     <string name="open_plugin_document">查看教程</string>
     <string name="format_code">格式化</string>
+    <string name="change_debug_args">设置参数</string>
+    <string name="trans_text">翻译文本</string>
+    <string name="source_language">源语言</string>
+    <string name="target_language">目标语言</string>
+    <string name="close">关闭</string>
+    <string name="export_plugin">导出为插件</string>
+    <string name="export_plugin_error">解析插件时出错，请确保您的插件可以正常执行！</string>
+    <string name="export_plugin_success">导出成功！</string>
 </resources>

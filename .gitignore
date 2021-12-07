@@ -9,9 +9,9 @@ build/*
 .externalNativeBuild
 .cxx
 /.git
-/translate/src/main/assets/secure_data.properties
 
 signing.properties
+translate/src/main/assets/secure_data.properties
 log.txt
 english_words.txt
 google_support.txt

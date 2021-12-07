@@ -11,7 +11,7 @@
 - 支持插件体系，强可拓展性
 - MaterialYou Design ，适配Android 12
 
-您可以在[酷安](https://www.coolapk.com/apk/com.funny.translation)或此仓库下载应用体验
+您可以在 [酷安](https://www.coolapk.com/apk/com.funny.translation) 或 [此仓库](/translate/release/translate-release.apk) 下载应用体验
 
 
 
@@ -27,9 +27,11 @@
 
 ### 参与贡献
 
-项目仍处于建设阶段，十分欢迎PR，有建议可在[酷安](https://www.coolapk.com/apk/com.funny.translation)评论区或issue提出  
+项目仍处于建设阶段，十分欢迎PR，有建议可在 [酷安](https://www.coolapk.com/apk/com.funny.translation) 评论区或issue提出  
 
-您可以在[爱发电](https://afdian.net/@funnysaltyfish?tab=home)支持本项目，您的任何发电记录都将永久记录在应用中！
+您可以在 [爱发电](https://afdian.net/@funnysaltyfish?tab=home) 支持本项目，您的任何发电记录都将永久记录在应用中！
+
+如要参与插件开发，请参考[此链接](https://www.yuque.com/funnysaltyfish/vzmuud/)
 
 为便于您参与开发，下面简单介绍各模块功能
 

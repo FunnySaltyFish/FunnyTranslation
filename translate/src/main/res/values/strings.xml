@@ -43,4 +43,8 @@
     <string name="loading_error">加载错误~</string>
 
     <string name="dialog_new_size">新版本大小：%s</string>
+    <string name="install_plugin">安装</string>
+    <string name="update_plugin">更新</string>
+    <string name="uninstall_plugin">卸载</string>
+    <string name="online_plugin">在线插件</string>
 </resources>

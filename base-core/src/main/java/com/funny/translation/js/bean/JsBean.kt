@@ -6,6 +6,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.funny.translation.trans.Language
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
 @Entity(tableName = "table_js")
@@ -27,7 +28,7 @@ data class JsBean(
     var supportLanguages: List<Language> = arrayListOf()
 ){
     fun toSQL() = """
-        insert into table_js($id,$fileName,$code,$author,$version,$description,$enabled,
+        insert into table_js($fileName,$code,$author,$version,$description,$enabled,
         $minSupportVersion,$maxSupportVersion,$isOffline,$debugMode)
         )
     """.trimIndent()
@@ -45,19 +46,24 @@ data class JsBean(
     }
 
     override fun hashCode(): Int {
-        var result = id
-        result = 31 * result + fileName.hashCode()
+        var result = fileName.hashCode()
+        result = 31 * result + code.hashCode()
+        result = 31 * result + version
         return result
+    }
+
+    companion object {
+        val GSON: Gson = GsonBuilder().setPrettyPrinting().create()
     }
 }
 
 class LanguageListConverter{
     @TypeConverter
-    fun languagesToJson(languages : List<Language>) : String = Gson().toJson(languages)
+    fun languagesToJson(languages : List<Language>) : String = JsBean.GSON.toJson(languages)
 
     @TypeConverter
     fun jsonToLanguages(json : String) : List<Language> {
         val typeToken = object : TypeToken<List<Language>>(){}.type
-        return Gson().fromJson(json, typeToken)
+        return JsBean.GSON.fromJson(json, typeToken)
     }
 }

@@ -25,13 +25,5 @@
         </activity>
         <activity android:name=".WebViewActivity" android:theme="@style/AppTheme" android:exported="false"/>
 
-        <receiver android:name="com.open.hule.library.downloadmanager.DownloadReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
-            </intent-filter>
-        </receiver>
-
     </application>
 </manifest>

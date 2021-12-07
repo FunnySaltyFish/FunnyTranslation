@@ -44,6 +44,8 @@ class ActivityCodeViewModel(application: Application) : BaseViewModel(applicatio
     val sourceLanguage = MutableLiveData(Language.CHINESE)
     val targetLanguage = MutableLiveData(Language.ENGLISH)
 
+    var exportText = ""
+
     val allLanguageNames : List<String>
         get() {
             return Language.values().map { it.name }
@@ -52,5 +54,6 @@ class ActivityCodeViewModel(application: Application) : BaseViewModel(applicatio
     fun updateCode(str : String){
         codeState.value = Content(str)
     }
+
 
 }

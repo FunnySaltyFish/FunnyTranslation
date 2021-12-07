@@ -1,17 +1,28 @@
 package com.funny.translation.translate.ui.plugin
 
-import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.helper.coroutine.Coroutine.Companion.async
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
 import com.funny.translation.translate.database.appDB
+import com.funny.translation.translate.network.TransNetwork
+import com.funny.translation.translate.network.service.PluginService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class PluginViewModel : ViewModel() {
+    companion object {
+        const val TAG = "PluginVM"
+    }
+
+    val pluginService : PluginService
+        get() = TransNetwork.pluginService
+
     val plugins : Flow<List<JsBean>>
         get() {
             return appDB.jsDao.getAllJs()
@@ -19,14 +30,39 @@ class PluginViewModel : ViewModel() {
 
     fun deletePlugin(jsBean: JsBean){
         viewModelScope.launch(Dispatchers.IO) {
-            appDB.jsDao.deleteJs(jsBean)
+            appDB.jsDao.deleteJsByName(jsBean.fileName)
         }
     }
 
     fun updatePlugin(jsBean: JsBean){
         viewModelScope.launch(Dispatchers.IO) {
+            val origin = appDB.jsDao.queryJsByName(jsBean.fileName)
+            if(origin != null){
+                jsBean.id = origin.id
+            }
             appDB.jsDao.updateJs(jsBean)
         }
+    }
+
+    fun installOnlinePlugin(jsBean: JsBean){
+        viewModelScope.launch(Dispatchers.IO) {
+            appDB.jsDao.insertJs(jsBean)
+        }
+    }
+
+    /**
+     * 根据jsBean判断这个在线插件是否已经被安装/需要升级
+     * @param jsBean JsBean
+     */
+     fun checkPluginState(jsBean: JsBean) : MutableState<OnlinePluginState>{
+        val state = mutableStateOf(OnlinePluginState.NotInstalled)
+        async {
+//            Log.d(TAG, "checkPluginState: 准备检查js")
+            appDB.jsDao.queryJsByName(jsBean.fileName)
+        }.onSuccess { data ->
+            state.value = if(data!!.version < jsBean.version) OnlinePluginState.OutDated else OnlinePluginState.Installed
+        }
+        return state
     }
 
     fun importPlugin(
@@ -53,6 +89,5 @@ class PluginViewModel : ViewModel() {
                 }
             )
         }
-
     }
 }

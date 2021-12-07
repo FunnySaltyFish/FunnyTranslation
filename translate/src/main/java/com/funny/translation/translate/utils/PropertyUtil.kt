@@ -6,6 +6,7 @@ import java.util.Properties
 object PropertyUtil {
     private val securityProps by lazy {
         Properties().apply {
+//            load(FunnyApplication.ctx.openFileInput("secure_data.properties"))
             load(FunnyApplication.ctx.assets.open("secure_data.properties"))
         }
     }
