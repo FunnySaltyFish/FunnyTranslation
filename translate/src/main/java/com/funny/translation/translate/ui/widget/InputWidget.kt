@@ -67,11 +67,9 @@ fun InputText(
                 Box(modifier = Modifier.align(Alignment.Bottom)) {
                     IconButton(onClick = {
                         updateText("")
-                        if(!focusRequester.captureFocus()){
-                            focusRequester.requestFocus()
-                            keyboard?.show()
-                            Log.d(TAG, "InputText: 手动展示软键盘")
-                        }
+                        focusRequester.requestFocus()
+                        keyboard?.show()
+                        Log.d(TAG, "InputText: 手动展示软键盘")
                     }) {
                         Icon(Icons.Default.Delete, stringResource(id = R.string.clear_content), tint = MaterialTheme.colors.onSurface)
                     }

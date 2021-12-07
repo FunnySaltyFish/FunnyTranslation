@@ -13,7 +13,12 @@
             android:exported="true"
             >
             <intent-filter>
-                <data android:host="code_editor" android:scheme="funny-trans"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="code_editor"
+                    android:scheme="funny-trans" />
             </intent-filter>
         </activity>
     </application>

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.funny.translation.BaseApplication
 import com.funny.translation.codeeditor.R
 import com.funny.translation.codeeditor.ui.Screen
 import com.funny.translation.codeeditor.ui.base.ComposeSpinner
@@ -33,16 +34,15 @@ import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readText
 import com.funny.translation.helper.writeText
+import com.funny.translation.js.JsEngine
+import com.funny.translation.js.bean.JsBean
 import com.funny.translation.trans.allLanguages
-import com.funny.translation.trans.findLanguageById
 import io.github.rosemoe.editor.interfaces.EditorEventListener
 import io.github.rosemoe.editor.langs.desc.JavaScriptDescription
 import io.github.rosemoe.editor.langs.universal.UniversalLanguage
 import io.github.rosemoe.editor.text.Content
 import io.github.rosemoe.editor.widget.CodeEditor
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun ComposeCodeEditor(
@@ -82,20 +82,15 @@ fun ComposeCodeEditor(
 //
 //        }
 
-    suspend fun saveFile(uri: Uri){
-            try {
-                withContext(Dispatchers.IO) {
-                    uri.writeText(
-                        context,
-                        activityViewModel.codeState.value.toString()
-                    )
-                }
-                activityViewModel.openFileUri = uri
-                viewModel.hasSaved = true
-                scaffoldState.snackbarHostState.showSnackbar("保存完成")
-            } catch (e: Exception) {
-                scaffoldState.snackbarHostState.showSnackbar("发生错误，保存失败！")
-            }
+    fun saveFile(uri: Uri) {
+        try {
+            uri.writeText(context, activityViewModel.codeState.value.toString())
+            activityViewModel.openFileUri = uri
+            viewModel.hasSaved = true
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar("保存完成") }
+        } catch (e: Exception) {
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar("发生错误，保存失败！") }
+        }
     }
 
     val fileCreatorLauncher = rememberLauncherForActivityResult(
@@ -103,24 +98,29 @@ fun ComposeCodeEditor(
     ) { uri ->
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.let {
-            scope.launch {
-                saveFile(it)
-            }
+            saveFile(it)
         }
     }
 
-    val sourceString   = activityViewModel.sourceString.observeAsState()
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument(),
+    ) { uri ->
+        Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
+        uri?.writeText(context, activityViewModel.exportText)
+    }
+
+    val sourceString = activityViewModel.sourceString.observeAsState()
     val sourceLanguage = activityViewModel.sourceLanguage.observeAsState()
     val targetLanguage = activityViewModel.targetLanguage.observeAsState()
 
-    fun finish(){
+    fun finish() {
         (context as ComponentActivity).finish()
     }
 
     BackHandler(enabled = navController.previousBackStackEntry == null) {
-        if(!viewModel.hasSaved){
+        if (!viewModel.hasSaved) {
             confirmLeave.value = true
-        }else{
+        } else {
             finish()
         }
     }
@@ -142,16 +142,13 @@ fun ComposeCodeEditor(
                 saveAction = {
                     //permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     //如果当前打开的是默认文件
-                    if(activityViewModel.openFileUri.encodedPath.isNullOrBlank()){
+                    if (activityViewModel.openFileUri.encodedPath.isNullOrBlank()) {
                         fileCreatorLauncher.launch("new_plugin_${System.currentTimeMillis()}.js")
                     } else { //已经打开了文件
-                        if(!viewModel.hasSaved){
-                            scope.launch {
-                                saveFile(uri = activityViewModel.openFileUri)
-                            }
+                        if (!viewModel.hasSaved) {
+                            saveFile(uri = activityViewModel.openFileUri)
                         }
                     }
-
                 },
                 undoAction = {
                     viewModel.shouldUndo.value = true
@@ -175,6 +172,28 @@ fun ComposeCodeEditor(
                 openPluginDocumentAction = {
                     context.openUrl("https://www.yuque.com/funnysaltyfish/vzmuud")
                 },
+                exportAction = {
+                    val jsBean = JsBean()
+                    jsBean.code = activityViewModel.codeState.value.toString()
+                    val jsEngine = JsEngine(jsBean)
+                    scope.launch {
+                        jsEngine.loadBasicConfigurations(
+                            onSuccess = {
+                                activityViewModel.exportText = JsBean.GSON.toJson(jsBean);
+                                exportLauncher.launch("${jsBean.fileName}.json")
+                                scope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_success))
+                                }
+                            },
+                            onError = {
+                                scope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_error))
+                                }
+                            }
+                        )
+
+                    }
+                }
             )
         },
         modifier = Modifier.fillMaxWidth(),
@@ -199,17 +218,19 @@ fun ComposeCodeEditor(
                 }
             )
 
-            SimpleDialog(openDialog = confirmLeave, title ="提示",message = "当前文件尚未保存，您确定要离开吗？",confirmButtonAction = {
-                finish()
-            })
+            SimpleDialog(
+                openDialog = confirmLeave,
+                title = "提示",
+                message = "当前文件尚未保存，您确定要离开吗？",
+                confirmButtonAction = {
+                    finish()
+                })
 
-            if(settingArgumentsDialog.value){
+            if (settingArgumentsDialog.value) {
                 AlertDialog(
-                    onDismissRequest = {  },
+                    onDismissRequest = { },
                     title = {
-                        Text(
-                            text = "标题"
-                        )
+                        Text(text = stringResource(id = R.string.change_debug_args))
                     },
                     text = {
                         Column {
@@ -219,8 +240,8 @@ fun ComposeCodeEditor(
                                     activityViewModel.sourceString.value = value
                                     //JsConfig.SCRIPT_ENGINE.put("sourceString",value)
                                 },
-                                label = { Text("翻译文本") },
-                                placeholder = { Text( sourceString.value!!) }
+                                label = { Text(stringResource(R.string.trans_text)) },
+                                placeholder = { Text(sourceString.value!!) }
                             )
                             Spacer(Modifier.height(8.dp))
                             ComposeSpinner(
@@ -230,7 +251,7 @@ fun ComposeCodeEditor(
                                     activityViewModel.sourceLanguage.value = allLanguages[index]
                                     //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
                                 },
-                                label = "源语言"
+                                label = stringResource(R.string.source_language)
                             )
                             Spacer(Modifier.height(8.dp))
                             ComposeSpinner(
@@ -240,14 +261,13 @@ fun ComposeCodeEditor(
                                     activityViewModel.targetLanguage.value = allLanguages[index]
                                     //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
                                 },
-                                label = "目标语言"
+                                label = stringResource(R.string.target_language)
                             )
                         }
                     },
                     confirmButton = {
                         Button(onClick = { settingArgumentsDialog.value = false }) {
-                            Text(text = "关闭")
-
+                            Text(text = stringResource(R.string.close))
                         }
                     }
                 )
@@ -265,9 +285,10 @@ fun CodeEditorTopBar(
     undoAction: () -> Unit,
     redoAction: () -> Unit,
     schemeAction: (EditorSchemes) -> Unit,
-    setArgumentsAction : () -> Unit,
+    setArgumentsAction: () -> Unit,
     openFileAction: () -> Unit,
-    openPluginDocumentAction : ()->Unit
+    openPluginDocumentAction: () -> Unit,
+    exportAction: () -> Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -310,9 +331,18 @@ fun CodeEditorTopBar(
                 }) {
                     Text(text = stringResource(id = R.string.open_file))
                 }
-                ExpandableDropdownItem("更改主题", requestDismiss = {
-                    //expanded = false}
+                DropdownMenuItem(onClick = {
+                    exportAction()
+                    expanded = false
                 }) {
+                    Text(stringResource(id = R.string.export_plugin))
+
+                }
+                ExpandableDropdownItem(
+                    stringResource(id = R.string.change_editor_theme),
+                    requestDismiss = {
+                        //expanded = false}
+                    }) {
                     for (editorScheme in EditorSchemes.values()) {
                         DropdownMenuItem(onClick = {
                             schemeAction(editorScheme)
@@ -368,7 +398,7 @@ fun Editor(
     }
     val codeText = activityViewModel.codeState
 
-    fun updateEditorText(){
+    fun updateEditorText() {
         editor.text.let {
             codeText.value = it
         }
@@ -441,11 +471,11 @@ fun Editor(
                     it.setText(codeText.value)
                     viewModel.textChanged.value = false
                 }
-                if(shouldRedo.value == true){
+                if (shouldRedo.value == true) {
                     it.redo()
                     viewModel.shouldRedo.value = false
                 }
-                if(shouldUndo.value == true){
+                if (shouldUndo.value == true) {
                     it.undo()
                     viewModel.shouldUndo.value = false
                 }

@@ -9,8 +9,8 @@ let FunnyJS = {
     "version":1,
     // 最低支持的插件引擎版本
     "minSupportVersion":2,
-    // 最高支持的插件引擎版本
-    "maxSupportVersion":999,
+    // 适合的插件引擎版本
+    "targetVersion":4,
     // 插件名称
     "name":"示例插件",
     // 是否开启Debug模式

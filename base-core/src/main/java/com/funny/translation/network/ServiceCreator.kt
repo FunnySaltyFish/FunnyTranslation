@@ -23,7 +23,7 @@ import kotlin.collections.HashSet
 
 object ServiceCreator {
 
-    private const val BASE_URL = "http://api.funnysaltyfish.fun/trans/v1/"
+    private const val BASE_URL = "https://api.funnysaltyfish.fun/trans/v1/"
 
     /**
      * 自定义，适配特殊数据类型

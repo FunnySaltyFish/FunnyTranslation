@@ -32,7 +32,7 @@ public final class Versions {
     public static final String materialVersion = "1.4.0";
     public final static String navigationVersion = "2.3.5";
     public static final String recyclerViewVersion = "1.2.1";
-    public static final String roomVersion = "2.3.0";
+    public static final String roomVersion = "2.4.0-beta02";
 
     public static final String kotlinVersion = "1.5.31";
     public static final String composeVersion = "1.0.5";

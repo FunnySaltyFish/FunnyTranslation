@@ -24,13 +24,14 @@ fun ExpandableDropdownItem(
         requestDismiss()
     }) {
         Text(text = text)
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            dropDownItems()
+        }
     }
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        dropDownItems()
-    }
+
 }
 
 @Composable

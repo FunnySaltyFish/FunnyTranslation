@@ -8,10 +8,13 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +38,8 @@ import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -71,9 +76,14 @@ fun AppNavigation(
         }
     }
 
+    val systemUiController = rememberSystemUiController()
+    //分开设置，考虑到背景颜色，我们需要动态更新图标颜色嘛
+    val darkIcon = !MaterialTheme.colors.isLight
+    systemUiController.setStatusBarColor(Color.Transparent, darkIcons = darkIcon)
+    systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = darkIcon)
+
+
     ProvideWindowInsets {
-//        rememberSystemUiController().setStatusBarColor(
-//            Color.Transparent, darkIcons = MaterialTheme.colors.isLight)
 //        Spacer(modifier = Modifier.statusBarsHeight().fillMaxWidth())
         TransTheme {
             Scaffold(
@@ -111,7 +121,8 @@ fun AppNavigation(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = TranslateScreen.MainScreen.route
+                    startDestination = TranslateScreen.MainScreen.route,
+                    modifier = Modifier.statusBarsPadding()
                 ) {
                     composable(TranslateScreen.MainScreen.route) {
                         MainScreen { str ->

@@ -101,26 +101,6 @@ fun MainScreen(
         vm.allEngines = temp
     }
 
-//    val lifecycleEventObserver = LifecycleEventObserver { _, event ->
-//        when (event) {
-//            Lifecycle.Event.ON_DESTROY -> {
-//                runBlocking {
-//                    Log.d(TAG, "MainScreen: 被销毁状态")
-//                }
-//            }
-//            else -> Unit
-//        }
-//    }
-//
-//    val lifecycle = LocalLifecycleOwner.current.lifecycle
-//    DisposableEffect(key1 = true) {
-//        lifecycle.addObserver(lifecycleEventObserver)
-//        onDispose {
-//            vm.saveData()
-//            lifecycle.removeObserver(lifecycleEventObserver)
-//        }
-//    }
-
     Column(
         modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 12.dp)

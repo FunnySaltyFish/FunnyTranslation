@@ -11,7 +11,7 @@ let FunnyJS = {
     "minSupportVersion":4,
     // 适合的插件引擎版本
     "targetVersion":4,
-    // 最高支持的插件引擎版本
+    // 最高支持的插件引擎版本(已弃用)
     "maxSupportVersion":999,
     // 插件名称
     "name":"谷歌翻译[补]",

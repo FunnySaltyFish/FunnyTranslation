@@ -16,6 +16,9 @@ interface JsDao {
     @Query("select count(*) from table_js")
     fun getJsCount() : Int
 
+    @Query("select * from table_js where fileName=(:name)")
+    fun queryJsByName(name : String) : JsBean?
+
     @Insert
     fun insertJs(jsBean: JsBean)
 
@@ -24,6 +27,9 @@ interface JsDao {
 
     @Delete
     fun deleteJs(jsBean: JsBean)
+
+    @Query("delete from table_js where fileName = (:fileName)")
+    fun deleteJsByName(fileName: String)
 
     @Update
     fun updateJs(jsBean: JsBean)

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.funny.translation.codeeditor.ui.editor.ComposeCodeEditor
 import com.funny.translation.codeeditor.ui.runner.ComposeCodeRunner
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
@@ -26,9 +27,11 @@ fun AppNavigation() {
         navController = navController,
         startDestination = Screen.ScreenCodeEditor.route
     ){
-        composable(Screen.ScreenCodeEditor.route){
+        composable(
+            Screen.ScreenCodeEditor.route,
+            deepLinks = listOf(navDeepLink { uriPattern = "funny-trans://code_editor" })
+        ){
             ComposeCodeEditor(navController = navController,activityViewModel = activityCodeViewModel)
-            deepLink("funny-trans://code_runner")
         }
         composable(Screen.ScreenCodeRunner.route){
             ComposeCodeRunner(navController = navController,activityCodeViewModel = activityCodeViewModel)

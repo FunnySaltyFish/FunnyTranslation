@@ -39,6 +39,15 @@ fun DefaultFailure(error: Throwable, retry : ()->Unit) {
     Text(text = stringResource(id = R.string.loading_error), modifier = Modifier.clickable(onClick = retry))
 }
 
+/**
+ * 通用加载微件
+ * @author [FunnySaltyFish](https://blog.funnysaltyfish.fun/)
+ * @param modifier Modifier 整个微件包围在Box中，此处修饰此Box
+ * @param loader  加载函数，返回值为正常加载出的结果
+ * @param loading 加载中显示的页面，默认为转圈圈
+ * @param failure 加载失败显示的页面，默认为文本，点击可以重新加载（retry即为重新加载的函数）
+ * @param success 加载成功后的页面，参数[T]即为返回的结果
+ */
 @Composable
 fun <T> LoadingContent(
     modifier: Modifier = Modifier,
@@ -47,7 +56,7 @@ fun <T> LoadingContent(
     failure : @Composable (error : Throwable, retry : ()->Unit)->Unit = { error, retry->
         DefaultFailure(error, retry)
     },
-    success : @Composable (data : T?)->Unit
+    success : @Composable (data : T)->Unit
 ) {
     var key by remember {
         mutableStateOf(false)
@@ -57,6 +66,7 @@ fun <T> LoadingContent(
             Log.d(TAG, "LoadingContent: loading...")
             LoadingState.Success(loader())
         }catch (e: Exception){
+            e.printStackTrace()
             LoadingState.Failure(e)
         }
     }

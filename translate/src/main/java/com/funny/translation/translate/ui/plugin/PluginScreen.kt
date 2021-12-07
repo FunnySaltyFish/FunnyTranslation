@@ -32,10 +32,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.compose.rememberNavController
-import com.funny.translation.codeeditor.CodeEditorActivity
 import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.R
+import com.funny.translation.translate.TransActivity
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
@@ -43,14 +43,14 @@ private const val TAG = "PluginScreen"
 
 @Composable
 fun PluginScreen(
-    showSnackbar : (String)->Unit,
+    showSnackbar: (String) -> Unit,
     navController: NavController
 ) {
-    val vm : PluginViewModel = viewModel()
+    val vm: PluginViewModel = viewModel()
     val plugins by vm.plugins.collectAsState(initial = arrayListOf())
 
-    var needToDeletePlugin : JsBean? = null
-    val showDeleteDialog =  remember {
+    var needToDeletePlugin: JsBean? = null
+    val showDeleteDialog = remember {
         mutableStateOf(false)
     }
 
@@ -66,61 +66,60 @@ fun PluginScreen(
         if (it == null) return@rememberLauncherForActivityResult
         try {
             val text = it.readText(context)
-            vm.importPlugin(text, successCall = {
-                showSnackbar(it)
-            }, failureCall = {
-                showSnackbar(it)
+            vm.importPlugin(text, successCall = { str ->
+                showSnackbar(str)
+            }, failureCall = { str ->
+                showSnackbar(str)
             })
         } catch (e: Exception) {
             showSnackbar("加载插件出错!")
         }
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(24.dp)){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = stringResource(id = R.string.manage_plugins), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
+                .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.manage_plugins),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
             IconButton(onClick = { showAddPluginMenu = true }) {
-                Icon(Icons.Default.AddCircle, tint = MaterialTheme.colors.onBackground, contentDescription = "Add plugins")
-                DropdownMenu(expanded = showAddPluginMenu, onDismissRequest = { showAddPluginMenu = false }) {
+                Icon(
+                    Icons.Default.AddCircle,
+                    tint = MaterialTheme.colors.onBackground,
+                    contentDescription = "Add plugins"
+                )
+                DropdownMenu(
+                    expanded = showAddPluginMenu,
+                    onDismissRequest = { showAddPluginMenu = false }) {
                     DropdownMenuItem(onClick = {
-                        showAddPluginMenu=false
+                        showAddPluginMenu = false
                         importPluginLauncher.launch(arrayOf("application/javascript"))
                     }) {
                         Text(stringResource(id = R.string.import_plugin))
                     }
-//                    DropdownMenuItem(onClick = {
-//                        showAddPluginMenu=false
-////                        val request = NavDeepLinkRequest.Builder
-////                            .fromUri("funny-trans://code_editor".toUri())
-////                            .build()
-////                        navController.navigate(request)
-//
-//                        val deepLinkIntent = Intent(
-//                            Intent.ACTION_VIEW,
-//                            "funny-trans://code_editor".toUri(),
-//                            context,
-//                            CodeEditorActivity::class.java
-//                        )
-//
-//                        val deepLinkPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-//                            addNextIntentWithParentStack(deepLinkIntent)
-//                            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
-//                        }
-//
-//                        deepLinkPendingIntent?.send()
-//                    }) {
-//                        Text(stringResource(id = R.string.create_plugin))
-//                    }
+                    DropdownMenuItem(onClick = {
+                        showAddPluginMenu = false
+                        val clazz =
+                            Class.forName("com.funny.translation.codeeditor.CodeEditorActivity")
+                        val intent = Intent(context, clazz)
+                        context.startActivity(intent)
+                    }) {
+                        Text(stringResource(id = R.string.create_plugin))
+                    }
                 }
             }
 
         }
-//        Spacer(modifier = Modifier.height(16.dp))
+
         PluginList(plugins = plugins, deletePlugin = {
             showDeleteDialog.value = true
             needToDeletePlugin = it
@@ -128,6 +127,14 @@ fun PluginScreen(
             it.enabled = 1 - it.enabled
             vm.updatePlugin(it)
         })
+
+        Text(
+            text = stringResource(id = R.string.online_plugin),
+            fontSize = 32.sp,
+            fontWeight = FontWeight.ExtraBold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        OnlinePluginList()
         //PreviewPluginList()
     }
 
@@ -150,7 +157,8 @@ fun PluginList(
 ) {
     LazyColumn(
         verticalArrangement = spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+        contentPadding = PaddingValues(vertical = 16.dp),
+        modifier = Modifier.heightIn(0.dp, 360.dp)
     ) {
         itemsIndexed(plugins) { index: Int, item: JsBean ->
             PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
@@ -209,6 +217,7 @@ fun PluginItem(
         }
     }
 }
+
 
 private val JsBean.markdown
     get() = """
