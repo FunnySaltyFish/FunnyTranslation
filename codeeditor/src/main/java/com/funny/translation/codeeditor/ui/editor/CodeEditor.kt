@@ -60,7 +60,7 @@ fun ComposeCodeEditor(
     val filePickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) {
-        if (it == null) return@rememberLauncherForActivityResult
+        it ?: return@rememberLauncherForActivityResult
         try {
             val text = it.readText(context)
             activityViewModel.codeState.value = Content(text)
@@ -85,10 +85,10 @@ fun ComposeCodeEditor(
     fun saveFile(uri: Uri) {
         try {
             uri.writeText(context, activityViewModel.codeState.value.toString())
-            activityViewModel.openFileUri = uri
             viewModel.hasSaved = true
             scope.launch { scaffoldState.snackbarHostState.showSnackbar("保存完成") }
         } catch (e: Exception) {
+            e.printStackTrace()
             scope.launch { scaffoldState.snackbarHostState.showSnackbar("发生错误，保存失败！") }
         }
     }
@@ -98,6 +98,7 @@ fun ComposeCodeEditor(
     ) { uri ->
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.let {
+            activityViewModel.openFileUri = it
             saveFile(it)
         }
     }
@@ -207,8 +208,8 @@ fun ComposeCodeEditor(
 
             SimpleDialog(
                 openDialog = confirmOpenFile,
-                title = "提示",
-                message = "您确定要打开文件吗？当前操作尚未保存……",
+                title = stringResource(R.string.message_hint),
+                message = stringResource(R.string.message_open_while_not_saved),
                 confirmButtonAction = {
                     filePickerLauncher.launch(
                         arrayOf(
@@ -221,7 +222,7 @@ fun ComposeCodeEditor(
             SimpleDialog(
                 openDialog = confirmLeave,
                 title = "提示",
-                message = "当前文件尚未保存，您确定要离开吗？",
+                message = stringResource(R.string.message_leave_not_saved),
                 confirmButtonAction = {
                     finish()
                 })

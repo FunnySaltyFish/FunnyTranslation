@@ -14,14 +14,6 @@ abstract class BasicTranslationTask() :
         result.engineName = name
 
         try {
-            //TODO("某个语言不支持")
-//            if (engineName == Consts.ENGINE_BIGGER_TEXT && (StringUtil.extraChinese(sourceString))
-//            ) {
-//                throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)
-//            }
-            processedString = getProcessedString(sourceString, mode)
-            //Log.i(TAG,"获取到的processedString是"+processedString);
-            result.sourceString = processedString
             if (sourceLanguage == targetLanguage) { //如果目标语言和源语言相同，跳过翻译
                 result.setBasicResult(sourceString)
             } else {
@@ -37,21 +29,6 @@ abstract class BasicTranslationTask() :
                 it.sourceString = sourceString
             }
         }
-    }
-
-    @Throws(TranslationException::class)
-    private fun getProcessedString(str: String, mode: Int): String {
-        return str
-//        return when (mode) {
-//            Consts.MODE_EACH_TEXT -> {
-//                val chinese = StringUtil.extraChinese(str)
-//                if (!StringUtil.isValidContent(chinese)) {
-//                    throw TranslationException(Consts.ERROR_ONLY_CHINESE_SUPPORT)
-//                }
-//                StringUtil.insertJuhao(chinese)
-//            }
-//            else -> str
-//        }
     }
 
     private fun reFormatBasicText(translationResult: TranslationResult, mode: Int) {

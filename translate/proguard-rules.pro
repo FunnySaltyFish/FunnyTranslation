@@ -26,6 +26,7 @@
 -keep class org.mozilla.** {*;}
 -keep class com.funny.translation.js.** {*;}
 -keep class com.sun.script.javascript.** {*;}
+-keep class okhttp3.** {*;}
 
 #工具类
 -keep class com.funny.translation.network.OkHttpUtils {*;}

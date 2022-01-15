@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="clear_content">清空输入内容</string>
-    <string name="app_name">FunnyTranslation</string>
+    <string name="app_name">译站</string>
     <string name="exchange">语言互换</string>
     <string name="copy_content">复制结果</string>
     <string name="speak">朗读</string>

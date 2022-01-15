@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.plugin
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -20,8 +21,20 @@ class PluginViewModel : ViewModel() {
         const val TAG = "PluginVM"
     }
 
-    val pluginService : PluginService
+    private val pluginService : PluginService
         get() = TransNetwork.pluginService
+
+    private lateinit var  _onlinePlugins : List<JsBean>
+
+
+    suspend fun getOnlinePlugins(): List<JsBean> {
+        if(!this::_onlinePlugins.isInitialized){
+            Log.d(TAG, "getOnlinePlugins: init")
+            _onlinePlugins = pluginService.getOnlinePlugins()
+        }
+        Log.d(TAG, "getOnlinePlugins: called!")
+        return _onlinePlugins
+    }
 
     val plugins : Flow<List<JsBean>>
         get() {
@@ -44,12 +57,6 @@ class PluginViewModel : ViewModel() {
         }
     }
 
-    fun installOnlinePlugin(jsBean: JsBean){
-        viewModelScope.launch(Dispatchers.IO) {
-            appDB.jsDao.insertJs(jsBean)
-        }
-    }
-
     /**
      * 根据jsBean判断这个在线插件是否已经被安装/需要升级
      * @param jsBean JsBean
@@ -60,7 +67,9 @@ class PluginViewModel : ViewModel() {
 //            Log.d(TAG, "checkPluginState: 准备检查js")
             appDB.jsDao.queryJsByName(jsBean.fileName)
         }.onSuccess { data ->
-            state.value = if(data!!.version < jsBean.version) OnlinePluginState.OutDated else OnlinePluginState.Installed
+            if(data!=null){
+                state.value = if(data.version < jsBean.version) OnlinePluginState.OutDated else OnlinePluginState.Installed
+            }
         }
         return state
     }
@@ -76,18 +85,31 @@ class PluginViewModel : ViewModel() {
             jsEngine.loadBasicConfigurations(
                 {
                     // Log.d(TAG, "onActivityResult: min:${jsBean.minSupportVersion} max:${jsBean.maxSupportVersion}")
-                    if(jsBean.minSupportVersion <= JsConfig.JS_ENGINE_VERSION){
-                        appDB.jsDao.insertJs(jsBean)
-                        if(JsConfig.JS_ENGINE_VERSION > jsBean.targetSupportVersion){
-                            successCall("添加成功！[请注意，插件最佳版本与当前引擎版本有所差异，可能有兼容性问题]")
-                        }else successCall("添加成功！")
-                    }else{
-                        failureCall("插件版本与软件核心不兼容，请与开发者联系解决！")
-                    }
+                    installOrUpdatePlugin(jsBean, successCall, failureCall)
                 },{
                     failureCall("插件加载时出错！请联系插件开发者解决！")
                 }
             )
+        }
+    }
+
+    fun installOrUpdatePlugin(jsBean: JsBean, successCall: (String) -> Unit, failureCall: (String) -> Unit){
+        viewModelScope.launch(Dispatchers.IO) {
+            if(jsBean.minSupportVersion <= JsConfig.JS_ENGINE_VERSION){
+                if(appDB.jsDao.queryJsByName(jsBean.fileName)!=null){ //更新
+                    updatePlugin(jsBean)
+                    if(JsConfig.JS_ENGINE_VERSION != jsBean.targetSupportVersion){
+                        successCall("更新成功！[请注意，新插件最佳版本与当前引擎版本有所差异，可能有兼容性问题]")
+                    }else successCall("更新成功！")
+                }else{
+                    appDB.jsDao.insertJs(jsBean)
+                    if(JsConfig.JS_ENGINE_VERSION != jsBean.targetSupportVersion){
+                        successCall("添加成功！[请注意，插件最佳版本与当前引擎版本有所差异，可能有兼容性问题]")
+                    }else successCall("添加成功！")
+                }
+            }else{
+                failureCall("插件版本与引擎核心不兼容，请联系插件开发者解决！")
+            }
         }
     }
 }

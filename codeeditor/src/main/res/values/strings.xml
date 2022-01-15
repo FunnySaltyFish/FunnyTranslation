@@ -30,4 +30,7 @@
     <string name="export_plugin">导出为插件</string>
     <string name="export_plugin_error">解析插件时出错，请确保您的插件可以正常执行！</string>
     <string name="export_plugin_success">导出成功！</string>
+    <string name="message_open_while_not_saved">您确定要打开文件吗？当前操作尚未保存……</string>
+    <string name="message_hint">提示</string>
+    <string name="message_leave_not_saved">当前文件尚未保存，您确定要离开吗？</string>
 </resources>

@@ -191,9 +191,7 @@ class TransActivity : ComponentActivity() {
     lateinit var activityViewModel: ActivityViewModel
     lateinit var context : Context
 
-    @ExperimentalComposeUiApi
-    @ExperimentalMaterialApi
-    @ExperimentalAnimationApi
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Debug.addTarget(DefaultDebugTarget)

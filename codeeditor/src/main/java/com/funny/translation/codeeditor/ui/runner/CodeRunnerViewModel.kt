@@ -38,7 +38,7 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
                         jsTranslateTask.translate()
                     },
                     onError = {
-
+                        it.printStackTrace()
                     }
                 )
             }

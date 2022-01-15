@@ -1,24 +1,17 @@
 package com.funny.translation.translate
 
 import android.content.Context
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
-import com.azhon.appupdate.utils.ApkUtil
-import com.azhon.appupdate.utils.ApkUtil.*
-import com.funny.translation.helper.DataStoreUtils
+import com.funny.translation.helper.MMKVUtils.kv
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.utils.ApplicationUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
-
-import java.io.File
-import java.lang.Exception
 
 
 class ActivityViewModel : ViewModel() {
@@ -49,7 +42,7 @@ class ActivityViewModel : ViewModel() {
             val manager = DownloadManager.getInstance(context);
             withContext(Dispatchers.IO){
                 val versionCode = ApplicationUtil.getAppVersionCode(FunnyApplication.ctx)
-                val channel = DataStoreUtils.getSyncData(Consts.KEY_APP_CHANNEL, "stable")
+                val channel = kv.decodeString(Consts.KEY_APP_CHANNEL, "stable")!!
                 val updateInfo = TransNetwork.appUpdateService.getUpdateInfo(versionCode, channel)
                 Log.i(TAG, "checkUpdate: $updateInfo")
                 if (updateInfo.should_update){

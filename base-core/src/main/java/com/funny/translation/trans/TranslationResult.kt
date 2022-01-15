@@ -16,7 +16,7 @@ data class TranslationResult(
     var engineName: String = "",
     var basicResult: Translation = Translation(""),
     var sourceString: String = "",
-    val detailText : String? = null,
+    var detailText : String? = null,
     var targetLanguage: Language? = Language.AUTO
 ) {
     /**

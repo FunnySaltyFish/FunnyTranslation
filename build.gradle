@@ -20,6 +20,27 @@ buildscript {
     }
 }
 
+allprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            freeCompilerArgs += [
+                    "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                    "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                    "-Xuse-experimental=kotlinx.coroutines.InternalCoroutinesApi",
+                    "-Xuse-experimental=androidx.compose.animation.ExperimentalAnimationApi",
+                    "-Xuse-experimental=androidx.compose.ExperimentalComposeApi",
+                    "-Xuse-experimental=androidx.compose.material.ExperimentalMaterialApi",
+                    "-Xuse-experimental=androidx.compose.runtime.ExperimentalComposeApi",
+                    "-Xuse-experimental=androidx.compose.ui.ExperimentalComposeUiApi",
+                    "-Xuse-experimental=coil.annotation.ExperimentalCoilApi",
+                    "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi",
+                    "-Xuse-experimental=com.google.accompanist.pager.ExperimentalPagerApi"
+            ]
+        }
+    }
+}
+
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id "com.google.devtools.ksp" version "1.5.31-1.0.0"
+    id "com.google.devtools.ksp" version "1.6.0-1.0.1"
 }
 
 android {
@@ -42,8 +42,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdkVersion 31
-        versionCode 29
-        versionName "2.1.0 Explore05"
+        versionCode 30
+        versionName "2.2.0"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'

@@ -1,13 +1,11 @@
 package com.funny.translation.helper
 
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import java.io.BufferedReader
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStreamReader
+import java.io.*
 
 private const val TAG = "UriExtensions"
 
@@ -30,13 +28,34 @@ fun Uri.readText(ctx: Context): String {
 
 @Throws(IOException::class)
 fun Uri.writeText(context: Context, text: String) {
-    val pfd: ParcelFileDescriptor? = context.contentResolver.openFileDescriptor(this, "w")
+//    val path = this.path
+//    Log.d(TAG, "writeText: $path")
+//    path?.let {
+//        val file = File(it)
+//        file.writeText(text)
+//    }
+    // 加上这一行之后保存不会多保存一段?
+    // 我不理解啊tmd
+    val path = UriUtils.getFileAbsolutePath(context, this)
+    Log.d(TAG, "writeText: path:$path")
+
+    val pfd: AssetFileDescriptor? = context.contentResolver.openAssetFileDescriptor(this, "w")
+
     Log.d(TAG, "writeText: $text")
     if (pfd != null) {
-        val fileOutputStream = FileOutputStream(pfd.fileDescriptor)
-        fileOutputStream.write(text.encodeToByteArray())
-        fileOutputStream.close()
-        pfd.close()
+        val fileWriter = FileWriter(pfd.fileDescriptor)
+        fileWriter.write(text)
+        try {
+            fileWriter.close()
+            pfd.close()
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+//        val fileOutputStream = FileOutputStream(pfd.fileDescriptor)
+//        fileOutputStream.write(text.encodeToByteArray())
+//        fileOutputStream.close()
+
     }
+//    FileUtils.
 }
 

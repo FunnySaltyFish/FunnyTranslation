@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
-import com.funny.translation.helper.DataStoreUtils
+import com.funny.translation.helper.MMKVUtils.kv
 import com.funny.translation.trans.*
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
@@ -46,34 +46,6 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 import java.util.*
 
 private const val TAG = "MainScreen"
-
-//@ExperimentalAnimationApi
-//@ExperimentalMaterialApi
-//@Composable
-//fun MainScreen(
-//    showSnackbar : (String) -> Unit,
-//    activityViewModel: ActivityViewModel
-//) {
-//    val vm : MainViewModel = viewModel()
-//    val bindEngines by vm.bindEngines.observeAsState()
-//    val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
-//    BottomSheetScaffold(
-//        modifier = Modifier.fillMaxHeight(),
-//        sheetContent = {
-//            EngineSelect(bindEngines!!, jsEngines?: arrayListOf(), updateJsEngine = {
-//                val temp = arrayListOf<TranslationEngine>()
-//                temp.addAll(bindEngines!!)
-//                temp.addAll(jsEngines)
-//                vm.allEngines = temp
-//            })
-//        },
-//        sheetPeekHeight = 20.dp,
-//        sheetShape = RoundedCornerShape(topEnd = 36.dp, topStart = 36.dp),
-//        backgroundColor = Color.White
-//    ) {
-//        MainScreenContent(showSnackbar = showSnackbar, activityViewModel = activityViewModel)
-//    }
-//}
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -149,7 +121,7 @@ fun MainScreen(
                 languages = allLanguages,
                 updateLanguage = {
                     vm.sourceLanguage.value = it
-                    DataStoreUtils.saveSyncIntData(Consts.KEY_SOURCE_LANGUAGE, it.id)
+                    kv.encode(Consts.KEY_SOURCE_LANGUAGE, it.id)
                 }
             )
             ExchangeButton {
@@ -158,15 +130,15 @@ fun MainScreen(
                 vm.sourceLanguage.value = targetLanguage
                 vm.targetLanguage.value = temp
 
-                DataStoreUtils.saveSyncIntData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
-                DataStoreUtils.saveSyncIntData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
+                kv.encode(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
+                kv.encode(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
             }
             LanguageSelect(
                 language = targetLanguage!!,
                 languages = allLanguages,
                 updateLanguage = {
                     vm.targetLanguage.value = it
-                    DataStoreUtils.saveSyncIntData(Consts.KEY_SOURCE_LANGUAGE, it.id)
+                    kv.encode(Consts.KEY_TARGET_LANGUAGE, it.id)
                 }
             )
         }
@@ -219,7 +191,7 @@ fun EngineSelect(
                 //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                 SelectableChip(initialSelect = task.selected, text = task.name) {
                     bindEngines[index].selected = !task.selected
-                    DataStoreUtils.saveSyncBooleanData(task.selectKey, task.selected)
+                    kv.encode(task.selectKey, task.selected)
 //                    updateBindEngine()
                 }
             }
@@ -243,7 +215,7 @@ fun EngineSelect(
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                     SelectableChip(initialSelect = task.selected, text = task.name) {
                         jsEngines[index].selected = !task.selected
-                        DataStoreUtils.saveSyncBooleanData(task.selectKey, task.selected)
+                        kv.encode(task.selectKey, task.selected)
                         updateJsEngine()
                     }
                 }
@@ -363,6 +335,9 @@ fun TranslationItem(
                 .animateContentSize()
 
     ) {
+        var expandDetail by remember {
+            mutableStateOf(false)
+        }
         Column(
             horizontalAlignment = Alignment.Start
         ) {
@@ -371,7 +346,8 @@ fun TranslationItem(
             val fontSize = when (result.basicResult.trans.length) {
                 in 0..25 -> 24
                 in 26..50 -> 20
-                in 50..70 -> 16
+                in 50..70 -> 18
+                in 70..90 -> 16
                 else -> 14
             }
             Text(
@@ -387,7 +363,7 @@ fun TranslationItem(
                         ClipBoardUtil.copy(FunnyApplication.ctx, result.basicResult.trans)
                         showSnackbar(FunnyApplication.resources.getString(R.string.snack_finish_copy))
                     }, modifier = Modifier
-                        .size(36.dp)
+//                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.secondary)
                 ) {
@@ -406,7 +382,7 @@ fun TranslationItem(
                             showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
                         }
                     }, modifier = Modifier
-                        .size(36.dp)
+//                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.secondary)
                         .pointerInput(Unit) {
@@ -421,19 +397,16 @@ fun TranslationItem(
                         tint = Color.White
                     )
                 }
-                result.detailText?.let { detail ->
-                    var expandDetail by remember {
-                        mutableStateOf(false)
-                    }
+                if (!result.detailText.isNullOrEmpty()){
                     Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                         ExpandMoreButton {
                             expandDetail = !expandDetail
                         }
-                        if(expandDetail){
-                            MarkdownText(markdown = detail)
-                        }
                     }
                 }
+            }
+            if(expandDetail){
+                MarkdownText(markdown = result.detailText!!, Modifier.padding(4.dp))
             }
         }
     }

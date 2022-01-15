@@ -19,6 +19,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -134,7 +135,7 @@ fun PluginScreen(
             fontWeight = FontWeight.ExtraBold
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OnlinePluginList()
+        OnlinePluginList(showSnackbar = showSnackbar)
         //PreviewPluginList()
     }
 
@@ -188,8 +189,9 @@ fun PluginItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ){
             Text(plugin.fileName, fontSize = 18.sp, fontWeight = FontWeight.W600)
             Checkbox(checked = selected, onCheckedChange = {
@@ -212,7 +214,7 @@ fun PluginItem(
                             deletePlugin(plugin)
                         })
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }

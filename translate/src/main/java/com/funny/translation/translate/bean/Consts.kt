@@ -19,8 +19,8 @@ object Consts {
     // 百度翻译常量
     // 为避免不必要的麻烦，开源部分不包含此部分，请您谅解
     // 您可以访问 https://api.fanyi.baidu.com/ 免费注册该项服务
-    private val DEFAULT_BAIDU_APP_ID: String = PropertyUtil.getSecureData("BAIDU_APP_ID")
-    private val DEFAULT_BAIDU_SECURITY_KEY: String = PropertyUtil.getSecureData("BAIDU_APP_KEY")
+    private val DEFAULT_BAIDU_APP_ID: String = ""
+    private val DEFAULT_BAIDU_SECURITY_KEY: String = ""
     const val DEFAULT_BAIDU_SLEEP_TIME = 1000L
 
     var BAIDU_APP_ID = DEFAULT_BAIDU_APP_ID

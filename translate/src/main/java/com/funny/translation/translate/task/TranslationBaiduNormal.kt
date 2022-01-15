@@ -1,13 +1,10 @@
 package com.funny.translation.translate.task
 
 import android.util.Log
-import com.funny.translation.trans.Language
+import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.engine.TranslationEngines
-import com.funny.translation.translate.utils.StringUtil
-import org.json.JSONException
 import org.json.JSONObject
 
 class TranslationBaiduNormal :
@@ -18,43 +15,30 @@ class TranslationBaiduNormal :
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
-        Log.i(TAG,String.format("正在使用百度翻译！用的appid是%s",Consts.BAIDU_APP_ID));
-        val api = BaiduTransApi.getBaiduTransApi(Consts.BAIDU_APP_ID, Consts.BAIDU_SECURITY_KEY)
         val from = languageMapping[sourceLanguage]
         val to = languageMapping[targetLanguage]
-        val transResult = api.getTransResult(sourceString, from!!, to!!)
-        Log.i(TAG,"baidu api获取到的基本result是"+transResult);
+        val headersMap = hashMapOf(
+            "Referer" to "FunnyTranslation"
+        )
+        val apiUrl = "$url?text=$sourceString&engine=baidu&source=$from&target=$to"
+        val transResult = OkHttpUtils.get(apiUrl, headersMap)
+        Log.i(TAG, "baidu api获取到的基本result是$transResult");
         return transResult
     }
 
     @Throws(TranslationException::class)
     override fun getFormattedResult(basicText: String) {
-        try {
-            val sb = StringBuilder()
-            val all = JSONObject(basicText)
-            val trans_result = all.getJSONArray("trans_result")
-            for (i in 0 until trans_result.length()) {
-                val resultObj = trans_result.getJSONObject(i)
-                var str1 = resultObj.getString("dst")
-                if (StringUtil.isUnicode(str1)) {
-                    str1 = StringUtil.unicodeToString(str1)
-                }
-                sb.append(str1)
-                sb.append("\n")
-            }
-            sb.deleteCharAt(sb.length - 1)
-            result.setBasicResult(sb.toString())
-        } catch (e: JSONException) {
-            e.printStackTrace()
-            throw TranslationException(Consts.ERROR_JSON)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw TranslationException(Consts.ERROR_UNKNOWN)
+        val obj = JSONObject(basicText)
+        if (obj.getInt("code")==50){
+            result.setBasicResult(obj.getString("translation"))
+            result.detailText = obj.getString("detail")
+        }else{
+            result.setBasicResult(obj.getString("error_msg"))
         }
     }
 
     override fun madeURL(): String {
-        return ""
+        return "https://api.funnysaltyfish.fun/trans/v1/api/translate"
     }
 
     override val isOffline: Boolean

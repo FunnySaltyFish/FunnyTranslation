@@ -1,18 +1,17 @@
 package com.funny.translation.translate.ui.plugin
 
-import android.service.autofill.OnClickAction
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults.buttonColors
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,11 +42,11 @@ interface ClickPluginAction {
 
 @Composable
 fun OnlinePluginList(
-
+    showSnackbar : (String)->Unit
 ) {
     val vm : PluginViewModel = viewModel()
 
-    LoadingContent(loader = vm.pluginService::getOnlinePlugins) { pluginList ->
+    LoadingContent(loader = vm::getOnlinePlugins) { pluginList ->
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
@@ -58,8 +57,13 @@ fun OnlinePluginList(
                 }
                 OnlinePluginItem(plugin = item, onlinePluginState = onlinePluginState, clickPluginAction = object : ClickPluginAction{
                     override fun install(jsBean: JsBean) {
-                        vm.installOnlinePlugin(jsBean)
-                        onlinePluginState = OnlinePluginState.Installed
+//                        vm.installOnlinePlugin(jsBean)
+                        vm.installOrUpdatePlugin(jsBean,{
+                            onlinePluginState = OnlinePluginState.Installed
+                            showSnackbar(it)
+                        },{
+                            showSnackbar(it)
+                        })
                     }
 
                     override fun delete(jsBean: JsBean) {
@@ -74,7 +78,7 @@ fun OnlinePluginList(
                 })
             }
             item {
-                Spacer(modifier = Modifier.height(64.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -87,7 +91,7 @@ fun OnlinePluginItem(
     clickPluginAction: ClickPluginAction
 ) {
     var expand by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -99,7 +103,7 @@ fun OnlinePluginItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -132,7 +136,7 @@ fun OnlinePluginItem(
                     .padding(horizontal = 12.dp)
             ) {
                 MarkdownText(markdown = plugin.markdown, Modifier.padding(horizontal = 8.dp))
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -142,9 +146,7 @@ private val JsBean.markdown
     get() = """
         By **${this.author}**    **v${this.version}**  
         ${this.description.replace("[Markdown]", "")}  
-    """.trimPreSpace.also {
-        Log.d(TAG, "显示的东西:\n $it")
-    }
+    """.trimPreSpace
 
 private val String.trimPreSpace
     get() = this.split("\n").joinToString("\n") { it.trimStart() }.trimStart()
