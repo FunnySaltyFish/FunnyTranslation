@@ -37,5 +37,4 @@ public final class Versions {
     public static final String kotlinVersion = "1.6.0";
     public static final String composeVersion = "1.1.0-rc01";
 
-
 }

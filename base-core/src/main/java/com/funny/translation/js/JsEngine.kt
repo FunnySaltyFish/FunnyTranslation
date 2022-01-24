@@ -12,6 +12,7 @@ import com.funny.translation.trans.Language
 import com.funny.translation.trans.allLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.mozilla.javascript.NativeArray
 import org.mozilla.javascript.NativeObject
 import org.mozilla.javascript.RhinoException
 import java.util.*
@@ -22,6 +23,12 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
     lateinit var funnyJS : NativeObject
     @Throws(ScriptException::class)
     fun eval(){
+        with(SCRIPT_ENGINE) {
+            put("funny", this@JsEngine)
+            Language.values().forEach {
+                put("LANGUAGE_${it.name}",it)
+            }
+        }
         SCRIPT_ENGINE.eval(jsBean.code)
         funnyJS = getProperty("FunnyJS") as NativeObject
     }
@@ -96,14 +103,15 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                     targetSupportVersion = getFunnyOrDefault("targetSupportVersion", JsConfig.JS_ENGINE_VERSION)
                     debugMode = getFunnyOrDefault("debugMode", false)
                     this.isOffline = getFunnyOrDefault("isOffline", false)
-                    supportLanguages = getFunnyOrDefault("supportLanguage", allLanguages)
-                    //Debug.log(funnyJS.toString())
+                    supportLanguages = getFunnyListOrDefault("supportLanguages", allLanguages)
+
                 }
             }.onSuccess {
                 Debug.log("插件加载完毕！")
                 Debug.log(JsConfig.DEBUG_DIVIDER)
                 Debug.log(" 【${jsBean.fileName}】 版本号：${jsBean.version}  作者：${jsBean.author}")
                 Debug.log("  ---> ${jsBean.description}")
+                Debug.log("支持的语言：${jsBean.supportLanguages}")
                 Debug.log(JsConfig.DEBUG_DIVIDER)
                 onSuccess()
             }.onFailure{  e ->
@@ -127,5 +135,18 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
         }
     }
 
-
+    private fun <E> getFunnyListOrDefault(key : String , default : List<E>) : List<E>{
+        return try{
+            funnyJS[key]?:return default
+            val nativeArray = funnyJS[key] as NativeArray
+            val result = arrayListOf<E>()
+            for (each in nativeArray){
+                result.add(each as E)
+            }
+            result
+        }catch (e : Exception){
+            e.printStackTrace()
+            default
+        }
+    }
 }

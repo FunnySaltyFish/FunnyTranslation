@@ -11,7 +11,7 @@ interface AppUpdateService {
     @FormUrlEncoded
     @POST("app_update/check_update")
     suspend fun getUpdateInfo(
-        @Field("versionCode") versionCode : Long,
+        @Field("version_code") versionCode : Long,
         @Field("channel") channel : String
     ) : UpdateInfo
 }

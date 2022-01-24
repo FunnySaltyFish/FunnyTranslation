@@ -40,6 +40,10 @@
 #Debug保留
 -keep class com.funny.translation.debug.** {*;}
 
+# Keep Activity (for check update)
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Service
+
 -keepattributes Signature
 
 # For using GSON @Expose annotation
@@ -51,6 +55,7 @@
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.funny.translation.translate.ui.thanks.Sponsor { *; }
+-keep class com.funny.translation.translate.bean.UpdateInfo {*;}
 
 #抛出异常时保留代码行号，在异常分析中可以方便定位
 -keepattributes SourceFile,LineNumberTable

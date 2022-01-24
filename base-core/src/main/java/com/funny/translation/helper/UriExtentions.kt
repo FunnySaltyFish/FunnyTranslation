@@ -36,20 +36,23 @@ fun Uri.writeText(context: Context, text: String) {
 //    }
     // 加上这一行之后保存不会多保存一段?
     // 我不理解啊tmd
+    // 20220121 然并卵，尝试加上锁约束
     val path = UriUtils.getFileAbsolutePath(context, this)
     Log.d(TAG, "writeText: path:$path")
 
     val pfd: AssetFileDescriptor? = context.contentResolver.openAssetFileDescriptor(this, "w")
 
-    Log.d(TAG, "writeText: $text")
+//    Log.d(TAG, "writeText: $text")
     if (pfd != null) {
-        val fileWriter = FileWriter(pfd.fileDescriptor)
-        fileWriter.write(text)
-        try {
-            fileWriter.close()
-            pfd.close()
-        }catch (e:Exception){
-            e.printStackTrace()
+        synchronized(pfd) {
+            val fileWriter = FileWriter(pfd.fileDescriptor)
+            fileWriter.write(text)
+            try {
+                fileWriter.close()
+                pfd.close()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
         }
 //        val fileOutputStream = FileOutputStream(pfd.fileDescriptor)
 //        fileOutputStream.write(text.encodeToByteArray())

@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':language-base')
     //ktx
 //    implementation("androidx.activity:activity-ktx:$Versions.ktxCoreVersion")
 

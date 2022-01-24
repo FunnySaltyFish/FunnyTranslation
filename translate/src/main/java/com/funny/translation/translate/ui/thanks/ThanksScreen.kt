@@ -37,49 +37,66 @@ import com.funny.translation.translate.ui.widget.LoadingContent
 fun ThanksScreen() {
     val vm : ThanksViewModel = viewModel()
     val scrollState = rememberScrollState()
-    Column(
+    LazyColumn(
         modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
         horizontalAlignment = Alignment.Start
     ){
-        Row(
+        item {
+            Row(
                 Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = stringResource(id = R.string.thanks), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
+                    .fillMaxWidth()
+                    .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = stringResource(id = R.string.thanks), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
+            }
         }
-
-        LoadingContent(modifier = Modifier.align(CenterHorizontally) ,loader = (vm.sponsorService::getAllSponsor) ) { sponsorList ->
-            sponsorList?.let{
-                Column() {
-                    SponsorList(it)
-                    Text(modifier = Modifier.fillMaxWidth(),text = "上述排名仅以时间为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为", textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
+        item {
+            LoadingContent(modifier = Modifier ,loader = (vm.sponsorService::getAllSponsor) ) { sponsorList ->
+                sponsorList.let{
+                    Column() {
+                        SponsorList(it)
+                        Text(modifier = Modifier.fillMaxWidth(),text = "上述排名仅以时间为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为", textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
+                    }
                 }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = stringResource(id = R.string.join_sponsor), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(modifier = Modifier
+        item{
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(text = stringResource(id = R.string.join_sponsor), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
+        }
+        item{
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        item {
+            Row(modifier = Modifier
                 .height(80.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colors.surface),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            SponsorIcon(
-                load_url = "https://afdian.net/@funnysaltyfish?tab=home",
-                resourceId = R.drawable.ic_aifadian,
-                contentDes = "爱发电"
-            )
-            SponsorIcon(
-                load_url = "https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111072055394.png",
-                resourceId = R.drawable.ic_wechat,
-                contentDes = "微信"
-            )
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                SponsorIcon(
+                    load_url = "https://afdian.net/@funnysaltyfish?tab=home",
+                    resourceId = R.drawable.ic_aifadian,
+                    contentDes = "爱发电"
+                )
+                SponsorIcon(
+                    load_url = "https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111072055394.png",
+                    resourceId = R.drawable.ic_wechat,
+                    contentDes = "微信"
+                )
+            }
         }
+        item{
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
+
+
     }
 }
 

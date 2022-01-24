@@ -47,4 +47,8 @@
     <string name="update_plugin">更新</string>
     <string name="uninstall_plugin">卸载</string>
     <string name="online_plugin">在线插件</string>
+    <string name="setting_show_status_bar">显示状态栏</string>
+    <string name="setting_ui">页面设置</string>
+    <string name="message_out_of_max_engine_limit">您最多可以同时选择%d个引擎进行翻译，当前数量：%d</string>
+    <string name="message_stop_translate">当前翻译已终止</string>
 </resources>

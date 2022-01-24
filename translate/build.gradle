@@ -42,8 +42,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdkVersion 31
-        versionCode 30
-        versionName "2.2.0"
+        versionCode 31
+        versionName "2.2.1"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
@@ -121,10 +121,11 @@ dependencies {
 
     // 应用更新
 //    implementation 'com.github.NewHuLe:AppUpdate:v1.7'
-    implementation 'com.github.azhon:AppUpdate:3.0.5'
+    implementation 'com.github.azhon:AppUpdate:3.0.6'
 
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")
+    implementation project(path: ":jet_setting_core")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

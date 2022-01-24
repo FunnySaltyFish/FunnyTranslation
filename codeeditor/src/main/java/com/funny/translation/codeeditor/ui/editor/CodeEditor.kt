@@ -380,7 +380,8 @@ fun rememberCodeEditor(viewModel: CodeEditorViewModel): CodeEditor {
         CodeEditor(ctx).apply {
             typefaceText = Typeface.MONOSPACE
             isOverScrollEnabled = false
-            setEditorLanguage(UniversalLanguage(JavaScriptDescription()))
+
+            setEditorLanguage(PluginLanguage(FunnyPluginDescription))
             setNonPrintablePaintingFlags(CodeEditor.FLAG_DRAW_WHITESPACE_LEADING or CodeEditor.FLAG_DRAW_LINE_SEPARATOR)
             //colorScheme = scheme.value!!.scheme
         }

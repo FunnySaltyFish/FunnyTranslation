@@ -17,7 +17,7 @@ class JsConfig {
             get() = SCRIPT_ENGINE as Invocable
 
         val DEBUG_DIVIDER = "=" * 18
-        const val JS_ENGINE_VERSION = 4
+        const val JS_ENGINE_VERSION = 5
     }
 }
 

@@ -45,7 +45,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.GERMANY to "de",
                 Language.WENYANWEN to "wyw",
                 Language.THAI to "th",
-                Language.PORTUGUESE to "pt"
+                Language.PORTUGUESE to "pt",
+                Language.VIETNAMESE to "vie"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
@@ -67,7 +68,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.RUSSIAN to "ru",
                 Language.GERMANY to "de",
                 Language.THAI to "th",
-                Language.PORTUGUESE to "pt"
+                Language.PORTUGUESE to "pt",
+                Language.VIETNAMESE to "vi"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
@@ -86,7 +88,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.RUSSIAN to "ru",
                 Language.GERMANY to "de",
                 Language.THAI to "th",
-                Language.PORTUGUESE to "pt"
+                Language.PORTUGUESE to "pt",
+                Language.VIETNAMESE to "vi"
             )
 
         override val name: String
@@ -111,7 +114,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.RUSSIAN to "ru",
                 Language.GERMANY to "de",
                 Language.THAI to "th",
-                Language.PORTUGUESE to "pt"
+                Language.PORTUGUESE to "pt",
+                Language.VIETNAMESE to "vi"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>

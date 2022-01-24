@@ -39,7 +39,7 @@ import static io.github.rosemoe.editor.langs.universal.UniversalTokens.EOF;
  */
 public class UniversalLanguage implements EditorLanguage, CodeAnalyzer {
 
-    private final LanguageDescription mLanguage;
+    public final LanguageDescription mLanguage;
     private final UniversalTokenizer tokenizer;
     private final UniversalTokenizer tokenizer2;
 
@@ -47,6 +47,10 @@ public class UniversalLanguage implements EditorLanguage, CodeAnalyzer {
         mLanguage = languageDescription;
         tokenizer = new UniversalTokenizer(mLanguage);
         tokenizer2 = new UniversalTokenizer(mLanguage);
+    }
+
+    public UniversalTokenizer getTokenizer() {
+        return tokenizer;
     }
 
     @Override
@@ -100,6 +104,7 @@ public class UniversalLanguage implements EditorLanguage, CodeAnalyzer {
         LineNumberCalculator helper = new LineNumberCalculator(text);
         IdentifierAutoComplete autoComplete = new IdentifierAutoComplete();
         autoComplete.setKeywords(mLanguage.getKeywords());
+        autoComplete.setKeywordsAreLowCase(false);
         IdentifierAutoComplete.Identifiers identifiers = new IdentifierAutoComplete.Identifiers();
         identifiers.begin();
         int maxSwitch = 0;

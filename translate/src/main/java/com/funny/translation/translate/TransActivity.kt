@@ -20,14 +20,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.azhon.appupdate.utils.ApkUtil
+import com.funny.jetsetting.core.LocalDataSave
+import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.trans.initLanguageDisplay
+import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.ui.main.MainScreen
@@ -59,7 +63,6 @@ fun AppNavigation(
 
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    
 
     BackHandler(enabled = true) {
         if (navController.previousBackStackEntry == null){
@@ -77,14 +80,21 @@ fun AppNavigation(
     }
 
     val systemUiController = rememberSystemUiController()
-    //分开设置，考虑到背景颜色，我们需要动态更新图标颜色嘛
-    val darkIcon = !MaterialTheme.colors.isLight
-    systemUiController.setStatusBarColor(Color.Transparent, darkIcons = darkIcon)
+    // 分开设置，考虑到背景颜色，我们需要动态更新图标颜色嘛
+    val darkIcon = MaterialTheme.colors.isLight
+    val showStatusBar = LocalDataSave.current.readData(Consts.KEY_SHOW_STATUS_BAR, false)
+    Log.d(TAG, "AppNavigation: currentStatusBar:$showStatusBar")
+    if(showStatusBar){
+        systemUiController.isStatusBarVisible = true
+        systemUiController.setStatusBarColor(MaterialTheme.colors.background, darkIcons = darkIcon)
+    }else {
+        systemUiController.isStatusBarVisible = false
+    }
+
     systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = darkIcon)
 
 
     ProvideWindowInsets {
-//        Spacer(modifier = Modifier.statusBarsHeight().fillMaxWidth())
         TransTheme {
             Scaffold(
                 bottomBar = {
@@ -157,7 +167,7 @@ fun AppNavigation(
 
 @Stable
 @Composable
-private fun NavController.currentScreenAsState(): MutableState<TranslateScreen> {
+private fun NavHostController.currentScreenAsState(): MutableState<TranslateScreen> {
     val selectedItem = remember { mutableStateOf<TranslateScreen>(TranslateScreen.MainScreen) }
 
     DisposableEffect(this) {
@@ -188,7 +198,7 @@ private fun NavController.currentScreenAsState(): MutableState<TranslateScreen> 
 }
 
 class TransActivity : ComponentActivity() {
-    lateinit var activityViewModel: ActivityViewModel
+    private lateinit var activityViewModel: ActivityViewModel
     lateinit var context : Context
 
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
@@ -204,6 +214,16 @@ class TransActivity : ComponentActivity() {
             if(appDB.jsDao.getJsCount() == 0) appDB.jsDao.insertJsList(DefaultData.getDefaultJsList(lifecycleScope))
         }
 
+//        ScreenUtils.initStatusBar(this)
+//        WindowCompat.setDecorFitsSystemWindows(window,false)
+
+//        window.setFlags(
+//            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+//            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+//        )
+
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             AppNavigation(
                 exitAppAction = {
@@ -214,7 +234,7 @@ class TransActivity : ComponentActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             activityViewModel.checkUpdate(context)
-            ApkUtil.deleteOldApk(context, "update_apk.apk")
+            ApkUtil.deleteOldApk(context, context.externalCache.absolutePath + "/" + "update_apk.apk")
         }
     }
 }

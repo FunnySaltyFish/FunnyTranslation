@@ -5,9 +5,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
+import com.funny.translation.codeeditor.extensions.externalCache
+import com.funny.translation.helper.DataSaveUtils
 import com.funny.translation.helper.MMKVUtils.kv
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.network.TransNetwork
+import com.funny.translation.translate.network.UpdateDownloadManager
 import com.funny.translation.translate.utils.ApplicationUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -42,11 +45,13 @@ class ActivityViewModel : ViewModel() {
             val manager = DownloadManager.getInstance(context);
             withContext(Dispatchers.IO){
                 val versionCode = ApplicationUtil.getAppVersionCode(FunnyApplication.ctx)
-                val channel = kv.decodeString(Consts.KEY_APP_CHANNEL, "stable")!!
+                Log.d(TAG, "checkUpdate: VersionCode:$versionCode")
+                val channel = DataSaveUtils.readData(Consts.KEY_APP_CHANNEL, "stable")
                 val updateInfo = TransNetwork.appUpdateService.getUpdateInfo(versionCode, channel)
                 Log.i(TAG, "checkUpdate: $updateInfo")
                 if (updateInfo.should_update){
                     val configuration = UpdateConfiguration().apply {
+                        httpManager = UpdateDownloadManager(FunnyApplication.ctx.externalCache.absolutePath)
                         isForcedUpgrade = updateInfo.force_update == true
                     }
 

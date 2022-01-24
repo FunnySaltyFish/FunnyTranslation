@@ -17,9 +17,10 @@ enum class Language(val id : Int,var displayText : String = "") {
     WENYANWEN(8),
     THAI(9),
     PORTUGUESE(10),
+    VIETNAMESE(11)
 }
 
-fun findLanguageById(id : Int) = Language.values().filter { it.id == id }[0]
+fun findLanguageById(id : Int) = Language.values().find { it.id == id }
 
 val allLanguages get() = Language.values().asList()
 
@@ -35,4 +36,5 @@ fun initLanguageDisplay(resources : Resources){
     Language.WENYANWEN.displayText = resources.getString(R.string.language_wenyanwen)
     Language.THAI.displayText = resources.getString(R.string.language_thai)
     Language.PORTUGUESE.displayText = resources.getString(R.string.language_portuguese)
+    Language.VIETNAMESE.displayText = resources.getString(R.string.language_vietnamese)
 }

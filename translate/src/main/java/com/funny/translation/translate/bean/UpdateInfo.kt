@@ -1,5 +1,8 @@
 package com.funny.translation.translate.bean
 
+import androidx.annotation.Keep
+
+@Keep
 data class UpdateInfo(
     val apk_md5: String?,
     val apk_size: Int?,
