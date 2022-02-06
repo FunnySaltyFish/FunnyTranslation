@@ -1,9 +1,10 @@
 package com.funny.translation.helper
 
 import android.os.Parcelable
+import com.funny.data_saver.core.DataSaverInterface
 import com.tencent.mmkv.MMKV
 
-object MMKVUtils : DataSaveInterface {
+object MMKVUtils : DataSaverInterface {
      val kv: MMKV by lazy {
         MMKV.defaultMMKV()
     }

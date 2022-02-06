@@ -46,7 +46,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.WENYANWEN to "wyw",
                 Language.THAI to "th",
                 Language.PORTUGUESE to "pt",
-                Language.VIETNAMESE to "vie"
+                Language.VIETNAMESE to "vie",
+                Language.ITALIAN to "it"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
@@ -69,11 +70,15 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.GERMANY to "de",
                 Language.THAI to "th",
                 Language.PORTUGUESE to "pt",
-                Language.VIETNAMESE to "vi"
+                Language.VIETNAMESE to "vi",
+                Language.ITALIAN to "it"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
             get() = TranslationJinshanEasy::class
+
+        override val supportLanguages: List<Language>
+            get() = listOf(Language.AUTO, Language.CHINESE, Language.ENGLISH)
     }
 
     object GoogleNormal : TranslationEngines() {
@@ -89,7 +94,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.GERMANY to "de",
                 Language.THAI to "th",
                 Language.PORTUGUESE to "pt",
-                Language.VIETNAMESE to "vi"
+                Language.VIETNAMESE to "vi",
+                Language.ITALIAN to "it"
             )
 
         override val name: String
@@ -115,7 +121,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.GERMANY to "de",
                 Language.THAI to "th",
                 Language.PORTUGUESE to "pt",
-                Language.VIETNAMESE to "vi"
+                Language.VIETNAMESE to "vi",
+                Language.ITALIAN to "it"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>

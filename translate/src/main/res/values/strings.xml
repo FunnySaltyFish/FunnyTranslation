@@ -51,4 +51,6 @@
     <string name="setting_ui">页面设置</string>
     <string name="message_out_of_max_engine_limit">您最多可以同时选择%d个引擎进行翻译，当前数量：%d</string>
     <string name="message_stop_translate">当前翻译已终止</string>
+    <string name="setting_show_float_window">显示悬浮窗</string>
+    <string name="setting_spring_theme">启用春节限定主题</string>
 </resources>

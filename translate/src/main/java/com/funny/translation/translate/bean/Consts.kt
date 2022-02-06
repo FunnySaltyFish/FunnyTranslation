@@ -3,6 +3,7 @@ package com.funny.translation.translate.bean
 import com.funny.translation.translate.utils.PropertyUtil
 
 object Consts {
+
     //错误常量
     const val ERROR_UNKNOWN = "未知错误！翻译失败！"
     const val ERROR_JSON = "Json数据解析错误！"
@@ -32,6 +33,8 @@ object Consts {
     const val KEY_APP_CHANNEL = "app_channel"
 
     const val KEY_SHOW_STATUS_BAR = "show_status_bar"
+    const val KEY_SHOW_FLOAT_WINDOW = "show_float_window"
+    const val KEY_SPRING_THEME: String = "spring_theme"
 
     const val MAX_SELECT_ENGINES = 5
 }

@@ -1,3 +1,5 @@
 package com.funny.translation.helper
 
-val DataSaveUtils : DataSaveInterface = MMKVUtils
+import com.funny.data_saver.core.DataSaverInterface
+
+val DataSaverUtils : DataSaverInterface = MMKVUtils

@@ -11,4 +11,6 @@
     <string name="language_wenyanwen">文言文</string>
     <string name="language_thai">Thai</string>
     <string name="language_portuguese">Portuguess</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_vietnamese">Vietnamese</string>
 </resources>

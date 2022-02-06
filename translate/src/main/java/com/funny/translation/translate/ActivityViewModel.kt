@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.codeeditor.extensions.externalCache
-import com.funny.translation.helper.DataSaveUtils
-import com.funny.translation.helper.MMKVUtils.kv
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager
@@ -46,7 +45,7 @@ class ActivityViewModel : ViewModel() {
             withContext(Dispatchers.IO){
                 val versionCode = ApplicationUtil.getAppVersionCode(FunnyApplication.ctx)
                 Log.d(TAG, "checkUpdate: VersionCode:$versionCode")
-                val channel = DataSaveUtils.readData(Consts.KEY_APP_CHANNEL, "stable")
+                val channel = DataSaverUtils.readData(Consts.KEY_APP_CHANNEL, "stable")
                 val updateInfo = TransNetwork.appUpdateService.getUpdateInfo(versionCode, channel)
                 Log.i(TAG, "checkUpdate: $updateInfo")
                 if (updateInfo.should_update){

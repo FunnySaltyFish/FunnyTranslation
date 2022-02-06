@@ -45,4 +45,9 @@
     <string name="update_plugin">Update</string>
     <string name="uninstall_plugin">Unintsall</string>
     <string name="online_plugin">Online Plugins</string>
+    <string name="setting_show_status_bar">Show Status Bar</string>
+    <string name="setting_ui">UI Settings</string>
+    <string name="message_out_of_max_engine_limit">You can choose at most %d engines to translate ay one time, but current is %d</string>
+    <string name="message_stop_translate">Current task has been can celled!</string>
+    <string name="setting_show_float_window">Show Float Window</string>
 </resources>

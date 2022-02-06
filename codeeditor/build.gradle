@@ -58,7 +58,6 @@ dependencies {
 
     implementation "com.github.FunnySaltyFish:CMaterialColors:1.0.21"
 
-
     implementation project(path: ':editor')
     implementation project(path: ":language-universal")
     implementation project(path: ":base-core")

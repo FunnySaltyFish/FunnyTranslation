@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.translation.helper.DataSaveUtils
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTask
 import com.funny.translation.trans.*
@@ -24,8 +24,8 @@ class MainViewModel : ViewModel() {
     private val actualTransText : String
         get() = translateText.value?.trim() ?: ""
 
-    val sourceLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataSaveUtils.readData(Consts.KEY_SOURCE_LANGUAGE, Language.ENGLISH.id)))
-    val targetLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataSaveUtils.readData(Consts.KEY_TARGET_LANGUAGE,Language.CHINESE.id)))
+    val sourceLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataSaverUtils.readData(Consts.KEY_SOURCE_LANGUAGE, Language.ENGLISH.id)))
+    val targetLanguage : MutableLiveData<Language> = MutableLiveData(findLanguageById(DataSaverUtils.readData(Consts.KEY_TARGET_LANGUAGE,Language.CHINESE.id)))
     val translateMode : MutableLiveData<Int> = MutableLiveData(0)
 
     val selectedEngines : List<TranslationEngine>
@@ -46,7 +46,7 @@ class MainViewModel : ViewModel() {
     val jsEngines : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().map { list ->
         list.map {
             JsTranslateTask(jsEngine = JsEngine(jsBean = it)).apply {
-                this.selected = DataSaveUtils.readData(this.selectKey, false)
+                this.selected = DataSaverUtils.readData(this.selectKey, false)
                 Log.d(TAG, "${this.jsEngine.jsBean.fileName} selected:$selected ")
             }.also {
                 if(!allEngines.contains(it))allEngines.add(it)
@@ -70,7 +70,7 @@ class MainViewModel : ViewModel() {
 
     init {
         bindEngines.value?.forEach {
-            it.selected = DataSaveUtils.readData(it.selectKey, false)
+            it.selected = DataSaverUtils.readData(it.selectKey, false)
         }
 
         allEngines.find { it.selected } ?: run {
@@ -78,8 +78,8 @@ class MainViewModel : ViewModel() {
             TranslationEngines.BaiduNormal.selected = true
             TranslationEngines.Youdao.selected = true
 
-            DataSaveUtils.saveData(TranslationEngines.BaiduNormal.selectKey, true)
-            DataSaveUtils.saveData(TranslationEngines.Youdao.selectKey, true)
+            DataSaverUtils.saveData(TranslationEngines.BaiduNormal.selectKey, true)
+            DataSaverUtils.saveData(TranslationEngines.Youdao.selectKey, true)
         }
     }
 

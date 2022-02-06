@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.funny.data_saver.core.LocalDataSaver
 import com.funny.jetsetting.core.ui.FunnyIcon
 import com.funny.jetsetting.core.ui.IconWidget
 
@@ -27,11 +28,12 @@ fun JetSettingCheckbox(
     resourceId : Int? = null,
     iconTintColor : Color = MaterialTheme.colors.onBackground,
     text : String,
+    default : Boolean = false,
     onCheck : (Boolean) -> Unit
 ) {
-    val dataSaveInterface = LocalDataSave.current
+    val dataSaveInterface = LocalDataSaver.current
     var checked by remember {
-        mutableStateOf(dataSaveInterface.readData(key, false))
+        mutableStateOf(dataSaveInterface.readData(key, default))
     }
     Row(modifier, horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
         val funnyIcon = FunnyIcon(imageVector, resourceId)

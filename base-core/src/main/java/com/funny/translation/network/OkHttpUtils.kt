@@ -3,7 +3,7 @@ package com.funny.translation.network
 import android.util.Log
 import androidx.annotation.Keep
 import com.funny.translation.BaseApplication
-import com.funny.translation.helper.DataSaveUtils
+import com.funny.translation.helper.DataSaverUtils
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -23,9 +23,9 @@ object OkHttpUtils {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     private fun saveCookie(url: String?, domain: String?, cookies: String) {
         url ?: return
-        DataSaveUtils.saveData(url, cookies)
+        DataSaverUtils.saveData(url, cookies)
         domain ?: return
-        DataSaveUtils.saveData(domain, cookies)
+        DataSaverUtils.saveData(domain, cookies)
     }
 
     private val cache = Cache(BaseApplication.ctx.cacheDir, 1024*1024*20L)
@@ -65,7 +65,7 @@ object OkHttpUtils {
                 val domain = request.url.host
                 // get domain cookie
                 if (domain.isNotEmpty()) {
-                    val spDomain: String = DataSaveUtils.readData(domain, "")
+                    val spDomain: String = DataSaverUtils.readData(domain, "")
                     val cookie: String = if (spDomain.isNotEmpty()) spDomain else ""
                     if (cookie.isNotEmpty()) {
                         builder.addHeader(COOKIE_NAME, cookie)

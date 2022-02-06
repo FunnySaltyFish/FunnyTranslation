@@ -77,7 +77,8 @@ dependencies {
 
 //    def datastore_version = "1.0.0"
 //    implementation "androidx.datastore:datastore-preferences:$datastore_version"
-    api 'com.tencent:mmkv:1.2.11'
+
+    implementation project(path: ":jet_setting_core")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

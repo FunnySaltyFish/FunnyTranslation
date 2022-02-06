@@ -13,6 +13,15 @@ import com.funny.cmaterialcolors.MaterialColors.Companion.Blue700
 import com.funny.cmaterialcolors.MaterialColors.Companion.BlueA200
 import com.funny.cmaterialcolors.MaterialColors.Companion.BlueA700
 import com.funny.cmaterialcolors.MaterialColors.Companion.LightBlue200
+import com.funny.cmaterialcolors.MaterialColors.Companion.Red200
+import com.funny.cmaterialcolors.MaterialColors.Companion.Red500
+import com.funny.cmaterialcolors.MaterialColors.Companion.Red700
+import com.funny.cmaterialcolors.MaterialColors.Companion.RedA200
+import com.funny.cmaterialcolors.MaterialColors.Companion.RedA400
+import com.funny.cmaterialcolors.MaterialColors.Companion.RedA700
+import com.funny.data_saver.core.LocalDataSaver
+import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.utils.DateUtils
 
 @SuppressLint("ConflictingOnColor")
 private val DarkColorPalette = darkColors(
@@ -47,15 +56,28 @@ private val LightColorPalette = lightColors(
     */
 )
 
+private val SpringFestivalColorPalette = lightColors(
+    primary = Red500,
+    primaryVariant = Red700,
+    secondary = RedA400,
+    onSecondary = Color.White,
+    surface = Red200.copy(alpha = 0.7f),
+    onSurface = RedA700
+)
+
+
+
 @Composable
 fun TransTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
+    val dataSaver = LocalDataSaver.current
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
-        LightColorPalette
+        if (dataSaver.readData(Consts.KEY_SPRING_THEME,true) && DateUtils.isSpringFestival) SpringFestivalColorPalette
+        else LightColorPalette
     }
 
     MaterialTheme(

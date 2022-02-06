@@ -1,5 +1,6 @@
 package com.funny.translation.translate
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -26,10 +27,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.azhon.appupdate.utils.ApkUtil
-import com.funny.jetsetting.core.LocalDataSave
+import com.funny.data_saver.core.LocalDataSaver
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
+import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.MMKVUtils
 import com.funny.translation.trans.initLanguageDisplay
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.DefaultData
@@ -41,10 +44,12 @@ import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.widget.CustomNavigation
+import com.funny.translation.translate.utils.FloatWindowUtils
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"
@@ -82,7 +87,7 @@ fun AppNavigation(
     val systemUiController = rememberSystemUiController()
     // 分开设置，考虑到背景颜色，我们需要动态更新图标颜色嘛
     val darkIcon = MaterialTheme.colors.isLight
-    val showStatusBar = LocalDataSave.current.readData(Consts.KEY_SHOW_STATUS_BAR, false)
+    val showStatusBar = LocalDataSaver.current.readData(Consts.KEY_SHOW_STATUS_BAR, false)
     Log.d(TAG, "AppNavigation: currentStatusBar:$showStatusBar")
     if(showStatusBar){
         systemUiController.isStatusBarVisible = true
@@ -200,6 +205,8 @@ private fun NavHostController.currentScreenAsState(): MutableState<TranslateScre
 class TransActivity : ComponentActivity() {
     private lateinit var activityViewModel: ActivityViewModel
     lateinit var context : Context
+    private lateinit var clipboardManager : ClipboardManager
+    private lateinit var onPrimaryClipChangedListener: ClipboardManager.OnPrimaryClipChangedListener
 
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -214,27 +221,48 @@ class TransActivity : ComponentActivity() {
             if(appDB.jsDao.getJsCount() == 0) appDB.jsDao.insertJsList(DefaultData.getDefaultJsList(lifecycleScope))
         }
 
-//        ScreenUtils.initStatusBar(this)
-//        WindowCompat.setDecorFitsSystemWindows(window,false)
-
-//        window.setFlags(
-//            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-//            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-//        )
-
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
-            AppNavigation(
-                exitAppAction = {
-                    this.finish()
-                }
-            )
+            CompositionLocalProvider(LocalDataSaver provides MMKVUtils){
+                AppNavigation(
+                    exitAppAction = {
+                        this.finish()
+                    }
+                )
+            }
         }
 
+        FloatWindowUtils.initScreenSize(this)
         lifecycleScope.launch(Dispatchers.IO) {
             activityViewModel.checkUpdate(context)
             ApkUtil.deleteOldApk(context, context.externalCache.absolutePath + "/" + "update_apk.apk")
         }
+
+        val showFloatWindow = DataSaverUtils.readData(Consts.KEY_SHOW_FLOAT_WINDOW,false)
+        Log.d(TAG, "onCreate: showFloatWindow: $showFloatWindow")
+        if(showFloatWindow){
+            FloatWindowUtils.initFloatingWindow(context)
+            FloatWindowUtils.showFloatWindow()
+        }
     }
+
+    private fun registerClipboardEvents(){
+        clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        onPrimaryClipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
+            if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClip?.itemCount?:0 > 0){
+                val content = clipboardManager.primaryClip?.getItemAt(0)?.text ?: ""
+                if (content.isNotBlank()){
+                    Log.d(TAG, "registerClipboardEvents: $content")
+                }
+            }
+        }
+        clipboardManager.addPrimaryClipChangedListener(onPrimaryClipChangedListener)
+    }
+
+    override fun onDestroy() {
+        if(this::onPrimaryClipChangedListener.isInitialized) clipboardManager.removePrimaryClipChangedListener(onPrimaryClipChangedListener)
+        FloatWindowUtils.hideFloatWindow()
+        super.onDestroy()
+    }
+
+
 }

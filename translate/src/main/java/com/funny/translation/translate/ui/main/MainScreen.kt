@@ -31,8 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
-import com.funny.translation.helper.DataSaveUtils
-import com.funny.translation.helper.MMKVUtils.kv
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
@@ -122,7 +121,7 @@ fun MainScreen(
                 languages = allLanguages,
                 updateLanguage = {
                     vm.sourceLanguage.value = it
-                    DataSaveUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
+                    DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
                 }
             )
             ExchangeButton {
@@ -131,15 +130,15 @@ fun MainScreen(
                 vm.sourceLanguage.value = targetLanguage
                 vm.targetLanguage.value = temp
 
-                DataSaveUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
-                DataSaveUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
+                DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
+                DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
             }
             LanguageSelect(
                 language = targetLanguage!!,
                 languages = allLanguages,
                 updateLanguage = {
                     vm.targetLanguage.value = it
-                    DataSaveUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
+                    DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
                 }
             )
         }
@@ -197,7 +196,7 @@ fun EngineSelect(
                 //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                 SelectableChip(initialSelect = task.selected, text = task.name) {
                     bindEngines[index].selected = !task.selected
-                    DataSaveUtils.saveData(task.selectKey, task.selected)
+                    DataSaverUtils.saveData(task.selectKey, task.selected)
 //                    updateBindEngine()
                 }
             }
@@ -221,7 +220,7 @@ fun EngineSelect(
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                     SelectableChip(initialSelect = task.selected, text = task.name) {
                         jsEngines[index].selected = !task.selected
-                        DataSaveUtils.saveData(task.selectKey, task.selected)
+                        DataSaverUtils.saveData(task.selectKey, task.selected)
                         updateJsEngine()
                     }
                 }
