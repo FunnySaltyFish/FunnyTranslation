@@ -1,14 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#9e9e9e"
+    android:background="@drawable/bg_float_window"
+    android:theme="@style/AppTheme"
+    android:paddingTop="4dp"
     >
 
-    <TextView
+    <Spinner
+        android:id="@+id/float_window_spinner_source"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="悬浮窗测试"/>
+        android:hint="@string/source_language"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_exchange_button"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/float_window_spinner_source"
+        android:background="#00000000"
+        android:contentDescription="@string/exchange"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_exchange"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint" />
+
+    <Spinner
+        android:id="@+id/float_window_spinner_target"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/source_language"
+        android:layout_toEndOf="@id/float_window_exchange_button"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_edit_button"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="#00000000"
+        android:contentDescription="@string/exchange"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_edit"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:tint="@color/black"
+        tools:ignore="UseAppTint" />
+
+    <LinearLayout
+        android:id="@+id/float_window_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/float_window_spinner_source"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:gravity="center_vertical"
+        >
+
+        <EditText
+            android:id="@+id/float_window_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            android:maxLines="1"
+
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/float_window_translate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/single_translate_text"
+            android:textSize="18sp"
+            />
+    </LinearLayout>
+
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/float_window_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/float_window_linear"
+        android:textColor="@color/white"
+        android:paddingHorizontal="8dp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeMaxTextSize="18sp"
+        app:autoSizeTextType="uniform"
+        tools:text = "红红火火恍恍惚惚或\nasdasda dsasd\nasdsaddasda"
+        />
+
 
 </RelativeLayout>

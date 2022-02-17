@@ -130,7 +130,10 @@ dependencies {
     implementation 'com.github.azhon:AppUpdate:3.0.6'
 
     // 悬浮窗
-    implementation("com.github.PBK-B:FloatWindow:1.0.9")
+//    implementation("com.github.PBK-B:FloatWindow:1.0.9")
+    implementation project(path: ":float_window")
+    implementation "com.github.skydoves:powerspinner:1.1.9"
+    implementation("androidx.appcompat:appcompat:1.4.1")
 
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")

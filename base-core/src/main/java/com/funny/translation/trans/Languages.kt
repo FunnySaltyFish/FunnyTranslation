@@ -21,7 +21,7 @@ enum class Language(val id : Int,var displayText : String = "") {
     ITALIAN(12)
 }
 
-fun findLanguageById(id : Int) = Language.values().find { it.id == id }
+fun findLanguageById(id : Int) = Language.values()[id]
 
 val allLanguages get() = Language.values().asList()
 

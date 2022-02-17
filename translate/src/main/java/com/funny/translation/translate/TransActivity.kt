@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
@@ -34,6 +35,7 @@ import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.MMKVUtils
 import com.funny.translation.trans.initLanguageDisplay
+import com.funny.translation.translate.bean.AppConfig
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
@@ -96,7 +98,8 @@ fun AppNavigation(
         systemUiController.isStatusBarVisible = false
     }
 
-    systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = darkIcon)
+    systemUiController.setNavigationBarColor(
+        if(darkIcon)Color.Transparent else MaterialTheme.colors.background, darkIcons = darkIcon)
 
 
     ProvideWindowInsets {
@@ -202,7 +205,7 @@ private fun NavHostController.currentScreenAsState(): MutableState<TranslateScre
     return selectedItem
 }
 
-class TransActivity : ComponentActivity() {
+class TransActivity : AppCompatActivity() {
     private lateinit var activityViewModel: ActivityViewModel
     lateinit var context : Context
     private lateinit var clipboardManager : ClipboardManager
@@ -218,7 +221,6 @@ class TransActivity : ComponentActivity() {
         activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
         lifecycleScope.launch(Dispatchers.IO) {
             initLanguageDisplay(resources)
-            if(appDB.jsDao.getJsCount() == 0) appDB.jsDao.insertJsList(DefaultData.getDefaultJsList(lifecycleScope))
         }
 
         setContent {
@@ -239,8 +241,8 @@ class TransActivity : ComponentActivity() {
 
         val showFloatWindow = DataSaverUtils.readData(Consts.KEY_SHOW_FLOAT_WINDOW,false)
         Log.d(TAG, "onCreate: showFloatWindow: $showFloatWindow")
-        if(showFloatWindow){
-            FloatWindowUtils.initFloatingWindow(context)
+        if(showFloatWindow && !AppConfig.INIT_FLOATING_WINDOW){
+            FloatWindowUtils.initFloatingWindow(FunnyApplication.ctx)
             FloatWindowUtils.showFloatWindow()
         }
     }
@@ -260,7 +262,7 @@ class TransActivity : ComponentActivity() {
 
     override fun onDestroy() {
         if(this::onPrimaryClipChangedListener.isInitialized) clipboardManager.removePrimaryClipChangedListener(onPrimaryClipChangedListener)
-        FloatWindowUtils.hideFloatWindow()
+        FloatWindowUtils.destroyFloatWindow()
         super.onDestroy()
     }
 

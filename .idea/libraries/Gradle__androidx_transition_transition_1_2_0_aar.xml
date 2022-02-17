@@ -2,15 +2,15 @@
   <library name="Gradle: androidx.transition:transition:1.2.0@aar">
     <ANNOTATIONS>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/annotations.zip!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/annotations.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f67fd24542ec95a222d27bba5bb086e6/transformed/transition-1.2.0/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/AndroidManifest.xml" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/res" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/afd63b4876d294ed2a79d6de6e560d3e/transformed/transition-1.2.0/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f67fd24542ec95a222d27bba5bb086e6/transformed/transition-1.2.0/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f67fd24542ec95a222d27bba5bb086e6/transformed/transition-1.2.0/res" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f67fd24542ec95a222d27bba5bb086e6/transformed/transition-1.2.0/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

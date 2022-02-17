@@ -2,7 +2,6 @@ package com.funny.jetsetting.core
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxColors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*

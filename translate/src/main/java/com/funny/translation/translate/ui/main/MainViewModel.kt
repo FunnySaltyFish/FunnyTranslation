@@ -133,7 +133,7 @@ class MainViewModel : ViewModel() {
                         it.createTask(actualTransText, sourceLanguage.value!!, targetLanguage.value!!)
                     } else {
                         val jsTask = it as JsTranslateTask
-                        jsTask.sourceString = translateText.value!!
+                        jsTask.sourceString = actualTransText
                         jsTask.sourceLanguage = sourceLanguage.value!!
                         jsTask.targetLanguage = targetLanguage.value!!
                         jsTask

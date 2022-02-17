@@ -15,8 +15,9 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e56db4ab3fc64839ffe64d98f5ee4d97/transformed/core-runtime-2.1.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/6dab5846d9e7292e29b47d97e97599eb/transformed/core-runtime-2.1.0/res" />
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/e56db4ab3fc64839ffe64d98f5ee4d97/transformed/core-runtime-2.1.0/res" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/e56db4ab3fc64839ffe64d98f5ee4d97/transformed/core-runtime-2.1.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/e56db4ab3fc64839ffe64d98f5ee4d97/transformed/core-runtime-2.1.0/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/e982fb2fc832e173ccc6fe0d147c29e0/transformed/core-runtime-2.1.0/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/e982fb2fc832e173ccc6fe0d147c29e0/transformed/core-runtime-2.1.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/e982fb2fc832e173ccc6fe0d147c29e0/transformed/core-runtime-2.1.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

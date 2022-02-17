@@ -53,4 +53,5 @@
     <string name="message_stop_translate">当前翻译已终止</string>
     <string name="setting_show_float_window">显示悬浮窗</string>
     <string name="setting_spring_theme">启用春节限定主题</string>
+    <string name="single_translate_text">译</string>
 </resources>

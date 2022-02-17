@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +66,8 @@ fun MainScreen(
 
     val bindEngines by vm.bindEngines.observeAsState()
     val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
+
+    val softKeyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
         val temp = arrayListOf<TranslationEngine>()
@@ -155,7 +158,10 @@ fun MainScreen(
                 showSnackbar(FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit).format(Consts.MAX_SELECT_ENGINES, selectedSize))
                 return@TranslateButton
             }
-            if(!vm.isTranslating()) vm.translate()
+            if(!vm.isTranslating()) {
+                vm.translate()
+                softKeyboardController?.hide()
+            }
             else{
                 vm.cancel()
                 showSnackbar(FunnyApplication.resources.getString(R.string.message_stop_translate))
