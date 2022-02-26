@@ -21,4 +21,5 @@ sealed class TranslateScreen(val icon : NavigationIcon, val titleId : Int, val r
     object SettingScreen : TranslateScreen(NavigationIcon(Icons.Default.Settings), R.string.nav_settings, "nav_trans_settings")
     object PluginScreen : TranslateScreen(NavigationIcon(resourceId = R.drawable.ic_plugin), R.string.nav_plugin, "nav_trans_plugin")
     object ThanksScreen : TranslateScreen(NavigationIcon(resourceId = R.drawable.ic_thanks), R.string.nav_thanks, "nav_thanks")
+    object AboutScreen : TranslateScreen(NavigationIcon(Icons.Default.Settings),R.string.about,"nav_trans_setting")
 }

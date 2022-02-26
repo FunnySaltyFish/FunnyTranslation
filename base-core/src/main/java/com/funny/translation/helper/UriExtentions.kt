@@ -28,17 +28,11 @@ fun Uri.readText(ctx: Context): String {
 
 @Throws(IOException::class)
 fun Uri.writeText(context: Context, text: String) {
-//    val path = this.path
-//    Log.d(TAG, "writeText: $path")
-//    path?.let {
-//        val file = File(it)
-//        file.writeText(text)
-//    }
     // 加上这一行之后保存不会多保存一段?
     // 我不理解啊tmd
     // 20220121 然并卵，尝试加上锁约束
-    val path = UriUtils.getFileAbsolutePath(context, this)
-    Log.d(TAG, "writeText: path:$path")
+//    val path = UriUtils.getFileAbsolutePath(context, this)
+//    Log.d(TAG, "writeText: path:$path")
 
     val pfd: AssetFileDescriptor? = context.contentResolver.openAssetFileDescriptor(this, "w")
 
@@ -54,9 +48,6 @@ fun Uri.writeText(context: Context, text: String) {
                 e.printStackTrace()
             }
         }
-//        val fileOutputStream = FileOutputStream(pfd.fileDescriptor)
-//        fileOutputStream.write(text.encodeToByteArray())
-//        fileOutputStream.close()
 
     }
 //    FileUtils.

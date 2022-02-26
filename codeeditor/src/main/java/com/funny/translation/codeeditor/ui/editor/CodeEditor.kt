@@ -1,5 +1,6 @@
 package com.funny.translation.codeeditor.ui.editor
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
 import android.util.Log
@@ -64,6 +65,7 @@ fun ComposeCodeEditor(
         try {
             val text = it.readText(context)
             activityViewModel.codeState.value = Content(text)
+            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             activityViewModel.openFileUri = it
         } catch (e: Exception) {
             activityViewModel.codeState.value = Content("打开文件失败！${e.localizedMessage}")
@@ -99,6 +101,7 @@ fun ComposeCodeEditor(
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.let {
             activityViewModel.openFileUri = it
+            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             saveFile(it)
         }
     }

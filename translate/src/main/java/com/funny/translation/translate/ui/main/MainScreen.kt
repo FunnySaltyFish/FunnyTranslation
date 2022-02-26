@@ -6,11 +6,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -55,19 +58,10 @@ private const val TAG = "MainScreen"
 fun MainScreen(
     showSnackbar: (String) -> Unit
 ) {
-    val vm: MainViewModel = viewModel()
-
-    val transText by vm.translateText.observeAsState("")
-    val sourceLanguage by vm.sourceLanguage.observeAsState()
-    val targetLanguage by vm.targetLanguage.observeAsState()
-
-    val resultList by vm.resultList.observeAsState()
-    val translateProgress by vm.progress.observeAsState()
+    val vm : MainViewModel = viewModel()
 
     val bindEngines by vm.bindEngines.observeAsState()
     val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
-
-    val softKeyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
         val temp = arrayListOf<TranslationEngine>()
@@ -76,102 +70,170 @@ fun MainScreen(
         vm.allEngines = temp
     }
 
-    Column(
-        modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 12.dp)
-                .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        var expandEngineSelect by remember {
-            mutableStateOf(false)
-        }
-        val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
-        Spacer(modifier = Modifier.statusBarsHeight())
-        // 这里的实现很不优雅，强行更改了viewModel的allEngines，
-        // 主要是 Flow 用的不熟
-        AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
-            EngineSelect(
-                modifier = Modifier.padding(8.dp),
-                bindEngines!!, jsEngines,
-                updateBindEngine = {
-                    //vm.markSave()
-                },
-                updateJsEngine = {
-                    //vm.markSave()
-                    val temp = arrayListOf<TranslationEngine>()
-                    temp.addAll(bindEngines!!)
-                    temp.addAll(jsEngines)
-                    vm.allEngines = temp
-                },
-            )
-        }
-        Spacer(modifier = Modifier.height(6.dp))
-        Box(modifier = Modifier
-                .clip(CircleShape)
-                .fillMaxWidth(0.4f)
-                .height(12.dp)
-                .background(MaterialTheme.colors.secondary)
-                .clickable { expandEngineSelect = !expandEngineSelect }
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            LanguageSelect(
-                language = sourceLanguage!!,
-                languages = allLanguages,
-                updateLanguage = {
-                    vm.sourceLanguage.value = it
-                    DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        if (maxWidth > 720.dp) { // 横屏
+            val scrollState = rememberScrollState()
+            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                EngineSelect(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.3f)
+                        .padding(8.dp)
+                        .scrollable(scrollState, Orientation.Vertical)
+                    ,
+                    bindEngines!!, jsEngines,
+                    updateBindEngine = {},
+                    updateJsEngine = {
+                        val temp = arrayListOf<TranslationEngine>()
+                        temp.addAll(bindEngines!!)
+                        temp.addAll(jsEngines)
+                        vm.allEngines = temp
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight(0.95f)
+                        .width(2.dp)
+                        .background(MaterialTheme.colors.surface)
+                )
+//                Spacer(modifier = Modifier.width())
+                Column(
+                    Modifier
+                        .fillMaxHeight()
+                        .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    TranslatePart(
+                        vm = vm,
+                        showSnackbar = showSnackbar,
+                        modifier = Modifier
+//                        modifier = Modifier
+//                            .fillMaxHeight()
+//                            .fillMaxWidth(0.610f)
+                    )
                 }
-            )
-            ExchangeButton {
-                Log.d(TAG, "MainScreen: clicked")
-                val temp = sourceLanguage
-                vm.sourceLanguage.value = targetLanguage
-                vm.targetLanguage.value = temp
 
-                DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
-                DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
             }
-            LanguageSelect(
-                language = targetLanguage!!,
-                languages = allLanguages,
-                updateLanguage = {
-                    vm.targetLanguage.value = it
-                    DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
+        }else{
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp, vertical = 12.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                var expandEngineSelect by remember {
+                    mutableStateOf(false)
                 }
-            )
+                val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
+                Spacer(modifier = Modifier.statusBarsHeight())
+                // 这里的实现很不优雅，强行更改了viewModel的allEngines，
+                // 主要是 Flow 用的不熟
+                AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
+                    EngineSelect(
+                        modifier = Modifier.padding(8.dp),
+                        bindEngines!!, jsEngines,
+                        updateBindEngine = {
+                            //vm.markSave()
+                        },
+                        updateJsEngine = {
+                            //vm.markSave()
+                            val temp = arrayListOf<TranslationEngine>()
+                            temp.addAll(bindEngines!!)
+                            temp.addAll(jsEngines)
+                            vm.allEngines = temp
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+                Box(modifier = Modifier
+                    .clip(CircleShape)
+                    .fillMaxWidth(0.4f)
+                    .height(12.dp)
+                    .background(MaterialTheme.colors.secondary)
+                    .clickable { expandEngineSelect = !expandEngineSelect }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                TranslatePart(
+                    vm = vm,
+                    showSnackbar = showSnackbar,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+            }
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        InputText(text = transText, updateText = { vm.translateText.value = it })
-        Spacer(modifier = Modifier.height(12.dp))
-        TranslateButton(translateProgress!!) {
-            if (vm.selectedEngines.isEmpty()) {
-                showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
-                return@TranslateButton
-            }
-            val selectedSize = vm.selectedEngines.size
-            if (selectedSize > Consts.MAX_SELECT_ENGINES){
-                showSnackbar(FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit).format(Consts.MAX_SELECT_ENGINES, selectedSize))
-                return@TranslateButton
-            }
-            if(!vm.isTranslating()) {
-                vm.translate()
-                softKeyboardController?.hide()
-            }
-            else{
-                vm.cancel()
-                showSnackbar(FunnyApplication.resources.getString(R.string.message_stop_translate))
-            }
-        }
-        Spacer(modifier = Modifier.height(18.dp))
-        TranslationList(resultList!!, showSnackbar)
     }
 
 
+}
+
+@Composable
+fun TranslatePart(
+    vm: MainViewModel,
+    showSnackbar: (String) -> Unit,
+    modifier : Modifier
+) {
+    val transText by vm.translateText.observeAsState("")
+    val sourceLanguage by vm.sourceLanguage.observeAsState()
+    val targetLanguage by vm.targetLanguage.observeAsState()
+
+    val resultList by vm.resultList.observeAsState()
+    val translateProgress by vm.progress.observeAsState()
+
+    val softKeyboardController = LocalSoftwareKeyboardController.current
+    Row(
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        LanguageSelect(
+            language = sourceLanguage!!,
+            languages = allLanguages,
+            updateLanguage = {
+                vm.sourceLanguage.value = it
+                DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
+            }
+        )
+        ExchangeButton {
+            Log.d(TAG, "MainScreen: clicked")
+            val temp = sourceLanguage
+            vm.sourceLanguage.value = targetLanguage
+            vm.targetLanguage.value = temp
+
+            DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
+            DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
+        }
+        LanguageSelect(
+            language = targetLanguage!!,
+            languages = allLanguages,
+            updateLanguage = {
+                vm.targetLanguage.value = it
+                DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
+            }
+        )
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    InputText(text = transText, updateText = { vm.translateText.value = it })
+    Spacer(modifier = Modifier.height(12.dp))
+    TranslateButton(translateProgress!!) {
+        if (vm.selectedEngines.isEmpty()) {
+            showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
+            return@TranslateButton
+        }
+        val selectedSize = vm.selectedEngines.size
+        if (selectedSize > Consts.MAX_SELECT_ENGINES){
+            showSnackbar(FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit).format(Consts.MAX_SELECT_ENGINES, selectedSize))
+            return@TranslateButton
+        }
+        if(!vm.isTranslating()) {
+            vm.translate()
+            softKeyboardController?.hide()
+        }
+        else{
+            vm.cancel()
+            showSnackbar(FunnyApplication.resources.getString(R.string.message_stop_translate))
+        }
+    }
+    Spacer(modifier = Modifier.height(18.dp))
+    TranslationList(resultList!!, showSnackbar)
 }
 
 @ExperimentalAnimationApi
@@ -185,7 +247,7 @@ fun EngineSelect(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Text(
             text = stringResource(id = R.string.bind_engine),
@@ -193,8 +255,8 @@ fun EngineSelect(
         )
         FlowRow(
             modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                .fillMaxWidth()
+                .padding(8.dp),
             mainAxisSpacing = 12.dp,
             crossAxisSpacing = 8.dp
         ) {
@@ -217,8 +279,8 @@ fun EngineSelect(
             )
             FlowRow(
                 modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 mainAxisSpacing = 12.dp,
                 crossAxisSpacing = 8.dp
             ) {
@@ -305,10 +367,10 @@ fun TranslateButton(
                 val p = if (progress == 0) 100 else progress
                 Box(
                     modifier = Modifier
-                            .fillMaxWidth(p / 100f)
-                            .height(48.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colors.primary)
+                        .fillMaxWidth(p / 100f)
+                        .height(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colors.primary)
                 )
                 Text(
                     text = stringResource(id = R.string.translate),
@@ -340,10 +402,10 @@ fun TranslationItem(
     }
     Box(
         modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colors.surface, shape = shape)
-                .padding(12.dp)
-                .animateContentSize()
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colors.surface, shape = shape)
+            .padding(12.dp)
+            .animateContentSize()
 
     ) {
         var expandDetail by remember {
@@ -395,6 +457,7 @@ fun TranslationItem(
                     }, modifier = Modifier
 //                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
+                        .size(48.dp)
                         .background(MaterialTheme.colors.secondary)
                         .pointerInput(Unit) {
                             detectTapGestures(onLongPress = {
@@ -405,7 +468,8 @@ fun TranslationItem(
                     Icon(
                         painterResource(id = R.drawable.ic_speak),
                         contentDescription = stringResource(id = R.string.speak),
-                        tint = Color.White
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 if (!result.detailText.isNullOrEmpty()){

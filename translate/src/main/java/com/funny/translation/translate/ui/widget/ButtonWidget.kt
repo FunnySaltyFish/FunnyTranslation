@@ -9,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -84,10 +85,12 @@ fun ExchangeButton(
                 MaterialTheme.colors.surface,
                 CircleShape
             )
+            .size(48.dp)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_exchange), tint = Color.White,
             contentDescription = stringResource(R.string.exchange),
+            modifier = Modifier.size(24.dp)
         )
     }
 }

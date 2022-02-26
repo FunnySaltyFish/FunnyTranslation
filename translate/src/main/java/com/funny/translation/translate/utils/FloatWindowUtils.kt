@@ -171,13 +171,6 @@ object FloatWindowUtils {
 
         FloatWindow
             .with(FunnyApplication.ctx)
-            .setView(view)
-            .setWidth(AppConfig.SCREEN_WIDTH * 9 / 10)
-            .setHeight(400)
-            .setX(AppConfig.SCREEN_WIDTH * 1 / 20)
-            .setY(100)
-            .setDesktopShow(true)
-            .setFilter(false, WebViewActivity::class.java, CodeEditorActivity::class.java)
             .setPermissionListener(object : PermissionListener {
                 override fun onSuccess() {
 
@@ -188,6 +181,14 @@ object FloatWindowUtils {
                     Toast.makeText(context, "悬浮窗权限授予失败，悬浮窗无法使用",Toast.LENGTH_SHORT).show()
                 }
             })
+            .setView(view)
+            .setWidth(AppConfig.SCREEN_WIDTH * 9 / 10)
+            .setHeight(400)
+            .setX(AppConfig.SCREEN_WIDTH * 1 / 20)
+            .setY(100)
+            .setDesktopShow(true)
+            .setFilter(false, WebViewActivity::class.java, CodeEditorActivity::class.java)
+
             .setMoveType(MoveType.active)
             .build()
 

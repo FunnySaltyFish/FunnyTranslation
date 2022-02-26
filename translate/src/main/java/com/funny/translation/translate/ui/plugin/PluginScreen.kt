@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +49,49 @@ fun PluginScreen(
     navController: NavController
 ) {
     val vm: PluginViewModel = viewModel()
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val maxW = maxWidth
+        if (maxWidth > 720.dp){ //宽屏
+            Row(
+                Modifier
+                    .fillMaxSize()
+                    .padding(12.dp), horizontalArrangement = Arrangement.SpaceAround) {
+                LocalPluginPart(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.45f),
+                    vm = vm,
+                    showSnackbar = showSnackbar
+                )
+                OnlinePluginPart(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(maxW * 0.45f),
+                    showSnackbar = showSnackbar
+                )
+            }
+
+        }else{
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(24.dp)) {
+                LocalPluginPart(modifier = Modifier.fillMaxWidth(), vm = vm, showSnackbar = showSnackbar)
+                OnlinePluginPart(modifier = Modifier.fillMaxWidth(), showSnackbar = showSnackbar)
+            }
+        }
+    }
+
+
+}
+
+@Composable
+fun LocalPluginPart(
+    modifier: Modifier,
+    vm : PluginViewModel,
+    showSnackbar: (String) -> Unit
+){
     val plugins by vm.plugins.collectAsState(initial = arrayListOf())
 
     var needToDeletePlugin: JsBean? = null
@@ -77,15 +121,23 @@ fun PluginScreen(
         }
     }
 
+    SimpleDialog(
+        openDialog = showDeleteDialog,
+        title = stringResource(id = R.string.message_confirm),
+        message = stringResource(id = R.string.message_delete_plugin),
+        confirmButtonText = stringResource(R.string.message_yes),
+        confirmButtonAction = {
+            needToDeletePlugin?.let { vm.deletePlugin(it) }
+        }
+    )
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
+        modifier = modifier
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = stringResource(id = R.string.manage_plugins),
@@ -118,7 +170,6 @@ fun PluginScreen(
                     }
                 }
             }
-
         }
 
         PluginList(plugins = plugins, deletePlugin = {
@@ -128,26 +179,21 @@ fun PluginScreen(
             it.enabled = 1 - it.enabled
             vm.updatePlugin(it)
         })
+    }
+}
 
+@Composable
+fun OnlinePluginPart(modifier: Modifier, showSnackbar: (String) -> Unit) {
+    Column(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.online_plugin),
             fontSize = 32.sp,
             fontWeight = FontWeight.ExtraBold
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OnlinePluginList(showSnackbar = showSnackbar)
+        OnlinePluginList(modifier = Modifier.fillMaxWidth(), showSnackbar = showSnackbar)
         //PreviewPluginList()
     }
-
-    SimpleDialog(
-        openDialog = showDeleteDialog,
-        title = stringResource(id = R.string.message_confirm),
-        message = stringResource(id = R.string.message_delete_plugin),
-        confirmButtonText = stringResource(R.string.message_yes),
-        confirmButtonAction = {
-            needToDeletePlugin?.let { vm.deletePlugin(it) }
-        }
-    )
 }
 
 @Composable
@@ -163,6 +209,9 @@ fun PluginList(
     ) {
         itemsIndexed(plugins) { index: Int, item: JsBean ->
             PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
+        }
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

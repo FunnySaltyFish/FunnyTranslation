@@ -42,11 +42,12 @@ interface ClickPluginAction {
 
 @Composable
 fun OnlinePluginList(
+    modifier: Modifier,
     showSnackbar : (String)->Unit
 ) {
     val vm : PluginViewModel = viewModel()
 
-    LoadingContent(loader = vm::getOnlinePlugins) { pluginList ->
+    LoadingContent(loader = vm::getOnlinePlugins, modifier = modifier) { pluginList ->
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
@@ -78,7 +79,7 @@ fun OnlinePluginList(
                 })
             }
             item {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
