@@ -1,12 +1,12 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.appcompat:appcompat:1.2.0@aar">
     <ANNOTATIONS>
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/0a75b8bc8aeabd6e11c622124b61b650/transformed/appcompat-1.2.0/annotations.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f1b64db1e8927bf588610d69a9dd3605/transformed/appcompat-1.2.0/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/0a75b8bc8aeabd6e11c622124b61b650/transformed/appcompat-1.2.0/res" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/0a75b8bc8aeabd6e11c622124b61b650/transformed/appcompat-1.2.0/AndroidManifest.xml" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/0a75b8bc8aeabd6e11c622124b61b650/transformed/appcompat-1.2.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f1b64db1e8927bf588610d69a9dd3605/transformed/appcompat-1.2.0/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f1b64db1e8927bf588610d69a9dd3605/transformed/appcompat-1.2.0/res" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/f1b64db1e8927bf588610d69a9dd3605/transformed/appcompat-1.2.0/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

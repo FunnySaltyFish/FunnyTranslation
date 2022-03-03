@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,6 +39,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
@@ -47,6 +49,7 @@ import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.statusBarsHeight
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "MainScreen"
@@ -56,12 +59,22 @@ private const val TAG = "MainScreen"
 @ExperimentalAnimationApi
 @Composable
 fun MainScreen(
-    showSnackbar: (String) -> Unit
+    translateText : String? = null,
+    sourceId : Int?,
+    targetId : Int?,
 ) {
     val vm : MainViewModel = viewModel()
 
     val bindEngines by vm.bindEngines.observeAsState()
     val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = LocalSnackbarState.current
+
+    val showSnackbar : (String) -> Unit = {
+        scope.launch {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
 
     LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
         val temp = arrayListOf<TranslationEngine>()
@@ -79,7 +92,7 @@ fun MainScreen(
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
                         .padding(8.dp)
-                        .scrollable(scrollState, Orientation.Vertical)
+                        .verticalScroll(scrollState)
                     ,
                     bindEngines!!, jsEngines,
                     updateBindEngine = {},
@@ -96,7 +109,6 @@ fun MainScreen(
                         .width(2.dp)
                         .background(MaterialTheme.colors.surface)
                 )
-//                Spacer(modifier = Modifier.width())
                 Column(
                     Modifier
                         .fillMaxHeight()
@@ -162,9 +174,21 @@ fun MainScreen(
         }
     }
 
-
+    LaunchedEffect(key1 = translateText){
+        if(!translateText.isNullOrBlank()){
+            vm.translateText.value = translateText.trim()
+            sourceId?.let {
+                vm.sourceLanguage.value = findLanguageById(it)
+            }
+            targetId?.let {
+                vm.targetLanguage.value = findLanguageById(it)
+            }
+            vm.translate()
+        }
+    }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TranslatePart(
     vm: MainViewModel,
@@ -272,7 +296,6 @@ fun EngineSelect(
 
         if (jsEngines.isNotEmpty()) {
             Spacer(modifier = Modifier.height(4.dp))
-
             Text(
                 text = stringResource(id = R.string.plugin_engine),
                 fontWeight = W600
@@ -344,7 +367,6 @@ fun TranslationList(
                 }, showSnackbar = showSnackbar
             )
         }
-        item { Spacer(modifier = Modifier.height(64.dp)) }
     }
 }
 

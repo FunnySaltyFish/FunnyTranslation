@@ -2,9 +2,12 @@
   <library name="Gradle: androidx.vectordrawable:vectordrawable:1.1.0@aar">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/1d6020ee8a32921660f2f46e9c9473fa/transformed/vectordrawable-1.1.0/res" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/850b688055f23c5108135a0edf0e894f/transformed/vectordrawable-1.1.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/850b688055f23c5108135a0edf0e894f/transformed/vectordrawable-1.1.0/AndroidManifest.xml" />
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/850b688055f23c5108135a0edf0e894f/transformed/vectordrawable-1.1.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/709e02e2b4b238fdaf9cf62c07ffdf0d/transformed/vectordrawable-1.1.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/7d2aae80443c2bf9df675fe5aa73dd75/transformed/vectordrawable-1.1.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d4f03c5355884d31a356a173cfbe0a01/transformed/vectordrawable-1.1.0/res" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d4f03c5355884d31a356a173cfbe0a01/transformed/vectordrawable-1.1.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d4f03c5355884d31a356a173cfbe0a01/transformed/vectordrawable-1.1.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -42,8 +42,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdkVersion 31
-        versionCode 33
-        versionName "2.2.3"
+        versionCode 34
+        versionName "2.2.4"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
@@ -106,6 +106,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.animation:animation:$compose_version"
     implementation "androidx.navigation:navigation-compose:2.5.0-alpha01"
     implementation 'androidx.activity:activity-compose:1.5.0-alpha01'
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-alpha01"
@@ -120,19 +121,23 @@ dependencies {
     implementation "com.airbnb.android:lottie-compose:4.2.0"
     implementation 'com.github.jeziellago:compose-markdown:0.2.6'
 
-    def accompanist_version = "0.20.0"
+    def accompanist_version = "0.23.1"
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
 
     // 应用更新
 //    implementation 'com.github.NewHuLe:AppUpdate:v1.7'
     implementation 'com.github.azhon:AppUpdate:3.0.6'
 
+    // 刘海屏适配
+    implementation 'com.github.smarxpan:NotchScreenTool:0.0.1'
+
     // 悬浮窗
 //    implementation("com.github.PBK-B:FloatWindow:1.0.9")
     implementation project(path: ":float_window")
-    implementation "com.github.skydoves:powerspinner:1.1.9"
+//    implementation "com.github.skydoves:powerspinner:1.1.9"
     implementation("androidx.appcompat:appcompat:1.4.1")
 
     implementation project(path: ":base-core")

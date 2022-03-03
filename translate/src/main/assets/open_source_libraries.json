@@ -1,0 +1,68 @@
+[
+  {
+    "name": "ComposeDataSaver",
+    "url": "https://github.com/FunnySaltyFish/ComposeDataSaver",
+    "description": "在 Jetpack Compose 中优雅完成数据持久化",
+    "author": "FunnySaltyFish"
+  },
+  {
+    "name": "CMaterialColors",
+    "url": "https://github.com/FunnySaltyFish/CMaterialColors",
+    "description": "在 Jetpack Compose 中使用 Material Design Color",
+    "author": "FunnySaltyFish"
+  },
+  {
+    "name": "AndroidX",
+    "url": "https://developer.android.google.cn/jetpack/androidx/",
+    "description": "Android 官方支持库",
+    "author": "Google"
+  },
+  {
+    "name": "OkHttp3",
+    "url": "https://github.com/square/okhttp",
+    "description": "Square’s meticulous HTTP client for the JVM, Android, and GraalVM.",
+    "author": "Square"
+  },
+  {
+    "name": "Retrofit",
+    "url": "https://github.com/square/retrofit",
+    "description": "A type-safe HTTP client for Android and the JVM",
+    "author": "Square"
+  },
+  {
+    "name": "MMKV",
+    "url": "https://github.com/Tencent/MMKV",
+    "description": "An efficient, small mobile key-value storage framework developed by WeChat. Works on Android, iOS, macOS, Windows, and POSIX.",
+    "author": "Tencent"
+  },
+  {
+    "name": "GSON",
+    "url": "https://github.com/google/gson",
+    "description": "A Java serialization/deserialization library to convert Java Objects into JSON and back",
+    "author": "Google"
+  },
+  {
+    "name": "Rhino-android",
+    "url": "https://github.com/gedoor/rhino-android",
+    "description": "Give access to RhinoScriptEngine from the JSR223 interfaces on Android JRE",
+    "author": "gedoor"
+  },
+  {
+    "name": "AppUpdate",
+    "url": "https://github.com/azhon/AppUpdate",
+    "description": "Android App update library. Android版本更新库，简单、可随意定制",
+    "author": "azhon"
+  },
+  {
+    "name": "lottie-compose",
+    "url": "http://airbnb.io/lottie/#/android-compose",
+    "description": "Render After Effects animations natively on Android and iOS, Web, and React Native",
+    "author": "airbnb"
+  },
+  {
+    "name": "compose-markdown",
+    "url": "https://github.com/jeziellago/compose-markdown",
+    "description": "Markdown Text for Android Jetpack Compose",
+    "author": "jeziellago"
+  }
+]

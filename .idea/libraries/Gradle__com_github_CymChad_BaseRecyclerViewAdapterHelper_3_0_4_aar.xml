@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4@aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/fb848a5405f38c951dcd39eabc966d09/transformed/jetified-BaseRecyclerViewAdapterHelper-3.0.4/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/fb848a5405f38c951dcd39eabc966d09/transformed/jetified-BaseRecyclerViewAdapterHelper-3.0.4/AndroidManifest.xml" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/fb848a5405f38c951dcd39eabc966d09/transformed/jetified-BaseRecyclerViewAdapterHelper-3.0.4/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/016ee4c291d82f1a289d40538ae9ee79/transformed/jetified-BaseRecyclerViewAdapterHelper-3.0.4/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/016ee4c291d82f1a289d40538ae9ee79/transformed/jetified-BaseRecyclerViewAdapterHelper-3.0.4/res" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/016ee4c291d82f1a289d40538ae9ee79/transformed/jetified-BaseRecyclerViewAdapterHelper-3.0.4/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

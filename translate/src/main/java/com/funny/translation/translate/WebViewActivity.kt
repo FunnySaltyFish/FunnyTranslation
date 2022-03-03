@@ -1,6 +1,7 @@
 package com.funny.translation.translate
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.net.http.SslError
@@ -8,17 +9,29 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.webkit.*
 import android.widget.ProgressBar
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 
-class WebViewActivity : ComponentActivity() {
-    @SuppressLint("ClickableViewAccessibility", "SetJavaScriptEnabled")
+class WebViewActivity : AppCompatActivity() {
+
     lateinit var webView : WebView
     lateinit var progressBar: ProgressBar
-    @SuppressLint("SetJavaScriptEnabled")
+    var url :String ?= null
+
+    companion object {
+        fun start(context: Context, url: String){
+            val intent = Intent(context, WebViewActivity::class.java)
+            intent.putExtra("load_url",url)
+            context.startActivity(intent)
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_webview)
@@ -100,7 +113,7 @@ class WebViewActivity : ComponentActivity() {
         webSettings.builtInZoomControls = true //设置内置的缩放控件。若为false，则该WebView不可缩放
         webSettings.displayZoomControls = false //隐藏原生的缩放控件
 
-        val url = intent.getStringExtra("load_url")
+        url = intent.getStringExtra("load_url")
         url?.let{
             webView.loadUrl(it)
         }
@@ -124,5 +137,25 @@ class WebViewActivity : ComponentActivity() {
         }else{
             super.onKeyDown(keyCode, event)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.webview, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menu_webview_refresh -> webView.reload()
+            R.id.menu_webview_jump_out -> url?.let { openWithBrowser(it) }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun openWithBrowser(url:String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 }

@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../Environment/AndroidSdk/icons/material/materialicons/edit/baseline_edit_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../Environment/AndroidSdk/icons/material/materialicons/call_made/baseline_call_made_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -34,7 +34,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_edit" />
+                            <entry key="outputName" value="ic_jump_out" />
                             <entry key="sourceFile" value="D:\projects\AppProjects\Mine\FunnyTranslation" />
                           </map>
                         </option>

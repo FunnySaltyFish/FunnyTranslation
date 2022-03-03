@@ -16,15 +16,22 @@
             android:name=".TransActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="funny" android:host="translation"/>
+            </intent-filter>
+
         </activity>
         <activity android:name=".WebViewActivity" android:theme="@style/AppTheme" android:exported="false"/>
-
+        <activity android:name=".ErrorDialogActivity" android:label="@string/crash" android:theme="@style/AppTheme.Dialog"/>
     </application>
 </manifest>

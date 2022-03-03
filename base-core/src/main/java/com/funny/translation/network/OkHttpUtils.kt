@@ -34,46 +34,48 @@ object OkHttpUtils {
         Log.d(TAG, "cache path: ${BaseApplication.ctx.cacheDir}")
     }
 
+    fun createBaseClient() = OkHttpClient().newBuilder().apply {
+        connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+        readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+        cache(cache)
+        addInterceptor(HttpCacheInterceptor())
+        // get response cookie
+        addInterceptor {
+            val request = it.request()
+            val response = it.proceed(request)
+            val requestUrl = request.url.toString()
+            val domain = request.url.host
+            // set-cookie maybe has multi, login to save cookie
+            if ((requestUrl.contains(SAVE_USER_LOGIN_KEY) || requestUrl.contains(
+                    SAVE_USER_REGISTER_KEY
+                ))
+                && response.headers(SET_COOKIE_KEY).isNotEmpty()
+            ) {
+                val cookies = response.headers(SET_COOKIE_KEY)
+                val cookie = encodeCookie(cookies)
+                saveCookie(requestUrl, domain, cookie)
+            }
+            response
+        }
+        // set request cookie
+        addInterceptor {
+            val request = it.request()
+            val builder = request.newBuilder()
+            val domain = request.url.host
+            // get domain cookie
+            if (domain.isNotEmpty()) {
+                val spDomain: String = DataSaverUtils.readData(domain, "")
+                val cookie: String = if (spDomain.isNotEmpty()) spDomain else ""
+                if (cookie.isNotEmpty()) {
+                    builder.addHeader(COOKIE_NAME, cookie)
+                }
+            }
+            it.proceed(builder.build())
+        }
+    }
+
     val okHttpClient by lazy {
-        OkHttpClient().newBuilder().apply {
-            connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
-            readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-            cache(cache)
-            addInterceptor(HttpCacheInterceptor())
-            // get response cookie
-            addInterceptor {
-                val request = it.request()
-                val response = it.proceed(request)
-                val requestUrl = request.url.toString()
-                val domain = request.url.host
-                // set-cookie maybe has multi, login to save cookie
-                if ((requestUrl.contains(SAVE_USER_LOGIN_KEY) || requestUrl.contains(
-                        SAVE_USER_REGISTER_KEY
-                    ))
-                    && response.headers(SET_COOKIE_KEY).isNotEmpty()
-                ) {
-                    val cookies = response.headers(SET_COOKIE_KEY)
-                    val cookie = encodeCookie(cookies)
-                    saveCookie(requestUrl, domain, cookie)
-                }
-                response
-            }
-            // set request cookie
-            addInterceptor {
-                val request = it.request()
-                val builder = request.newBuilder()
-                val domain = request.url.host
-                // get domain cookie
-                if (domain.isNotEmpty()) {
-                    val spDomain: String = DataSaverUtils.readData(domain, "")
-                    val cookie: String = if (spDomain.isNotEmpty()) spDomain else ""
-                    if (cookie.isNotEmpty()) {
-                        builder.addHeader(COOKIE_NAME, cookie)
-                    }
-                }
-                it.proceed(builder.build())
-            }
-        }.build()
+        createBaseClient().build()
     }
 
     @JvmOverloads

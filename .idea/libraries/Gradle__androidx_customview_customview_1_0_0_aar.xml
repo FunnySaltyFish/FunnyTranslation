@@ -2,9 +2,12 @@
   <library name="Gradle: androidx.customview:customview:1.0.0@aar">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/5b6ba6f7a00e2054b5a9f0b865899768/transformed/customview-1.0.0/res" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/7e966507b3cd191b16b57b79f50491c5/transformed/customview-1.0.0/AndroidManifest.xml" />
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/7e966507b3cd191b16b57b79f50491c5/transformed/customview-1.0.0/res" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/7e966507b3cd191b16b57b79f50491c5/transformed/customview-1.0.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/8928ccbfa0d598bff6907c4f25c6e7c3/transformed/customview-1.0.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/ff87f3f1eb8ae1aee4eadf822b17eed2/transformed/customview-1.0.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d2a276d4a00b08b59c699fe6533ae0b2/transformed/customview-1.0.0/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d2a276d4a00b08b59c699fe6533ae0b2/transformed/customview-1.0.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d2a276d4a00b08b59c699fe6533ae0b2/transformed/customview-1.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

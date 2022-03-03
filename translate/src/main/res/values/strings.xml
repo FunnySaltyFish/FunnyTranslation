@@ -56,5 +56,12 @@
     <string name="single_translate_text">译</string>
     <string name="about_float_window">关于悬浮窗</string>
     <string name="about">关于</string>
-    <string name="open_source_library">开源许可</string>
+    <string name="open_source_library">开源项目</string>
+    <string name="refresh">刷新</string>
+    <string name="open_with_browser">浏览器打开</string>
+    <string name="welcome_star">欢迎star~</string>
+    <string name="source_code">项目源代码</string>
+    <string name="privacy">隐私政策</string>
+    <string name="setting_hide_nav_bar">隐藏底部栏</string>
+    <string name="crash">崩溃</string>
 </resources>

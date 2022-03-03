@@ -41,7 +41,7 @@ class ActivityViewModel : ViewModel() {
     suspend fun checkUpdate(context : Context){
         if(hasCheckedUpdate)return
         kotlin.runCatching {
-            val manager = DownloadManager.getInstance(context);
+            val manager = DownloadManager.getInstance(context)
             withContext(Dispatchers.IO){
                 val versionCode = ApplicationUtil.getAppVersionCode(FunnyApplication.ctx)
                 Log.d(TAG, "checkUpdate: VersionCode:$versionCode")
@@ -76,4 +76,5 @@ class ActivityViewModel : ViewModel() {
         }
 
     }
+
 }

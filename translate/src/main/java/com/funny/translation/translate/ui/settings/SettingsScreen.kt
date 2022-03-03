@@ -3,12 +3,9 @@ package com.funny.translation.translate.ui.settings
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,13 +17,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
+import com.funny.jetsetting.core.JetSettingTile
+import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
+import com.funny.translation.translate.WebViewActivity
 import com.funny.translation.translate.bean.AppConfig
 import com.funny.translation.translate.bean.Consts
-import com.funny.translation.translate.ui.widget.RoundCornerButton
+import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.DateUtils
 import com.funny.translation.translate.utils.FloatWindowUtils
@@ -36,12 +37,13 @@ private const val TAG = "SettingScreen"
 @Composable
 fun SettingsScreen() {
     val systemUiController = rememberSystemUiController()
-    val navController = rememberNavController()
+    val navController = LocalNavController.current
     val context = LocalContext.current
 
     val showFloatWindowTipDialog = remember {
         mutableStateOf(false)
     }
+    val scrollState = rememberScrollState()
     val floatWindowTip = """
         悬浮窗使用需要权限，请正确授予相应权限
         因悬浮窗焦点问题，如需输入内容请先点击右上角 编辑 图标切换至编辑模式，编辑完后再次点击退出
@@ -52,7 +54,9 @@ fun SettingsScreen() {
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(24.dp)) {
+        .padding(24.dp)
+        .verticalScroll(scrollState)
+    ) {
         Text(
             text = stringResource(id = R.string.setting_ui),
             fontSize = 32.sp,
@@ -60,14 +64,13 @@ fun SettingsScreen() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         JetSettingCheckbox(
-            key = Consts.KEY_SHOW_STATUS_BAR,
-            text = stringResource(R.string.setting_show_status_bar),
+            key = Consts.KEY_HIDE_NAVIGATION_BAR,
+            default = false,
+            text = stringResource(R.string.setting_hide_nav_bar),
             resourceId = R.drawable.ic_status_bar,
             iconTintColor = MaterialColors.Blue700
         ){
-            systemUiController.isStatusBarVisible = it
-//            systemUiController.setStatusBarColor(Color.Transparent, darkIcons = darkIcon)
-//            Log.d(TAG, "SettingsScreen: statusBar ${systemUiController.}")
+            systemUiController.isNavigationBarVisible = !it
         }
         JetSettingCheckbox(
             key = Consts.KEY_SHOW_FLOAT_WINDOW,
@@ -75,10 +78,15 @@ fun SettingsScreen() {
             resourceId = R.drawable.ic_float_window,
             iconTintColor = MaterialColors.Orange700
         ){
-            if(!AppConfig.INIT_FLOATING_WINDOW)FloatWindowUtils.initFloatingWindow(context)
-            if (AppConfig.INIT_FLOATING_WINDOW){
-                if(it)FloatWindowUtils.showFloatWindow()
-                else FloatWindowUtils.hideFloatWindow()
+            try {
+                if(!AppConfig.INIT_FLOATING_WINDOW)FloatWindowUtils.initFloatingWindow(context)
+                if (AppConfig.INIT_FLOATING_WINDOW){
+                    if(it)FloatWindowUtils.showFloatWindow()
+                    else FloatWindowUtils.hideFloatWindow()
+                }
+            }catch (e:Exception){
+                Toast.makeText(context,"显示悬浮窗失败，请检查是否正确授予权限！",Toast.LENGTH_LONG).show()
+                DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
             }
         }
         Text(text = stringResource(R.string.about_float_window), modifier = Modifier
@@ -105,13 +113,28 @@ fun SettingsScreen() {
             fontSize = 32.sp,
             fontWeight = FontWeight.ExtraBold
         )
-        Row(Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.open_source_library))
-            IconButton(onClick = {
-                navController.navigate()
-            }) {
-                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Jump")
-            }
+
+        JetSettingTile(
+            text = stringResource(R.string.source_code),
+            resourceId = R.drawable.ic_github,
+            iconTintColor = MaterialColors.Purple700
+        ) {
+            Toast.makeText(context, FunnyApplication.resources.getText(R.string.welcome_star), Toast.LENGTH_SHORT).show()
+            WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
+        }
+        JetSettingTile(
+            text = stringResource(id = R.string.open_source_library),
+            resourceId = R.drawable.ic_open_source_library,
+            iconTintColor = MaterialColors.DeepOrange700
+        ) {
+            navController.navigate(TranslateScreen.AboutScreen.route)
+        }
+        JetSettingTile(
+            text = stringResource(R.string.privacy),
+            resourceId = R.drawable.ic_privacy,
+            iconTintColor = MaterialColors.Amber700
+        ) {
+            WebViewActivity.start(context, "https://api.funnysaltyfish.fun/trans/v1/api/privacy")
         }
     }
 }

@@ -48,7 +48,7 @@
 
 - 您需要使用 [Android Studio](https://developer.android.google.cn/studio/)  **2020.3.1 及以上版本**
 
-- 为了安全起见，开源部分不包括有关签名信息的`signing.properties`文件、有关翻译api key的`secure_data.properties`，如需完整运行请自行补全
+- 为了安全起见，开源部分不包括有关签名信息的`signing.properties`文件。如需打Release请自行补全
 
   - **signing.properties**
 

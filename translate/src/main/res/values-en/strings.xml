@@ -50,4 +50,15 @@
     <string name="message_out_of_max_engine_limit">You can choose at most %d engines to translate ay one time, but current is %d</string>
     <string name="message_stop_translate">Current task has been can celled!</string>
     <string name="setting_show_float_window">Show Float Window</string>
+    <string name="single_translate_text">T</string>
+    <string name="about_float_window">About float window</string>
+    <string name="about">About</string>
+    <string name="open_source_library">Open Source Library</string>
+    <string name="setting_spring_theme">Enable Spring Festival Theme</string>
+    <string name="refresh">Refresh</string>
+    <string name="open_with_browser">Open With Browser</string>
+    <string name="welcome_star">I would be appreciated if you can give a star~</string>
+    <string name="source_code">View Souce Code</string>
+    <string name="privacy">Pravicy Policy</string>
+    <string name="setting_hide_nav_bar">Hide Navigation Bar</string>
 </resources>

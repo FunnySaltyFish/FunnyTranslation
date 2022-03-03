@@ -36,19 +36,26 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.compose.rememberNavController
 import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
+import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
 import com.funny.translation.translate.TransActivity
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.launch
 
 private const val TAG = "PluginScreen"
 
 @Composable
-fun PluginScreen(
-    showSnackbar: (String) -> Unit,
-    navController: NavController
-) {
+fun PluginScreen() {
     val vm: PluginViewModel = viewModel()
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = LocalSnackbarState.current
+
+    val showSnackbar : (String) -> Unit = {
+        scope.launch {
+            snackbarHostState.showSnackbar(it)
+        }
+    }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val maxW = maxWidth
@@ -209,9 +216,6 @@ fun PluginList(
     ) {
         itemsIndexed(plugins) { index: Int, item: JsBean ->
             PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
-        }
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

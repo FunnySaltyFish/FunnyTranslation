@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashSet
 
 /** from https://github.com/zhujiang521/PlayAndroid
  * 版权：Zhujiang 个人版权
@@ -23,7 +22,7 @@ import kotlin.collections.HashSet
 
 object ServiceCreator {
 
-    private const val BASE_URL = "https://api.funnysaltyfish.fun/trans/v1/"
+    const val BASE_URL = "https://api.funnysaltyfish.fun/trans/v1/"
 
     /**
      * 自定义，适配特殊数据类型
@@ -43,8 +42,15 @@ object ServiceCreator {
         .create()
 
     private val retrofit by lazy{
-        // okHttpClientBuilder
-        val okHttpClient = OkHttpUtils.okHttpClient
+        val appName = "FunnyTranslation"
+        val okHttpClient = OkHttpUtils.createBaseClient().addInterceptor { chain ->
+            chain.proceed(
+                chain.request().newBuilder()
+                    .addHeader("User-Agent", appName)
+                    .addHeader("Referee", appName)
+                    .build()
+            )
+        }.build()
         RetrofitBuild(
             url = BASE_URL,
             client = okHttpClient,
@@ -67,7 +73,6 @@ class RetrofitBuild(
         baseUrl(url)
         client(client)
         addConverterFactory(gsonFactory)
-
     }.build()
 }
 

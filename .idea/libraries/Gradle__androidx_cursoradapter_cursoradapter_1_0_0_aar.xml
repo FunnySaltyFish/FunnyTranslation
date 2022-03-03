@@ -2,9 +2,12 @@
   <library name="Gradle: androidx.cursoradapter:cursoradapter:1.0.0@aar">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/118cca02b7a1784f9b2a9c7052e8a1dc/transformed/cursoradapter-1.0.0/res" />
-      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/4a91c84b172022652ac1651bdeed9c67/transformed/cursoradapter-1.0.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/4a91c84b172022652ac1651bdeed9c67/transformed/cursoradapter-1.0.0/AndroidManifest.xml" />
       <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/4a91c84b172022652ac1651bdeed9c67/transformed/cursoradapter-1.0.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/9adb968266168d009e3bbd06e94dc45d/transformed/cursoradapter-1.0.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/d422edea27ed2e2c0fdb3f7e1219b29c/transformed/cursoradapter-1.0.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/84f04b29014cb7725b522bd44a326bd9/transformed/cursoradapter-1.0.0/res" />
+      <root url="jar://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/84f04b29014cb7725b522bd44a326bd9/transformed/cursoradapter-1.0.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Environment/GradleRepos/caches/transforms-3/84f04b29014cb7725b522bd44a326bd9/transformed/cursoradapter-1.0.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

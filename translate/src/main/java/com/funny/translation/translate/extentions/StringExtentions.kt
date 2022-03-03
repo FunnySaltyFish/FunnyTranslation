@@ -1,7 +1,5 @@
 package com.funny.translation.translate.extentions
 
-import java.lang.Exception
-import java.lang.StringBuilder
 import java.security.MessageDigest
 
 val String.md5: String
@@ -24,3 +22,6 @@ val String.md5: String
         }
         return builder.toString()
     }
+
+val String.trimLineStart
+    get() = this.splitToSequence("\n").map { it.trim() }.joinToString("\n")

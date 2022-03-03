@@ -36,11 +36,11 @@ import com.funny.translation.translate.ui.widget.LoadingContent
 @Composable
 fun ThanksScreen() {
     val vm : ThanksViewModel = viewModel()
-    val scrollState = rememberScrollState()
     LazyColumn(
         modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+            .fillMaxSize()
+            .padding(24.dp)
+        ,
         horizontalAlignment = Alignment.Start
     ){
         item {
@@ -85,18 +85,17 @@ fun ThanksScreen() {
                     contentDes = "爱发电"
                 )
                 SponsorIcon(
-                    load_url = "https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111072055394.png",
+                    load_url = "https://api.funnysaltyfish.fun/alipay.jpg",
+                    resourceId = R.drawable.ic_alipay,
+                    contentDes = "支付宝"
+                )
+                SponsorIcon(
+                    load_url = "https://api.funnysaltyfish.fun/wechat.png",
                     resourceId = R.drawable.ic_wechat,
                     contentDes = "微信"
                 )
             }
         }
-        item{
-            Spacer(modifier = Modifier.height(20.dp))
-        }
-
-
-
     }
 }
 
@@ -126,7 +125,7 @@ fun SponsorIcon(
         val intent = Intent(context, WebViewActivity::class.java)
         intent.putExtra("load_url",load_url)
         context.startActivity(intent)
-    }) {
+    }, modifier = Modifier.size(64.dp)) {
         Icon(
             modifier = Modifier.size(48.dp) ,
             painter = painterResource(id = resourceId),
@@ -141,11 +140,11 @@ fun SponsorItem(
     sponsor : Sponsor,
 ) {
     Row(modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colors.surface)
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
-            .animateContentSize(),
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(16.dp))
+        .background(MaterialTheme.colors.surface)
+        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
+        .animateContentSize(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){

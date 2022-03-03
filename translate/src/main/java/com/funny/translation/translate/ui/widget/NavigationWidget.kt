@@ -6,9 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.funny.translation.translate.ui.screen.TranslateScreen
 
@@ -51,24 +50,38 @@ fun CustomNavigationItem(
     }
 }
 
+val BottomNavigationHeight = 56.dp
+
 @ExperimentalAnimationApi
 @Composable
 fun CustomNavigation(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    backgroundColor: Color = MaterialTheme.colors.primarySurface,
+    contentColor: Color = contentColorFor(backgroundColor),
+    elevation: Dp = BottomNavigationDefaults.Elevation,
     screens : Array<TranslateScreen>,
     currentScreen: TranslateScreen = screens[0],
     onItemClick: (TranslateScreen) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .padding(start=8.dp,end=8.dp,bottom = 4.dp,top = 2.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+    Surface(
+        color = backgroundColor,
+        contentColor = contentColor,
+        elevation = elevation,
+        modifier = modifier,
     ) {
-        screens.forEach{ screen->
-            CustomNavigationItem(item = screen, isSelected = currentScreen==screen) {
-                onItemClick(screen)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(contentPadding)
+                .height(BottomNavigationHeight),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            screens.forEach { screen ->
+                CustomNavigationItem(item = screen, isSelected = currentScreen == screen) {
+                    onItemClick(screen)
+                }
             }
         }
     }

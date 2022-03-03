@@ -32,7 +32,7 @@ object Consts {
     const val KEY_TARGET_LANGUAGE = "targetLanguage"
     const val KEY_APP_CHANNEL = "app_channel"
 
-    const val KEY_SHOW_STATUS_BAR = "show_status_bar"
+    const val KEY_HIDE_NAVIGATION_BAR = "hide_nav_bar"
     const val KEY_SHOW_FLOAT_WINDOW = "show_float_window"
     const val KEY_SPRING_THEME: String = "spring_theme"
 
