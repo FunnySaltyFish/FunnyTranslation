@@ -1,50 +1,50 @@
 package com.funny.translation.translate.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.graphics.Color
+import android.app.AlertDialog
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.runtime.*
-import com.funny.translation.codeeditor.CodeEditorActivity
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.allLanguages
 import com.funny.translation.trans.findLanguageById
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
-import com.funny.translation.translate.WebViewActivity
 import com.funny.translation.translate.bean.AppConfig
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.engine.TranslationEngines
-import com.yhao.floatwindow.FloatWindow
-import com.yhao.floatwindow.IFloatWindow
-import com.yhao.floatwindow.MoveType
-import com.yhao.floatwindow.PermissionListener
+import com.lzf.easyfloat.EasyFloat
+import com.lzf.easyfloat.enums.ShowPattern
+import com.lzf.easyfloat.enums.SidePattern
+import com.lzf.easyfloat.interfaces.OnPermissionResult
+import com.lzf.easyfloat.interfaces.OnTouchRangeListener
+import com.lzf.easyfloat.permission.PermissionUtils
+import com.lzf.easyfloat.utils.DragUtils
+import com.lzf.easyfloat.widget.BaseSwitchView
+import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 
-data class TranslationConfig(
-    val sourceString: String,
-    val sourceLanguage: Language,
-    val targetLanguage: Language
-)
+data class TranslationConfig(val sourceString:String, val sourceLanguage: Language, val targetLanguage: Language)
 
-object FloatWindowUtils {
-    const val TAG = "FloatWindowUtils"
-    var translateConfigFlow =
+object EasyFloatUtils {
+    const val TAG_FLOAT_BALL = "ball"
+    const val TAG_TRANS_WINDOW = "window"
+    private const val TAG = "EasyFloat"
+    private var vibrating = false
+    private var initTransWindow = false
+    private var initFloatBall = false
+
+    private var translateConfigFlow =
         MutableStateFlow(TranslationConfig("", Language.AUTO, Language.CHINESE))
     var translateJob: Job? = null
-    var iFloatWindow: IFloatWindow? = null
 
     fun initScreenSize(activity: Activity) {
         val displayMetrics = DisplayMetrics()
@@ -52,18 +52,18 @@ object FloatWindowUtils {
         AppConfig.SCREEN_WIDTH = displayMetrics.widthPixels
         AppConfig.SCREEN_HEIGHT = displayMetrics.heightPixels
     }
+    
+    private fun initTransWindow(view: View){
+        view.layoutParams.width = (AppConfig.SCREEN_WIDTH * 0.9).toInt()
 
-    fun initFloatingWindow(context: Context) {
-        val view = LayoutInflater.from(context).inflate(R.layout.layout_float_window, null)
-
-        var editable = false
         val edittext = view.findViewById<EditText>(R.id.float_window_input)
 
         val spinnerSource: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_source).apply {
                 adapter =
-                    ArrayAdapter<String>(context, android.R.layout.simple_spinner_item).apply {
+                    ArrayAdapter<String>(context, R.layout.view_spinner_text_item).apply {
                         addAll(allLanguages.map { it.displayText })
+                        setDropDownViewResource(R.layout.view_spinner_dropdown_item)
                     }
                 setSelection(Language.AUTO.id)
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -80,7 +80,7 @@ object FloatWindowUtils {
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
-                        TODO("Not yet implemented")
+//                        TODO("Not yet implemented")
                     }
                 }
             }
@@ -88,8 +88,9 @@ object FloatWindowUtils {
         val spinnerTarget: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_target).apply {
                 adapter =
-                    ArrayAdapter<String>(context, android.R.layout.simple_spinner_item).apply {
+                    ArrayAdapter<String>(context, R.layout.view_spinner_text_item).apply {
                         addAll(allLanguages.map { it.displayText })
+                        setDropDownViewResource(R.layout.view_spinner_dropdown_item)
                     }
                 setSelection(Language.CHINESE.id)
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -129,16 +130,9 @@ object FloatWindowUtils {
 
         val resultText: TextView = view.findViewById(R.id.float_window_text)
 
-        view.findViewById<ImageButton?>(R.id.float_window_edit_button).apply {
+        view.findViewById<ImageButton?>(R.id.float_window_close).apply {
             setOnClickListener {
-                if (editable) {
-                    FloatWindow.get().setUneditable()
-                    setColorFilter(Color.BLACK)
-                } else {
-                    FloatWindow.get().setEditable()
-                    setColorFilter(Color.WHITE)
-                }
-                editable = !editable
+                EasyFloat.hide(TAG_TRANS_WINDOW)
             }
         }
 
@@ -164,17 +158,18 @@ object FloatWindowUtils {
                     }
                 }.onFailure {
                     withContext(Dispatchers.Main) {
-                        resultText.text = "翻译失败！${it.localizedMessage}"
+                        resultText.text = FunnyApplication.ctx.resources.getString(R.string.trans_error).format(it)
                     }
                 }
             }
         }
 
-        view.findViewById<Button?>(R.id.float_window_translate).apply {
+        view.findViewById<TextView?>(R.id.float_window_translate).apply {
             setOnLongClickListener {
                 val clipboardText = ClipBoardUtil.get(context).trim()
                 Log.d(TAG, "clipboardText: $clipboardText")
                 if (clipboardText != "") {
+                    VibratorUtils.vibrate(100)
                     edittext.setText(clipboardText)
                     translateConfigFlow.value =
                         translateConfigFlow.value.copy(sourceString = clipboardText)
@@ -189,68 +184,107 @@ object FloatWindowUtils {
                 }
             }
         }
+    }
 
-        FloatWindow
-            .with(FunnyApplication.ctx)
-            .setPermissionListener(object : PermissionListener {
-                override fun onSuccess() {
-
+    private fun showTransWindow(){
+        if(!initTransWindow){
+            EasyFloat.with(FunnyApplication.ctx)
+                .setTag(TAG_TRANS_WINDOW)
+                .setLayout(R.layout.layout_float_window){ view ->
+                    initTransWindow(view)
                 }
+                .hasEditText(true)
+                .setShowPattern(ShowPattern.ALL_TIME)
+                .setSidePattern(SidePattern.DEFAULT)
+                .setImmersionStatusBar(true)
+                .setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0, 100)
+                .show()
+            initTransWindow = true
+        }else{
+            EasyFloat.show(TAG_TRANS_WINDOW)
+        }
+    }
 
-                override fun onFail() {
-                    AppConfig.INIT_FLOATING_WINDOW = false
-                    Toast.makeText(context, "悬浮窗权限授予失败，悬浮窗无法使用", Toast.LENGTH_SHORT).show()
+    @SuppressLint("MissingPermission")
+    fun setVibrator(inRange: Boolean) {
+        val vibrator = VibratorUtils.vibrator
+        if (!vibrator.hasVibrator() || (inRange && vibrating)) return
+        vibrating = inRange
+        if (inRange) VibratorUtils.vibrate(100)
+        else vibrator.cancel()
+    }
+
+    private fun _showFloatBall(){
+        if(initFloatBall){
+            EasyFloat.show(TAG_FLOAT_BALL)
+        }else {
+            EasyFloat.with(FunnyApplication.ctx)
+                .setTag(TAG_FLOAT_BALL)
+                .setLayout(R.layout.layout_float_ball) { view ->
+                    view.findViewById<RoundImageView>(R.id.float_ball_image).apply {
+                        setOnClickListener {
+                            showTransWindow()
+                        }
+                    }
                 }
-            })
-            .setView(view)
-            .setWidth(AppConfig.SCREEN_WIDTH * 9 / 10)
-            .setHeight(400)
-            .setX(AppConfig.SCREEN_WIDTH * 1 / 20)
-            .setY(100)
-            .setDesktopShow(true)
-            .setFilter(false, WebViewActivity::class.java, CodeEditorActivity::class.java)
+                .setShowPattern(ShowPattern.ALL_TIME)
+                .setSidePattern(SidePattern.RESULT_HORIZONTAL)
+                .setImmersionStatusBar(true)
+                .setGravity(Gravity.END or Gravity.BOTTOM, -20, -200)
+                .registerCallback {
+                    drag { _, motionEvent ->
+                        DragUtils.registerDragClose(motionEvent, object : OnTouchRangeListener {
+                            override fun touchInRange(inRange: Boolean, view: BaseSwitchView) {
+                                setVibrator(inRange)
+                                view.findViewById<TextView>(com.lzf.easyfloat.R.id.tv_delete).text =
+                                    if (inRange) "松手删除" else "删除浮窗"
 
-            .setMoveType(MoveType.active)
-            .build()
+                                view.findViewById<ImageView>(com.lzf.easyfloat.R.id.iv_delete)
+                                    .setImageResource(
+                                        if (inRange) com.lzf.easyfloat.R.drawable.icon_delete_selected
+                                        else com.lzf.easyfloat.R.drawable.icon_delete_normal
+                                    )
+                            }
 
-        iFloatWindow = FloatWindow.get()
-
-        AppConfig.INIT_FLOATING_WINDOW = true
-    }
-
-    fun showFloatWindow() {
-        FloatWindow.get()?.apply {
-            show()
-            updateFlags(
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            )
+                            override fun touchUpInRange() {
+                                EasyFloat.dismiss(TAG_FLOAT_BALL)
+                                initFloatBall = false
+                                DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
+                            }
+                        }, showPattern = ShowPattern.ALL_TIME)
+                    }
+                }
+                .show()
+            initFloatBall = true
         }
     }
 
-    private fun IFloatWindow.setEditable() {
-        updateFlags(WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR)
-    }
-
-    private fun IFloatWindow.setUneditable() {
-        updateFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                    or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-        )
-    }
-
-    fun hideFloatWindow() {
-        iFloatWindow?.apply {
-            hide()
-            updateFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+    fun showFloatBall(activity : Activity){
+        if(!PermissionUtils.checkPermission(FunnyApplication.ctx)) {
+            AlertDialog.Builder(activity)
+                .setMessage("使用浮窗功能，需要您授权悬浮窗权限。")
+                .setPositiveButton("去开启") { _, _ ->
+                    PermissionUtils.requestPermission(activity, object : OnPermissionResult {
+                        override fun permissionResult(isOpen: Boolean) {
+                            showFloatBall(activity)
+                        }
+                    })
+                }
+                .setNegativeButton("取消") { _, _ -> }
+                .show()
+        }else{
+            _showFloatBall()
         }
     }
 
-    fun destroyFloatWindow() {
-        if (iFloatWindow != null) {
-            FloatWindow.destroy()
-            DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
-            translateJob?.cancel()
-        }
+    fun hideFloatBall(){
+        EasyFloat.hide(TAG_TRANS_WINDOW)
+        EasyFloat.hide(TAG_FLOAT_BALL)
+    }
+
+    fun dismissAll(){
+        EasyFloat.dismiss(TAG_TRANS_WINDOW)
+        EasyFloat.dismiss(TAG_FLOAT_BALL)
+        translateJob?.cancel()
     }
 }

@@ -25,4 +25,7 @@
     <string name="export_plugin">Export</string>
     <string name="export_plugin_error">An error occurs while parsing the plugin, please make sure that your plugin can be excuted correctly.</string>
     <string name="export_plugin_success">Export Success!</string>
+    <string name="message_open_while_not_saved">Are you sure to open new file while current file has not been saved?</string>
+    <string name="message_hint">Tip</string>
+    <string name="message_leave_not_saved">Current file is not saved, are you sure to exit?</string>
 </resources>

@@ -12,13 +12,20 @@
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/codeeditor/src/main/res/menu/menu_code_editor.xml" value="0.20416666666666666" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/codeeditor/src/main/res/menu/menu_code_run.xml" value="0.10833333333333334" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/editor/src/main/res/layout/text_compose_popup_window.xml" value="0.1" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/bg_edittext.xml" value="0.1075" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/bg_edittext_focused.xml" value="0.1075" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/bg_edittext_normal.xml" value="0.1075" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/bg_float_window.xml" value="0.11" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/bg_round_button.xml" value="0.1" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/bg_trans_button.xml" value="0.1" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/drawable.xml" value="0.19907407407407407" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/drawable/ic_edit.xml" value="0.1" />
-        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/layout_float_window.xml" value="0.165" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/layout_float_ball.xml" value="0.1" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/layout_float_window.xml" value="0.1" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/layout_float_window_shell.xml" value="0.1" />
         <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/layout_webview.xml" value="0.165" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/view_spinner_dropdown_item.xml" value="0.203125" />
+        <entry key="..\:/projects/AppProjects/Mine/FunnyTranslation/translate/src/main/res/layout/view_spinner_text_item.xml" value="0.203125" />
       </map>
     </option>
   </component>

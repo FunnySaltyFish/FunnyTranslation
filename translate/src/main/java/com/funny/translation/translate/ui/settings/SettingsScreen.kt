@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.settings
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,7 +31,7 @@ import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.DateUtils
-import com.funny.translation.translate.utils.FloatWindowUtils
+import com.funny.translation.translate.utils.EasyFloatUtils
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private const val TAG = "SettingScreen"
@@ -79,11 +80,8 @@ fun SettingsScreen() {
             iconTintColor = MaterialColors.Orange700
         ){
             try {
-                if(!AppConfig.INIT_FLOATING_WINDOW)FloatWindowUtils.initFloatingWindow(context)
-                if (AppConfig.INIT_FLOATING_WINDOW){
-                    if(it)FloatWindowUtils.showFloatWindow()
-                    else FloatWindowUtils.hideFloatWindow()
-                }
+                if(it) EasyFloatUtils.showFloatBall(context as Activity)
+                else EasyFloatUtils.hideFloatBall()
             }catch (e:Exception){
                 Toast.makeText(context,"显示悬浮窗失败，请检查是否正确授予权限！",Toast.LENGTH_LONG).show()
                 DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)

@@ -149,7 +149,7 @@ fun AppNavigation(
                         startDestination = TranslateScreen.MainScreen.route,
                         modifier = Modifier
                             .statusBarsPadding()
-                                // avoid content being sheltered
+                            // avoid content being sheltered
                             .padding(bottom = BottomNavigationHeight + bottomBarContentPadding.calculateBottomPadding())
                     ) {
                         composable(TranslateScreen.MainScreen.route, deepLinks = listOf(
@@ -157,8 +157,8 @@ fun AppNavigation(
                         )) { navBackStackEntry ->
                             MainScreen(
                                 translateText = navBackStackEntry.arguments?.getString("text"),
-                                sourceId = navBackStackEntry.arguments?.getInt("sourceId"),
-                                targetId = navBackStackEntry.arguments?.getInt("targetId")
+                                sourceId = navBackStackEntry.arguments?.getString("sourceId", "-1")?.toInt(),
+                                targetId = navBackStackEntry.arguments?.getString("targetId", "-1")?.toInt()
                             )
                         }
                         navigation(

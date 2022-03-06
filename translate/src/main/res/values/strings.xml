@@ -64,4 +64,6 @@
     <string name="privacy">隐私政策</string>
     <string name="setting_hide_nav_bar">隐藏底部栏</string>
     <string name="crash">崩溃</string>
+    <string name="float_ball">Float Ball</string>
+    <string name="trans_error">翻译失败！原因是：%s</string>
 </resources>

@@ -137,6 +137,9 @@ dependencies {
     // 悬浮窗
 //    implementation("com.github.PBK-B:FloatWindow:1.0.9")
     implementation project(path: ":float_window")
+
+    implementation 'com.github.princekin-f:EasyFloat:2.0.4'
+    implementation 'com.github.thomhurst:RoundImageView:1.0.2'
 //    implementation "com.github.skydoves:powerspinner:1.1.9"
     implementation("androidx.appcompat:appcompat:1.4.1")
 

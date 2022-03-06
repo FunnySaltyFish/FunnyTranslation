@@ -49,6 +49,7 @@ import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.insets.statusBarsHeight
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -74,6 +75,10 @@ fun MainScreen(
         scope.launch {
             snackbarHostState.showSnackbar(it)
         }
+    }
+
+    SideEffect {
+        Log.d(TAG, "MainScreen: sourceId:$sourceId targetId:$targetId")
     }
 
     LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
@@ -175,13 +180,14 @@ fun MainScreen(
     }
 
     LaunchedEffect(key1 = translateText){
+        delay(800)
         if(!translateText.isNullOrBlank()){
             vm.translateText.value = translateText.trim()
-            sourceId?.let {
-                vm.sourceLanguage.value = findLanguageById(it)
+            if (sourceId != null && sourceId >= 0) {
+                vm.sourceLanguage.value = findLanguageById(sourceId)
             }
-            targetId?.let {
-                vm.targetLanguage.value = findLanguageById(it)
+            if (targetId != null && targetId >= 0) {
+                vm.targetLanguage.value = findLanguageById(targetId)
             }
             vm.translate()
         }
