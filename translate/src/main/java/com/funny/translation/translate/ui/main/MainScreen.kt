@@ -6,9 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
+import com.funny.translation.translate.ActivityViewModel
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
@@ -47,7 +46,6 @@ import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.insets.statusBarsHeight
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -60,14 +58,15 @@ private const val TAG = "MainScreen"
 @ExperimentalAnimationApi
 @Composable
 fun MainScreen(
-    translateText : String? = null,
-    sourceId : Int?,
-    targetId : Int?,
+    translateText: String? = null,
+    source: Language?,
+    target: Language?,
 ) {
+    val activityVM : ActivityViewModel = viewModel()
     val vm : MainViewModel = viewModel()
 
-    val bindEngines by vm.bindEngines.observeAsState()
-    val jsEngines by vm.jsEngines.collectAsState(arrayListOf())
+    val bindEngines by activityVM.bindEnginesFlow.collectAsState(emptyList())
+    val jsEngines by activityVM.jsEnginesFlow.collectAsState(emptyList())
     val scope = rememberCoroutineScope()
     val snackbarHostState = LocalSnackbarState.current
 
@@ -78,15 +77,15 @@ fun MainScreen(
     }
 
     SideEffect {
-        Log.d(TAG, "MainScreen: sourceId:$sourceId targetId:$targetId")
+        Log.d(TAG, "MainScreen: text:$translateText sourceId:$source targetId:$target")
     }
 
-    LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
-        val temp = arrayListOf<TranslationEngine>()
-        temp.addAll(bindEngines!!)
-        temp.addAll(jsEngines)
-        vm.allEngines = temp
-    }
+//    LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
+//        val temp = arrayListOf<TranslationEngine>()
+//        temp.addAll(bindEngines!!)
+//        temp.addAll(jsEngines)
+//        vm.allEngines = temp
+//    }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         if (maxWidth > 720.dp) { // 横屏
@@ -99,13 +98,13 @@ fun MainScreen(
                         .padding(8.dp)
                         .verticalScroll(scrollState)
                     ,
-                    bindEngines!!, jsEngines,
+                    bindEngines, jsEngines,
                     updateBindEngine = {},
                     updateJsEngine = {
-                        val temp = arrayListOf<TranslationEngine>()
-                        temp.addAll(bindEngines!!)
-                        temp.addAll(jsEngines)
-                        vm.allEngines = temp
+//                        val temp = arrayListOf<TranslationEngine>()
+//                        temp.addAll(bindEngines)
+//                        temp.addAll(jsEngines)
+//                        vm.allEngines = temp
                     }
                 )
                 Box(
@@ -140,7 +139,6 @@ fun MainScreen(
                     mutableStateOf(false)
                 }
                 val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
-                Spacer(modifier = Modifier.statusBarsHeight())
                 // 这里的实现很不优雅，强行更改了viewModel的allEngines，
                 // 主要是 Flow 用的不熟
                 AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
@@ -152,10 +150,10 @@ fun MainScreen(
                         },
                         updateJsEngine = {
                             //vm.markSave()
-                            val temp = arrayListOf<TranslationEngine>()
-                            temp.addAll(bindEngines!!)
-                            temp.addAll(jsEngines)
-                            vm.allEngines = temp
+//                            val temp = arrayListOf<TranslationEngine>()
+//                            temp.addAll(bindEngines!!)
+//                            temp.addAll(jsEngines)
+//                            vm.allEngines = temp
                         }
                     )
                 }
@@ -179,15 +177,20 @@ fun MainScreen(
         }
     }
 
-    LaunchedEffect(key1 = translateText){
+    // 接收其他应用传来的参数并开始翻译
+    val translateTextState = remember {
+        mutableStateOf(translateText)
+    }
+    LaunchedEffect(key1 = translateTextState.value){
         delay(800)
-        if(!translateText.isNullOrBlank()){
-            vm.translateText.value = translateText.trim()
-            if (sourceId != null && sourceId >= 0) {
-                vm.sourceLanguage.value = findLanguageById(sourceId)
+        val text = translateText?.trim() ?: ""
+        if(text!=""){
+            vm.translateText.value = text
+            if (source != null) {
+                vm.sourceLanguage.value = source
             }
-            if (targetId != null && targetId >= 0) {
-                vm.targetLanguage.value = findLanguageById(targetId)
+            if (target != null) {
+                vm.targetLanguage.value = target
             }
             vm.translate()
         }
@@ -243,7 +246,7 @@ fun TranslatePart(
     Spacer(modifier = Modifier.height(12.dp))
     InputText(text = transText, updateText = { vm.translateText.value = it })
     Spacer(modifier = Modifier.height(12.dp))
-    TranslateButton(translateProgress!!) {
+    TranslateButton(translateProgress!!.toInt()) {
         if (vm.selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
             return@TranslateButton
@@ -270,7 +273,7 @@ fun TranslatePart(
 @Composable
 fun EngineSelect(
     modifier: Modifier,
-    bindEngines: ArrayList<TranslationEngine> = arrayListOf(),
+    bindEngines: List<TranslationEngine> = arrayListOf(),
     jsEngines: List<TranslationEngine> = arrayListOf(),
     updateBindEngine : ()->Unit,
     updateJsEngine: () -> Unit
@@ -364,7 +367,7 @@ fun TranslationList(
         verticalArrangement = spacedBy(4.dp)
     ) {
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
-            //Log.d(TAG, "TranslationList: $result")
+//            Log.d(TAG, "TranslationList: $result")
             TranslationItem(
                 result = result, roundCornerConfig = when (index) {
                     0 -> if (size == 1) RoundCornerConfig.All else RoundCornerConfig.Top

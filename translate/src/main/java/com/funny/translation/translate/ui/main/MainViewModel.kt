@@ -13,11 +13,10 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
@@ -62,7 +61,7 @@ class MainViewModel : ViewModel() {
     val resultList : MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
     private val _resultList : ArrayList<TranslationResult> = arrayListOf()
 
-    val progress : MutableLiveData<Int> = MutableLiveData(0)
+    val progress : MutableLiveData<Float> = MutableLiveData(0f)
     private val totalProgress : Int
         get() = selectedEngines.size
 
@@ -73,19 +72,25 @@ class MainViewModel : ViewModel() {
             it.selected = DataSaverUtils.readData(it.selectKey, false)
         }
 
-        allEngines.find { it.selected } ?: run {
-            // 默认选两个
-            TranslationEngines.BaiduNormal.selected = true
-            TranslationEngines.Youdao.selected = true
+        viewModelScope.launch {
+            // 延时一秒，等待插件加载完
+            delay(1000)
+            allEngines.find { it.selected } ?: run {
+                // 默认选两个
+                TranslationEngines.BaiduNormal.selected = true
+                TranslationEngines.Youdao.selected = true
 
-            DataSaverUtils.saveData(TranslationEngines.BaiduNormal.selectKey, true)
-            DataSaverUtils.saveData(TranslationEngines.Youdao.selectKey, true)
+                DataSaverUtils.saveData(TranslationEngines.BaiduNormal.selectKey, true)
+                DataSaverUtils.saveData(TranslationEngines.Youdao.selectKey, true)
+            }
         }
+
+
     }
 
     fun cancel(){
         translateJob?.cancel()
-        progress.value = 100
+        progress.value = 100f
     }
 
     fun isTranslating() : Boolean = translateJob?.isActive ?: false
@@ -94,9 +99,37 @@ class MainViewModel : ViewModel() {
         if(translateJob?.isActive==true)return
         if(actualTransText.isEmpty())return
         _resultList.clear()
-        progress.value = 0
-
+        progress.value = 0f
+        val mutex = Mutex()
         translateJob = viewModelScope.launch {
+//            createFlow().toList().map { task ->
+//                async {
+//                    try {
+//                        task.result.targetLanguage = targetLanguage.value!!
+//                        withContext(Dispatchers.IO) {
+//                            task.translate(translateMode.value!!)
+//                        }
+//                        mutex.withLock {
+//                            updateTranslateResult(task.result)
+//                        }
+//                        Log.d(TAG, "translate : ${progress.value} ${task.result} (${task.hashCode()})(${task.result.hashCode()})")
+//
+//                    } catch (e: TranslationException) {
+//                        e.printStackTrace()
+//                        with(task.result) {
+//                            setBasicResult(
+//                                "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
+//                            )
+//                            updateTranslateResult(this)
+//                        }
+//                    } catch (e: Exception) {
+//                        with(task.result) {
+//                            setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
+//                            updateTranslateResult(this)
+//                        }
+//                    }
+//                }
+//            }.awaitAll()
             createFlow().buffer().collect { task ->
                 try {
                     task.result.targetLanguage = targetLanguage.value!!

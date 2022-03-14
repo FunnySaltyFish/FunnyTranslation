@@ -99,15 +99,14 @@ fun AppNavigation(
                 val systemUiController = rememberSystemUiController()
                 val useDarkIcons = MaterialTheme.colors.isLight
                 val navigationBarColor = MaterialTheme.colors.background.copy(alpha = 0.95f)
-                SideEffect {
+                LaunchedEffect(key1 = null) {
                     systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
                     systemUiController.setNavigationBarColor(
                         if (!useDarkIcons) Color.Transparent else navigationBarColor, darkIcons = useDarkIcons
                     )
 
-                    if(DataSaverUtils.readData(Consts.KEY_HIDE_NAVIGATION_BAR,false)){
-                        systemUiController.isNavigationBarVisible = false
-                    }
+                    systemUiController.isNavigationBarVisible = !DataSaverUtils.readData(Consts.KEY_HIDE_NAVIGATION_BAR,false)
+                    systemUiController.isStatusBarVisible = !DataSaverUtils.readData(Consts.KEY_HIDE_STATUS_BAR,true)
                 }
                 Scaffold(
                     bottomBar = {
@@ -156,10 +155,13 @@ fun AppNavigation(
                             navDeepLink { uriPattern = "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}" }
                         )) { navBackStackEntry ->
                             MainScreen(
-                                translateText = navBackStackEntry.arguments?.getString("text"),
-                                sourceId = navBackStackEntry.arguments?.getString("sourceId", "-1")?.toInt(),
-                                targetId = navBackStackEntry.arguments?.getString("targetId", "-1")?.toInt()
-                            )
+                                translateText = activityVM.tempTransConfig.sourceString,
+                                source = activityVM.tempTransConfig.sourceLanguage,
+                                target = activityVM.tempTransConfig.targetLanguage
+                            ).also {
+                                // 清空临时翻译参数
+                                activityVM.tempTransConfig.clear()
+                            }
                         }
                         navigation(
                             startDestination = TranslateScreen.SettingScreen.route,

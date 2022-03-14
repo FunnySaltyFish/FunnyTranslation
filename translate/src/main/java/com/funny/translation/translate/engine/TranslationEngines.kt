@@ -112,8 +112,8 @@ sealed class TranslationEngines : TranslationEngine{
         override val languageMapping: Map<Language, String>
             get() = mapOf(
                 Language.AUTO to "auto",
-                Language.CHINESE to "zh",
-                Language.ENGLISH to "en-US",
+                Language.CHINESE to "zh-CHS",
+                Language.ENGLISH to "en",
                 Language.JAPANESE to "ja",
                 Language.KOREAN to "ko",
                 Language.FRENCH to "fr",

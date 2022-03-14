@@ -15,7 +15,7 @@ object ClipBoardUtil {
      * 获取剪切板内容
      * @return
      */
-    operator fun get(ctx: Context): String {
+    fun read(ctx: Context): String {
         val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (manager.hasPrimaryClip() && manager.primaryClip!!.itemCount > 0) {
             val addedText = manager.primaryClip!!.getItemAt(0).text

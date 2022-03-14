@@ -108,5 +108,35 @@
         tools:text = "红红火火恍恍惚惚或\nasdasda dsasd\nasdsaddasda"
         />
 
+    <ImageButton
+        android:id="@+id/float_window_speak_btn"
+        android:visibility="invisible"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_below="@+id/float_window_text"
+        android:layout_marginStart="12dp"
+        android:background="#00000000"
+        android:contentDescription="@string/speak"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_speak"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_open_app_btn"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_below="@+id/float_window_text"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:background="#00000000"
+        android:contentDescription="@string/open_app"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_jump_out"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint"
+        />
+
 
 </RelativeLayout>

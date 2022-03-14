@@ -33,6 +33,7 @@ object Consts {
     const val KEY_APP_CHANNEL = "app_channel"
 
     const val KEY_HIDE_NAVIGATION_BAR = "hide_nav_bar"
+    const val KEY_HIDE_STATUS_BAR = "hide_status_bar"
     const val KEY_SHOW_FLOAT_WINDOW = "show_float_window"
     const val KEY_SPRING_THEME: String = "spring_theme"
 

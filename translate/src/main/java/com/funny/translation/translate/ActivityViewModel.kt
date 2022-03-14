@@ -7,18 +7,57 @@ import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.js.JsEngine
+import com.funny.translation.js.core.JsTranslateTask
+import com.funny.translation.trans.CoreTranslationTask
+import com.funny.translation.trans.selectKey
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.database.appDB
+import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager
+import com.funny.translation.translate.ui.bean.TranslationConfig
+import com.funny.translation.translate.ui.main.MainViewModel
 import com.funny.translation.translate.utils.ApplicationUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 
 
 class ActivityViewModel : ViewModel() {
+
     var lastBackTime : Long = 0
     var hasCheckedUpdate = false
+    // 由悬浮窗或其他应用传过来的临时翻译参数
+    val tempTransConfig = TranslationConfig()
+
+    val jsEnginesFlow : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
+        list.map {
+            JsTranslateTask(jsEngine = JsEngine(jsBean = it)).apply {
+                this.selected = DataSaverUtils.readData(this.selectKey, false)
+                Log.d(TAG, "${this.jsEngine.jsBean.fileName} selected:$selected ")
+            }
+        }
+    }
+
+    val bindEnginesFlow = flowOf(listOf(
+        TranslationEngines.BaiduNormal,
+        TranslationEngines.Youdao,
+        TranslationEngines.Jinshan,
+
+        TranslationEngines.BiggerText,
+        TranslationEngines.EachText,
+        TranslationEngines.Bv2Av
+    ))
+
+    val localEnginesFlow
+        get() = bindEnginesFlow.combine(jsEnginesFlow){ bindEngines , jsEngines ->
+            bindEngines + jsEngines
+        }.flowOn(Dispatchers.IO).conflate()
+
+
+
     companion object{
         const val TAG = "ActivityVM"
     }

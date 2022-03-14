@@ -1,7 +1,5 @@
 package com.funny.translation.translate.ui.plugin
 
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,19 +24,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.compose.rememberNavController
 import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
-import com.funny.translation.translate.TransActivity
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
@@ -209,14 +204,18 @@ fun PluginList(
     updateSelect: (JsBean) -> Unit,
     deletePlugin : (JsBean)->Unit
 ) {
-    LazyColumn(
-        verticalArrangement = spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        modifier = Modifier.heightIn(0.dp, 360.dp)
-    ) {
-        itemsIndexed(plugins) { index: Int, item: JsBean ->
-            PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
+    if (plugins.isNotEmpty()) {
+        LazyColumn(
+            verticalArrangement = spacedBy(12.dp),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = Modifier.heightIn(0.dp, 360.dp)
+        ) {
+            itemsIndexed(plugins) { _: Int, item: JsBean ->
+                PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
+            }
         }
+    }else{
+        Text(text = "空空如也~\n去添加一个插件试试吧", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
     }
 }
 
@@ -246,7 +245,7 @@ fun PluginItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            Text(plugin.fileName, fontSize = 18.sp, fontWeight = FontWeight.W600)
+            Text(plugin.fileName, fontSize = 18.sp, fontWeight = W600)
             Checkbox(checked = selected, onCheckedChange = {
                 updateSelect(plugin)
                 selected = !selected

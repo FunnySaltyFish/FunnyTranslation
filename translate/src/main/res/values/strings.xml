@@ -64,6 +64,9 @@
     <string name="privacy">隐私政策</string>
     <string name="setting_hide_nav_bar">隐藏底部栏</string>
     <string name="crash">崩溃</string>
-    <string name="float_ball">Float Ball</string>
+    <string name="float_ball">悬浮球</string>
     <string name="trans_error">翻译失败！原因是：%s</string>
+    <string name="setting_hide_status_bar">隐藏状态栏</string>
+    <string name="open_app">打开应用查询</string>
+    <string name="sort_result">结果排序</string>
 </resources>

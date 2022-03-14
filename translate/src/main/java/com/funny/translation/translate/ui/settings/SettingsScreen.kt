@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
+import com.funny.jetsetting.core.JetSettingDialog
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.FunnyApplication
@@ -65,10 +66,19 @@ fun SettingsScreen() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         JetSettingCheckbox(
+            key = Consts.KEY_HIDE_STATUS_BAR,
+            default = true,
+            text = stringResource(R.string.setting_hide_status_bar),
+            resourceId = R.drawable.ic_status_bar,
+            iconTintColor = MaterialColors.BlueGrey700
+        ){
+            systemUiController.isStatusBarVisible = !it
+        }
+        JetSettingCheckbox(
             key = Consts.KEY_HIDE_NAVIGATION_BAR,
             default = false,
             text = stringResource(R.string.setting_hide_nav_bar),
-            resourceId = R.drawable.ic_status_bar,
+            resourceId = R.drawable.ic_bottom_bar,
             iconTintColor = MaterialColors.Blue700
         ){
             systemUiController.isNavigationBarVisible = !it
@@ -104,6 +114,14 @@ fun SettingsScreen() {
             ){
                 Toast.makeText(context, "已${if(it){"设置"}else{"取消"}}春节限定主题，下次启动应用生效",Toast.LENGTH_SHORT).show()
             }
+        }
+        JetSettingDialog(
+            text = stringResource(R.string.sort_result),
+            resourceId = R.drawable.ic_sort,
+            iconTintColor = MaterialColors.DeepOrangeA700,
+            dialogTitle = stringResource(R.string.sort_result)
+        ) {
+            Text("哈哈哈")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(

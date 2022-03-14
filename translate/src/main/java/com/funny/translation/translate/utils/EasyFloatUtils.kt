@@ -3,6 +3,8 @@ package com.funny.translation.translate.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
@@ -19,6 +21,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.AppConfig
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
@@ -32,11 +35,10 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 
-data class TranslationConfig(val sourceString:String, val sourceLanguage: Language, val targetLanguage: Language)
 
 object EasyFloatUtils {
     const val TAG_FLOAT_BALL = "ball"
-    const val TAG_TRANS_WINDOW = "window"
+    private const val TAG_TRANS_WINDOW = "window"
     private const val TAG = "EasyFloat"
     private var vibrating = false
     private var initTransWindow = false
@@ -44,7 +46,7 @@ object EasyFloatUtils {
 
     private var translateConfigFlow =
         MutableStateFlow(TranslationConfig("", Language.AUTO, Language.CHINESE))
-    var translateJob: Job? = null
+    private var translateJob: Job? = null
 
     fun initScreenSize(activity: Activity) {
         val displayMetrics = DisplayMetrics()
@@ -107,7 +109,7 @@ object EasyFloatUtils {
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
-                        TODO("Not yet implemented")
+//                        TODO("Not yet implemented")
                     }
                 }
             }
@@ -129,6 +131,16 @@ object EasyFloatUtils {
         }
 
         val resultText: TextView = view.findViewById(R.id.float_window_text)
+        val speakBtn = view.findViewById<ImageButton>(R.id.float_window_speak_btn).apply {
+            setOnClickListener {
+                val txt = resultText.text
+                if (txt.isNotEmpty()){
+                    AudioPlayer.play(txt.toString(), findLanguageById(spinnerTarget.selectedItemPosition)){
+                        Toast.makeText(context, "朗读错误", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
 
         view.findViewById<ImageButton?>(R.id.float_window_close).apply {
             setOnClickListener {
@@ -139,12 +151,12 @@ object EasyFloatUtils {
         translateJob = GlobalScope.launch(Dispatchers.IO) {
             translateConfigFlow.collect {
                 kotlin.runCatching {
-                    if (it.sourceString.isNotBlank()) {
+                    if (it.sourceString!=null && it.sourceString!="") {
                         val sourceLanguage = findLanguageById(spinnerSource.selectedItemPosition)
                         val targetLanguage = findLanguageById(spinnerTarget.selectedItemPosition)
                         val task = TranslateUtils.createTask(
                             TranslationEngines.BaiduNormal,
-                            it.sourceString,
+                            it.sourceString!!,
                             sourceLanguage,
                             targetLanguage
                         )
@@ -154,6 +166,9 @@ object EasyFloatUtils {
                         task.translate()
                         withContext(Dispatchers.Main) {
                             resultText.text = task.result.basicResult.trans
+                            if(speakBtn.visibility != View.VISIBLE){
+                                speakBtn.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }.onFailure {
@@ -166,7 +181,7 @@ object EasyFloatUtils {
 
         view.findViewById<TextView?>(R.id.float_window_translate).apply {
             setOnLongClickListener {
-                val clipboardText = ClipBoardUtil.get(context).trim()
+                val clipboardText = ClipBoardUtil.read(context).trim()
                 Log.d(TAG, "clipboardText: $clipboardText")
                 if (clipboardText != "") {
                     VibratorUtils.vibrate(100)
@@ -181,6 +196,18 @@ object EasyFloatUtils {
                 if (inputText.isNotEmpty()) {
                     translateConfigFlow.value =
                         translateConfigFlow.value.copy(sourceString = inputText.toString())
+                }
+            }
+        }
+
+        view.findViewById<ImageButton>(R.id.float_window_open_app_btn).apply {
+            setOnClickListener {
+                Intent().apply {
+                    action = Intent.ACTION_VIEW
+                    data = Uri.parse("funny://translation/translate?text=${edittext.text}&sourceId=${spinnerSource.selectedItemPosition}&targetId=${spinnerTarget.selectedItemPosition}")
+                    flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
+                }.also {
+                    context.startActivity(it)
                 }
             }
         }
@@ -223,6 +250,7 @@ object EasyFloatUtils {
                 .setLayout(R.layout.layout_float_ball) { view ->
                     view.findViewById<RoundImageView>(R.id.float_ball_image).apply {
                         setOnClickListener {
+                            Log.d(TAG, "_showFloatBall: clip:${ClipBoardUtil.read(FunnyApplication.ctx)}")
                             showTransWindow()
                         }
                     }

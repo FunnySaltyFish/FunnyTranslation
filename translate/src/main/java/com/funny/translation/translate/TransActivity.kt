@@ -1,7 +1,10 @@
 package com.funny.translation.translate
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -15,6 +18,7 @@ import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.trans.findLanguageById
 import com.funny.translation.trans.initLanguageDisplay
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.utils.EasyFloatUtils
@@ -35,13 +39,15 @@ class TransActivity : AppCompatActivity() {
         ExperimentalMaterialApi::class,
         ExperimentalAnimationApi::class
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Debug.addTarget(DefaultDebugTarget)
 
-        //WindowCompat.setDecorFitsSystemWindows(window, false)
         context = this
         activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
+        getIntentData(intent)
+
         lifecycleScope.launch(Dispatchers.IO) {
             initLanguageDisplay(resources)
         }
@@ -72,8 +78,36 @@ class TransActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        getIntentData(intent)
+    }
+
     override fun onDestroy() {
         EasyFloatUtils.dismissAll()
         super.onDestroy()
+    }
+
+    /**
+     * 处理从各种地方传过来的 intent
+     * @param intent Intent?
+     */
+    private fun getIntentData(intent: Intent?) {
+        val action: String? = intent?.getAction()
+//        Log.d(TAG, "getIntentData: $intent")
+        if (Intent.ACTION_VIEW.equals(action)) {
+            val data: Uri? = intent.data
+            Log.d(TAG, "getIntentData: data:$data")
+            if (data !=null  && data.scheme == "funny" && data.host == "translation") {
+                with(activityViewModel.tempTransConfig){
+                    sourceString = data.getQueryParameter("text")
+                    val s = data.getQueryParameter("sourceId")
+                    if(s!=null) sourceLanguage = findLanguageById(s.toInt())
+                    val t = data.getQueryParameter("targetId")
+                    if(t!=null) targetLanguage = findLanguageById(t.toInt())
+                }
+                Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
+            }
+        }
     }
 }
