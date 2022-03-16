@@ -1,7 +1,9 @@
 package com.funny.translation.translate.ui.settings
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.helper.readAssets
@@ -13,9 +15,14 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class SettingsScreenViewModel : ViewModel() {
+    companion object {
+        private const val TAG = "SettingsScreenVM"
+    }
+
     lateinit var openSourceLibraryList: List<OpenSourceLibraryInfo>
     suspend fun loadOpenSourceLibInfo(): List<OpenSourceLibraryInfo> =
         if (this@SettingsScreenViewModel::openSourceLibraryList.isInitialized) openSourceLibraryList
@@ -27,12 +34,17 @@ class SettingsScreenViewModel : ViewModel() {
                 openSourceLibraryList
             }
 
-    var localEngineNamesState : MutableState<List<TranslationEngineName>> = mutableStateOf(listOf())
-
-    init {
-        viewModelScope.launch {
-            localEngineNamesState.value = SortResultUtils.getLocalEngineNames()
+    val localEngineNamesState : List<TranslationEngineName> by lazy{
+        runBlocking {
+            return@runBlocking SortResultUtils.getLocalEngineNames()
         }
     }
+
+//    init {
+//        viewModelScope.launch {
+//            localEngineNamesState = SortResultUtils.getLocalEngineNames().toMutableStateList()
+//            Log.d(TAG, "init: ")
+//        }
+//    }
 
 }

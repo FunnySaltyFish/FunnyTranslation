@@ -1,7 +1,6 @@
 package com.funny.translation.translate.ui.settings
 
 import android.app.Activity
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
-import com.funny.jetsetting.core.JetSettingDialog
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.FunnyApplication
@@ -37,8 +35,6 @@ import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.DateUtils
 import com.funny.translation.translate.utils.EasyFloatUtils
-import com.funny.translation.translate.utils.SortResultUtils
-import com.funny.translation.translate.utils.TranslationEngineName
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.burnoutcrew.reorderable.*
 
@@ -196,7 +192,7 @@ fun SortResult(
 //    val l: State<List<TranslationEngineName>> = produceState(initialValue = listOf()) {
 //        value = SortResultUtils.getLocalEngineNames()
 //    }
-    val data = vm.localEngineNamesState.value.toMutableStateList()
+    val data = vm.localEngineNamesState.toMutableStateList()
     LazyColumn(
         state = state.listState,
         modifier = modifier
@@ -223,12 +219,12 @@ fun SortResult(
         }
     }
 
-    DisposableEffect(key1 = null){
-        onDispose {
-            if(!SortResultUtils.checkEquals(data)){
-                Log.d(TAG, "SortResult: 不相等")
-                SortResultUtils.resetMappingAndSave(data)
-            }
-        }
-    }
+//    DisposableEffect(key1 = null){
+//        onDispose {
+//            if(!SortResultUtils.checkEquals(data)){
+//                Log.d(TAG, "SortResult: 不相等")
+//                SortResultUtils.resetMappingAndSave(data)
+//            }
+//        }
+//    }
 }
