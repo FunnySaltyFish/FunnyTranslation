@@ -54,9 +54,9 @@ fun ThanksScreen() {
         item {
             LoadingContent(modifier = Modifier ,loader = (vm.sponsorService::getAllSponsor) ) { sponsorList ->
                 sponsorList.let{
-                    Column() {
+                    Column {
                         SponsorList(it)
-                        Text(modifier = Modifier.fillMaxWidth(),text = "上述排名仅以时间为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为", textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
+                        Text(modifier = Modifier.fillMaxWidth(),text = stringResource(id = R.string.sponsor_tip), textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
                     }
                 }
             }

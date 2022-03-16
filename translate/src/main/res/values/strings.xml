@@ -69,4 +69,6 @@
     <string name="setting_hide_status_bar">隐藏状态栏</string>
     <string name="open_app">打开应用查询</string>
     <string name="sort_result">结果排序</string>
+    <string name="sponsor_tip">上述排名仅以时间为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为</string>
+    <string name="others">其他</string>
 </resources>

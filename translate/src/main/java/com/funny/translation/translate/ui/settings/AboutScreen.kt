@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.settings
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.W300
 import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,7 +33,7 @@ fun AboutScreen() {
 
 @Composable
 fun OpenSourceLib() {
-    val vm : AboutScreenViewModel = viewModel()
+    val vm : SettingsScreenViewModel = viewModel()
     LoadingContent(modifier = Modifier.fillMaxSize(), loader = vm::loadOpenSourceLibInfo) { list ->
         LazyColumn(
             Modifier

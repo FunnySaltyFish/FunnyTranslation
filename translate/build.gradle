@@ -142,6 +142,7 @@ dependencies {
     implementation 'com.github.thomhurst:RoundImageView:1.0.2'
 //    implementation "com.github.skydoves:powerspinner:1.1.9"
     implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.7.4")
 
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")

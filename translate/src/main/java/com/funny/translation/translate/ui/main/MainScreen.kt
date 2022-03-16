@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,13 +33,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
-import com.funny.translation.translate.ActivityViewModel
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.LocalSnackbarState
+import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
@@ -49,24 +50,34 @@ import com.google.accompanist.flowlayout.FlowRow
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 private const val TAG = "MainScreen"
+private interface UpdateSelectedEngine {
+    fun add(engine: TranslationEngine)
+    fun remove(engine: TranslationEngine)
+}
+
+
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
-fun MainScreen(
-    translateText: String? = null,
-    source: Language?,
-    target: Language?,
-) {
-    val activityVM : ActivityViewModel = viewModel()
+fun MainScreen() {
     val vm : MainViewModel = viewModel()
 
-    val bindEngines by activityVM.bindEnginesFlow.collectAsState(emptyList())
-    val jsEngines by activityVM.jsEnginesFlow.collectAsState(emptyList())
+    val updateSelectedEngine = object : UpdateSelectedEngine {
+        override fun add(engine: TranslationEngine) {
+            vm.addSelectedEngines(engine)
+        }
+
+        override fun remove(engine: TranslationEngine) {
+            vm.removeSelectedEngine(engine)
+        }
+    }
+
+    val bindEngines by vm.bindEnginesFlow.collectAsState(emptyList())
+    val jsEngines by vm.jsEnginesFlow.collectAsState(emptyList())
     val scope = rememberCoroutineScope()
     val snackbarHostState = LocalSnackbarState.current
 
@@ -76,15 +87,8 @@ fun MainScreen(
         }
     }
 
-    SideEffect {
-        Log.d(TAG, "MainScreen: text:$translateText sourceId:$source targetId:$target")
-    }
-
-//    LaunchedEffect(key1 = bindEngines!!.size + jsEngines.size ){
-//        val temp = arrayListOf<TranslationEngine>()
-//        temp.addAll(bindEngines!!)
-//        temp.addAll(jsEngines)
-//        vm.allEngines = temp
+//    SideEffect {
+//        Log.d(TAG, "MainScreen: text:$translateText sourceId:$source targetId:$target")
 //    }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -99,13 +103,7 @@ fun MainScreen(
                         .verticalScroll(scrollState)
                     ,
                     bindEngines, jsEngines,
-                    updateBindEngine = {},
-                    updateJsEngine = {
-//                        val temp = arrayListOf<TranslationEngine>()
-//                        temp.addAll(bindEngines)
-//                        temp.addAll(jsEngines)
-//                        vm.allEngines = temp
-                    }
+                    updateSelectedEngine
                 )
                 Box(
                     modifier = Modifier
@@ -126,7 +124,6 @@ fun MainScreen(
 //                            .fillMaxWidth(0.610f)
                     )
                 }
-
             }
         }else{
             Column(
@@ -139,22 +136,12 @@ fun MainScreen(
                     mutableStateOf(false)
                 }
                 val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
-                // 这里的实现很不优雅，强行更改了viewModel的allEngines，
-                // 主要是 Flow 用的不熟
+
                 AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
                     EngineSelect(
                         modifier = Modifier.padding(8.dp),
-                        bindEngines!!, jsEngines,
-                        updateBindEngine = {
-                            //vm.markSave()
-                        },
-                        updateJsEngine = {
-                            //vm.markSave()
-//                            val temp = arrayListOf<TranslationEngine>()
-//                            temp.addAll(bindEngines!!)
-//                            temp.addAll(jsEngines)
-//                            vm.allEngines = temp
-                        }
+                        bindEngines, jsEngines,
+                        updateSelectedEngine
                     )
                 }
                 Spacer(modifier = Modifier.height(6.dp))
@@ -172,29 +159,64 @@ fun MainScreen(
                     showSnackbar = showSnackbar,
                     modifier = Modifier.fillMaxWidth()
                 )
-
             }
         }
     }
 
     // 接收其他应用传来的参数并开始翻译
-    val translateTextState = remember {
-        mutableStateOf(translateText)
-    }
-    LaunchedEffect(key1 = translateTextState.value){
-        delay(800)
-        val text = translateText?.trim() ?: ""
-        if(text!=""){
-            vm.translateText.value = text
-            if (source != null) {
-                vm.sourceLanguage.value = source
+//    val translateTextState = remember {
+//        mutableStateOf(activityVM.tempTransConfig.sourceString)
+//    }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val activityVM : ActivityViewModel = LocalActivityVM.current
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
+    DisposableEffect(key1 = lifecycleOwner){
+        val observer = LifecycleEventObserver { _, event ->
+//            Log.d(TAG, "MainScreen: event: $event")
+            if (event == Lifecycle.Event.ON_RESUME) {
+//                Log.d(TAG, "MainScreen: activityVM:${activityVM.hashCode()}")
+                val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
+//                Log.d(TAG, "MainScreen: get_text:$text")
+                if(text!=""){
+                    vm.translateText.value = text
+                    if (activityVM.tempTransConfig.sourceLanguage != null) {
+                        vm.sourceLanguage.value = activityVM.tempTransConfig.sourceLanguage
+                    }
+                    if (activityVM.tempTransConfig.targetLanguage != null) {
+                        vm.targetLanguage.value = activityVM.tempTransConfig.targetLanguage
+                    }
+                    vm.translate()
+                    activityVM.tempTransConfig.clear()
+                }
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                softwareKeyboardController?.hide()
             }
-            if (target != null) {
-                vm.targetLanguage.value = target
-            }
-            vm.translate()
+        }
+
+        // Add the observer to the lifecycle
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        // When the effect leaves the Composition, remove the observer
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
+//    LaunchedEffect(key1 = translateTextState){
+//        delay(800)
+//        val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
+//        Log.d(TAG, "MainScreen: get_text:$text")
+//        if(text!=""){
+//            vm.translateText.value = text
+//            if (activityVM.tempTransConfig.sourceLanguage != null) {
+//                vm.sourceLanguage.value = activityVM.tempTransConfig.sourceLanguage
+//            }
+//            if (activityVM.tempTransConfig.targetLanguage != null) {
+//                vm.targetLanguage.value = activityVM.tempTransConfig.targetLanguage
+//            }
+//            vm.translate()
+//        }
+//    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -247,11 +269,12 @@ fun TranslatePart(
     InputText(text = transText, updateText = { vm.translateText.value = it })
     Spacer(modifier = Modifier.height(12.dp))
     TranslateButton(translateProgress!!.toInt()) {
-        if (vm.selectedEngines.isEmpty()) {
+        val selectedEngines = vm.selectedEngines
+        if (selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
             return@TranslateButton
         }
-        val selectedSize = vm.selectedEngines.size
+        val selectedSize = selectedEngines.size
         if (selectedSize > Consts.MAX_SELECT_ENGINES){
             showSnackbar(FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit).format(Consts.MAX_SELECT_ENGINES, selectedSize))
             return@TranslateButton
@@ -271,12 +294,11 @@ fun TranslatePart(
 
 @ExperimentalAnimationApi
 @Composable
-fun EngineSelect(
+private fun EngineSelect(
     modifier: Modifier,
     bindEngines: List<TranslationEngine> = arrayListOf(),
     jsEngines: List<TranslationEngine> = arrayListOf(),
-    updateBindEngine : ()->Unit,
-    updateJsEngine: () -> Unit
+    updateSelectEngine: UpdateSelectedEngine
 ) {
     Column(
         modifier = modifier,
@@ -294,11 +316,12 @@ fun EngineSelect(
             crossAxisSpacing = 8.dp
         ) {
             bindEngines.forEachIndexed { index, task ->
-                //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                 SelectableChip(initialSelect = task.selected, text = task.name) {
+                    if(!task.selected){ // 选中了
+                        updateSelectEngine.add(task)
+                    }else updateSelectEngine.remove(task)
                     bindEngines[index].selected = !task.selected
                     DataSaverUtils.saveData(task.selectKey, task.selected)
-//                    updateBindEngine()
                 }
             }
         }
@@ -319,9 +342,12 @@ fun EngineSelect(
                 jsEngines.forEachIndexed { index, task ->
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                     SelectableChip(initialSelect = task.selected, text = task.name) {
+                        if(!task.selected){ // 选中了
+                            updateSelectEngine.add(task)
+                        }else updateSelectEngine.remove(task)
+
                         jsEngines[index].selected = !task.selected
                         DataSaverUtils.saveData(task.selectKey, task.selected)
-                        updateJsEngine()
                     }
                 }
             }

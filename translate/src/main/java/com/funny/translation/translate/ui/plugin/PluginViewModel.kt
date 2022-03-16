@@ -32,7 +32,7 @@ class PluginViewModel : ViewModel() {
             Log.d(TAG, "getOnlinePlugins: init")
             _onlinePlugins = pluginService.getOnlinePlugins()
         }
-        Log.d(TAG, "getOnlinePlugins: called!")
+//        Log.d(TAG, "getOnlinePlugins: called!")
         return _onlinePlugins
     }
 

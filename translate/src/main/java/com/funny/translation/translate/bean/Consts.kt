@@ -36,6 +36,7 @@ object Consts {
     const val KEY_HIDE_STATUS_BAR = "hide_status_bar"
     const val KEY_SHOW_FLOAT_WINDOW = "show_float_window"
     const val KEY_SPRING_THEME: String = "spring_theme"
+    const val KEY_SORT_RESULT = "sort_result"
 
     const val MAX_SELECT_ENGINES = 5
 }

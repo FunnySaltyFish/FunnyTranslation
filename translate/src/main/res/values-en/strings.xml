@@ -43,7 +43,7 @@
     <string name="dialog_new_size">The size of new version: %s</string>
     <string name="install_plugin">Install</string>
     <string name="update_plugin">Update</string>
-    <string name="uninstall_plugin">Unintsall</string>
+    <string name="uninstall_plugin">Uninstall</string>
     <string name="online_plugin">Online Plugins</string>
     <string name="setting_show_status_bar">Show Status Bar</string>
     <string name="setting_ui">UI Settings</string>
@@ -58,11 +58,14 @@
     <string name="refresh">Refresh</string>
     <string name="open_with_browser">Open With Browser</string>
     <string name="welcome_star">I would be appreciated if you can give a star~</string>
-    <string name="source_code">View Souce Code</string>
-    <string name="privacy">Pravicy Policy</string>
+    <string name="source_code">View Source Code</string>
+    <string name="privacy">Privacy Policy</string>
     <string name="setting_hide_nav_bar">Hide Navigation Bar</string>
     <string name="crash">Crash happened!</string>
     <string name="float_ball">Float Ball</string>
     <string name="trans_error">Translating failed! Detail reason is %s</string>
     <string name="setting_hide_status_bar">Hide Status Bar</string>
+    <string name="open_app">Open app to query</string>
+    <string name="sort_result">Sort Result</string>
+    <string name="sponsor_tip">The order above is sorted only by its time. It is your support that makes this application better.\n It\'s totally up to you whether to sponsor or not, \nplease do it according to your ability.</string>
 </resources>

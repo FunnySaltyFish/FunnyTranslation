@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.funny.translation.trans.findLanguageById
 import com.funny.translation.trans.initLanguageDisplay
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.utils.EasyFloatUtils
+import com.funny.translation.translate.utils.SortResultUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,18 +58,21 @@ class TransActivity : AppCompatActivity() {
         NotchScreenManager.getInstance().setDisplayInNotch(this)
 
         setContent {
-            AppNavigation(
-                exitAppAction = {
-                    this.finish()
-                }
-            )
+            CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
+                AppNavigation(
+                    exitAppAction = {
+                        this.finish()
+                    }
+                )
+            }
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
+            SortResultUtils.init()
             activityViewModel.checkUpdate(context)
             ApkUtil.deleteOldApk(
                 context,
-                context.externalCache.absolutePath + "/" + "update_apk.apk"
+                context.externalCache.absolutePath + "/update_apk.apk"
             )
         }
 
@@ -97,7 +102,7 @@ class TransActivity : AppCompatActivity() {
 //        Log.d(TAG, "getIntentData: $intent")
         if (Intent.ACTION_VIEW.equals(action)) {
             val data: Uri? = intent.data
-            Log.d(TAG, "getIntentData: data:$data")
+//            Log.d(TAG, "getIntentData: data:$data")
             if (data !=null  && data.scheme == "funny" && data.host == "translation") {
                 with(activityViewModel.tempTransConfig){
                     sourceString = data.getQueryParameter("text")
@@ -107,6 +112,7 @@ class TransActivity : AppCompatActivity() {
                     if(t!=null) targetLanguage = findLanguageById(t.toInt())
                 }
                 Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
+//                Log.d(TAG, "getIntentData: activityVM:${activityViewModel.hashCode()}")
             }
         }
     }

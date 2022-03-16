@@ -64,5 +64,17 @@
     "url": "https://github.com/jeziellago/compose-markdown",
     "description": "Markdown Text for Android Jetpack Compose",
     "author": "jeziellago"
+  },
+  {
+    "name": "EasyFloat",
+    "url": "https://github.com/princekin-f/EasyFloat",
+    "description": "\uD83D\uDD25 EasyFloat：浮窗从未如此简单（Android可拖拽悬浮窗口，支持页面过滤、自定义动画，可设置单页面浮窗、前台浮窗、全局浮窗，浮窗权限按需自动申请...）",
+    "author": "princekin-f"
+  },
+  {
+    "name": "ComposeReorderable",
+    "url": "https://github.com/aclassen/ComposeReorderable",
+    "description": "A Jetpack Compose (Desktop) modifier enabling reordering in a LazyList.",
+    "author": "aclassen"
   }
 ]

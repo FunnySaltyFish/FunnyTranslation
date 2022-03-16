@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -25,6 +26,7 @@ import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.settings.AboutScreen
 import com.funny.translation.translate.ui.settings.SettingsScreen
+import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.widget.BottomNavigationHeight
@@ -46,6 +48,9 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
 }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> {
     error("LocalSnackbarState has not been initialized! ")
+}
+val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
+    error("Local ActivityVM has not been initialized! ")
 }
 
 @ExperimentalComposeUiApi
@@ -155,13 +160,10 @@ fun AppNavigation(
                             navDeepLink { uriPattern = "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}" }
                         )) { navBackStackEntry ->
                             MainScreen(
-                                translateText = activityVM.tempTransConfig.sourceString,
-                                source = activityVM.tempTransConfig.sourceLanguage,
-                                target = activityVM.tempTransConfig.targetLanguage
-                            ).also {
-                                // 清空临时翻译参数
-                                activityVM.tempTransConfig.clear()
-                            }
+//                                translateText = activityVM.tempTransConfig.sourceString,
+//                                source = activityVM.tempTransConfig.sourceLanguage,
+//                                target = activityVM.tempTransConfig.targetLanguage
+                            )
                         }
                         navigation(
                             startDestination = TranslateScreen.SettingScreen.route,
@@ -187,6 +189,23 @@ fun AppNavigation(
                                 }
                             ) {
                                 AboutScreen()
+                            }
+                            composable(
+                                TranslateScreen.SortResultScreen.route,
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
+                                }
+                            ) {
+                                SortResult(Modifier.fillMaxSize())
                             }
                         }
 
