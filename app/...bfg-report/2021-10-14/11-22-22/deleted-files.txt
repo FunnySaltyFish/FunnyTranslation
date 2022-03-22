@@ -1,9 +1,0 @@
-af273376f45d435b8caaf055f9be6d642dff8ea7 1686 build.gradle
-7cddace4a44a6c8862c496c9c1cf48c3a3afceca 502 build.gradle
-c4137b12c6ea9b5c9a0fea1fd3e09cf84909aa81 1970 build.gradle
-09de143f38a50c86405fda2b8bacf3508666c58d 3489 build.gradle
-243f74d2dae49883d3e941a5e85ef6a14b506ae1 4987 build.gradle
-94ff186ab70bffe737ce411ddd01e4e07ae2b7a3 2277 build.gradle
-a8f3edffdc3975990240e307268ea5870b99196f 2332 build.gradle
-57290999f30b6fa54d402323fa6dc9e1dcf12bfd 1311 build.gradle
-dcacc2b067a5e752df870b7a168d5848762052cc 1737 build.gradle
