@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/drawer_header_height"
+    android:background="?attr/colorPrimary"
+    tools:background="@color/cardview_light_background"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/view_drawer_header_img"
+        android:layout_width="@dimen/drawer_header_icon_size"
+        android:layout_height="@dimen/drawer_header_icon_size"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/drawer_item_icon_left_margin"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/description_drawer_header_image" />
+
+    <TextView
+        android:id="@+id/view_drawer_header_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_drawer_header_img"
+        android:layout_marginStart="@dimen/drawer_item_text_left_margin"
+        android:layout_marginTop="12dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_normal"
+        tools:text="您好" />
+</RelativeLayout>

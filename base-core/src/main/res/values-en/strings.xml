@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language_auto">Auto</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_english">English</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_french">French</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_germany">German</string>
+    <string name="language_wenyanwen">文言文</string>
+    <string name="language_thai">Thai</string>
+    <string name="language_portuguese">Portuguess</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_vietnamese">Vietnamese</string>
+</resources>

@@ -1,0 +1,6 @@
+<Space xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/view_result_space_space"
+    android:layout_width="fill_parent"
+    android:layout_height="8dp">
+    
+</Space>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.NoActionBar.Fullscreen">-->
+<!--    </style>-->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog"/>
+</resources>

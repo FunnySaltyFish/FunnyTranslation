@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+	xmlns:funny="http://schemas.android.com/apk/res-auto"
+	>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
+        <item name="colorAccent">@color/colorAccentBlue</item>
+    </style>
+
+	
+	<style name="AppTheme.Blue" parent="@style/AppTheme">
+		<item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="colorAccent">@color/colorAccentGreen</item>
+		<!--结果展示的时候主要的文本颜色-->
+		<item name="attr_result_adapter_text_color_main">@color/color_blue_result_adapter_text_color_main</item>
+		<!--结果展示的时候语种形式 引擎名称的文本颜色-->
+		<item name="attr_result_adapter_text_color_language">@color/color_blue_result_adapter_text_color_language</item>
+		<!--结果展示的时候额外的翻译的文本颜色-->
+		<item name="attr_result_adapter_text_color_detail">@color/color_blue_result_adapter_text_color_detail</item>
+		<!--结果展示的时候注音的文本颜色-->
+		<item name="attr_result_adapter_text_color_punctuation">@color/color_blue_result_adapter_text_color_punctuation</item>
+		<!--选择语种的时候主要的背景颜色-->
+		<item name="attr_language_adapter_bg_color_checked" >@color/color_blue_language_adapter_bg_color_checked</item>
+		<!--选择语种的时候主要的文字颜色（选中）-->
+		<item name="attr_language_adapter_text_color_checked" >@color/color_blue_language_adapter_text_color_checked</item>
+		<!--选择语种的时候主要的文字颜色-->
+		<item name="attr_language_adapter_text_color">@color/color_blue_language_adapter_text_color</item>
+	</style>
+	
+	<style name="AppTheme.Green" parent="@style/AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="colorAccent">@color/colorAccentGreen</item>
+    </style>
+	
+    <style name="AppTheme.DoubleSeven" parent="@style/AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryDS</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkDS</item>
+        <item name="colorAccent">@color/colorAccentDS</item>
+    </style>
+    
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+		<item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.SettingActivity" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="alertDialogTheme">@style/MyAlertDialogTheme</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+
+    <style name="MyAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+	
+	<style name="MyToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+		<item name="actionMenuTextColor">@android:color/white</item>
+	</style>
+	
+	<style name="MyProgressbarStyle" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:maxHeight">50dip</item>
+        <item name="android:minHeight">10dip</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:progressDrawable">@drawable/bg_progressbar</item>
+	</style>
+	
+	<!--圆形波纹按钮-->
+	<style name="MyButtonRippleWhite">
+		<item name="android:radius">18dp</item>
+	</style>
+
+    <!-- FAB menu items -->
+    <style name="FabMenuLabelStyle">
+        <item name="android:background">@drawable/fab_label_background_black_pre21</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+	
+
+</resources>

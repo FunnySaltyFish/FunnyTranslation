@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_float_window"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:theme="@style/AppTheme"
+    >
+
+    <Spinner
+        android:id="@+id/float_window_spinner_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/source_language"
+
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_exchange_button"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@id/float_window_spinner_source"
+        android:background="#00000000"
+        android:contentDescription="@string/exchange"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_exchange"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint" />
+
+    <Spinner
+        android:id="@+id/float_window_spinner_target"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/float_window_exchange_button"
+        android:hint="@string/source_language"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:background="#00000000"
+        android:contentDescription="@string/close"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint" />
+
+    <LinearLayout
+        android:id="@+id/float_window_linear"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_below="@id/float_window_spinner_source"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        android:paddingHorizontal="8dp">
+
+        <com.funny.translation.translate.ui.widget.EditTextField
+            android:id="@+id/float_window_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="8dp"
+
+            android:layout_weight="6"
+
+            android:background="@drawable/bg_edittext"
+            android:maxLines="1"
+            android:textColor="@color/white"
+            app:clearButtonDrawable="@drawable/ic_clear_button"
+            app:clearButtonMode="whileEditing"
+            />
+
+        <TextView
+            android:id="@+id/float_window_translate"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_trans_button"
+            android:text="@string/single_translate_text"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/float_window_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/float_window_linear"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="4dp"
+        android:paddingHorizontal="8dp"
+        android:textColor="@color/white"
+        android:layout_marginBottom="4dp"
+        app:autoSizeMaxTextSize="18sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeTextType="uniform"
+        tools:text = "红红火火恍恍惚惚或\nasdasda dsasd\nasdsaddasda"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_speak_btn"
+        android:visibility="invisible"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_below="@+id/float_window_text"
+        android:layout_marginStart="12dp"
+        android:background="#00000000"
+        android:contentDescription="@string/speak"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_speak"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_open_app_btn"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_below="@+id/float_window_text"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="8dp"
+        android:background="#00000000"
+        android:contentDescription="@string/open_app"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_jump_out"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint"
+        />
+
+
+</RelativeLayout>

@@ -1,0 +1,34 @@
+pluginManagement {
+    repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin/'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url "https://repo1.maven.org/maven2/" }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google/'}
+        maven { url 'https://maven.aliyun.com/repository/jcenter/'}
+        maven { url "https://jitpack.io" }
+
+        google()
+        mavenCentral()
+    }
+}
+
+include ':codeeditor'
+include ':editor'
+include ":language-base"
+include ":language-universal"
+include ':base-core'
+include ':translate'
+include ':jet_setting_core'
+include ':float_window'
