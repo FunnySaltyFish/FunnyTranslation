@@ -11,9 +11,9 @@
 - 支持插件体系，强可拓展性
 - MaterialYou Design ，适配Android 12
 
-您可以在 [酷安](https://www.coolapk.com/apk/com.funny.translation) 或 [此仓库](/translate/release/translate-release.apk) 下载应用体验
-
-
+您可以在以下途径获取最新版本：
+- [酷安](https://www.coolapk.com/apk/com.funny.translation)
+- [此仓库](/translate/release/translate-release.apk)
 
 ### 截图
 
@@ -21,8 +21,8 @@
 
 | 图片                                                         | 图片                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102032441.jpg" alt="Screenshot_2021-11-07-22-37-33-814_com.funny.tran" style="zoom:33%;" /> | <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102032313.jpg" alt="Screenshot_2021-11-07-22-39-18-201_com.funny.tran" style="zoom:33%;" /> |
-| <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102033517.jpg" alt="Screenshot_2021-11-07-22-40-16-339_com.funny.tran" style="zoom:33%;" /> | <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202111102033976.jpg" alt="IMG_20211107_223720" style="zoom:33%;" /> |
+| <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202203231110130.png" alt="Screenshot_2021-11-07-22-37-33-814_com.funny.tran" style="zoom:33%;" /> | <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202203231110131.png" alt="Screenshot_2021-11-07-22-39-18-201_com.funny.tran" style="zoom:33%;" /> |
+| <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202203231110132.png" alt="Screenshot_2021-11-07-22-40-16-339_com.funny.tran" style="zoom:33%;" /> | <img src="https://gitee.com/funnysaltyfish/blog-drawing-bed/raw/master/img/202203231110129.png" alt="IMG_20211107_223720" style="zoom:33%;" /> |
 
 
 ### 参与贡献
@@ -39,9 +39,10 @@
 
 - **translate： 主体的翻译页面**
 - **base-core：基础模块，定义了基本Bean，以API形式引入第三方模块提供给其他部分**
-- **codeeditor：代码编辑器**
-- editor、language-base、language-universal：来源于开源项目[CodeEditor](https://github.com/Rosemoe/CodeEditor) ，代码编辑器View
-- buildSrc：版本管理
+- **codeeditor：代码编辑器页面**
+- **jet_setting_core：设置页面的基本组件**
+- editor、language-base、language-universal：来源于开源项目[sora-editor](https://github.com/Rosemoe/sora-editor)，代码编辑器 View
+- buildSrc：依赖版本管理
 - app/library：旧版应用全部模块
 
 
@@ -50,7 +51,7 @@
 
 - 您需要使用 [Android Studio](https://developer.android.google.cn/studio/)  **2020.3.1 及以上版本**
 
-- 为了安全起见，开源部分不包括有关签名信息的`signing.properties`文件、有关翻译api key的`secure_data.properties`，如需完整运行请自行补全
+- 为了安全起见，开源部分不包括有关签名信息的`signing.properties`文件，如需打 Release 包请您补全此文件
 
   - **signing.properties**
 
@@ -65,21 +66,11 @@
         KEY_PASSWORD=yourAliasPwd
      */
     ```
-
-  - **secure_data.properties**
-  
-  - 位于 `\translate\src\main\assets\secure_data.properties`
-  
-  - ```bash
-    // 您可以访问 https://api.fanyi.baidu.com/ 免费注册该项服务
-    
-    BAIDU_APP_ID=
-    BAIDU_APP_KEY=
-    ```
   
     
 
 ### 致谢
 
 - 页面设计参考自 酷安@江戸川コナン（已授权）
+- 宣传图来自 酷安@松川吖
 - 感谢所有赞助过项目的小伙伴们！
