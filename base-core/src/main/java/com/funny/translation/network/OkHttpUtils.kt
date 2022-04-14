@@ -46,11 +46,7 @@ object OkHttpUtils {
             val requestUrl = request.url.toString()
             val domain = request.url.host
             // set-cookie maybe has multi, login to save cookie
-            if ((requestUrl.contains(SAVE_USER_LOGIN_KEY) || requestUrl.contains(
-                    SAVE_USER_REGISTER_KEY
-                ))
-                && response.headers(SET_COOKIE_KEY).isNotEmpty()
-            ) {
+            if (response.headers(SET_COOKIE_KEY).isNotEmpty()) {
                 val cookies = response.headers(SET_COOKIE_KEY)
                 val cookie = encodeCookie(cookies)
                 saveCookie(requestUrl, domain, cookie)
@@ -72,10 +68,10 @@ object OkHttpUtils {
             }
             it.proceed(builder.build())
         }
-    }
+    }.build()
 
     val okHttpClient by lazy {
-        createBaseClient().build()
+        createBaseClient()
     }
 
     @JvmOverloads

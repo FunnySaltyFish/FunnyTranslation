@@ -104,7 +104,7 @@ fun AppNavigation(
                 val systemUiController = rememberSystemUiController()
                 val useDarkIcons = MaterialTheme.colors.isLight
                 val navigationBarColor = MaterialTheme.colors.background.copy(alpha = 0.95f)
-                LaunchedEffect(key1 = null) {
+                LaunchedEffect(key1 = systemUiController) {
                     systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
                     systemUiController.setNavigationBarColor(
                         if (!useDarkIcons) Color.Transparent else navigationBarColor, darkIcons = useDarkIcons

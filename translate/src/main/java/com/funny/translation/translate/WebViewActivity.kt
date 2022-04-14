@@ -11,11 +11,17 @@ import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.webkit.*
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.translate.bean.Consts
+import com.smarx.notchlib.NotchScreenManager
 
 class WebViewActivity : AppCompatActivity() {
 
@@ -34,6 +40,9 @@ class WebViewActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        NotchScreenManager.getInstance().setDisplayInNotch(this)
+
         setContentView(R.layout.layout_webview)
         
         webView = findViewById(R.id.webview)
@@ -127,6 +136,13 @@ class WebViewActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onResume() {
         super.onResume()
+        if(DataSaverUtils.readData(Consts.KEY_HIDE_STATUS_BAR, true)){
+            // Hide the status bar.
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+            // Remember that you should never show the action bar if the
+            // status bar is hidden, so hide that too if necessary.
+            actionBar?.hide()
+        }
         webView.settings.javaScriptEnabled = true
     }
 

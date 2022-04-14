@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -306,8 +307,8 @@ private fun EngineSelect(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            mainAxisSpacing = 12.dp,
-            crossAxisSpacing = 8.dp
+            mainAxisSpacing = 8.dp,
+            crossAxisSpacing = 0.dp
         ) {
             bindEngines.forEachIndexed { index, task ->
                 SelectableChip(initialSelect = task.selected, text = task.name) {
@@ -330,8 +331,8 @@ private fun EngineSelect(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                mainAxisSpacing = 12.dp,
-                crossAxisSpacing = 8.dp
+                mainAxisSpacing = 8.dp,
+                crossAxisSpacing = 0.dp
             ) {
                 jsEngines.forEachIndexed { index, task ->
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
@@ -536,7 +537,12 @@ fun TranslationItem(
                 }
             }
             if(expandDetail){
-                MarkdownText(markdown = result.detailText!!, Modifier.padding(4.dp))
+                SelectionContainer {
+                    MarkdownText(markdown = result.detailText!!,
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp))
+                }
             }
         }
     }

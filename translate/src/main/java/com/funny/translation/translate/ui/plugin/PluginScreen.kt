@@ -92,7 +92,7 @@ fun PluginScreen() {
 fun LocalPluginPart(
     modifier: Modifier,
     vm : PluginViewModel,
-    showSnackbar: (String) -> Unit
+    showSnackbar: (String) -> Unit,
 ){
     val plugins by vm.plugins.collectAsState(initial = arrayListOf())
 

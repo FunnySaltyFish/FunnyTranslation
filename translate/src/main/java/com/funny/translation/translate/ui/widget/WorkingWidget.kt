@@ -57,7 +57,7 @@ import com.funny.translation.translate.R
 //            },
 //            text = {
 //                Image(
-//                    painter = painterResource(id = R.drawable.sponser),
+//                    painter = painterResource(id = R.mipmap.sponser),
 //                    stringResource(id = R.string.sponser),
 //                    modifier = Modifier.fillMaxWidth(),
 //                    alignment = Alignment.Center,

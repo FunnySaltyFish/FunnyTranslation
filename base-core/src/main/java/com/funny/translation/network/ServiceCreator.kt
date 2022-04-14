@@ -18,6 +18,7 @@ import java.util.*
  * 创建日期：2021/4/30
  * 描述：ServiceCreator
  *
+ * 有修改
  */
 
 object ServiceCreator {
@@ -43,7 +44,7 @@ object ServiceCreator {
 
     private val retrofit by lazy{
         val appName = "FunnyTranslation"
-        val okHttpClient = OkHttpUtils.createBaseClient().addInterceptor { chain ->
+        val okHttpClient = OkHttpUtils.okHttpClient.newBuilder().addInterceptor { chain ->
             chain.proceed(
                 chain.request().newBuilder()
                     .addHeader("User-Agent", appName)
