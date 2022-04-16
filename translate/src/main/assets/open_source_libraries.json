@@ -76,5 +76,11 @@
     "url": "https://github.com/aclassen/ComposeReorderable",
     "description": "A Jetpack Compose (Desktop) modifier enabling reordering in a LazyList.",
     "author": "aclassen"
+  },
+  {
+    "name": "NotchScreenTool",
+    "url": "https://github.com/smarxpan/NotchScreenTool",
+    "description": "Android刘海屏、水滴屏等全面屏适配工具",
+    "author": "smarxpan"
   }
 ]
