@@ -229,7 +229,7 @@ fun TranslatePart(
     val translateProgress by vm.progress.observeAsState()
 
     val softKeyboardController = LocalSoftwareKeyboardController.current
-    Row(
+    Row( // 语种选择
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -261,9 +261,9 @@ fun TranslatePart(
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
-    InputText(text = transText, updateText = { vm.translateText.value = it })
+    InputText(text = transText, updateText = { vm.translateText.value = it }) // 输入框
     Spacer(modifier = Modifier.height(12.dp))
-    TranslateButton(translateProgress!!.toInt()) {
+    TranslateButton(translateProgress!!.toInt()) { // 翻译按钮
         val selectedEngines = vm.selectedEngines
         if (selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
@@ -284,7 +284,7 @@ fun TranslatePart(
         }
     }
     Spacer(modifier = Modifier.height(18.dp))
-    TranslationList(resultList!!, showSnackbar)
+    TranslationList(resultList!!, showSnackbar) // 结果列表
 }
 
 @ExperimentalAnimationApi

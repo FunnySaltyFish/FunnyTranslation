@@ -18,9 +18,9 @@ object SortResultUtils {
     var mapping : HashMap<TranslationEngineName, Int> = hashMapOf()
     private val gson = GsonBuilder().enableComplexMapKeySerialization().create()
     var localEngines = listOf<TranslationEngineName>()
-    private val defaultSort : (String)->Int = { mapping.get(it, Int.MAX_VALUE)!! }
-    val defaultEngineSort : (TranslationEngine)->Int = { mapping.get(it.name, Int.MAX_VALUE)!! }
-    val defaultResultSort : (TranslationResult)->Int = { mapping.get(it.engineName, Int.MAX_VALUE)!! }
+    private val defaultSort : (String)->Int = { mapping.get(it, Int.MAX_VALUE) }
+    val defaultEngineSort : (TranslationEngine)->Int = { mapping.get(it.name, Int.MAX_VALUE) }
+    val defaultResultSort : (TranslationResult)->Int = { mapping.get(it.engineName, Int.MAX_VALUE) }
 //    val engineComparator = Comparator<Int> { o1, o2 -> o1 - o2 }
 
     suspend fun init(){

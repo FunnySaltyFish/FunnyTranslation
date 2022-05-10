@@ -58,10 +58,6 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
         get() = "插件"
 
     override fun appendLog(text: CharSequence) {
-        viewModelScope.launch {
-            withContext(Dispatchers.Main){
-                outputDebug.value = "${outputDebug.value}\n$text"
-            }
-        }
+        outputDebug.value += "\n$text"
     }
 }

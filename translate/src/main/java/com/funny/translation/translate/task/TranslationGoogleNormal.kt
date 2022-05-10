@@ -30,9 +30,10 @@ class TranslationGoogleNormal() :
                 FunnyGoogleApi.tk(sourceString, "439500.3343569631"),
                 Uri.encode(sourceString)
             )
-            val headers = HashMap<String,String>().apply {
-                put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.73")
-            }
+            val headers = hashMapOf(
+                "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.73"
+            )
+
             val html = OkHttpUtils.get(realUrl,headers)
             //Log.d(TAG, "getBasicText: $html")
             html
