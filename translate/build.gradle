@@ -124,7 +124,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
 
-    implementation "androidx.work:work-runtime-ktx:2.7.1"
+//    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
     implementation "com.github.FunnySaltyFish:CMaterialColors:1.0.21"
     implementation "com.airbnb.android:lottie-compose:4.2.0"

@@ -1,10 +1,12 @@
 package com.funny.translation.translate.ui.main
 
 import android.util.Log
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -20,15 +22,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -46,7 +55,9 @@ import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 private const val TAG = "MainScreen"
 private interface UpdateSelectedEngine {
@@ -121,20 +132,77 @@ fun MainScreen() {
                 }
             }
         }else{
+            var expandEngineSelect by remember {
+                mutableStateOf(false)
+            }
+            val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
+            var engineSelectHeight by remember{ mutableStateOf(0) }
+            var currentSwipeOffset by remember{ mutableStateOf(0f) }
+            var jumpBackAnimate by remember { mutableStateOf(false) }
+            var jumpingBack = false // 是否正在弹回去
+
+            LaunchedEffect(key1 = jumpBackAnimate){
+                while (currentSwipeOffset > 0){
+                    currentSwipeOffset *= 0.8f
+//                    Log.d(TAG, "MainScreen: currentOffset: $currentSwipeOffset")
+                    if (currentSwipeOffset <= 10) {
+                        currentSwipeOffset = 0f
+                        jumpingBack = false
+                    }
+                    delay(16)
+                }
+            }
+
+            val nestedScrollConnection = remember {
+                object : NestedScrollConnection {
+                    override fun onPostScroll(
+                        consumed: Offset,
+                        available: Offset,
+                        source: NestedScrollSource
+                    ): Offset {
+                        Log.d(TAG, "onPostScroll: source: $source avai: $available offset: $currentSwipeOffset")
+                        if (!expandEngineSelect) return super.onPostScroll(consumed, available, source)
+                        if(source == NestedScrollSource.Drag){ // 如果在拖动
+                            if (currentSwipeOffset > 0.2 * engineSelectHeight){
+                                expandEngineSelect = false
+                                currentSwipeOffset = 0f
+                                return Offset(0f, available.y)
+                            }
+
+                            if(available.y < 0 && expandEngineSelect){
+                                currentSwipeOffset -= available.y // -= 负数等于加上整数
+//                                Log.d(TAG, "onPostScroll: currentSwipeOffset: $currentSwipeOffset")
+                                return Offset(0f, available.y)
+                            }
+                        }else if(source == NestedScrollSource.Fling){ // 手已经松了，但还开着
+                            if(Math.abs(available.y) < 1f && currentSwipeOffset > 0f && !jumpingBack){
+                                Log.d(TAG, "onPostScroll: 手松了但还展开着，手动关闭")
+                                jumpBackAnimate = !jumpBackAnimate
+                                jumpingBack = true
+                                return Offset(0f, available.y)
+                            }
+                        }
+
+                        return super.onPostScroll(consumed, available, source)
+                    }
+                }
+            }
             Column(
                 modifier = Modifier
+                    .offset { IntOffset(0, -currentSwipeOffset.roundToInt()) }
                     .padding(horizontal = 12.dp, vertical = 12.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .nestedScroll(nestedScrollConnection),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var expandEngineSelect by remember {
-                    mutableStateOf(false)
-                }
-                val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
-
                 AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
                     EngineSelect(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier
+                            .onGloballyPositioned {
+                                engineSelectHeight = Math.max(it.size.height, engineSelectHeight)
+//                                Log.d(TAG, "MainScreen: EngineSelect Height :$engineSelectHeight")
+                            }
+                            .padding(8.dp),
                         bindEngines, jsEngines,
                         updateSelectedEngine
                     )
@@ -145,7 +213,10 @@ fun MainScreen() {
                     .fillMaxWidth(0.4f)
                     .height(12.dp)
                     .background(MaterialTheme.colors.secondary)
-                    .clickable { expandEngineSelect = !expandEngineSelect }
+                    .clickable {
+                        expandEngineSelect = !expandEngineSelect
+                        currentSwipeOffset = 0f
+                    }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 

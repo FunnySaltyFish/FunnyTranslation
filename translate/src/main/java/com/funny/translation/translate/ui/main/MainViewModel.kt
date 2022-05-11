@@ -18,11 +18,14 @@ import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.net.URLEncoder
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
     private val actualTransText: String
-        get() = translateText.value?.trim() ?: ""
+        get() = translateText.value?.trim()?.also {
+            URLEncoder.encode(it, "utf-8")
+        } ?: ""
 
     val sourceLanguage: MutableLiveData<Language> = MutableLiveData(
         findLanguageById(
@@ -143,6 +146,7 @@ class MainViewModel : ViewModel() {
                         updateTranslateResult(this)
                     }
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     with(task.result) {
                         setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
                         updateTranslateResult(this)
