@@ -2,6 +2,7 @@ package com.funny.translation.translate.network
 
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.network.service.AppUpdateService
+import com.funny.translation.translate.network.service.NoticeService
 import com.funny.translation.translate.network.service.PluginService
 import com.funny.translation.translate.network.service.SponsorService
 
@@ -16,5 +17,9 @@ object TransNetwork {
 
     val pluginService by lazy {
         ServiceCreator.create(PluginService::class.java)
+    }
+
+    val noticeService by lazy {
+        ServiceCreator.create(NoticeService::class.java)
     }
 }

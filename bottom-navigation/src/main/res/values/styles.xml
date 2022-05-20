@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FunnyBottomNavigation">
+        <!--        未选中时的图标tint色     -->
+        <attr name="normalColor" format="color|reference" />
+        <!--        按钮被点击时渲染的颜色-->
+        <attr name="highlightColor" format="color|reference" />
+        <!--        按钮的额外上边距，默认为0，即纵向居中-->
+        <attr name="paddingTop" format="dimension" />
+        <!--        按钮图片的宽度-->
+        <attr name="imageWidth" format="dimension" />
+        <!--        按钮图片的高度-->
+        <attr name="imageHeight" format="dimension" />
+        <!--        默认的起始页，值应当介于[0~页数-1]-->
+        <attr name="startPage" format="integer" />
+        <!--        导航栏的背景颜色-->
+        <attr name="backgroundColor" format="color|reference" />
+        <!--        转移动画的持续时长-->
+        <attr name="animationDuration" format="integer" />
+    </declare-styleable>
+
+</resources>

@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id "com.google.devtools.ksp" version "1.6.10-1.0.2"
+    id "com.google.devtools.ksp" version "1.6.21-1.0.5"
 }
 
 android {
@@ -42,8 +42,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdkVersion 31
-        versionCode 37
-        versionName "2.2.7"
+        versionCode 39
+        versionName "2.2.9"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
@@ -127,6 +127,7 @@ dependencies {
 //    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
     implementation "com.github.FunnySaltyFish:CMaterialColors:1.0.21"
+//    implementation 'com.github.FunnySaltyFish:FunnyBottomNavigation:v1.1.1'
     implementation "com.airbnb.android:lottie-compose:4.2.0"
     implementation 'com.github.jeziellago:compose-markdown:0.2.6'
 
@@ -151,6 +152,7 @@ dependencies {
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")
     implementation project(path: ":jet_setting_core")
+    implementation project(path: ":bottom-navigation")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

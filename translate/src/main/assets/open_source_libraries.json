@@ -12,6 +12,12 @@
     "author": "FunnySaltyFish"
   },
   {
+    "name": "FunnyBottomNavigation",
+    "url": "https://github.com/FunnySaltyFish/FunnyBottomNavigation",
+    "description": "一个很漂亮的底部导航栏，继承自View，带有流畅且有趣的过度动画",
+    "author": "FunnySaltyFish"
+  },
+  {
     "name": "AndroidX",
     "url": "https://developer.android.google.cn/jetpack/androidx/",
     "description": "Android 官方支持库",

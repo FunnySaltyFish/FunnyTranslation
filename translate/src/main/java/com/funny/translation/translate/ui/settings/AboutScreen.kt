@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.translate.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.translate.ui.widget.LoadingContent
@@ -40,11 +42,12 @@ fun OpenSourceLib() {
                 .fillMaxWidth()
                 .padding(12.dp)) {
             items(list){ info ->
+                val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colors.isLight) MaterialColors.Orange200 else MaterialTheme.colors.surface
                 OpenSourceLibItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colors.surface)
+                        .background(color)
                         .padding(top = 12.dp, start = 12.dp, end = 12.dp),
                     info = info
                 )

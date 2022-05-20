@@ -12,6 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -19,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navDeepLink
 import com.funny.data_saver.core.LocalDataSaver
+import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.main.MainScreen
@@ -29,8 +32,8 @@ import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
-import com.funny.translation.translate.ui.widget.BottomNavigationHeight
 import com.funny.translation.translate.ui.widget.CustomNavigation
+import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
@@ -40,6 +43,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"
@@ -89,7 +93,6 @@ fun AppNavigation(
             //currentScreen = TranslateScreen.MainScreen
         }
     }
-
 
     CompositionLocalProvider(
         LocalNavController provides navController,
@@ -154,16 +157,12 @@ fun AppNavigation(
                         modifier = Modifier
                             .statusBarsPadding()
                             // avoid content being sheltered
-                            .padding(bottom = BottomNavigationHeight + bottomBarContentPadding.calculateBottomPadding())
+                            .padding(bottom = it.calculateBottomPadding())
                     ) {
                         composable(TranslateScreen.MainScreen.route, deepLinks = listOf(
                             navDeepLink { uriPattern = "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}" }
-                        )) { navBackStackEntry ->
-                            MainScreen(
-//                                translateText = activityVM.tempTransConfig.sourceString,
-//                                source = activityVM.tempTransConfig.sourceLanguage,
-//                                target = activityVM.tempTransConfig.targetLanguage
-                            )
+                        )) {
+                            MainScreen()
                         }
                         navigation(
                             startDestination = TranslateScreen.SettingScreen.route,
@@ -204,8 +203,7 @@ fun AppNavigation(
                                 popExitTransition = {
                                     slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
                                 }
-                            ) {
-                                SortResult(Modifier.fillMaxSize())
+                            ) {                                SortResult(Modifier.fillMaxSize())
                             }
                         }
 
@@ -216,6 +214,26 @@ fun AppNavigation(
                             ThanksScreen()
                         }
                     }
+                }
+
+                var firstOpenApplication by rememberDataSaverState(key = Consts.KEY_FIRST_OPEN_APP, default = true)
+                if (firstOpenApplication){
+                    AlertDialog(
+                        onDismissRequest = {  },
+                        text = {
+                            MarkdownText(markdown = "请认真阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)后，方可使用本应用")
+                        },
+                        confirmButton = {
+                            Button(onClick = { firstOpenApplication = false }) {
+                                Text(stringResource(R.string.agree))
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = exitAppAction) {
+                                Text(stringResource(R.string.not_agree))
+                            }
+                        }
+                    )
                 }
             }
         }

@@ -98,6 +98,23 @@ fun SettingsScreen() {
             systemUiController.isNavigationBarVisible = !it
         }
         JetSettingCheckbox(
+            key = Consts.KEY_CUSTOM_NAVIGATION,
+            default = true,
+            text = stringResource(id = R.string.custom_nav),
+            resourceId = R.drawable.ic_custom_nav,
+            iconTintColor = MaterialColors.DeepOrangeA200
+        ) {
+            Toast.makeText(
+                context, "已${
+                    if (it) {
+                        "启动"
+                    } else {
+                        "关闭"
+                    }
+                }新导航栏，下次启动应用生效", Toast.LENGTH_SHORT
+            ).show()
+        }
+        JetSettingCheckbox(
             key = Consts.KEY_SHOW_FLOAT_WINDOW,
             text = stringResource(R.string.setting_show_float_window),
             resourceId = R.drawable.ic_float_window,

@@ -36,6 +36,8 @@ allprojects {
                     "-Xuse-experimental=kotlinx.serialization.ExperimentalSerializationApi",
                     "-Xuse-experimental=com.google.accompanist.pager.ExperimentalPagerApi"
             ]
+
+            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
     }
 }

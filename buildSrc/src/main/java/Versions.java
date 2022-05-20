@@ -34,7 +34,7 @@ public final class Versions {
     public static final String recyclerViewVersion = "1.2.1";
     public static final String roomVersion = "2.4.0-beta02";
 
-    public static final String kotlinVersion = "1.6.10";
-    public static final String composeVersion = "1.2.0-alpha04";
+    public static final String kotlinVersion = "1.6.21";
+    public static final String composeVersion = "1.2.0-beta01";
 
 }

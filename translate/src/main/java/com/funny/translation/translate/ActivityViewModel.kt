@@ -2,6 +2,8 @@ package com.funny.translation.translate
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.azhon.appupdate.config.UpdateConfiguration
@@ -14,6 +16,7 @@ import com.funny.translation.trans.CoreTranslationTask
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.selectKey
 import com.funny.translation.translate.bean.Consts
+import com.funny.translation.translate.bean.NoticeInfo
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.network.TransNetwork
@@ -35,6 +38,7 @@ class ActivityViewModel : ViewModel() {
     var hasCheckedUpdate = false
     // 由悬浮窗或其他应用传过来的临时翻译参数
     val tempTransConfig = TranslationConfig()
+    var noticeInfo : MutableState<NoticeInfo?> = mutableStateOf(null)
 
     companion object{
         const val TAG = "ActivityVM"
@@ -91,7 +95,16 @@ class ActivityViewModel : ViewModel() {
         }.onFailure {
             it.printStackTrace()
         }
+    }
 
+    suspend fun getNotice(){
+        kotlin.runCatching {
+            withContext(Dispatchers.IO){
+                noticeInfo.value = TransNetwork.noticeService.getNotice()
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }
     }
 
 }

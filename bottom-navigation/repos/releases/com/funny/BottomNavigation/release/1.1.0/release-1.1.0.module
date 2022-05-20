@@ -1,0 +1,88 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.funny.BottomNavigation",
+    "module": "release",
+    "version": "1.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "release-1.1.0.aar",
+          "url": "release-1.1.0.aar",
+          "size": 55869,
+          "sha512": "b8093a384d7b0c55f9daebf9db343e26c889891c96cb9706aa60c78f6de186edc5a30fdf4f772e2d0e0003c76a3b9c75193afa8de7b3a3d8b97a934c56b10525",
+          "sha256": "9eb9dd0a90a0250a3f4de0e61b5f4341684fc804704fd2fcf643576933f2cd56",
+          "sha1": "f01fd7cec7c7574867c9d82e467806fe1226117f",
+          "md5": "3daab0e4745e2636f9ac0c03c8bccb42"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.4.1"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.4.0"
+          }
+        },
+        {
+          "group": "androidx.core",
+          "module": "core-ktx",
+          "version": {
+            "requires": "1.7.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk7",
+          "version": {
+            "requires": "1.6.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "release-1.1.0.aar",
+          "url": "release-1.1.0.aar",
+          "size": 55869,
+          "sha512": "b8093a384d7b0c55f9daebf9db343e26c889891c96cb9706aa60c78f6de186edc5a30fdf4f772e2d0e0003c76a3b9c75193afa8de7b3a3d8b97a934c56b10525",
+          "sha256": "9eb9dd0a90a0250a3f4de0e61b5f4341684fc804704fd2fcf643576933f2cd56",
+          "sha1": "f01fd7cec7c7574867c9d82e467806fe1226117f",
+          "md5": "3daab0e4745e2636f9ac0c03c8bccb42"
+        }
+      ]
+    }
+  ]
+}

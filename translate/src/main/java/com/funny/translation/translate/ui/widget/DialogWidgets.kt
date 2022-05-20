@@ -11,11 +11,12 @@ fun SimpleDialog(
     openDialog: MutableState<Boolean>,
     title: String? = null,
     message: String = "message",
-    confirmButtonAction: () -> Unit? = {},
+    confirmButtonAction: (() -> Unit)? = {},
     confirmButtonText : String = "确认",
-    dismissButtonAction: () -> Unit? = {},
+    dismissButtonAction: (() -> Unit)? = {},
     dismissButtonText : String = "取消",
-    userData : Any? = null
+    userData : Any? = null,
+    closeable : Boolean = true
 ) {
     val emptyAction = {}
     if (openDialog.value) {
@@ -24,7 +25,7 @@ fun SimpleDialog(
                 // Dismiss the dialog when the user clicks outside the dialog or on the back
                 // button. If you want to disable that functionality, simply use an empty
                 // onCloseRequest.
-                openDialog.value = false
+                if (closeable) openDialog.value = false
             },
             title = {
                 if (title != null) Text(text = title)
@@ -37,7 +38,7 @@ fun SimpleDialog(
                 Button(
                     onClick = {
                         openDialog.value = false
-                        confirmButtonAction()
+                        confirmButtonAction?.invoke()
                     }) {
                     Text(confirmButtonText)
                 }
@@ -47,7 +48,7 @@ fun SimpleDialog(
                 Button(
                     onClick = {
                         openDialog.value = false
-                        dismissButtonAction()
+                        dismissButtonAction?.invoke()
                     }) {
                     Text(dismissButtonText)
                 }

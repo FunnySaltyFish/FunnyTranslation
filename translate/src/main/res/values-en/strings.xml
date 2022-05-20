@@ -69,4 +69,5 @@
     <string name="sort_result">Sort Result</string>
     <string name="sponsor_tip">The order above is sorted only by its time. It is your support that makes this application better.\n It\'s totally up to you whether to sponsor or not, \nplease do it according to your ability.</string>
     <string name="others">Other Settings</string>
+    <string name="custom_nav">New Navigation Bar</string>
 </resources>

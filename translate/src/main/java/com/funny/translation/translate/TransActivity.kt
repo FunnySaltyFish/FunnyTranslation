@@ -70,6 +70,7 @@ class TransActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             SortResultUtils.init()
             activityViewModel.checkUpdate(context)
+            activityViewModel.getNotice()
             ApkUtil.deleteOldApk(
                 context,
                 context.externalCache.absolutePath + "/update_apk.apk"

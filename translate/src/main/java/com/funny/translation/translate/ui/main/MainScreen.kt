@@ -1,12 +1,11 @@
 package com.funny.translation.translate.ui.main
 
 import android.util.Log
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -22,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -30,20 +31,23 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
 import com.funny.translation.translate.*
@@ -55,11 +59,12 @@ import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import dev.jeziellago.compose.markdowntext.MarkdownText
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 private const val TAG = "MainScreen"
+
 private interface UpdateSelectedEngine {
     fun add(engine: TranslationEngine)
     fun remove(engine: TranslationEngine)
@@ -70,7 +75,7 @@ private interface UpdateSelectedEngine {
 @ExperimentalAnimationApi
 @Composable
 fun MainScreen() {
-    val vm : MainViewModel = viewModel()
+    val vm: MainViewModel = viewModel()
 
     val updateSelectedEngine = object : UpdateSelectedEngine {
         override fun add(engine: TranslationEngine) {
@@ -87,11 +92,16 @@ fun MainScreen() {
     val scope = rememberCoroutineScope()
     val snackbarHostState = LocalSnackbarState.current
 
-    val showSnackbar : (String) -> Unit = {
+    val showSnackbar: (String) -> Unit = {
         scope.launch {
             snackbarHostState.showSnackbar(it)
         }
     }
+
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val activityVM: ActivityViewModel = LocalActivityVM.current
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
 //    SideEffect {
 //        Log.d(TAG, "MainScreen: text:$translateText sourceId:$source targetId:$target")
@@ -106,8 +116,7 @@ fun MainScreen() {
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
                         .padding(8.dp)
-                        .verticalScroll(scrollState)
-                    ,
+                        .verticalScroll(scrollState),
                     bindEngines, jsEngines,
                     updateSelectedEngine
                 )
@@ -120,38 +129,19 @@ fun MainScreen() {
                 Column(
                     Modifier
                         .fillMaxHeight()
-                        .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     TranslatePart(
                         vm = vm,
                         showSnackbar = showSnackbar,
                         modifier = Modifier
-//                        modifier = Modifier
-//                            .fillMaxHeight()
-//                            .fillMaxWidth(0.610f)
                     )
                 }
             }
-        }else{
-            var expandEngineSelect by remember {
-                mutableStateOf(false)
-            }
-            val swipeableState = rememberSwipeableState(initialValue = ExpandState.CLOSE)
-            var engineSelectHeight by remember{ mutableStateOf(0) }
-            var currentSwipeOffset by remember{ mutableStateOf(0f) }
-            var jumpBackAnimate by remember { mutableStateOf(false) }
-            var jumpingBack = false // 是否正在弹回去
-
-            LaunchedEffect(key1 = jumpBackAnimate){
-                while (currentSwipeOffset > 0){
-                    currentSwipeOffset *= 0.8f
-//                    Log.d(TAG, "MainScreen: currentOffset: $currentSwipeOffset")
-                    if (currentSwipeOffset <= 10) {
-                        currentSwipeOffset = 0f
-                        jumpingBack = false
-                    }
-                    delay(16)
-                }
-            }
+        } else {
+            var expandEngineSelect by remember { mutableStateOf(false) }
+            var engineSelectHeight by remember { mutableStateOf(0) }
+            val swipeOffset = remember { Animatable(0f) }
 
             val nestedScrollConnection = remember {
                 object : NestedScrollConnection {
@@ -160,46 +150,49 @@ fun MainScreen() {
                         available: Offset,
                         source: NestedScrollSource
                     ): Offset {
-                        Log.d(TAG, "onPostScroll: source: $source avai: $available offset: $currentSwipeOffset")
-                        if (!expandEngineSelect) return super.onPostScroll(consumed, available, source)
-                        if(source == NestedScrollSource.Drag){ // 如果在拖动
-                            if (currentSwipeOffset > 0.2 * engineSelectHeight){
+                        // 仅在展开时处理嵌套滑动（向上收回）
+                        if (!expandEngineSelect) return super.onPostScroll(
+                            consumed,
+                            available,
+                            source
+                        )
+//                        Log.d(TAG, "onPostScroll: source: $source available: $available offset: ${swipeOffset.value}")
+                        if (source == NestedScrollSource.Drag) { // 如果在拖动
+                            if (swipeOffset.value > 0.2 * engineSelectHeight) {
                                 expandEngineSelect = false
-                                currentSwipeOffset = 0f
+                                scope.launch { swipeOffset.snapTo(0f) }
                                 return Offset(0f, available.y)
                             }
-
-                            if(available.y < 0 && expandEngineSelect){
-                                currentSwipeOffset -= available.y // -= 负数等于加上整数
-//                                Log.d(TAG, "onPostScroll: currentSwipeOffset: $currentSwipeOffset")
+                            // 如果向上拖并且展开了
+                            if (available.y < 0 && expandEngineSelect) {
+                                // -负数等于加上正数
+                                scope.launch { swipeOffset.snapTo(swipeOffset.value - available.y) }
                                 return Offset(0f, available.y)
                             }
-                        }else if(source == NestedScrollSource.Fling){ // 手已经松了，但还开着
-                            if(Math.abs(available.y) < 1f && currentSwipeOffset > 0f && !jumpingBack){
+                        } else if (source == NestedScrollSource.Fling) { // 手已经松了，但还开着
+                            if (abs(available.y) < 1f && swipeOffset.value > 0f && !swipeOffset.isRunning) {
                                 Log.d(TAG, "onPostScroll: 手松了但还展开着，手动关闭")
-                                jumpBackAnimate = !jumpBackAnimate
-                                jumpingBack = true
+                                scope.launch { swipeOffset.animateTo(0f) }
                                 return Offset(0f, available.y)
                             }
                         }
-
                         return super.onPostScroll(consumed, available, source)
                     }
                 }
             }
             Column(
                 modifier = Modifier
-                    .offset { IntOffset(0, -currentSwipeOffset.roundToInt()) }
+                    .offset { IntOffset(0, -swipeOffset.value.roundToInt()) }
                     .padding(horizontal = 12.dp, vertical = 12.dp)
                     .fillMaxWidth()
                     .nestedScroll(nestedScrollConnection),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AnimatedVisibility(visible = swipeableState.currentValue == ExpandState.OPEN || expandEngineSelect) {
+                AnimatedVisibility(visible = expandEngineSelect) {
                     EngineSelect(
                         modifier = Modifier
                             .onGloballyPositioned {
-                                engineSelectHeight = Math.max(it.size.height, engineSelectHeight)
+                                if (engineSelectHeight == 0) engineSelectHeight = it.size.height
 //                                Log.d(TAG, "MainScreen: EngineSelect Height :$engineSelectHeight")
                             }
                             .padding(8.dp),
@@ -215,16 +208,36 @@ fun MainScreen() {
                     .background(MaterialTheme.colors.secondary)
                     .clickable {
                         expandEngineSelect = !expandEngineSelect
-                        currentSwipeOffset = 0f
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-
                 TranslatePart(
                     vm = vm,
                     showSnackbar = showSnackbar,
                     modifier = Modifier.fillMaxWidth()
                 )
+                var singleLine by remember {
+                    mutableStateOf(true)
+                }
+                val notice by activityVM.noticeInfo
+                notice?.let {
+                    NoticeBar(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentHeight(Alignment.Bottom)
+                            .clickable {
+                                if (it.url.isNullOrEmpty()) singleLine = !singleLine
+                                else WebViewActivity.start(context, it.url)
+                            }
+                            .background(MaterialTheme.colors.surface, RoundedCornerShape(8.dp))
+                            .padding(8.dp)
+                            .animateContentSize(),
+                        text = it.message,
+                        singleLine = singleLine,
+                        showClose = true,
+                    )
+                }
+
             }
         }
     }
@@ -233,17 +246,15 @@ fun MainScreen() {
 //    val translateTextState = remember {
 //        mutableStateOf(activityVM.tempTransConfig.sourceString)
 //    }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val activityVM : ActivityViewModel = LocalActivityVM.current
-    val softwareKeyboardController = LocalSoftwareKeyboardController.current
-    DisposableEffect(key1 = lifecycleOwner){
+
+    DisposableEffect(key1 = lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
 //            Log.d(TAG, "MainScreen: event: $event")
             if (event == Lifecycle.Event.ON_RESUME) {
 //                Log.d(TAG, "MainScreen: activityVM:${activityVM.hashCode()}")
                 val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
 //                Log.d(TAG, "MainScreen: get_text:$text")
-                if(text!=""){
+                if (text != "") {
                     vm.translateText.value = text
                     if (activityVM.tempTransConfig.sourceLanguage != null) {
                         vm.sourceLanguage.value = activityVM.tempTransConfig.sourceLanguage
@@ -267,22 +278,6 @@ fun MainScreen() {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-
-//    LaunchedEffect(key1 = translateTextState){
-//        delay(800)
-//        val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
-//        Log.d(TAG, "MainScreen: get_text:$text")
-//        if(text!=""){
-//            vm.translateText.value = text
-//            if (activityVM.tempTransConfig.sourceLanguage != null) {
-//                vm.sourceLanguage.value = activityVM.tempTransConfig.sourceLanguage
-//            }
-//            if (activityVM.tempTransConfig.targetLanguage != null) {
-//                vm.targetLanguage.value = activityVM.tempTransConfig.targetLanguage
-//            }
-//            vm.translate()
-//        }
-//    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -290,7 +285,7 @@ fun MainScreen() {
 fun TranslatePart(
     vm: MainViewModel,
     showSnackbar: (String) -> Unit,
-    modifier : Modifier
+    modifier: Modifier
 ) {
     val transText by vm.translateText.observeAsState("")
     val sourceLanguage by vm.sourceLanguage.observeAsState()
@@ -298,6 +293,12 @@ fun TranslatePart(
 
     val resultList by vm.resultList.observeAsState()
     val translateProgress by vm.progress.observeAsState()
+    val animateProgress = remember {
+        Animatable(0f)
+    }
+    LaunchedEffect(translateProgress){
+        animateProgress.animateTo(translateProgress!!)
+    }
 
     val softKeyboardController = LocalSoftwareKeyboardController.current
     Row( // 语种选择
@@ -334,22 +335,24 @@ fun TranslatePart(
     Spacer(modifier = Modifier.height(12.dp))
     InputText(text = transText, updateText = { vm.translateText.value = it }) // 输入框
     Spacer(modifier = Modifier.height(12.dp))
-    TranslateButton(translateProgress!!.toInt()) { // 翻译按钮
+    TranslateButton(animateProgress.value.toInt()) { // 翻译按钮
         val selectedEngines = vm.selectedEngines
         if (selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
             return@TranslateButton
         }
         val selectedSize = selectedEngines.size
-        if (selectedSize > Consts.MAX_SELECT_ENGINES){
-            showSnackbar(FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit).format(Consts.MAX_SELECT_ENGINES, selectedSize))
+        if (selectedSize > Consts.MAX_SELECT_ENGINES) {
+            showSnackbar(
+                FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit)
+                    .format(Consts.MAX_SELECT_ENGINES, selectedSize)
+            )
             return@TranslateButton
         }
-        if(!vm.isTranslating()) {
+        if (!vm.isTranslating()) {
             vm.translate()
             softKeyboardController?.hide()
-        }
-        else{
+        } else {
             vm.cancel()
             showSnackbar(FunnyApplication.resources.getString(R.string.message_stop_translate))
         }
@@ -383,9 +386,9 @@ private fun EngineSelect(
         ) {
             bindEngines.forEachIndexed { index, task ->
                 SelectableChip(initialSelect = task.selected, text = task.name) {
-                    if(!task.selected){ // 选中了
+                    if (!task.selected) { // 选中了
                         updateSelectEngine.add(task)
-                    }else updateSelectEngine.remove(task)
+                    } else updateSelectEngine.remove(task)
                     bindEngines[index].selected = !task.selected
                     DataSaverUtils.saveData(task.selectKey, task.selected)
                 }
@@ -408,9 +411,9 @@ private fun EngineSelect(
                 jsEngines.forEachIndexed { index, task ->
                     //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
                     SelectableChip(initialSelect = task.selected, text = task.name) {
-                        if(!task.selected){ // 选中了
+                        if (!task.selected) { // 选中了
                             updateSelectEngine.add(task)
-                        }else updateSelectEngine.remove(task)
+                        } else updateSelectEngine.remove(task)
 
                         jsEngines[index].selected = !task.selected
                         DataSaverUtils.saveData(task.selectKey, task.selected)
@@ -457,13 +460,13 @@ fun TranslationList(
 ) {
     val size = resultList.size
     LazyColumn(
-        modifier = Modifier ,
+        modifier = Modifier,
         verticalArrangement = spacedBy(4.dp)
     ) {
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
 //            Log.d(TAG, "TranslationList: $result")
             TranslationItem(
-                modifier = Modifier.animateItemPlacement() ,
+                modifier = Modifier.animateItemPlacement(),
                 result = result, roundCornerConfig = when (index) {
                     0 -> if (size == 1) RoundCornerConfig.All else RoundCornerConfig.Top
                     size - 1 -> RoundCornerConfig.Bottom
@@ -479,34 +482,43 @@ fun TranslateButton(
     progress: Int = 100,
     onClick: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Button(
-            onClick = onClick,
-            shape = CircleShape,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent
-            ),
-            contentPadding = PaddingValues(0.dp)
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                val p = if (progress == 0) 100 else progress
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(p / 100f)
-                        .height(48.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colors.primary)
+    val bgColor = MaterialTheme.colors.primary
+    val p = if (progress == 0) 100 else progress
+    Box(
+        modifier = Modifier
+            .height(48.dp)
+            .fillMaxWidth()
+            .padding(0.dp)
+            .clip(CircleShape)
+            .drawWithContent {
+                drawRect(
+                    MaterialColors.Grey200,
+                    Offset.Zero,
+                    size,
                 )
-                Text(
-                    text = stringResource(id = R.string.translate),
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center),
-                    fontSize = 22.sp
+                drawRoundRect(
+                    bgColor,
+                    Offset.Zero,
+                    size.copy(width = size.width * p / 100f),
+                    CornerRadius(size.height / 2)
                 )
+                drawContent()
             }
-        }
+            .clickable(onClick = onClick),
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center),
+            text = stringResource(id = R.string.translate),
+            color = Color.White,
+            fontSize = 22.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = W500,
+            letterSpacing = 18.sp
+        )
     }
+
 }
 
 
@@ -599,7 +611,7 @@ fun TranslationItem(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-                if (!result.detailText.isNullOrEmpty()){
+                if (!result.detailText.isNullOrEmpty()) {
                     Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                         ExpandMoreButton {
                             expandDetail = !expandDetail
@@ -607,19 +619,16 @@ fun TranslationItem(
                     }
                 }
             }
-            if(expandDetail){
+            if (expandDetail) {
                 SelectionContainer {
-                    MarkdownText(markdown = result.detailText!!,
+                    MarkdownText(
+                        markdown = result.detailText!!,
                         Modifier
                             .fillMaxWidth()
-                            .padding(4.dp))
+                            .padding(4.dp)
+                    )
                 }
             }
         }
     }
-}
-
-enum class ExpandState{
-    OPEN,
-    CLOSE
 }

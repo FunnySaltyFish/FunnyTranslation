@@ -23,9 +23,7 @@ import java.net.URLEncoder
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")
     private val actualTransText: String
-        get() = translateText.value?.trim()?.also {
-            URLEncoder.encode(it, "utf-8")
-        } ?: ""
+        get() = translateText.value?.trim()?.replace("#","") ?: ""
 
     val sourceLanguage: MutableLiveData<Language> = MutableLiveData(
         findLanguageById(
@@ -186,6 +184,10 @@ class MainViewModel : ViewModel() {
     private fun updateTranslateResult(result: TranslationResult) {
         progress.value = progress.value!! + 100f / totalProgress
         resultList.value?.let {
+            val currentKey = it.find { r -> r.engineName == result.engineName }
+            // 绝大多数情况下应该是没有的
+            // 但是线上的报错显示有时候会有，所以判断一下吧
+            if (currentKey != null) it.remove(currentKey)
             it.add(result)
             it.sortBy(SortResultUtils.defaultResultSort)
         }
