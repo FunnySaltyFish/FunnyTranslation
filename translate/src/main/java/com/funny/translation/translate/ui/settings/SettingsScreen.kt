@@ -175,18 +175,18 @@ fun SettingsScreen() {
             fontWeight = FontWeight.ExtraBold
         )
 
-        JetSettingTile(
-            text = stringResource(R.string.source_code),
-            resourceId = R.drawable.ic_github,
-            iconTintColor = MaterialColors.Purple700
-        ) {
-            Toast.makeText(
-                context,
-                FunnyApplication.resources.getText(R.string.welcome_star),
-                Toast.LENGTH_SHORT
-            ).show()
-            WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
-        }
+//        JetSettingTile(
+//            text = stringResource(R.string.source_code),
+//            resourceId = R.drawable.ic_github,
+//            iconTintColor = MaterialColors.Purple700
+//        ) {
+//            Toast.makeText(
+//                context,
+//                FunnyApplication.resources.getText(R.string.welcome_star),
+//                Toast.LENGTH_SHORT
+//            ).show()
+//            WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
+//        }
         JetSettingTile(
             text = stringResource(id = R.string.open_source_library),
             resourceId = R.drawable.ic_open_source_library,

@@ -126,7 +126,7 @@ fun AppNavigation(
                                 TranslateScreen.MainScreen,
                                 TranslateScreen.PluginScreen,
                                 TranslateScreen.SettingScreen,
-                                TranslateScreen.ThanksScreen
+                                //TranslateScreen.ThanksScreen
                             ),
                             currentScreen = currentScreen.value
                         ) { screen ->
@@ -210,9 +210,9 @@ fun AppNavigation(
                         composable(TranslateScreen.PluginScreen.route) {
                             PluginScreen()
                         }
-                        composable(TranslateScreen.ThanksScreen.route) {
-                            ThanksScreen()
-                        }
+//                        composable(TranslateScreen.ThanksScreen.route) {
+//                            ThanksScreen()
+//                        }
                     }
                 }
 
