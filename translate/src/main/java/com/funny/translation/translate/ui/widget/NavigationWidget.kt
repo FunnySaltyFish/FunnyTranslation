@@ -131,9 +131,10 @@ fun CustomNavigation(
                         imageWidth = height * 2 / 5
                         imageHeight = height * 2 / 5
                         this.highlightColor = highlightColor
-                        this.navigationBgColor = (backgroundColor.toArgb())
-                        this.normalColor = contentColor.toArgb()
-                        animationDuration = 750
+                        navigationBgColor = (backgroundColor.toArgb())
+                        normalColor = contentColor.toArgb()
+                        clickMargin = 24 // 拓宽点击边界
+                        animationDuration = 500
                         initIconButtons(screens.map { screen -> screen.icon.resourceId!! }.toIntArray())
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,

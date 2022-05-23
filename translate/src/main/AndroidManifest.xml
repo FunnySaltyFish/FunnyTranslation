@@ -33,6 +33,19 @@
                 <data android:scheme="funny" android:host="translation"/>
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+
+
         </activity>
         <activity android:name=".WebViewActivity" android:theme="@style/AppTheme" android:exported="false"/>
         <activity android:name=".ErrorDialogActivity" android:label="@string/crash" android:theme="@style/AppTheme.Dialog"/>

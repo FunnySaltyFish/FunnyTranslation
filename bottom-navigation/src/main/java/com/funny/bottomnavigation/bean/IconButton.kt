@@ -2,8 +2,6 @@ package com.funny.bottomnavigation.bean
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.Drawable
-import androidx.core.graphics.setBlendMode
 import com.funny.bottomnavigation.FunnyBottomNavigation
 import com.funny.bottomnavigation.FunnyBottomNavigation.Companion.log
 import com.funny.bottomnavigation.utils.BitmapUtils.getBitmapFromResources
@@ -19,7 +17,8 @@ class IconButton(
     var imageWidth: Int,
     var imageHeight: Int,
     var srcColor: Int,
-    var normalColor : Int
+    var normalColor : Int,
+    var clickMargin : Int = 8
 ) {
     var backgroundColor = Color.parseColor("#6e6c6f")
     var paddingLeft = 0
@@ -64,7 +63,7 @@ class IconButton(
     }
 
     fun isClicked(actionX: Float, actionY: Float): Boolean {
-        return actionX >= imageX && actionX <= imageX + imageWidth && actionY >= imageY && actionY <= imageY + imageHeight
+        return actionX >= imageX - clickMargin && actionX <= imageX + imageWidth + clickMargin && actionY >= imageY - clickMargin && actionY <= imageY + imageHeight + clickMargin
     }
 
     /**

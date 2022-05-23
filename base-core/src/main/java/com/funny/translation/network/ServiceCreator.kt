@@ -5,11 +5,14 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /** from https://github.com/zhujiang521/PlayAndroid
  * 版权：Zhujiang 个人版权
@@ -28,7 +31,7 @@ object ServiceCreator {
     /**
      * 自定义，适配特殊数据类型
      */
-    private val gson = GsonBuilder()
+     val gson = GsonBuilder()
         .setDateFormat("yyyy-MM-dd hh:mm:ss")
         .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
             override fun deserialize(
@@ -65,6 +68,26 @@ object ServiceCreator {
     fun <T> create(service: Class<T>): T = retrofit.create(service)
 }
 
+/**
+ * 当相应体为空时直接返回null
+ */
+class NullOnEmptyConverterFactory : Converter.Factory() {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): Converter<ResponseBody, *> {
+        val delegate: Converter<ResponseBody, *> =
+            retrofit.nextResponseBodyConverter<Any>(this, type, annotations)
+        return Converter { body ->
+            val contentLength = body.contentLength()
+            if (contentLength == 0L) {
+                null
+            } else delegate.convert(body)
+        }
+    }
+}
+
 
 class RetrofitBuild(
     url: String, client: OkHttpClient,
@@ -73,6 +96,7 @@ class RetrofitBuild(
     val retrofit: Retrofit = Retrofit.Builder().apply {
         baseUrl(url)
         client(client)
+        addConverterFactory(NullOnEmptyConverterFactory())
         addConverterFactory(gsonFactory)
     }.build()
 }

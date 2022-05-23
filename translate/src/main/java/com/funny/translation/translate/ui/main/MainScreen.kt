@@ -47,7 +47,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
-import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
 import com.funny.translation.translate.*
@@ -515,7 +514,7 @@ fun TranslateButton(
             fontSize = 22.sp,
             textAlign = TextAlign.Center,
             fontWeight = W500,
-            letterSpacing = 18.sp
+            letterSpacing = 8.sp
         )
     }
 

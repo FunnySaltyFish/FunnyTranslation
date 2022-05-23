@@ -5,29 +5,19 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.js.JsEngine
-import com.funny.translation.js.core.JsTranslateTask
-import com.funny.translation.trans.CoreTranslationTask
-import com.funny.translation.trans.TranslationEngine
-import com.funny.translation.trans.selectKey
+import com.funny.translation.network.OkHttpUtils
+import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.bean.NoticeInfo
-import com.funny.translation.translate.database.appDB
-import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager
 import com.funny.translation.translate.ui.bean.TranslationConfig
-import com.funny.translation.translate.ui.main.MainViewModel
 import com.funny.translation.translate.utils.ApplicationUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 
@@ -100,7 +90,10 @@ class ActivityViewModel : ViewModel() {
     suspend fun getNotice(){
         kotlin.runCatching {
             withContext(Dispatchers.IO){
-                noticeInfo.value = TransNetwork.noticeService.getNotice()
+                val jsonBody = OkHttpUtils.get("${ServiceCreator.BASE_URL}/api/notice")
+                if (jsonBody != ""){
+                    noticeInfo.value = ServiceCreator.gson.fromJson(jsonBody, NoticeInfo::class.java)
+                }
             }
         }.onFailure {
             it.printStackTrace()

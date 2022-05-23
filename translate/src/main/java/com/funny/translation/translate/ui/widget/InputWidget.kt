@@ -38,7 +38,6 @@ fun InputText(
     updateText : (String)->Unit
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
-    val focus = LocalFocusManager.current
     val focusRequester = remember {
         FocusRequester()
     }

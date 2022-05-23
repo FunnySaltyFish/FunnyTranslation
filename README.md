@@ -45,6 +45,7 @@
 - buildSrc：依赖版本管理
 - app/library：旧版应用全部模块
 
+您可以参阅[此文档](detail_introduction.md)以了解各模块详细代码组成
 
 
 #### 运行前准备
