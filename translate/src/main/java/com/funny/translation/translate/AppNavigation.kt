@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -28,6 +29,7 @@ import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.settings.AboutScreen
+import com.funny.translation.translate.ui.settings.SelectLanguage
 import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
@@ -164,46 +166,40 @@ fun AppNavigation(
                         )) {
                             MainScreen()
                         }
+                        val animDuration = 700
                         navigation(
                             startDestination = TranslateScreen.SettingScreen.route,
-                            route = "nav_composition_setting"
+                            route = "nav_composition_setting",
+                            enterTransition = {
+                                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
+                            },
+                            popEnterTransition = {
+                                slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
+                            },
+                            popExitTransition = {
+                                slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
+                            }
                         ) {
                             composable(TranslateScreen.SettingScreen.route) {
                                 SettingsScreen()
                             }
-                            val animDuration = 700
                             composable(
                                 TranslateScreen.AboutScreen.route,
-                                enterTransition = {
-                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
-                                },
-                                exitTransition = {
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
-                                },
-                                popEnterTransition = {
-                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
-                                },
-                                popExitTransition = {
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
-                                }
                             ) {
                                 AboutScreen()
                             }
                             composable(
                                 TranslateScreen.SortResultScreen.route,
-                                enterTransition = {
-                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
-                                },
-                                exitTransition = {
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(animDuration))
-                                },
-                                popEnterTransition = {
-                                    slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
-                                },
-                                popExitTransition = {
-                                    slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(animDuration))
-                                }
-                            ) {                                SortResult(Modifier.fillMaxSize())
+                            ) {
+                                SortResult(Modifier.fillMaxSize())
+                            }
+                            composable(
+                                TranslateScreen.SelectLanguageScreen.route
+                            ){
+                                SelectLanguage(modifier = Modifier.fillMaxSize())
                             }
                         }
 

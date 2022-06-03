@@ -3,6 +3,7 @@ package com.funny.translation.translate.ui.settings
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,11 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +28,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.trans.allLanguages
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
@@ -70,7 +70,7 @@ fun SettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp)
             .verticalScroll(scrollState)
     ) {
         Text(
@@ -168,6 +168,13 @@ fun SettingsScreen() {
         ) {
             navController.navigate(TranslateScreen.SortResultScreen.route)
         }
+        JetSettingTile(
+            text = stringResource(R.string.select_language),
+            resourceId = R.drawable.ic_select,
+            iconTintColor = MaterialColors.LightBlueA700,
+        ) {
+            navController.navigate(TranslateScreen.SelectLanguageScreen.route)
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(id = R.string.about),
@@ -247,6 +254,65 @@ fun SortResult(
             if(!SortResultUtils.checkEquals(data)){
                 Log.d(TAG, "SortResult: 不相等")
                 SortResultUtils.resetMappingAndSave(data)
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectLanguage(modifier: Modifier) {
+    val data = remember {
+        allLanguages.map { DataSaverUtils.readData(it.selectedKey, true) }.toMutableStateList()
+    }
+
+    fun setAllState(state : Boolean){
+        for (i in 0 until data.size){
+            data[i] = state
+            DataSaverUtils.saveData(allLanguages[i].selectedKey, state)
+        }
+    }
+
+    DisposableEffect(key1 = Unit){
+        onDispose {
+            // 如果什么都没选，退出的时候默认帮忙选几个
+            data.firstOrNull{it} ?: kotlin.run {
+                for (i in 0..2){
+                    DataSaverUtils.saveData(allLanguages[i].selectedKey,true)
+                }
+            }
+        }
+    }
+
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(12.dp)
+    ) {
+        item {
+            var selectAll by rememberSaveable {
+                // 当所有开始都被选上时，默认就是全选状态
+                mutableStateOf(data.firstOrNull { !it } == null )
+            }
+            val tintColor by animateColorAsState(targetValue = if (selectAll) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground)
+            IconButton(onClick = {
+                selectAll = !selectAll
+                setAllState(selectAll)
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End)) {
+                Icon(painter = painterResource(id = R.drawable.ic_select_all), contentDescription = "是否全选", tint= tintColor)
+            }
+        }
+
+        itemsIndexed(data, { i, _ -> i }) { i, selected ->
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = allLanguages[i].displayText,
+                    modifier = Modifier.padding(16.dp)
+                )
+                Checkbox(checked = selected, onCheckedChange = {
+                    data[i] = it
+                    DataSaverUtils.saveData(allLanguages[i].selectedKey, it)
+                })
             }
         }
     }

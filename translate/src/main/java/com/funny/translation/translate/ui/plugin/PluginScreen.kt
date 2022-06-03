@@ -78,7 +78,7 @@ fun PluginScreen() {
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(24.dp)) {
+                    .padding(start = 24.dp, end = 24.dp, top = 16.dp)) {
                 LocalPluginPart(modifier = Modifier.fillMaxWidth(), vm = vm, showSnackbar = showSnackbar)
                 OnlinePluginPart(modifier = Modifier.fillMaxWidth(), showSnackbar = showSnackbar)
             }

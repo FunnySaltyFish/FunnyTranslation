@@ -6,6 +6,7 @@ import com.funny.translation.trans.TranslationResult
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +14,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 typealias TranslationEngineName = String
+val localDataGson: Gson = GsonBuilder().enableComplexMapKeySerialization().create()
 
 object SortResultUtils {
     var mapping : HashMap<TranslationEngineName, Int> = hashMapOf()
-    private val gson = GsonBuilder().enableComplexMapKeySerialization().create()
+
     var localEngines = listOf<TranslationEngineName>()
     private val defaultSort : (String)->Int = { mapping.get(it, Int.MAX_VALUE) }
     val defaultEngineSort : (TranslationEngine)->Int = { mapping.get(it.name, Int.MAX_VALUE) }
@@ -47,7 +49,7 @@ object SortResultUtils {
 
     private fun readMapping(json : String){
         val type = object : TypeToken<HashMap<TranslationEngineName, Int>>() {}.type
-        mapping = gson.fromJson(json, type)
+        mapping = localDataGson.fromJson(json, type)
     }
 
     fun checkEquals(list : List<TranslationEngineName>) : Boolean = when{
@@ -67,13 +69,13 @@ object SortResultUtils {
     fun resetMappingAndSave(list : List<TranslationEngineName>){
         initMapping(list)
         localEngines = localEngines.sortedBy(defaultSort)
-        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT ,gson.toJson(mapping))
+        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT ,localDataGson.toJson(mapping))
     }
 
     fun addNew(name : TranslationEngineName){
         mapping[name] = mapping.maxOf { it.value } + 1 // 默认排最后一个
         localEngines = localEngines.toMutableList().apply { add(name) }
-        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT ,gson.toJson(mapping))
+        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT ,localDataGson.toJson(mapping))
     }
 
     fun <K,V> HashMap<K,V>.get(key: K, default: V) = try {

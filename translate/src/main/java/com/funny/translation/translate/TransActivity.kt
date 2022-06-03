@@ -1,6 +1,5 @@
 package com.funny.translation.translate
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -30,7 +29,6 @@ import com.funny.translation.translate.utils.SortResultUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.reflect.Field
 
 class TransActivity : AppCompatActivity() {
     private lateinit var activityViewModel: ActivityViewModel

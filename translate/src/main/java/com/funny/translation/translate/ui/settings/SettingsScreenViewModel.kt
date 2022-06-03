@@ -11,6 +11,7 @@ import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.translate.utils.SortResultUtils
 import com.funny.translation.translate.utils.TranslationEngineName
+import com.funny.translation.translate.utils.localDataGson
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -34,11 +35,12 @@ class SettingsScreenViewModel : ViewModel() {
                 openSourceLibraryList
             }
 
-    val localEngineNamesState : List<TranslationEngineName> by lazy{
+    val localEngineNamesState : List<TranslationEngineName> by lazy {
         runBlocking {
             return@runBlocking SortResultUtils.getLocalEngineNames()
         }
     }
+
 
 //    init {
 //        viewModelScope.launch {

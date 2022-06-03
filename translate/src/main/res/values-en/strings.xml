@@ -70,4 +70,9 @@
     <string name="sponsor_tip">The order above is sorted only by its time. It is your support that makes this application better.\n It\'s totally up to you whether to sponsor or not, \nplease do it according to your ability.</string>
     <string name="others">Other Settings</string>
     <string name="custom_nav">New Navigation Bar</string>
+    <string name="tip">Tip</string>
+    <string name="not_agree">Deny</string>
+    <string name="select_language">Select Language</string>
+    <string name="agree">Agree</string>
+    <string name="tip_privacy_policy">Please read and agree [Privacy Polocy](https://api.funnysaltyfish.fun/trans/v1/api/privacy) before using the application.</string>
 </resources>

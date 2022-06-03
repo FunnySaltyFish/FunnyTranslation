@@ -35,6 +35,6 @@ public final class Versions {
     public static final String roomVersion = "2.4.0-beta02";
 
     public static final String kotlinVersion = "1.6.21";
-    public static final String composeVersion = "1.2.0-beta01";
+    public static final String composeVersion = "1.2.0-beta02";
 
 }

@@ -18,8 +18,7 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/google/'}
         maven { url 'https://maven.aliyun.com/repository/jcenter/'}
         maven { url "https://jitpack.io" }
-
-        google()
+        maven { url "https://maven.google.com" }
         mavenCentral()
     }
 }
@@ -31,5 +30,5 @@ include ":language-universal"
 include ':base-core'
 include ':translate'
 include ':jet_setting_core'
-include ':float_window'
+//include ':float_window'
 include ':bottom-navigation'

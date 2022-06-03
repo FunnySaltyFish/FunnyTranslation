@@ -73,4 +73,6 @@
     <string name="tip">提示</string>
     <string name="not_agree">拒绝</string>
     <string name="agree">同意</string>
+    <string name="select_language">语种选择</string>
+    <string name="tip_privacy_policy">请认真阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)后，方可使用本应用</string>
 </resources>

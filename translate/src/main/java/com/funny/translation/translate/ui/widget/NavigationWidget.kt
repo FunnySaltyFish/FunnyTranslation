@@ -151,7 +151,7 @@ fun CustomNavigation(
                 },
                 update = {
                     if (!firstInit){ // 避免未初始化时即跳转
-                        Log.d(TAG, "CustomNavigation: 手动跳转")
+                        Log.d(TAG, "CustomNavigation: 手动跳转到 ${currentScreen.route}")
                         it.moveTo(screens.indexOf(currentScreen), hasAnimation = true, performClick = false)
                     }
                 }

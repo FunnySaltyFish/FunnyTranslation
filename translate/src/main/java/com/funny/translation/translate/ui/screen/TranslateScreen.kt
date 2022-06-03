@@ -17,4 +17,5 @@ sealed class TranslateScreen(val icon : NavigationIcon, val titleId : Int, val r
     object ThanksScreen : TranslateScreen(NavigationIcon(resourceId = R.drawable.ic_thanks), R.string.nav_thanks, "nav_thanks")
     object AboutScreen : TranslateScreen(NavigationIcon(resourceId = R.drawable.ic_settings),R.string.about,"nav_trans_setting")
     object SortResultScreen : TranslateScreen(NavigationIcon(resourceId = R.drawable.ic_settings),R.string.sort_result,"nav_trans_sort_result")
+    object SelectLanguageScreen : TranslateScreen(NavigationIcon(resourceId = R.drawable.ic_settings),R.string.select_language,"nav_trans_select_language")
 }

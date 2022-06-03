@@ -312,10 +312,12 @@ class FunnyBottomNavigation @JvmOverloads constructor(
             mNeedToClickIconButton!!.direction = (direction)
             if (hasAnimation) startClickAnimation() else resetProgress()
             mLastPage = page
+
+            if (performClick) {
+                onItemClickListener?.onClick(page)
+            }
         }
-        if (performClick) {
-            onItemClickListener?.onClick(page)
-        }
+
     }
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {

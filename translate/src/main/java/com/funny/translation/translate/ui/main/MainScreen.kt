@@ -293,8 +293,15 @@ fun TranslatePart(
     val resultList by vm.resultList.observeAsState()
     val translateProgress by vm.progress.observeAsState()
     val animateProgress = remember {
-        Animatable(0f)
+        Animatable(100f)
     }
+
+    val enabledLanguages = remember {
+        allLanguages.filter {
+            DataSaverUtils.readData(it.selectedKey, true)
+        }
+    }
+
     LaunchedEffect(translateProgress){
         animateProgress.animateTo(translateProgress!!)
     }
@@ -307,7 +314,7 @@ fun TranslatePart(
     ) {
         LanguageSelect(
             language = sourceLanguage!!,
-            languages = allLanguages,
+            languages = enabledLanguages,
             updateLanguage = {
                 vm.sourceLanguage.value = it
                 DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
@@ -324,7 +331,7 @@ fun TranslatePart(
         }
         LanguageSelect(
             language = targetLanguage!!,
-            languages = allLanguages,
+            languages = enabledLanguages,
             updateLanguage = {
                 vm.targetLanguage.value = it
                 DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
@@ -465,7 +472,7 @@ fun TranslationList(
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
 //            Log.d(TAG, "TranslationList: $result")
             TranslationItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.fillMaxWidth(),
                 result = result, roundCornerConfig = when (index) {
                     0 -> if (size == 1) RoundCornerConfig.All else RoundCornerConfig.Top
                     size - 1 -> RoundCornerConfig.Bottom
@@ -482,7 +489,6 @@ fun TranslateButton(
     onClick: () -> Unit
 ) {
     val bgColor = MaterialTheme.colors.primary
-    val p = if (progress == 0) 100 else progress
     Box(
         modifier = Modifier
             .height(48.dp)
@@ -498,7 +504,7 @@ fun TranslateButton(
                 drawRoundRect(
                     bgColor,
                     Offset.Zero,
-                    size.copy(width = size.width * p / 100f),
+                    size.copy(width = size.width * progress / 100f),
                     CornerRadius(size.height / 2)
                 )
                 drawContent()

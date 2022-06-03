@@ -96,7 +96,7 @@ class MainViewModel : ViewModel() {
 
     val resultList: MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
 
-    val progress: MutableLiveData<Float> = MutableLiveData(0f)
+    val progress: MutableLiveData<Float> = MutableLiveData(100f)
 
     private val totalProgress: Int
         get() = selectedEngines.size
