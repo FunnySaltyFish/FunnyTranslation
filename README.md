@@ -6,10 +6,13 @@
 
 本应用有以下特点：
 
-- 基于Jetpack Compose编写页面
-- 多引擎同步翻译，提供横向对比选择
-- 支持插件体系，强可拓展性
-- MaterialYou Design ，适配Android 12
+-  Jetpack Compose + MVVM + Kotlin Coroutine + Flow + Room 
+- 多 module 设计，公共模块与项目模块分离
+- 支持多引擎同步翻译，支持插件开发、下载、更新、导入、导出等，高拓展性
+- 充分利用 Kotlin 语言特性，如延迟懒加载、类代理、Coroutine、Flow、密闭类、拓展方法、拓展属性、反射等 
+- 基于 Rhino JS 设计并实现完整的 JavaScript 插件加载、运行、调试环境，提供插件开发一条龙支持 
+- 前后端兼备，后端基于 Python + Flask 搭建， nginx + gunicorn 部署，后端数据库为 MongoDB
+- 适配 Android11文件权限，适配双语、暗黑模式、横屏/平板页面，开发、使用并公开发布三个开源库
 
 您可以在以下途径获取最新版本：
 - [酷安](https://www.coolapk.com/apk/com.funny.translation)
