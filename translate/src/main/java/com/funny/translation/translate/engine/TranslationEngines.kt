@@ -33,8 +33,8 @@ sealed class TranslationEngines : TranslationEngine{
         override val name: String
             get() = stringResource(R.string.engine_baidu)
 
-        override val languageMapping: Map<Language, String>
-            get() = mapOf(
+        override val languageMapping: HashMap<Language, String>
+            get() = hashMapOf(
                 Language.AUTO to "auto",
                 Language.CHINESE to "zh",
                 Language.ENGLISH to "en",
@@ -47,7 +47,8 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.THAI to "th",
                 Language.PORTUGUESE to "pt",
                 Language.VIETNAMESE to "vie",
-                Language.ITALIAN to "it"
+                Language.ITALIAN to "it",
+                Language.CHINESE_YUE to "yue"
             )
 
         override val taskClass: KClass<out CoreTranslationTask>
@@ -112,7 +113,7 @@ sealed class TranslationEngines : TranslationEngine{
         override val languageMapping: Map<Language, String>
             get() = mapOf(
                 Language.AUTO to "auto",
-                Language.CHINESE to "zh-CHS",
+                Language.CHINESE to "zh",
                 Language.ENGLISH to "en",
                 Language.JAPANESE to "ja",
                 Language.KOREAN to "ko",

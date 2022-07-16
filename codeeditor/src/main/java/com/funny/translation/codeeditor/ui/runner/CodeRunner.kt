@@ -1,5 +1,6 @@
 package com.funny.translation.codeeditor.ui.runner
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import com.funny.translation.debug.DefaultDebugTarget
 
 private const val TAG = "CodeRunner"
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ComposeCodeRunner(
     navController: NavController,
@@ -56,7 +58,6 @@ fun ComposeCodeRunner(
                 activityCodeViewModel = activityCodeViewModel
             )
         }
-
     }
 }
 

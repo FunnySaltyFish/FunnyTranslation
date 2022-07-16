@@ -75,4 +75,10 @@
     <string name="agree">同意</string>
     <string name="select_language">语种选择</string>
     <string name="tip_privacy_policy">请认真阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)后，方可使用本应用</string>
+    <string name="action_expand_or_close_select_engines">点击%s引擎选择页面</string>
+    <string name="action_see_notice_detail">查看公告详情</string>
+    <string name="des_current_source_lang">当前选中的源语言</string>
+    <string name="des_current_target_lang">当前选中的目标语言</string>
+    <string name="float_window_tip">悬浮窗说明</string>
+    <string name="empty_plugin_tip">空空如也~\n去添加一个插件试试吧</string>
 </resources>

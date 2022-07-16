@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import com.funny.translation.translate.R
 
@@ -30,12 +27,12 @@ sealed class LoadingState<out R> {
 }
 
 @Composable
-fun DefaultLoading() {
-    CircularProgressIndicator()
+fun DefaultLoading(modifier: Modifier = Modifier) {
+    CircularProgressIndicator(modifier)
 }
 
 @Composable
-fun DefaultFailure(error: Throwable, retry : ()->Unit) {
+fun DefaultFailure(modifier: Modifier = Modifier, retry: () -> Unit) {
     Text(text = stringResource(id = R.string.loading_error), modifier = Modifier.clickable(onClick = retry))
 }
 
@@ -54,7 +51,7 @@ fun <T> LoadingContent(
     loader : suspend ()->T,
     loading : @Composable ()->Unit = { DefaultLoading() },
     failure : @Composable (error : Throwable, retry : ()->Unit)->Unit = { error, retry->
-        DefaultFailure(error, retry)
+        DefaultFailure(retry = retry)
     },
     success : @Composable (data : T)->Unit
 ) {

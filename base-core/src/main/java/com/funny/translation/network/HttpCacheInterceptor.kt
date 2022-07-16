@@ -1,7 +1,6 @@
 package com.funny.translation.network
 
 import android.util.Log
-import com.funny.translation.BaseApplication
 import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -17,7 +16,7 @@ class HttpCacheInterceptor : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         var request: Request = chain.request()
-        val connected = NetworkHelper.isConnected(BaseApplication.ctx)
+        val connected = NetworkHelper.isConnected()
         Log.d(TAG, "intercept: connected:$connected")
         if (!connected) {
             request = request.newBuilder()

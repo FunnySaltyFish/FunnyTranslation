@@ -118,7 +118,7 @@
         android:background="#00000000"
         android:contentDescription="@string/speak"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_speak"
+        android:src="@drawable/ic_speaker_1"
         android:tint="@color/white"
         tools:ignore="UseAppTint"
         />

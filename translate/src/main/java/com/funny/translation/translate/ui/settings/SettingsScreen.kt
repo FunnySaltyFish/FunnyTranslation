@@ -35,6 +35,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.WebViewActivity
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.DateUtils
 import com.funny.translation.translate.utils.EasyFloatUtils
@@ -62,7 +63,7 @@ fun SettingsScreen() {
 
     SimpleDialog(
         openDialog = showFloatWindowTipDialog,
-        title = "悬浮窗说明",
+        title = stringResource(R.string.float_window_tip),
         message = floatWindowTip,
         dismissButtonText = ""
     )
@@ -73,11 +74,7 @@ fun SettingsScreen() {
             .padding(start = 24.dp, end = 24.dp, top = 16.dp)
             .verticalScroll(scrollState)
     ) {
-        Text(
-            text = stringResource(id = R.string.setting_ui),
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        HeadingText(stringResource(id = R.string.setting_ui))
         Spacer(modifier = Modifier.height(8.dp))
         JetSettingCheckbox(
             key = Consts.KEY_HIDE_STATUS_BAR,
@@ -156,11 +153,7 @@ fun SettingsScreen() {
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(id = R.string.others),
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        HeadingText(stringResource(id = R.string.others))
         JetSettingTile(
             text = stringResource(R.string.sort_result),
             resourceId = R.drawable.ic_sort,
@@ -176,11 +169,7 @@ fun SettingsScreen() {
             navController.navigate(TranslateScreen.SelectLanguageScreen.route)
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(id = R.string.about),
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        HeadingText(stringResource(id = R.string.about))
 
         JetSettingTile(
             text = stringResource(R.string.source_code),

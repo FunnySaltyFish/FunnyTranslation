@@ -6,6 +6,7 @@ import android.content.res.Resources
 import com.funny.translation.BaseApplication
 import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
 import kotlin.properties.Delegates
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class FunnyApplication : BaseApplication() {
     override fun onCreate() {
@@ -25,3 +26,5 @@ class FunnyApplication : BaseApplication() {
         }
     }
 }
+
+val appCtx = FunnyApplication.ctx

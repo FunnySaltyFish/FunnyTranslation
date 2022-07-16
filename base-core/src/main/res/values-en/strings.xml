@@ -8,9 +8,10 @@
     <string name="language_french">French</string>
     <string name="language_russian">Russian</string>
     <string name="language_germany">German</string>
-    <string name="language_wenyanwen">文言文</string>
+    <string name="language_wenyanwen">Literary Chinese</string>
     <string name="language_thai">Thai</string>
     <string name="language_portuguese">Portuguess</string>
     <string name="language_italian">Italian</string>
     <string name="language_vietnamese">Vietnamese</string>
+    <string name="language_chinese_yue">Cantonese</string>
 </resources>

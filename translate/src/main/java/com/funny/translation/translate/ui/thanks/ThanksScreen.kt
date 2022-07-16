@@ -1,22 +1,16 @@
 package com.funny.translation.translate.ui.thanks
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,17 +19,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W800
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.funny.translation.translate.R
 import com.funny.translation.translate.WebViewActivity
-import com.funny.translation.translate.ui.widget.LoadingContent
+import com.funny.translation.translate.ui.widget.DefaultFailure
+import com.funny.translation.translate.ui.widget.DefaultLoading
 
 @Composable
 fun ThanksScreen() {
     val vm : ThanksViewModel = viewModel()
+    val sponsors = vm.sponsors.collectAsLazyPagingItems()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -51,16 +50,21 @@ fun ThanksScreen() {
                 Text(text = stringResource(id = R.string.thanks), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
             }
         }
+
         item {
-            LoadingContent(modifier = Modifier ,loader = (vm.sponsorService::getAllSponsor) ) { sponsorList ->
-                sponsorList.let{
-                    Column {
-                        SponsorList(it)
-                        Text(modifier = Modifier.fillMaxWidth(),text = stringResource(id = R.string.sponsor_tip), textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
-                    }
-                }
-            }
+            SponsorList(sponsors = sponsors)
         }
+
+//        item {
+//            LoadingContent(modifier = Modifier ,loader = (vm.sponsorService::getAllSponsor) ) { sponsorList ->
+//                sponsorList.let{
+//                    Column {
+//                        SponsorList(it)
+//                        Text(modifier = Modifier.fillMaxWidth(),text = stringResource(id = R.string.sponsor_tip), textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
+//                    }
+//                }
+//            }
+//        }
         item{
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -101,15 +105,52 @@ fun ThanksScreen() {
 
 @Composable
 fun SponsorList(
-    sponsors : List<Sponsor>,
+    sponsors : LazyPagingItems<Sponsor>,
 ) {
     LazyColumn(
         modifier = Modifier.requiredHeightIn(0.dp, 380.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        itemsIndexed(sponsors) { _: Int, item: Sponsor ->
-            SponsorItem(sponsor = item)
+        items(sponsors){ sponsor ->
+            sponsor?.let {
+                SponsorItem(sponsor = it)
+            }
+        }
+        val loadStates = sponsors.loadState
+        when {
+            loadStates.refresh is LoadState.Loading -> {
+                item { DefaultLoading() }
+            }
+            loadStates.append is LoadState.Loading -> {
+                item { DefaultLoading() }
+            }
+            loadStates.refresh is LoadState.Error -> {
+                val e = sponsors.loadState.refresh as LoadState.Error
+                Log.e("refresh error: %s", e.toString())
+                item {
+                    DefaultFailure(modifier = Modifier.fillParentMaxSize()) {
+                        sponsors.refresh()
+                    }
+                }
+            }
+            loadStates.append is LoadState.Error -> {
+                val e = sponsors.loadState.append as LoadState.Error
+                Log.e("append error: %s", e.toString())
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        DefaultFailure(retry = {
+                            sponsors.retry()
+                        })
+                    }
+                }
+            }
         }
     }
 }

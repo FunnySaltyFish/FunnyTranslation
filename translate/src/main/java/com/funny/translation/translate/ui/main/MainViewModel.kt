@@ -191,8 +191,6 @@ class MainViewModel : ViewModel() {
             it.add(result)
             it.sortBy(SortResultUtils.defaultResultSort)
         }
-
-        // Log.d(TAG, "updateTranslateResult: ${progress.value}")
     }
 
     private fun support(supportLanguages: List<Language>) =
@@ -200,6 +198,6 @@ class MainViewModel : ViewModel() {
 
 
     companion object {
-        const val TAG = "MainVM"
+        private const val TAG = "MainVM"
     }
 }

@@ -25,6 +25,11 @@ android {
                         "room.expandProjection":"true"]
             }
         }
+//        externalNativeBuild {
+//            cmake {
+//                cppFlags ''
+//            }
+//        }
     }
 
     buildTypes {
@@ -40,6 +45,12 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+//    externalNativeBuild {
+//        cmake {
+//            path file('src/main/cpp/CMakeLists.txt')
+//            version '3.18.1'
+//        }
+//    }
 }
 
 dependencies {
@@ -61,7 +72,15 @@ dependencies {
     //JS rhino
     api 'com.github.gedoor:rhino-android:1.6'
 
-    implementation "io.noties.markwon:core:4.6.2"
+    // Markwon
+    final def markwon_version = '4.6.2'
+    api "io.noties.markwon:core:$markwon_version"
+    api "io.noties.markwon:ext-strikethrough:$markwon_version"
+    api "io.noties.markwon:ext-tables:$markwon_version"
+    api "io.noties.markwon:html:$markwon_version"
+    api "io.noties.markwon:image-coil:$markwon_version"
+    api "io.noties.markwon:linkify:$markwon_version"
+
     implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.4.0'
 
     def room_version = Versions.roomVersion

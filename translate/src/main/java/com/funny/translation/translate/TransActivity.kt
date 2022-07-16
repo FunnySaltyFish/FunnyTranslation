@@ -2,7 +2,10 @@ package com.funny.translation.translate
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +23,7 @@ import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.network.NetworkReceiver
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.findLanguageById
 import com.funny.translation.trans.initLanguageDisplay
@@ -30,9 +34,23 @@ import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * 你好，很高兴见到你！
+ *
+ * 考虑到最近项目的star逐渐加多，目前（2022年7月13日） 已经有近50个了，所以感觉上我应该更负责一些。
+ * 所以在这里，我尝试添加了一些注释，希望对阅读有所帮助。有任何建议或意见欢迎 [issue](https://github.com/FunnySaltyFish/FunnyTranslation/issues) 或 [PR](https://github.com/FunnySaltyFish/FunnyTranslation/pulls)！
+ *
+ * 我也建议您在充分体验项目功能后再来阅读代码，这会很有帮助的
+ *
+ * [TransActivity] 是项目的主 Activity，大多数你见到的页面都是这个 Activity 下的。
+ * 这是项目的入口页面，一些初始化工作也由它来完成。翻译页面见 [MainScreen()]
+ *
+ */
+
 class TransActivity : AppCompatActivity() {
     private lateinit var activityViewModel: ActivityViewModel
-    lateinit var context: Context
+    private lateinit var context: Context
+    private lateinit var netWorkReceiver: NetworkReceiver
 
     companion object {
         const val TAG = "TransActivity"
@@ -49,16 +67,17 @@ class TransActivity : AppCompatActivity() {
 
         context = this
         activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
+
+        registerNetworkReceiver()
         getIntentData(intent)
+        initLanguageDisplay(resources)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            initLanguageDisplay(resources)
-        }
-
+        // 状态栏沉浸
         WindowCompat.setDecorFitsSystemWindows(window, false)
         NotchScreenManager.getInstance().setDisplayInNotch(this)
 
         setContent {
+            // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
                 AppNavigation(
                     exitAppAction = {
@@ -68,6 +87,7 @@ class TransActivity : AppCompatActivity() {
             }
         }
 
+        // 做一些耗时的后台任务
         lifecycleScope.launch(Dispatchers.IO) {
             SortResultUtils.init()
             activityViewModel.checkUpdate(context)
@@ -78,6 +98,7 @@ class TransActivity : AppCompatActivity() {
             )
         }
 
+        // 显示悬浮窗
         EasyFloatUtils.initScreenSize(this)
         val showFloatWindow = DataSaverUtils.readData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
         if (showFloatWindow) {
@@ -92,7 +113,23 @@ class TransActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         EasyFloatUtils.dismissAll()
+        unregisterReceiver(netWorkReceiver)
         super.onDestroy()
+    }
+
+    /**
+     * 注册用于网络监听的广播，以判断网络状况
+     */
+    private fun registerNetworkReceiver() {
+        netWorkReceiver = NetworkReceiver()
+        val filter = IntentFilter().apply {
+            addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
+            addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
+            addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        }
+        registerReceiver(netWorkReceiver, filter)
+        // 初始化一下最开始的网络状态
+        NetworkReceiver.setNetworkState(context)
     }
 
     /**
@@ -104,7 +141,7 @@ class TransActivity : AppCompatActivity() {
         // 这里处理以 url 形式传递的文本
         if (Intent.ACTION_VIEW == action) {
             val data: Uri? = intent.data
-//            Log.d(TAG, "getIntentData: data:$data")
+            // Log.d(TAG, "getIntentData: data:$data")
             if (data != null && data.scheme == "funny" && data.host == "translation") {
                 with(activityViewModel.tempTransConfig) {
                     sourceString = data.getQueryParameter("text")
@@ -114,7 +151,6 @@ class TransActivity : AppCompatActivity() {
                     if (t != null) targetLanguage = findLanguageById(t.toInt())
                 }
                 Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
-//                Log.d(TAG, "getIntentData: activityVM:${activityViewModel.hashCode()}")
             }
         }
         // 这里处理的是外部分享过来的文本
@@ -142,5 +178,4 @@ class TransActivity : AppCompatActivity() {
             }
         }
     }
-
 }

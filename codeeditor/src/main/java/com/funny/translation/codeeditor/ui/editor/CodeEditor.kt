@@ -39,8 +39,6 @@ import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.trans.allLanguages
 import io.github.rosemoe.editor.interfaces.EditorEventListener
-import io.github.rosemoe.editor.langs.desc.JavaScriptDescription
-import io.github.rosemoe.editor.langs.universal.UniversalLanguage
 import io.github.rosemoe.editor.text.Content
 import io.github.rosemoe.editor.widget.CodeEditor
 import kotlinx.coroutines.launch
@@ -96,7 +94,7 @@ fun ComposeCodeEditor(
     }
 
     val fileCreatorLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(),
+        contract = ActivityResultContracts.CreateDocument("application/javascript"),
     ) { uri ->
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.let {
@@ -107,7 +105,7 @@ fun ComposeCodeEditor(
     }
 
     val exportLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument(),
+        contract = ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.writeText(context, activityViewModel.exportText)
@@ -183,7 +181,7 @@ fun ComposeCodeEditor(
                     scope.launch {
                         jsEngine.loadBasicConfigurations(
                             onSuccess = {
-                                activityViewModel.exportText = JsBean.GSON.toJson(jsBean);
+                                activityViewModel.exportText = JsBean.GSON.toJson(jsBean)
                                 exportLauncher.launch("${jsBean.fileName}.json")
                                 scope.launch {
                                     scaffoldState.snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_success))
@@ -201,9 +199,8 @@ fun ComposeCodeEditor(
             )
         },
         modifier = Modifier.fillMaxWidth(),
-
-        ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+    ) {
+        Box(modifier = Modifier.fillMaxSize().padding(it)) {
             Editor(
                 viewModel = viewModel,
                 activityViewModel = activityViewModel

@@ -75,4 +75,10 @@
     <string name="select_language">Select Language</string>
     <string name="agree">Agree</string>
     <string name="tip_privacy_policy">Please read and agree [Privacy Polocy](https://api.funnysaltyfish.fun/trans/v1/api/privacy) before using the application.</string>
+    <string name="action_expand_or_close_select_engines">Click to %s the engine-selecting page</string>
+    <string name="action_see_notice_detail">Show detail of the annoncement</string>
+    <string name="des_current_source_lang">Current selected source language is </string>
+    <string name="des_current_target_lang">Current selected target language is </string>
+    <string name="float_window_tip">About Float Window</string>
+    <string name="empty_plugin_tip">It seems that nothing is here.\\n Try to add a new plugin to explore more.</string>
 </resources>

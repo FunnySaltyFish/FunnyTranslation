@@ -1,7 +1,6 @@
 package com.funny.translation.translate.network
 
 import android.util.Log
-import androidx.annotation.NonNull
 import com.azhon.appupdate.base.BaseHttpDownloadManager
 import com.azhon.appupdate.listener.OnDownloadListener
 import com.azhon.appupdate.utils.Constant
@@ -10,12 +9,10 @@ import com.azhon.appupdate.utils.LogUtil
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadFactory
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
@@ -26,13 +23,12 @@ class UpdateDownloadManager(private val downloadPath: String) :
     private var shutdown = false
     private var listener: OnDownloadListener? = null
     private val executor: ThreadPoolExecutor = ThreadPoolExecutor(1, 1,
-        0L, TimeUnit.SECONDS, LinkedBlockingQueue<Runnable>(), object : ThreadFactory {
-            override fun newThread(@NonNull r: Runnable?): Thread {
-                val thread = Thread(r)
-                thread.name = Constant.THREAD_NAME
-                return thread
-            }
-        })
+        0L, TimeUnit.SECONDS, LinkedBlockingQueue()
+    ) { r ->
+        val thread = Thread(r)
+        thread.name = Constant.THREAD_NAME
+        thread
+    }
 
     override fun download(apkUrl: String, apkName: String, listener: OnDownloadListener) {
         this.apkUrl = apkUrl
@@ -119,6 +115,6 @@ class UpdateDownloadManager(private val downloadPath: String) :
     }
 
     companion object {
-        private val TAG: String = Constant.TAG + "HttpDownloadManager"
+        private const val TAG: String = "HttpDownloadManager"
     }
 }

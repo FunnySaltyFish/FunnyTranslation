@@ -32,12 +32,12 @@ import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.widget.CustomNavigation
+import com.funny.translation.translate.ui.widget.MarkdownText
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"

@@ -34,8 +34,9 @@ import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
+import com.funny.translation.translate.ui.widget.HeadingText
+import com.funny.translation.translate.ui.widget.MarkdownText
 import com.funny.translation.translate.ui.widget.SimpleDialog
-import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 
 private const val TAG = "PluginScreen"
@@ -141,11 +142,7 @@ fun LocalPluginPart(
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(id = R.string.manage_plugins),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
+            HeadingText(stringResource(id = R.string.manage_plugins))
             IconButton(onClick = { showAddPluginMenu = true }) {
                 Icon(
                     Icons.Default.AddCircle,
@@ -187,14 +184,9 @@ fun LocalPluginPart(
 @Composable
 fun OnlinePluginPart(modifier: Modifier, showSnackbar: (String) -> Unit) {
     Column(modifier = modifier) {
-        Text(
-            text = stringResource(id = R.string.online_plugin),
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        HeadingText(stringResource(id = R.string.online_plugin))
         Spacer(modifier = Modifier.height(8.dp))
         OnlinePluginList(modifier = Modifier.fillMaxWidth(), showSnackbar = showSnackbar)
-        //PreviewPluginList()
     }
 }
 
@@ -215,7 +207,7 @@ fun PluginList(
             }
         }
     }else{
-        Text(text = "空空如也~\n去添加一个插件试试吧", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
+        Text(text = stringResource(id = R.string.empty_plugin_tip), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
     }
 }
 

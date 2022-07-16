@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 class PluginViewModel : ViewModel() {
     companion object {
-        const val TAG = "PluginVM"
+        private const val TAG = "PluginVM"
     }
 
     private val pluginService : PluginService

@@ -25,7 +25,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.LoadingContent
-import dev.jeziellago.compose.markdowntext.MarkdownText
+import com.funny.translation.translate.ui.widget.MarkdownText
 
 
 private const val TAG = "OnlinePlugin"

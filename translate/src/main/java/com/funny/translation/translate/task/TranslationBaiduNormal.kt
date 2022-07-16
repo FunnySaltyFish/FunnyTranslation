@@ -2,6 +2,7 @@ package com.funny.translation.translate.task
 
 import android.util.Log
 import com.funny.translation.network.OkHttpUtils
+import com.funny.translation.network.ServiceCreator.BASE_URL
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.translate.engine.TranslationEngines
@@ -22,7 +23,7 @@ class TranslationBaiduNormal :
         )
         val apiUrl = "$url?text=$sourceString&engine=baidu&source=$from&target=$to"
         val transResult = OkHttpUtils.get(apiUrl, headersMap)
-        Log.i(TAG, "baidu api获取到的基本result是$transResult");
+        Log.i(TAG, "baidu url:$apiUrl 获取到的基本result是$transResult")
         return transResult
     }
 
@@ -38,7 +39,7 @@ class TranslationBaiduNormal :
     }
 
     override fun madeURL(): String {
-        return "https://api.funnysaltyfish.fun/trans/v1/api/translate"
+        return "$BASE_URL/api/translate"
     }
 
     override val isOffline: Boolean

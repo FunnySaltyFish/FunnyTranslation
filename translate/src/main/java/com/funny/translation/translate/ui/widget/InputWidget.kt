@@ -3,15 +3,11 @@ package com.funny.translation.translate.ui.widget
 import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
@@ -25,6 +21,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.editableText
+import androidx.compose.ui.semantics.requestFocus
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +62,7 @@ fun InputText(
                     innerTextField()
                 }
                 //Box(modifier = Modifier.align(Alignment.Vertical.Bottom))
-                Box(modifier = Modifier.align(Alignment.Bottom)) {
+                Box(modifier = Modifier.align(Alignment.Bottom).wrapContentSize()) {
                     IconButton(onClick = {
                         updateText("")
                         focusRequester.requestFocus()

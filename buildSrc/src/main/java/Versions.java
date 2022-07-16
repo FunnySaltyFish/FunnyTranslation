@@ -20,8 +20,8 @@ public final class Versions {
     public final static int versionCode = 10;
 
     // Platform & Tool versions
-    public final static String buildToolsVersion = "31.0.0";
-    public final static int compileSdkVersion = 31;
+    public final static String buildToolsVersion = "32.0.0";
+    public final static int compileSdkVersion = 32;
     public final static int minSdkVersion = 21;
     public final static int targetSdkVersion = 30;
 

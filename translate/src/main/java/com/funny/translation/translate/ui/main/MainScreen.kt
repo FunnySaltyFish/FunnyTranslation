@@ -5,15 +5,17 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -29,13 +31,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
@@ -57,18 +60,21 @@ import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.translate.utils.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
-import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 private const val TAG = "MainScreen"
 
+// 用于选择引擎时的回调
 private interface UpdateSelectedEngine {
     fun add(engine: TranslationEngine)
     fun remove(engine: TranslationEngine)
 }
 
+/**
+ * 项目的翻译页面, [图片](https://web.funnysaltyfish.fun/temp_img/202111102032441.jpg)
+ */
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -86,9 +92,14 @@ fun MainScreen() {
         }
     }
 
+    // 内置引擎
     val bindEngines by vm.bindEnginesFlow.collectAsState(emptyList())
+    // 插件
     val jsEngines by vm.jsEnginesFlow.collectAsState(emptyList())
     val scope = rememberCoroutineScope()
+    // 使用 staticCompositionLocal 传递主页面 scaffold 的 snackbarHostState
+    // 方便各个页面展示 snackBar
+    // CompositionLocal 相关知识可参阅 https://developer.android.google.cn/jetpack/compose/compositionlocal?hl=zh-cn
     val snackbarHostState = LocalSnackbarState.current
 
     val showSnackbar: (String) -> Unit = {
@@ -102,10 +113,7 @@ fun MainScreen() {
     val activityVM: ActivityViewModel = LocalActivityVM.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
-//    SideEffect {
-//        Log.d(TAG, "MainScreen: text:$translateText sourceId:$source targetId:$target")
-//    }
-
+    // 使用 BoxWithConstraints 用于适配横竖屏
     BoxWithConstraints(Modifier.fillMaxSize()) {
         if (maxWidth > 720.dp) { // 横屏
             val scrollState = rememberScrollState()
@@ -138,10 +146,15 @@ fun MainScreen() {
                 }
             }
         } else {
+            // 下面的几个对象干这么一件事：
+            // 当 竖屏页面、有翻译结果且引擎选择展开 时，可以通过上滑结果列表关闭引擎选择
             var expandEngineSelect by remember { mutableStateOf(false) }
             var engineSelectHeight by remember { mutableStateOf(0) }
+            // 此变量用于模拟“上滑到一半时松后后回弹”的效果
+            // 动画的教程可以参考 https://juejin.cn/post/7038528545374765064
             val swipeOffset = remember { Animatable(0f) }
-
+            // NestedScrollConnection 用于嵌套滑动时对手势的自定义消费
+            // 可以参考 https://jetpackcompose.cn/docs/design/gesture/nestedScroll
             val nestedScrollConnection = remember {
                 object : NestedScrollConnection {
                     override fun onPostScroll(
@@ -181,6 +194,10 @@ fun MainScreen() {
             }
             Column(
                 modifier = Modifier
+                    // 注意这个 .offset 使用的是 lambda 表达式的形式，这可以将计算的过程推后
+                    // 具体到此处，会将变动的流程局限在 layout->drawing ，而无需 recomposition
+                    // 三个流程可以参考 https://juejin.cn/post/7063451846861406245
+                    // 这个优化的点可以参考  https://juejin.cn/post/7103336251645755429#heading-6
                     .offset { IntOffset(0, -swipeOffset.value.roundToInt()) }
                     .padding(horizontal = 12.dp, vertical = 12.dp)
                     .fillMaxWidth()
@@ -190,6 +207,8 @@ fun MainScreen() {
                 AnimatedVisibility(visible = expandEngineSelect) {
                     EngineSelect(
                         modifier = Modifier
+                            // onGloballyPositioned 可以获取到 Composable 放置完后的大小
+                            // 但注意，随着UI变动，此方法会被多次回调
                             .onGloballyPositioned {
                                 if (engineSelectHeight == 0) engineSelectHeight = it.size.height
 //                                Log.d(TAG, "MainScreen: EngineSelect Height :$engineSelectHeight")
@@ -205,8 +224,18 @@ fun MainScreen() {
                     .fillMaxWidth(0.4f)
                     .height(12.dp)
                     .background(MaterialTheme.colors.secondary)
-                    .clickable {
+                    .clickable() {
                         expandEngineSelect = !expandEngineSelect
+                    }
+                    // 用于优化无障碍体验，talkback会读出 contentDescription
+                    // 无障碍相关见：https://developer.android.google.cn/jetpack/compose/accessibility?hl=zh-cn
+                    .semantics {
+                        contentDescription = appCtx.getString(
+                            R.string.action_expand_or_close_select_engines,
+                            if (!expandEngineSelect) appCtx.getString(R.string.expand) else appCtx.getString(
+                                R.string.close
+                            )
+                        )
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -224,7 +253,7 @@ fun MainScreen() {
                         modifier = Modifier
                             .fillMaxSize()
                             .wrapContentHeight(Alignment.Bottom)
-                            .clickable {
+                            .clickable(onClickLabel = stringResource(R.string.action_see_notice_detail)) {
                                 if (it.url.isNullOrEmpty()) singleLine = !singleLine
                                 else WebViewActivity.start(context, it.url)
                             }
@@ -241,18 +270,16 @@ fun MainScreen() {
         }
     }
 
-    // 接收其他应用传来的参数并开始翻译
-//    val translateTextState = remember {
-//        mutableStateOf(activityVM.tempTransConfig.sourceString)
-//    }
 
+    // DisposableEffect 是副作用的一种，相较于其他几个 SideEffect，特点在于可取消
+    // 有关更多副作用，可参阅 https://developer.android.google.cn/jetpack/compose/side-effects?hl=zh-cn
+    // 此处用于观察生命周期
     DisposableEffect(key1 = lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
 //            Log.d(TAG, "MainScreen: event: $event")
+            // onResume 时执行
             if (event == Lifecycle.Event.ON_RESUME) {
-//                Log.d(TAG, "MainScreen: activityVM:${activityVM.hashCode()}")
                 val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
-//                Log.d(TAG, "MainScreen: get_text:$text")
                 if (text != "") {
                     vm.translateText.value = text
                     if (activityVM.tempTransConfig.sourceLanguage != null) {
@@ -313,6 +340,9 @@ fun TranslatePart(
         modifier = modifier
     ) {
         LanguageSelect(
+            Modifier.semantics {
+                contentDescription = appCtx.getString(R.string.des_current_source_lang,)
+            },
             language = sourceLanguage!!,
             languages = enabledLanguages,
             updateLanguage = {
@@ -330,6 +360,9 @@ fun TranslatePart(
             DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
         }
         LanguageSelect(
+            Modifier.semantics {
+                contentDescription = appCtx.getString(R.string.des_current_target_lang)
+            },
             language = targetLanguage!!,
             languages = enabledLanguages,
             updateLanguage = {
@@ -432,6 +465,7 @@ private fun EngineSelect(
 
 @Composable
 fun LanguageSelect(
+    modifier: Modifier = Modifier,
     language: Language,
     languages: List<Language>,
     updateLanguage: (Language) -> Unit,
@@ -439,9 +473,9 @@ fun LanguageSelect(
     var expanded by remember {
         mutableStateOf(false)
     }
-    RoundCornerButton(text = language.displayText, onClick = {
-        expanded = true
-    }) {
+    RoundCornerButton(text = language.displayText, modifier = modifier , onClick = {
+            expanded = true
+        }) {
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -458,7 +492,6 @@ fun LanguageSelect(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TranslationList(
     resultList: List<TranslationResult>,
@@ -567,12 +600,14 @@ fun TranslationItem(
                 in 70..90 -> 16
                 else -> 14
             }
-            Text(
-                text = result.basicResult.trans,
-                color = MaterialTheme.colors.onSurface,
-                fontSize = fontSize.sp,
-                fontWeight = FontWeight.Bold
-            )
+            SelectionContainer {
+                Text(
+                    text = result.basicResult.trans,
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = fontSize.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
                 IconButton(
@@ -591,26 +626,42 @@ fun TranslationItem(
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
+                val speakerState = rememberFrameAnimIconState(
+                    listOf(R.drawable.ic_speaker_2, R.drawable.ic_speaker_1),
+                )
+                val text = result.basicResult.trans.trim()
+                LaunchedEffect(AudioPlayer.currentPlayingText){
+                    // 修正：当列表划出屏幕后state与实际播放不匹配的情况
+                    if (AudioPlayer.currentPlayingText != text && speakerState.isPlaying){
+                        speakerState.reset()
+                    }
+                }
                 IconButton(
                     onClick = {
-                        AudioPlayer.play(
-                            result.basicResult.trans.trim(), result.targetLanguage!!
-                        ) {
-                            showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
+                        if (text == AudioPlayer.currentPlayingText){
+                            speakerState.reset()
+                            AudioPlayer.pause()
+                        }else{
+                            speakerState.play()
+                            AudioPlayer.play(
+                                text,
+                                result.targetLanguage!!,
+                                onError =  {
+                                    showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
+                                },
+                                onComplete = {
+                                    speakerState.reset()
+                                }
+                            )
                         }
                     }, modifier = Modifier
 //                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
                         .size(48.dp)
                         .background(MaterialTheme.colors.secondary)
-                        .pointerInput(Unit) {
-                            detectTapGestures(onLongPress = {
-                                AudioPlayer.pause()
-                            })
-                        }
                 ) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_speak),
+                    FrameAnimationIcon(
+                        state = speakerState,
                         contentDescription = stringResource(id = R.string.speak),
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
@@ -625,15 +676,15 @@ fun TranslationItem(
                 }
             }
             if (expandDetail) {
-                SelectionContainer {
-                    MarkdownText(
-                        markdown = result.detailText!!,
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    )
-                }
+                MarkdownText(
+                    markdown = result.detailText!!,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    selectable = false
+                )
             }
+
         }
     }
 }

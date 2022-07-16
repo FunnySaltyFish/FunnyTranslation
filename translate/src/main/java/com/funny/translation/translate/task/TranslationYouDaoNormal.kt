@@ -1,18 +1,13 @@
 package com.funny.translation.translate.task
 
-import android.util.Log
 import com.funny.translation.network.OkHttpUtils
-import com.funny.translation.trans.Language
+import com.funny.translation.network.ServiceCreator.BASE_URL
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.engine.TranslationEngines
-import com.funny.translation.translate.extentions.md5
-import org.json.JSONException
 import org.json.JSONObject
-import kotlin.math.roundToInt
 
-class TranslationYouDaoNormal() :
+class TranslationYouDaoNormal :
     BasicTranslationTask(), TranslationEngine by TranslationEngines.Youdao{
     companion object{
         var TAG = "YoudaoTranslation"
@@ -26,9 +21,8 @@ class TranslationYouDaoNormal() :
             "Referer" to "FunnyTranslation"
         )
         val apiUrl = "$url?text=$sourceString&engine=youdao&source=$from&target=$to"
-        val transResult = OkHttpUtils.get(apiUrl, headersMap)
-//        Log.i(TAG, "youdao api获取到的基本result是$transResult");
-        return transResult
+        //        Log.i(TAG, "youdao api获取到的基本result是$transResult");
+        return OkHttpUtils.get(apiUrl, headersMap)
     }
 
     @Throws(TranslationException::class)
@@ -43,7 +37,7 @@ class TranslationYouDaoNormal() :
     }
 
     override fun madeURL(): String {
-        return "https://api.funnysaltyfish.fun/trans/v1/api/translate"
+        return "$BASE_URL/api/translate"
     }
 
     override val isOffline: Boolean
