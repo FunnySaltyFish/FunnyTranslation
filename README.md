@@ -18,6 +18,12 @@
 - [酷安](https://www.coolapk.com/apk/com.funny.translation)
 - [此仓库](/translate/release/translate-release.apk)
 
+考虑到本应用的Star逐渐增多，且在某些地方一定程度上作为学习的项目，我最近也在加强它“一个可参考的开源项目”的属性。  
+
+如果您希望阅读代码，我建议您从 [主Activity](translate/src/main/java/com/funny/translation/translate/TransActivity.kt) 开始
+
+如有帮助， **欢迎star** ！
+
 ### 截图
 
 #### 运行截图
