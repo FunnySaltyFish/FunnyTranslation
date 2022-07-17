@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTask
@@ -127,6 +128,12 @@ class MainViewModel : ViewModel() {
         translateJob = viewModelScope.launch {
             createFlow().buffer().collect { task ->
                 try {
+                    with(TranslateConfig){
+                        this.sourceLanguage = task.sourceLanguage
+                        this.targetLanguage = task.targetLanguage
+                        this.sourceString   = task.sourceString
+                    }
+
                     task.result.targetLanguage = targetLanguage.value!!
                     withContext(Dispatchers.IO) {
                         task.translate(translateMode.value!!)
