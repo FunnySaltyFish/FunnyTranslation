@@ -26,7 +26,7 @@ import java.util.*
 
 object ServiceCreator {
 
-    const val BASE_URL = "https://api.funnysaltyfish.fun/trans/v1/"
+    val BASE_URL = NetworkConfig.BASE_URL
 
     /**
      * 自定义，适配特殊数据类型
@@ -47,16 +47,9 @@ object ServiceCreator {
 
     private val retrofit by lazy{
         val appName = "FunnyTranslation"
-        val okHttpClient = OkHttpUtils.okHttpClient.newBuilder().addInterceptor { chain ->
-            chain.proceed(
-                chain.request().newBuilder()
-                    .addHeader("User-Agent", appName)
-                    .addHeader("Referee", appName)
-                    .build()
-            )
-        }.build()
+        val okHttpClient = OkHttpUtils.okHttpClient
         RetrofitBuild(
-            url = BASE_URL,
+            url = NetworkConfig.BASE_URL,
             client = okHttpClient,
             gsonFactory = GsonConverterFactory.create(gson)
         ).retrofit

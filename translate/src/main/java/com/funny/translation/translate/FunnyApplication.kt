@@ -20,10 +20,7 @@ class FunnyApplication : BaseApplication() {
         val resources: Resources get() = ctx.resources
         const val TAG = "FunnyApplication"
 
-        @Throws(PackageManager.NameNotFoundException::class)
-        fun getLocalPackageInfo(): PackageInfo? {
-            return ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_CONFIGURATIONS)
-        }
+
     }
 }
 

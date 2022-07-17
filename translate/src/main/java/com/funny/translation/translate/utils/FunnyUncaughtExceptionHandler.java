@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.funny.translation.BaseApplication;
 import com.funny.translation.translate.ErrorDialogActivity;
 import com.funny.translation.translate.FunnyApplication;
 
@@ -61,7 +62,7 @@ public class FunnyUncaughtExceptionHandler implements Thread.UncaughtExceptionHa
 
     private String getCrashReport(Throwable ex) throws PackageManager.NameNotFoundException {
         StringBuilder exceptionStr = new StringBuilder();
-        PackageInfo packageInfo = FunnyApplication.Companion.getLocalPackageInfo();
+        PackageInfo packageInfo = BaseApplication.Companion.getLocalPackageInfo();
         if (packageInfo != null) {
             if (ex != null) {
                 //app版本信息

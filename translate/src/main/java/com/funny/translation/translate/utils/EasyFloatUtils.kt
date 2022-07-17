@@ -18,7 +18,8 @@ import com.funny.translation.trans.allLanguages
 import com.funny.translation.trans.findLanguageById
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
-import com.funny.translation.translate.bean.AppConfig
+import com.funny.translation.AppConfig
+import com.funny.translation.TranslateConfig
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
@@ -33,7 +34,6 @@ import com.lzf.easyfloat.widget.BaseSwitchView
 import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 
 
 object EasyFloatUtils {
@@ -160,6 +160,14 @@ object EasyFloatUtils {
                             sourceLanguage,
                             targetLanguage
                         )
+
+                        // 设置全局的翻译参数
+                        with(TranslateConfig){
+                            this.sourceLanguage = task.sourceLanguage
+                            this.targetLanguage = task.targetLanguage
+                            this.sourceString   = task.sourceString
+                        }
+
                         withContext(Dispatchers.Main) {
                             resultText.text = "正在翻译……"
                         }

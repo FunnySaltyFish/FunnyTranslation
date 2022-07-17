@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.funny.translation.BaseApplication
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.extentions.trimLineStart
@@ -56,7 +57,7 @@ class ErrorDialogActivity : AppCompatActivity() {
     private fun reportCrash(){
         crashMessage?.let {
             try {
-                val packageInfo = FunnyApplication.getLocalPackageInfo()
+                val packageInfo = BaseApplication.getLocalPackageInfo()
                 OkHttpUtils.postForm(
                     url = "${ServiceCreator.BASE_URL}/api/report_crash",
                     form = hashMapOf(

@@ -2,18 +2,20 @@ package com.funny.translation.network
 
 import android.util.Log
 import androidx.annotation.Keep
+import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
+import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.sign.SignUtils
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 @Keep
 object OkHttpUtils {
-    private const val SAVE_USER_LOGIN_KEY = "user/login"
-    private const val SAVE_USER_REGISTER_KEY = "user/register"
     private const val SET_COOKIE_KEY = "set-cookie"
     private const val COOKIE_NAME = "Cookie"
     private const val CONNECT_TIMEOUT = 15L
@@ -34,7 +36,7 @@ object OkHttpUtils {
         Log.d(TAG, "cache path: ${BaseApplication.ctx.cacheDir}")
     }
 
-    fun createBaseClient() = OkHttpClient().newBuilder().apply {
+    private fun createBaseClient() = OkHttpClient().newBuilder().apply {
         connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
         readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
         cache(cache)
@@ -57,15 +59,32 @@ object OkHttpUtils {
         addInterceptor {
             val request = it.request()
             val builder = request.newBuilder()
+            val newUrl = URL(removeExtraSlashOfUrl(request.url.toString())).also { url -> builder.url(url) }
             val domain = request.url.host
             // get domain cookie
             if (domain.isNotEmpty()) {
                 val spDomain: String = DataSaverUtils.readData(domain, "")
-                val cookie: String = if (spDomain.isNotEmpty()) spDomain else ""
+                val cookie: String = spDomain.ifEmpty { "" }
                 if (cookie.isNotEmpty()) {
                     builder.addHeader(COOKIE_NAME, cookie)
                 }
             }
+            // 对所有向本项目请求的域名均加上应用名称
+            if (newUrl.host.contains(NetworkConfig.API_HOST)){
+                builder.addHeader("Referer", "FunnyTranslation")
+                builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
+            }
+
+            if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/translate")){
+                builder.addHeader("sign", SignUtils.encodeSign(
+                    uid = AppConfig.uid, appVersionCode = AppConfig.versionCode,
+                    sourceLanguageCode = TranslateConfig.sourceLanguage.id,
+                    targetLanguageCode = TranslateConfig.targetLanguage.id,
+                    text = TranslateConfig.sourceString,
+                    extra = ""
+                ))
+            }
+
             it.proceed(builder.build())
         }
     }.build()
@@ -156,5 +175,11 @@ object OkHttpUtils {
         headers.forEach {
             addHeader(it.key, it.value)
         }
+    }
+
+    fun removeExtraSlashOfUrl(url: String): String {
+        return if (url.isEmpty()) {
+            url
+        } else url.replace("(?<!(http:|https:))/+".toRegex(), "/")
     }
 }

@@ -24,6 +24,7 @@ import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.NetworkReceiver
+import com.funny.translation.sign.SignUtils
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.findLanguageById
 import com.funny.translation.trans.initLanguageDisplay
@@ -89,6 +90,7 @@ class TransActivity : AppCompatActivity() {
 
         // 做一些耗时的后台任务
         lifecycleScope.launch(Dispatchers.IO) {
+            SignUtils.loadJs()
             SortResultUtils.init()
             activityViewModel.checkUpdate(context)
             activityViewModel.getNotice()
