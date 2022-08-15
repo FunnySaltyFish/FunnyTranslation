@@ -94,10 +94,15 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
+    // 刘海屏适配
+    api 'com.github.smarxpan:NotchScreenTool:0.0.1'
+
 //    def datastore_version = "1.0.0"
 //    implementation "androidx.datastore:datastore-preferences:$datastore_version"
 
-    implementation project(path: ":jet_setting_core")
+    api project(path: ":jet_setting_core")
+
+    api ("androidx.biometric:biometric:1.2.0-alpha04")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

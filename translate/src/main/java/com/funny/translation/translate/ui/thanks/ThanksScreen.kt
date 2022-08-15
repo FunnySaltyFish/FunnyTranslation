@@ -6,7 +6,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -27,7 +26,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.funny.translation.translate.R
-import com.funny.translation.translate.WebViewActivity
+import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.ui.widget.DefaultFailure
 import com.funny.translation.translate.ui.widget.DefaultLoading
 

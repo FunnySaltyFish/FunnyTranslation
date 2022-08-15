@@ -104,8 +104,8 @@ fun Context.toastOnUi(message: Int) {
     }
 }
 
-fun Context.toastOnUi(message: CharSequence?) {
+fun Context.toastOnUi(message: CharSequence?, length: Int = Toast.LENGTH_SHORT) {
     runOnUI {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, message, length).show()
     }
 }

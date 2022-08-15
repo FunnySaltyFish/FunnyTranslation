@@ -9,7 +9,7 @@ import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.service.SponsorPagingSource
 
 class ThanksViewModel : ViewModel() {
-    val sponsorService = TransNetwork.sponsorService
+    private val sponsorService = TransNetwork.sponsorService
 
     val sponsors = Pager(PagingConfig(pageSize = 10)) {
         SponsorPagingSource(sponsorService)

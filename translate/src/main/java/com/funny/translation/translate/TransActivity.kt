@@ -28,9 +28,11 @@ import com.funny.translation.sign.SignUtils
 import com.funny.translation.trans.Language
 import com.funny.translation.trans.findLanguageById
 import com.funny.translation.trans.initLanguageDisplay
+import com.funny.trans.login.LoginActivity
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
+import com.google.android.gms.ads.MobileAds
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,6 +92,7 @@ class TransActivity : AppCompatActivity() {
 
         // 做一些耗时的后台任务
         lifecycleScope.launch(Dispatchers.IO) {
+            MobileAds.initialize(context) {}
             SignUtils.loadJs()
             SortResultUtils.init()
             activityViewModel.checkUpdate(context)
@@ -106,6 +109,8 @@ class TransActivity : AppCompatActivity() {
         if (showFloatWindow) {
             EasyFloatUtils.showFloatBall(this)
         }
+
+        startActivity(Intent(this, LoginActivity::class.java))
     }
 
     override fun onNewIntent(intent: Intent?) {

@@ -31,7 +31,7 @@ fun findLanguageById(id : Int) = try {
     Language.AUTO
 }
 
-val allLanguages get() = Language.values().asList()
+val allLanguages = Language.values().asList()
 
 fun initLanguageDisplay(resources : Resources){
     Language.AUTO.displayText = resources.getString(R.string.language_auto)

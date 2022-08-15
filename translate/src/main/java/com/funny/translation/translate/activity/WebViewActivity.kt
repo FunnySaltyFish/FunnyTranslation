@@ -1,4 +1,4 @@
-package com.funny.translation.translate
+package com.funny.translation.translate.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -18,8 +18,8 @@ import android.webkit.*
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.Consts
 import com.smarx.notchlib.NotchScreenManager
 

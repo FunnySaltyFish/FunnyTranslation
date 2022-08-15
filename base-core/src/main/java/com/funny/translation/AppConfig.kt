@@ -1,5 +1,7 @@
 package com.funny.translation
 
+import android.annotation.SuppressLint
+import android.provider.Settings
 import com.funny.translation.trans.Language
 
 object AppConfig {
@@ -8,6 +10,8 @@ object AppConfig {
 
     var uid = 0L
     var versionCode = BaseApplication.getLocalPackageInfo()?.versionCode ?: 0
+    @SuppressLint("HardwareIds")
+    val androidId = Settings.Secure.getString(BaseApplication.ctx.contentResolver, Settings.Secure.ANDROID_ID)
 }
 
 object TranslateConfig {

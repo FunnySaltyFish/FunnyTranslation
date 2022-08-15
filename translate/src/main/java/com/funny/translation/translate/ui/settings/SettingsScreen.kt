@@ -32,7 +32,7 @@ import com.funny.translation.trans.allLanguages
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
-import com.funny.translation.translate.WebViewActivity
+import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.HeadingText

@@ -1,4 +1,4 @@
-package com.funny.translation.translate
+package com.funny.translation.translate.activity
 
 import android.os.Bundle
 import android.os.Process

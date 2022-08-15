@@ -3,9 +3,11 @@ package com.funny.translation.translate.ui.plugin
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.helper.coroutine.Coroutine.Companion.async
+import com.funny.translation.helper.lazyPromise
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
@@ -21,20 +23,16 @@ class PluginViewModel : ViewModel() {
     companion object {
         private const val TAG = "PluginVM"
     }
-
     private val pluginService : PluginService
+
         get() = TransNetwork.pluginService
 
-    private lateinit var  _onlinePlugins : List<JsBean>
-
+    private val _onlinePlugins by lazyPromise(viewModelScope){
+        pluginService.getOnlinePlugins()
+    }
 
     suspend fun getOnlinePlugins(): List<JsBean> {
-        if(!this::_onlinePlugins.isInitialized){
-            Log.d(TAG, "getOnlinePlugins: init")
-            _onlinePlugins = pluginService.getOnlinePlugins()
-        }
-//        Log.d(TAG, "getOnlinePlugins: called!")
-        return _onlinePlugins
+        return _onlinePlugins.await()
     }
 
     val plugins : Flow<List<JsBean>>

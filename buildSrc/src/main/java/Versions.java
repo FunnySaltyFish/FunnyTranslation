@@ -27,14 +27,16 @@ public final class Versions {
 
     // Dependency versions
     public final static String antlrVersion = "4.9.2";
-    public static final String appCompatVersion = "1.3.1";
+    public static final String appCompatVersion = "1.4.2";
     public static final String ktxCoreVersion = "1.6.0";
     public static final String materialVersion = "1.4.0";
     public final static String navigationVersion = "2.3.5";
     public static final String recyclerViewVersion = "1.2.1";
     public static final String roomVersion = "2.4.0-beta02";
+    public static final String activityComposeVersion = "1.6.0-alpha05";
+    public static final String lifeCycleViewModelComposeVersion = "2.5.0";
 
     public static final String kotlinVersion = "1.6.21";
-    public static final String composeVersion = "1.2.0-beta02";
+    public static final String composeVersion = "1.2.0-rc02";
 
 }

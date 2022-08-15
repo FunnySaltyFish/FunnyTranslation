@@ -17,7 +17,7 @@ android {
             def props = new Properties()
             def propFile = new File("signing.properties")
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(propFile), "utf-8"));
+                    new FileInputStream(propFile), "utf-8"))
             props.load(reader)
 
             storeFile file(props['STORE_FILE'])
@@ -99,15 +99,14 @@ configurations.all {
 }
 
 dependencies {
-
     def compose_version = Versions.composeVersion
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.animation:animation:$compose_version"
     implementation "androidx.navigation:navigation-compose:2.5.0-alpha04"
-    implementation 'androidx.activity:activity-compose:1.5.0-alpha05'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-beta01"
+    implementation "androidx.activity:activity-compose:${Versions.activityComposeVersion}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifeCycleViewModelComposeVersion}"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
 
@@ -135,17 +134,18 @@ dependencies {
     // 应用更新
     implementation 'com.github.azhon:AppUpdate:3.0.6'
 
-    // 刘海屏适配
-    implementation 'com.github.smarxpan:NotchScreenTool:0.0.1'
-
     implementation 'com.github.princekin-f:EasyFloat:2.0.4'
     implementation 'com.github.thomhurst:RoundImageView:1.0.2'
 //    implementation "com.github.skydoves:powerspinner:1.1.9"
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     implementation("org.burnoutcrew.composereorderable:reorderable:0.7.4")
+
+    // Google Ad
+    implementation 'com.google.android.gms:play-services-ads:21.1.0'
 
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")
+    implementation project(path: ":login")
     implementation project(path: ":jet_setting_core")
     implementation project(path: ":bottom-navigation")
 

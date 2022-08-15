@@ -54,6 +54,7 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.*
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
+import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.Consts
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*

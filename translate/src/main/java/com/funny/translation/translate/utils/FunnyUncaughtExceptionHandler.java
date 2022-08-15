@@ -10,8 +10,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.funny.translation.BaseApplication;
-import com.funny.translation.translate.ErrorDialogActivity;
-import com.funny.translation.translate.FunnyApplication;
+import com.funny.translation.translate.activity.ErrorDialogActivity;
 
 
 public class FunnyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler{

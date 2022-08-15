@@ -47,6 +47,8 @@ class MainViewModel : ViewModel() {
     var selectedEngines: HashSet<TranslationEngine> = hashSetOf()
     private var initialSelected = 0
 
+    var jsEngineInitialized = false
+
     val jsEnginesFlow : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
         list.map {
             JsTranslateTask(jsEngine = JsEngine(jsBean = it)).apply {
@@ -57,7 +59,7 @@ class MainViewModel : ViewModel() {
                 }
                 Log.d(ActivityViewModel.TAG, "${this.jsEngine.jsBean.fileName} selected:$selected ")
             }
-        }.sortedBy(SortResultUtils.defaultEngineSort)
+        }.sortedBy(SortResultUtils.defaultEngineSort).also { jsEngineInitialized = true }
     }
 
     val bindEnginesFlow = DefaultData.bindEngines.map {
@@ -79,8 +81,10 @@ class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            // 延时一秒，等待插件加载完
-            delay(1000)
+            // 延时，等待插件加载完
+            while (!jsEngineInitialized) {
+                delay(100)
+            }
             if(initialSelected == 0) {
                 // 默认选两个
                 TranslationEngines.BaiduNormal.selected = true
