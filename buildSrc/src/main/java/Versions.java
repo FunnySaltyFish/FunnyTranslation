@@ -20,14 +20,14 @@ public final class Versions {
     public final static int versionCode = 10;
 
     // Platform & Tool versions
-    public final static String buildToolsVersion = "32.0.0";
-    public final static int compileSdkVersion = 32;
+    public final static String buildToolsVersion = "33.0.0";
+    public final static int compileSdkVersion = 33;
     public final static int minSdkVersion = 21;
-    public final static int targetSdkVersion = 30;
+    public final static int targetSdkVersion = 33;
 
     // Dependency versions
     public final static String antlrVersion = "4.9.2";
-    public static final String appCompatVersion = "1.4.2";
+    public static final String appCompatVersion = "1.6.0-alpha05";
     public static final String ktxCoreVersion = "1.6.0";
     public static final String materialVersion = "1.4.0";
     public final static String navigationVersion = "2.3.5";

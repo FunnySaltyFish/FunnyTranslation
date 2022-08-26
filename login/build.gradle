@@ -4,7 +4,8 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk Versions.compileSdkVersion
+    buildToolsVersion Versions.buildToolsVersion
 
     defaultConfig {
         minSdk 21
@@ -44,13 +45,14 @@ dependencies {
     def accompanist_version = "0.24.9-beta"
     implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     implementation "androidx.activity:activity-compose:${Versions.activityComposeVersion}"
 
     // tencent soter
-    implementation 'com.github.Tencent.soter:soter-wrapper:2.0.7'
+    // implementation 'com.github.Tencent.soter:soter-wrapper:2.0.7'
 
     api (project(':base-core'))
 

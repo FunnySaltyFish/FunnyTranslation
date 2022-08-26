@@ -41,7 +41,7 @@ android {
     defaultConfig {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
-        targetSdkVersion 31
+        targetSdk Versions.targetSdkVersion
         versionCode 42
         versionName "2.3.2"
         resConfigs('zh-rCN','en')
