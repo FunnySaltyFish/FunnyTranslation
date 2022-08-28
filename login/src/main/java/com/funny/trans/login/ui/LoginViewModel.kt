@@ -1,6 +1,7 @@
 package com.funny.trans.login.ui
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,9 +15,9 @@ import com.funny.translation.helper.toastOnUi
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    var username by mutableStateOf("FunnySaltyFish")
-    val password by mutableStateOf("")
-    var email by mutableStateOf("shen2183@foxmail.com")
+    var username by mutableStateOf("")
+    var password by mutableStateOf("")
+    var email by mutableStateOf("")
     var verifyCode by mutableStateOf("")
 
     val isValidUsername by derivedStateOf { UserUtils.isValidUsername(username) }
@@ -25,7 +26,9 @@ class LoginViewModel : ViewModel() {
     var finishSetFingerPrint by mutableStateOf(false)
     var finishValidateFingerPrint by mutableStateOf(false)
 
-    var passwordType by mutableStateOf("1")
+    // 1 -> 指纹
+    // 2 -> 密码
+    var passwordType by mutableStateOf(if(AppConfig.lowerThanM) "2" else "1")
     // 当在新设备登录时，需要验证邮箱
     var shouldVerifyEmailWhenLogin by mutableStateOf(false)
 
@@ -50,7 +53,11 @@ class LoginViewModel : ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                val userBean = UserUtils.login(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email)
+                val userBean = if (passwordType == "1"){
+                    UserUtils.login(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email)
+                } else {
+                    UserUtils.login(username, password, passwordType, email)
+                }
                 if (userBean != null) {
                     onSuccess(userBean)
                 }else{
@@ -69,7 +76,11 @@ class LoginViewModel : ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")
+                if (passwordType == "1"){
+                    UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")
+                } else {
+                    UserUtils.register(username, password, passwordType, email, verifyCode, "")
+                }
                 onSuccess()
                 clear()
             } catch (e: Exception) {

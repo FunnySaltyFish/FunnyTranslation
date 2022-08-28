@@ -1,7 +1,7 @@
 package com.funny.translation.translate.task
 
 import com.funny.translation.trans.*
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 
 
 abstract class BasicTranslationTask() :

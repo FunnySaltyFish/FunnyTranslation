@@ -35,7 +35,7 @@
 
 -keep class com.funny.translation.translate.engine.TranslationEngines {*;}
 -keep interface com.funny.translation.trans.TranslationEngine {*;}
--keep class com.funny.translation.translate.bean.Consts {*;}
+-keep class com.funny.translation.Consts {*;}
 
 #Debug保留
 -keep class com.funny.translation.debug.** {*;}

@@ -11,7 +11,7 @@ import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.bean.NoticeInfo
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager

@@ -20,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.R
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.smarx.notchlib.NotchScreenManager
 
 class WebViewActivity : AppCompatActivity() {

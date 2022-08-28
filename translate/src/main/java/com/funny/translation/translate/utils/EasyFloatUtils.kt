@@ -20,7 +20,8 @@ import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.helper.VibratorUtils
+import com.funny.translation.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat

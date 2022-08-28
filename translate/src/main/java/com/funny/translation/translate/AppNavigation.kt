@@ -21,7 +21,7 @@ import androidx.navigation.navDeepLink
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen

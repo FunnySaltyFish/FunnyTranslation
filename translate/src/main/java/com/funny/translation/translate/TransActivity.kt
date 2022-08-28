@@ -29,7 +29,7 @@ import com.funny.translation.trans.Language
 import com.funny.translation.trans.findLanguageById
 import com.funny.translation.trans.initLanguageDisplay
 import com.funny.trans.login.LoginActivity
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
 import com.google.android.gms.ads.MobileAds

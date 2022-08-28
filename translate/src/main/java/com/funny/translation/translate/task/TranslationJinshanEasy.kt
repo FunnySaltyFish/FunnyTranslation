@@ -4,7 +4,7 @@ import android.util.Log
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.buildMarkdown
 import org.json.JSONException

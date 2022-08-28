@@ -7,10 +7,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +26,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.trans.login.R
 import com.funny.trans.login.bean.GameStatus
 import com.funny.trans.login.bean.IGameListener
 import com.funny.trans.login.bean.MemoryNumberGame
@@ -35,6 +36,19 @@ import com.funny.trans.login.bean.MemoryNumberGame
  * @author  FunnySaltyFish
  * @date    2022/8/2 14:19
  */
+
+val GAME_TIP = """
+    如你所见，你得通过玩游戏来输入密码。所以，请认真阅读以下内容：
+    1. 左侧为游戏区。游戏有两种模式，二者随机出现：
+    (1) 数字模式：在此模式下，你需要在记忆时间内按顺序记住所有数字的位置，并在倒计时结束后按上方提示依次点击对应数字。此模式不会对输入有任何帮助，但是会增加游戏的难度，嘿嘿嘿
+    (2) 文字模式：在此模式下，你需要在记忆时间内按顺序记住所有数字的位置，并在倒计时结束后按上方提示依次点击对应字符。你所点击的字符将作为密码或确认密码的一部分输入其中，点击'⌫'可删除一个字符，点击空白字符（注意不是空白部分）跳过此次输入
+    
+    2. 右侧为输入区
+    您可以点击输入框以指定当前的文本会被输入到哪个输入框中
+    
+    当完成输入后，您可以使用返回键直接回到上一级页面，此时的结果将作为您的密码
+    祝你好运！
+""".trimIndent()
 
 @Composable
 fun SquareLayout(modifier: Modifier, content: @Composable () -> Unit) {
@@ -49,6 +63,18 @@ fun SquareLayout(modifier: Modifier, content: @Composable () -> Unit) {
 
 @Composable
 fun GameScreen(modifier: Modifier) {
+    var showGameTip by rememberDataSaverState("key_show_game_tip", default = true)
+    if (showGameTip){
+        AlertDialog(
+            onDismissRequest = { showGameTip = false },
+            title = { Text("游戏提示") },
+            text = {
+                Text(modifier=Modifier.verticalScroll(rememberScrollState()),text=GAME_TIP)
+            },
+            confirmButton = { TextButton(onClick = {showGameTip = false}){ Text(text = "我已知晓")} },
+        )
+    }
+
     val leftGame by remember {
         mutableStateOf(MemoryNumberGame())
     }
@@ -61,7 +87,7 @@ fun GameScreen(modifier: Modifier) {
         MemoryNumberGameContainer(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
                 .weight(0.49f), game = leftGame
         )
 
@@ -77,21 +103,20 @@ fun GameScreen(modifier: Modifier) {
         InputContainer(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.49f)
+                .weight(0.49f),
+            showTip = { showGameTip = true }
         )
     }
 }
 
 @Composable
-fun InputContainer(modifier: Modifier) {
+fun InputContainer(modifier: Modifier, showTip: ()->Unit = {}) {
     val vm: GameViewModel = viewModel()
-
     Column(
         modifier
             .verticalScroll(rememberScrollState())
             .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Spacer(modifier = Modifier.height(8.dp))
         InputByOtherTextField(
             onFocused = { vm.what = GameViewModel.WHAT_PASSWORD },
@@ -109,14 +134,22 @@ fun InputContainer(modifier: Modifier) {
             placeholderText = "请再次输入密码"
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "请通过左侧游戏输入内容",
-            textAlign = TextAlign.Center,
-            color = Color.Gray,
-            fontWeight = FontWeight.Light,
-            fontSize = 12.sp
-        )
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+            Text(
+                text = "请通过左侧游戏输入内容",
+                textAlign = TextAlign.Center,
+                color = Color.Gray,
+                fontWeight = FontWeight.Light,
+                fontSize = 12.sp
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(painterResource(R.drawable.ic_help), "Help", tint = Color.Gray, modifier = Modifier
+                .size(24.dp)
+                .clickable { showTip() })
+        }
+
+
+
     }
 }
 

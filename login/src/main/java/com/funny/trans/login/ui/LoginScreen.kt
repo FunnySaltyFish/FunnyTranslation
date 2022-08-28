@@ -1,7 +1,12 @@
 package com.funny.trans.login.ui
 
+import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -22,9 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.trans.login.GameActivity
 import com.funny.trans.login.R
 import com.funny.trans.login.bean.UserBean
 import com.funny.trans.login.utils.UserUtils
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.toastOnUi
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -43,6 +50,14 @@ fun LoginScreen(
 ) {
     val vm: LoginViewModel = viewModel()
     val infiniteTransition = rememberInfiniteTransition()
+    val activityLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        Log.d("GameActivityResult", "LoginScreen: data: ${result.data?.extras}")
+        result.data?.getStringExtra("password")?.let {
+            Log.d("GameActivityResult", "LoginScreen: password: $it")
+            vm.password = it
+            vm.passwordType = "2"
+        }
+    }
 
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = isSystemInDarkTheme()
@@ -114,15 +129,15 @@ fun LoginScreen(
             verticalAlignment = Alignment.Top
         ) { page ->
             when (page) {
-                0 -> LoginForm(vm, onLoginSuccess = onLoginSuccess)
-                1 -> RegisterForm(vm, onRegisterSuccess = { changePage(0) })
+                0 -> LoginForm(vm, activityLauncher, onLoginSuccess = onLoginSuccess)
+                1 -> RegisterForm(vm, activityLauncher, onRegisterSuccess = { changePage(0) })
             }
         }
     }
 }
 
 @Composable
-fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
+fun LoginForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<*>, onLoginSuccess: (UserBean) -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
@@ -135,7 +150,11 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
             InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, shouldInputEmail = false)
             Spacer(modifier = Modifier.height(12.dp))
         }
-        CompletableButton(
+        if (vm.passwordType == "2"){
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
+                Text(text = "长度8-16位，包含大小写字母和数字")
+            })
+        } else CompletableButton(
             onClick = {
                 if (Build.VERSION_CODES.M <= Build.VERSION.SDK_INT) {
                     BiometricUtils.validateFingerPrint(
@@ -163,11 +182,15 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
                                     context.toastOnUi("邮件发送失败！")
                                 }
                             }
-
+                        },
+                        onUsePassword = {
+                            vm.passwordType = "2"
+                            vm.password = ""
                         }
                     )
                 } else {
                     context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)
+                    vm.passwordType = "2"
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -194,7 +217,11 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
                 if (vm.shouldVerifyEmailWhenLogin) {
                     vm.isValidUsername && vm.finishValidateFingerPrint && vm.isValidEmail && vm.verifyCode.length == 6
                 } else {
-                    vm.isValidUsername && vm.finishValidateFingerPrint
+                    when(vm.passwordType){
+                        "1" -> vm.isValidUsername && vm.finishValidateFingerPrint
+                        "2" -> vm.isValidUsername && vm.password.length >= 8 && vm.password.length <= 16
+                        else -> false
+                    }
                 }
         ) {
             Text("登录")
@@ -203,7 +230,7 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
 }
 
 @Composable
-fun RegisterForm(vm: LoginViewModel, onRegisterSuccess: () -> Unit = {}) {
+fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<Intent>, onRegisterSuccess: () -> Unit = {}) {
     val context = LocalContext.current
     Column(
         Modifier.fillMaxWidth(WIDTH_FRACTION),
@@ -213,7 +240,18 @@ fun RegisterForm(vm: LoginViewModel, onRegisterSuccess: () -> Unit = {}) {
         Spacer(modifier = Modifier.height(8.dp))
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
-        CompletableButton(
+        if (vm.passwordType == "2"){
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
+                Text(text = "长度8-16位，包含大小写字母和数字")
+            }, label = { Text(text = "密码") }, readOnly = !AppConfig.lowerThanM)
+            Spacer(modifier = Modifier.height(8.dp))
+            CompletableButton(
+                    modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            onClick = { activityLauncher.launch(Intent(context as AppCompatActivity, GameActivity::class.java)) }) {
+                Text(text = "点我输入密码")
+            }
+        } else CompletableButton(
             onClick = {
                 if (Build.VERSION_CODES.M <= Build.VERSION.SDK_INT) {
                     BiometricUtils.setFingerPrint(
@@ -227,7 +265,11 @@ fun RegisterForm(vm: LoginViewModel, onRegisterSuccess: () -> Unit = {}) {
                             vm.encryptedInfo = encryptedInfo
                             vm.iv = iv
                         },
-                        onError = { errorCode, errorMsg -> context.toastOnUi("认证失败！（$errorCode: $errorMsg）") }
+                        onError = { errorCode, errorMsg -> context.toastOnUi("认证失败！（$errorCode: $errorMsg）") },
+                        onUsePassword = {
+                            vm.passwordType = "2"
+                            vm.password = ""
+                        }
                     )
                 } else {
                     context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)

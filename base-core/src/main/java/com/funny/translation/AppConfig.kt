@@ -12,6 +12,8 @@ object AppConfig {
     var versionCode = BaseApplication.getLocalPackageInfo()?.versionCode ?: 0
     @SuppressLint("HardwareIds")
     val androidId = Settings.Secure.getString(BaseApplication.ctx.contentResolver, Settings.Secure.ANDROID_ID)
+
+    val lowerThanM = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M
 }
 
 object TranslateConfig {

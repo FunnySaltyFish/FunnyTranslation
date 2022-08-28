@@ -1,9 +1,8 @@
 package com.funny.translation.translate.task
 
-import com.funny.translation.trans.Language
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.FunnyEachText
 import com.funny.translation.translate.utils.StringUtil

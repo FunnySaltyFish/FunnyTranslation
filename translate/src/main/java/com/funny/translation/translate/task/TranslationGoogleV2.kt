@@ -1,12 +1,10 @@
 package com.funny.translation.translate.task
 
 import android.net.Uri
-import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.network.OkHttpUtils
-import com.funny.translation.trans.Language
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationException
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import org.json.JSONArray
 import org.json.JSONException

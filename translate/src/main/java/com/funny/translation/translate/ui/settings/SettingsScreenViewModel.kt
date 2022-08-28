@@ -41,12 +41,4 @@ class SettingsScreenViewModel : ViewModel() {
         }
     }
 
-
-//    init {
-//        viewModelScope.launch {
-//            localEngineNamesState = SortResultUtils.getLocalEngineNames().toMutableStateList()
-//            Log.d(TAG, "init: ")
-//        }
-//    }
-
 }

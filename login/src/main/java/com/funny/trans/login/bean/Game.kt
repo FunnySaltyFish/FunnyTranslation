@@ -2,6 +2,7 @@ package com.funny.trans.login.bean
 
 import android.util.Log
 import androidx.compose.runtime.*
+import com.funny.translation.helper.VibratorUtils
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import com.funny.translation.helper.randInt
@@ -39,7 +40,7 @@ class MemoryNumberGame : BaseGame() {
         const val PLAYING_MODE_NUMBER = 0x1002
         // 字符模式
         const val PLAYING_MODE_CHAR = 0x1004
-        const val DELETE_CHAR = '␡'
+        const val DELETE_CHAR = '⌫'
 
         private const val TAG = "MemoryNumberGame"
     }
@@ -130,6 +131,7 @@ class MemoryNumberGame : BaseGame() {
                 is Block.NumberBlock -> clickBlockNumber(block)
                 else -> kotlin.run {
                     retryTimes--
+                    VibratorUtils.vibrate(100)
                     if (retryTimes == 0) fail()
                 }
             }

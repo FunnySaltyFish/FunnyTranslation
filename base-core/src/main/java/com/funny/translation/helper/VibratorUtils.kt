@@ -1,4 +1,4 @@
-package com.funny.translation.translate.utils
+package com.funny.translation.helper
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,17 +7,17 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.BaseApplication
 
 @SuppressLint("WrongConstant")
 object VibratorUtils {
     val vibrator by lazy{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager = FunnyApplication.ctx.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            val vibratorManager = BaseApplication.ctx.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vibratorManager.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
-            FunnyApplication.ctx.getSystemService(VIBRATOR_SERVICE) as Vibrator
+            BaseApplication.ctx.getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
     }
 

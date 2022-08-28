@@ -1,5 +1,7 @@
 package com.funny.trans.login.bean
 
+import androidx.annotation.Keep
+
 /**
  * class User:
         uid: int
@@ -18,17 +20,20 @@ package com.funny.trans.login.bean
         # 单位为天
         vip_duration = -1
  */
+@Keep
 data class UserBean(
     val uid: Int,
     val username: String,
     val password: String,
     val email: String,
     val phone: String,
-    val password_type: String = "2",
+    val password_type: String = "1",
     val avatar_url: String = "",
     val vip_level: Int = 0,
     val vip_start_time: Long = -1,
-    val vip_duration: Long = -1
+    val vip_duration: Long = -1,
+
+    val jwt_token: String = ""
 )
 
 

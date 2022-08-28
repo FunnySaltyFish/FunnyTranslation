@@ -121,6 +121,9 @@ object UserUtils {
         return "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$".toRegex().matches(email)
     }
 
+    // 密码校验
+    // 长度8-16位，包含大小写字母和数字，可以包含
+
     /**
      * 注册
      * @param username String

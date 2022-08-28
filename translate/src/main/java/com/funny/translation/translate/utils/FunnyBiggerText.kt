@@ -2,7 +2,7 @@ package com.funny.translation.translate.utils
 
 import com.funny.translation.trans.TranslationException
 import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 
 object FunnyBiggerText {
     private const val ENCODE = "GB2312"

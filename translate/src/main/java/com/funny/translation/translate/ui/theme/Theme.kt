@@ -7,20 +7,15 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.funny.cmaterialcolors.MaterialColors
 import com.funny.cmaterialcolors.MaterialColors.Companion.Blue500
-import com.funny.cmaterialcolors.MaterialColors.Companion.Blue700
-import com.funny.cmaterialcolors.MaterialColors.Companion.BlueA200
 import com.funny.cmaterialcolors.MaterialColors.Companion.BlueA700
-import com.funny.cmaterialcolors.MaterialColors.Companion.LightBlue200
 import com.funny.cmaterialcolors.MaterialColors.Companion.Red200
 import com.funny.cmaterialcolors.MaterialColors.Companion.Red500
 import com.funny.cmaterialcolors.MaterialColors.Companion.Red700
-import com.funny.cmaterialcolors.MaterialColors.Companion.RedA200
 import com.funny.cmaterialcolors.MaterialColors.Companion.RedA400
 import com.funny.cmaterialcolors.MaterialColors.Companion.RedA700
 import com.funny.data_saver.core.LocalDataSaver
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.utils.DateUtils
 
 @SuppressLint("ConflictingOnColor")

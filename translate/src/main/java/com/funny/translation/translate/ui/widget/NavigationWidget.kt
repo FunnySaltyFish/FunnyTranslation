@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.funny.bottomnavigation.FunnyBottomNavigation
 import com.funny.data_saver.core.rememberDataSaverState
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

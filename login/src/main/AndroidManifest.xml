@@ -9,6 +9,13 @@
             android:name="com.funny.trans.login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
+
+        <activity
+            android:name="com.funny.trans.login.GameActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            />
     </application>
 
 

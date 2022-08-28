@@ -110,6 +110,7 @@ object BiometricUtils {
         data: String,
         onNotSupport: (msg: String) -> Unit = { _ -> },
         onSuccess: (String, String) -> Unit = { _, _ -> },
+        onUsePassword: () -> Unit = {},
         onFail: () -> Unit = {},
         onError: (errorCode: Int, errString: CharSequence) -> Unit = { _, _ -> }
     ) {
@@ -145,7 +146,11 @@ object BiometricUtils {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    onError(errorCode, errString)
+                    if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        onUsePassword()
+                    } else {
+                        onError(errorCode, errString)
+                    }
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -207,6 +212,7 @@ object BiometricUtils {
         onNotSupport: (msg: String) -> Unit = { _ -> },
         onSuccess: (String, String) -> Unit = { _, _ -> },
         onFail: () -> Unit = {},
+        onUsePassword: () -> Unit,
         onError: (errorCode: Int, errString: CharSequence) -> Unit = { _, _ -> },
         // 新设备登录时回调
         onNewFingerPrint: (email: String) -> Unit = {}
@@ -243,7 +249,11 @@ object BiometricUtils {
                                     errString: CharSequence
                                 ) {
                                     super.onAuthenticationError(errorCode, errString)
-                                    onError(errorCode, errString)
+                                    if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                                        onUsePassword()
+                                    } else {
+                                        onError(errorCode, errString)
+                                    }
                                 }
 
                                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -305,9 +315,8 @@ object BiometricUtils {
                                     onFail = {
                                         onError(-2, "新指纹录入失败")
                                     },
-                                    onError = { code, err ->
-                                        onError(code, err)
-                                    }
+                                    onError = onError,
+                                    onUsePassword = onUsePassword
                                 )
                             }
                         else -> onError(-5, "未知错误！")

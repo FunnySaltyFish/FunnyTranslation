@@ -12,14 +12,13 @@ import com.funny.translation.trans.*
 import com.funny.translation.translate.ActivityViewModel
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import java.net.URLEncoder
 
 class MainViewModel : ViewModel() {
     val translateText = MutableLiveData("")

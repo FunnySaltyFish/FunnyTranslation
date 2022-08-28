@@ -3,7 +3,7 @@ package com.funny.translation.translate.utils
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.trans.TranslationEngine
 import com.funny.translation.trans.TranslationResult
-import com.funny.translation.translate.bean.Consts
+import com.funny.translation.Consts
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import com.google.gson.Gson
