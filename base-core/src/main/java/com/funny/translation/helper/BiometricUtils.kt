@@ -10,8 +10,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
-import com.funny.translation.awaitDialog
 import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +34,8 @@ private const val EXTRA_NEW_DEVICE = "new_device"
 
 @Keep
 data class FingerPrintInfo(
-    val encrypted_info: String = "",
-    val iv: String = "",
+    var encrypted_info: String = "",
+    var iv: String = "",
     // 额外信息：
     // 为 "no_user" 代表此用户不存在
     // 为 “new_device#email" 代表此设备是新设备，后半部分为邮箱
@@ -62,12 +62,37 @@ interface FingerPrintService {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.M)
 object BiometricUtils {
     private const val TAG = "BiometricUtils"
     private const val KEY_NAME = "KEY_LOGIN"
 
     private const val KEY_ENCRYPTED_INFO = "KEY_ENCRYPTED_INFO"
     private const val KEY_VECTOR = "KEY_VECTOR"
+
+    // 用于注册时临时保存当前的指纹数据
+    var tempSetFingerPrintInfo = FingerPrintInfo()
+    var tempSetUserName = ""
+
+    private fun getSecretKey(): SecretKey? {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+        keyStore.load(null)
+        // keyAlias 为密钥别名，可自己定义，加密解密要一致
+        if (!keyStore.containsAlias(KEY_NAME)) {
+            // 不包含改别名，重新生成
+            // 秘钥生成器
+            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+            val builder = KeyGenParameterSpec.Builder(
+                KEY_NAME,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setUserAuthenticationRequired(false)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+            keyGenerator.init(builder.build())
+            keyGenerator.generateKey()
+        }
+        return keyStore.getKey(KEY_NAME, "FunnyTrans".toCharArray()) as? SecretKey
+    }
 
     private val biometricManager by lazy {
         BiometricManager.from(BaseApplication.ctx)
@@ -99,12 +124,20 @@ object BiometricUtils {
         else -> "未知错误"
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun init() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    suspend fun uploadFingerPrint(username: String) = withContext(Dispatchers.IO){
+        fingerPrintService.saveFingerPrintInfo(
+            username = username,
+            did = AppConfig.androidId,
+            encryptedInfo = tempSetFingerPrintInfo.encrypted_info,
+            iv = tempSetFingerPrintInfo.iv
+        )
+    }
+
+    // 设置指纹信息，相关内容会暂存，等到注册时提交
     fun setFingerPrint(
         activity: FragmentActivity,
         data: String,
@@ -118,28 +151,6 @@ object BiometricUtils {
         if (error != "") {
             onNotSupport(error)
             return
-        }
-
-        var secretKey = getSecretKey(data)
-        if (secretKey == null) {
-            generateSecretKey(KeyGenParameterSpec.Builder(
-                KEY_NAME,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-            )
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                .setUserAuthenticationRequired(true)
-                // Invalidate the keys if the user has registered a new biometric
-                // credential, such as a new fingerprint. Can call this method only
-                // on Android 7.0 (API level 24) or higher. The variable
-                // "invalidatedByBiometricEnrollment" is true by default.
-                .apply {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        setInvalidatedByBiometricEnrollment(true)
-                    }
-                }
-                .build())
-            secretKey = getSecretKey(data)
         }
 
         val biometricPrompt = BiometricPrompt(activity, ContextCompat.getMainExecutor(activity),
@@ -163,27 +174,20 @@ object BiometricUtils {
                         TAG, "Encrypted information: " +
                                 encryptedInfo.contentToString()
                     )
-//                    DataSaverUtils.saveData(KEY_ENCRYPTED_INFO, encryptedInfo.joinToString(separator = ","))
-//                    DataSaverUtils.saveData(KEY_VECTOR, cipher.iv.joinToString(separator = ",").also {
-//                        Log.d(
-//                            TAG,
-//                            "onAuthenticationSucceeded: saved iv: $it"
-//                        ) })
 
                     kotlin.runCatching {
-                        scope.launch {
-                            val arr = data.split("@")
-                            val encryptedInfo1 = encryptedInfo.joinToString(",")
-                            val iv = cipher.iv.joinToString(",")
-                            fingerPrintService.saveFingerPrintInfo(
-                                username = arr[0],
-                                did = arr[1],
-                                encryptedInfo = encryptedInfo1,
-                                iv = iv
-                            )
-                            onSuccess(encryptedInfo1, iv)
-                        }
+                        val arr = data.split("@")
+                        val encryptedInfo1 = encryptedInfo.joinToString(",")
+                        val iv = cipher.iv.joinToString(",")
+
+                        // 保存临时设置的
+                        tempSetUserName = arr[0]
+                        tempSetFingerPrintInfo.iv = iv
+                        tempSetFingerPrintInfo.encrypted_info = encryptedInfo1
+
+                        onSuccess(encryptedInfo1, iv)
                     }.onFailure {
+                        it.printStackTrace()
                         onError(-2, it.message ?: "未知错误")
                     }
                 }
@@ -196,7 +200,7 @@ object BiometricUtils {
 
         try {
             val cipher = getCipher()
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
             runOnUI {
                 biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
             }
@@ -205,7 +209,6 @@ object BiometricUtils {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     fun validateFingerPrint(
         activity: FragmentActivity,
         data: String,
@@ -223,11 +226,6 @@ object BiometricUtils {
             return
         }
 
-        val secretKey: SecretKey = getSecretKey(data) ?: kotlin.run {
-            onError(-1, "未查询到密钥信息，请先录入指纹！")
-            return
-        }
-
         val decodeCipher = getCipher()
         kotlin.runCatching {
             scope.launch {
@@ -239,7 +237,7 @@ object BiometricUtils {
                 if (ivBytes != null) {
                     Log.d(TAG, "validateFingerPrint: loaded iv: ${ivBytes.joinToString(",")}")
                     val iv = IvParameterSpec(ivBytes)
-                    decodeCipher.init(Cipher.DECRYPT_MODE, secretKey, iv)
+                    decodeCipher.init(Cipher.DECRYPT_MODE, getSecretKey(), iv)
 
                     val biometricPrompt =
                         BiometricPrompt(activity, ContextCompat.getMainExecutor(activity),
@@ -270,13 +268,17 @@ object BiometricUtils {
                                             "onAuthenticationSucceeded: decrypted text: $decryptedText"
                                         )
                                         if (data == decryptedText) {
-                                            onSuccess(fingerPrintInfo.encrypted_info, fingerPrintInfo.iv)
+                                            onSuccess(
+                                                fingerPrintInfo.encrypted_info,
+                                                fingerPrintInfo.iv
+                                            )
                                         } else {
                                             throw Exception("指纹验证失败！")
                                         }
 
                                     }.onFailure {
-                                        onError(-2, it.message ?: "未知错误")
+                                        it.printStackTrace()
+                                        onError(-2, it.message ?: "未知错误(${it.javaClass})")
                                     }
                                 }
 
@@ -293,7 +295,7 @@ object BiometricUtils {
                         )
                     }
                 } else {
-                    when  {
+                    when {
                         fingerPrintInfo.extra == EXTRA_NO_USER -> onError(-3, "用户不存在！")
 
                         fingerPrintInfo.extra.startsWith(EXTRA_NEW_DEVICE) ->
@@ -330,7 +332,6 @@ object BiometricUtils {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun generateSecretKey(keyGenParameterSpec: KeyGenParameterSpec) {
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore"
@@ -339,16 +340,6 @@ object BiometricUtils {
         keyGenerator.generateKey()
     }
 
-    private fun getSecretKey(data: String): SecretKey? {
-        val keyStore = KeyStore.getInstance("AndroidKeyStore")
-
-        // Before the keystore can be accessed, it must be loaded.
-        keyStore.load(null)
-        Log.d(TAG, "getSecretKey: Data: $data")
-        return keyStore.getKey(KEY_NAME, data.toCharArray()) as? SecretKey
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun getCipher(): Cipher {
         return Cipher.getInstance(
             KeyProperties.KEY_ALGORITHM_AES + "/"

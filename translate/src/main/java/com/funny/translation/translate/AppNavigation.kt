@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.funny.translation.translate
 
 import android.util.Log
@@ -6,7 +8,8 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -31,6 +34,7 @@ import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.theme.TransTheme
+import com.funny.translation.translate.ui.theme.isLight
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -64,15 +68,17 @@ fun AppNavigation(
 
     val activityVM: ActivityViewModel = viewModel()
 
-    val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
 
     BackHandler(enabled = true) {
         if (navController.previousBackStackEntry == null) {
             val curTime = System.currentTimeMillis()
             if (curTime - activityVM.lastBackTime > 2000) {
                 scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
+                    snackbarHostState.showSnackbar(
                         FunnyApplication.resources.getString(
                             R.string.snack_quit
                         )
@@ -90,13 +96,13 @@ fun AppNavigation(
 
     CompositionLocalProvider(
         LocalNavController provides navController,
-        LocalSnackbarState provides scaffoldState.snackbarHostState,
+        LocalSnackbarState provides snackbarHostState,
         LocalDataSaver provides DataSaverUtils
     ) {
         TransTheme {
             val systemUiController = rememberSystemUiController()
-            val useDarkIcons = MaterialTheme.colors.isLight
-            val navigationBarColor = MaterialTheme.colors.background.copy(alpha = 0.95f)
+            val useDarkIcons = MaterialTheme.colorScheme.isLight
+            val navigationBarColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
             LaunchedEffect(key1 = systemUiController) {
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
                 systemUiController.setNavigationBarColor(
@@ -113,7 +119,7 @@ fun AppNavigation(
                 bottomBar = {
                     val currentScreen = navController.currentScreenAsState()
                     CustomNavigation(
-                        backgroundColor = navigationBarColor,
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         contentPadding = WindowInsets.navigationBars.asPaddingValues(),
                         screens = arrayOf(
                             TranslateScreen.MainScreen,
@@ -142,12 +148,15 @@ fun AppNavigation(
                         }
                     }
                 },
-                scaffoldState = scaffoldState
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
+                }
             ) {
                 AnimatedNavHost(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
-                    modifier = Modifier.statusBarsPadding()
+                    modifier = Modifier
+                        .statusBarsPadding()
                         // avoid content being sheltered
                         .padding(bottom = it.calculateBottomPadding())
                 ) {
@@ -225,7 +234,7 @@ fun AppNavigation(
                 AlertDialog(
                     onDismissRequest = { },
                     text = {
-                        MarkdownText(markdown = "请认真阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)后，方可使用本应用")
+                        MarkdownText(markdown = "我们更新了新的[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)，请认真阅读并同意后，方可使用本应用")
                     },
                     confirmButton = {
                         Button(onClick = { firstOpenApplication = false }) {

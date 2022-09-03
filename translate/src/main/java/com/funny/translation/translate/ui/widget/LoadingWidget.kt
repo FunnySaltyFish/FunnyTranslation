@@ -3,8 +3,9 @@ package com.funny.translation.translate.ui.widget
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -46,18 +47,17 @@ fun DefaultFailure(modifier: Modifier = Modifier, retry: () -> Unit) {
  * @param success 加载成功后的页面，参数[T]即为返回的结果
  */
 @Composable
-fun <T> LoadingContent(
+fun <T,K> LoadingContent(
     modifier: Modifier = Modifier,
+    key: K,
+    updateKey: (K) -> Unit,
     loader : suspend ()->T,
     loading : @Composable ()->Unit = { DefaultLoading() },
     failure : @Composable (error : Throwable, retry : ()->Unit)->Unit = { error, retry->
         DefaultFailure(retry = retry)
     },
-    success : @Composable (data : T)->Unit
+    success : @Composable BoxScope.(data : T)->Unit
 ) {
-    var key by remember {
-        mutableStateOf(false)
-    }
     val state : LoadingState<T> by produceState<LoadingState<T>>(initialValue = LoadingState.Loading, key){
         value = try {
             Log.d(TAG, "LoadingContent: loading...")
@@ -72,11 +72,26 @@ fun <T> LoadingContent(
             is LoadingState.Loading -> loading()
             is LoadingState.Success<T> -> success((state as LoadingState.Success<T>).data)
             is LoadingState.Failure -> failure((state as LoadingState.Failure).error){
-                key = !key
-                Log.d(TAG, "LoadingContent: newKey:$key")
+                updateKey(key)
             }
         }
     }
+}
+
+@Composable
+fun <T> LoadingContent(
+    modifier: Modifier = Modifier,
+    loader : suspend ()->T,
+    loading : @Composable ()->Unit = { DefaultLoading() },
+    failure : @Composable (error : Throwable, retry : ()->Unit)->Unit = { error, retry->
+        DefaultFailure(retry = retry)
+    },
+    success : @Composable BoxScope.(data : T)->Unit
+) {
+    var key by remember {
+        mutableStateOf(false)
+    }
+    LoadingContent(modifier, key, { k -> key = !k }, loader, loading, failure, success)
 }
 
 fun <T> loadingState(

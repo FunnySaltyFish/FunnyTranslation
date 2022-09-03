@@ -5,7 +5,7 @@ import com.funny.translation.js.JsEngine
 import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.extentions.messageWithDetail
-import com.funny.translation.trans.*
+import com.funny.translation.translate.*
 import java.lang.Exception
 import javax.script.ScriptException
 import kotlin.reflect.KClass

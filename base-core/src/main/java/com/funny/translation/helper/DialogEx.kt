@@ -1,4 +1,4 @@
-package com.funny.translation
+package com.funny.translation.helper
 
 import android.app.AlertDialog
 import android.content.Context
@@ -15,7 +15,7 @@ suspend fun awaitDialog(
     message: String,
     positiveButton: String,
     negativeButton: String,
-) = suspendCancellableCoroutine<Boolean> { continuation ->
+) = suspendCancellableCoroutine { continuation ->
      runOnUI {
         AlertDialog.Builder(context).setTitle(title).setMessage(message)
             .setPositiveButton(positiveButton) { _, _ ->

@@ -11,6 +11,7 @@ import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.extentions.trimLineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.system.exitProcess
@@ -37,13 +38,12 @@ class ErrorDialogActivity : AppCompatActivity() {
             .setPositiveButton(
                 "发送报告"
             ) { _,_ ->
-                lifecycleScope.launch {
+                GlobalScope.launch {
                     withContext(Dispatchers.IO){
                         reportCrash()
                     }
                     destroy()
                 }
-
             }
             .setNegativeButton(
                 "退出"

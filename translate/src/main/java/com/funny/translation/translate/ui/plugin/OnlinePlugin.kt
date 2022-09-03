@@ -8,10 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults.buttonColors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,7 +94,7 @@ fun OnlinePluginItem(
     Column(modifier = Modifier
         .fillMaxWidth()
         .clip(RoundedCornerShape(16.dp))
-        .background(MaterialTheme.colors.surface)
+        .background(MaterialTheme.colorScheme.primaryContainer)
         .clickable { expand = !expand }
         .animateContentSize()
     ) {
@@ -108,20 +108,20 @@ fun OnlinePluginItem(
             Text(plugin.fileName, fontSize = 18.sp, fontWeight = FontWeight.W600)
             when(onlinePluginState){
                 OnlinePluginState.Installed -> Button(shape = CircleShape, colors = buttonColors(
-                    contentColor = MaterialTheme.colors.onBackground,
-                    backgroundColor = MaterialColors.Red700
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    containerColor = MaterialTheme.colorScheme.errorContainer
                 ) ,onClick = { clickPluginAction.delete(plugin) }) {
                     Text(stringResource(R.string.uninstall_plugin))
                 }
                 OnlinePluginState.OutDated -> Button(shape = CircleShape, colors = buttonColors(
-                    contentColor = MaterialTheme.colors.onBackground,
-                    backgroundColor = MaterialColors.Green700
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    containerColor = MaterialColors.Green200
                 ) ,onClick = { clickPluginAction.update(plugin) }) {
                     Text(text = stringResource(R.string.update_plugin))
                 }
                 OnlinePluginState.NotInstalled -> Button(shape = CircleShape, colors = buttonColors(
-                    contentColor = MaterialTheme.colors.onBackground,
-                    backgroundColor = MaterialTheme.colors.background
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    containerColor = MaterialTheme.colorScheme.background
                 ), onClick = { clickPluginAction.install(plugin) }) {
                     Text(text = stringResource(id = R.string.install_plugin))
                 }

@@ -1,21 +1,19 @@
 package com.funny.translation.js
 
 import com.funny.translation.debug.Debug
-import com.funny.translation.helper.coroutine.Coroutine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
 import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.core.JsInterface
 import com.funny.translation.js.extentions.messageWithDetail
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.allLanguages
+import com.funny.translation.translate.Language
+import com.funny.translation.translate.allLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.mozilla.javascript.NativeArray
 import org.mozilla.javascript.NativeObject
 import org.mozilla.javascript.RhinoException
-import java.util.*
 import javax.script.ScriptException
 
 class JsEngine(val jsBean: JsBean) : JsInterface {

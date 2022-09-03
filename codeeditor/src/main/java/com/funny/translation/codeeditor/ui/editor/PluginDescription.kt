@@ -1,7 +1,7 @@
 package com.funny.translation.codeeditor.ui.editor
 
 import com.funny.translation.js.core.JsInterface
-import com.funny.translation.trans.Language
+import com.funny.translation.translate.Language
 import io.github.rosemoe.editor.langs.desc.JavaScriptDescription
 
 val FunnyPluginDescription = PluginDescription()

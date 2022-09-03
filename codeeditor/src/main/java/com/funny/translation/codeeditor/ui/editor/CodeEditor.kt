@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.funny.translation.codeeditor.ui.editor
 
 import android.content.Intent
@@ -8,12 +10,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -37,7 +40,7 @@ import com.funny.translation.helper.readText
 import com.funny.translation.helper.writeText
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
-import com.funny.translation.trans.allLanguages
+import com.funny.translation.translate.allLanguages
 import io.github.rosemoe.editor.interfaces.EditorEventListener
 import io.github.rosemoe.editor.text.Content
 import io.github.rosemoe.editor.widget.CodeEditor
@@ -49,7 +52,7 @@ fun ComposeCodeEditor(
     activityViewModel: ActivityCodeViewModel
 ) {
     val viewModel: CodeEditorViewModel = viewModel()
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember{ SnackbarHostState() }
     val context = LocalContext.current
     val confirmOpenFile = remember { mutableStateOf(false) }
     val settingArgumentsDialog = remember { mutableStateOf(false) }
@@ -86,10 +89,10 @@ fun ComposeCodeEditor(
         try {
             uri.writeText(context, activityViewModel.codeState.value.toString())
             viewModel.hasSaved = true
-            scope.launch { scaffoldState.snackbarHostState.showSnackbar("保存完成") }
+            scope.launch { snackbarHostState.showSnackbar("保存完成") }
         } catch (e: Exception) {
             e.printStackTrace()
-            scope.launch { scaffoldState.snackbarHostState.showSnackbar("发生错误，保存失败！") }
+            scope.launch { snackbarHostState.showSnackbar("发生错误，保存失败！") }
         }
     }
 
@@ -128,7 +131,9 @@ fun ComposeCodeEditor(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             CodeEditorTopBar(
                 debugAction = {
@@ -184,12 +189,12 @@ fun ComposeCodeEditor(
                                 activityViewModel.exportText = JsBean.GSON.toJson(jsBean)
                                 exportLauncher.launch("${jsBean.fileName}.json")
                                 scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_success))
+                                    snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_success))
                                 }
                             },
                             onError = {
                                 scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_error))
+                                    snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_error))
                                 }
                             }
                         )
@@ -200,7 +205,9 @@ fun ComposeCodeEditor(
         },
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Box(modifier = Modifier.fillMaxSize().padding(it)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(it)) {
             Editor(
                 viewModel = viewModel,
                 activityViewModel = activityViewModel
@@ -294,11 +301,11 @@ fun CodeEditorTopBar(
     var expanded by remember {
         mutableStateOf(false)
     }
-    TopAppBar(
+    SmallTopAppBar(
         title = {
             Text("编辑代码")
         },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer),
         actions = {
             IconButton(onClick = debugAction) {
                 Icon(painterResource(id = R.drawable.ic_debug), contentDescription = "Debug")
@@ -318,27 +325,26 @@ fun CodeEditorTopBar(
             ) {
                 DropdownMenuItem(onClick = {
                     undoAction()
-                }) {
+                }, text = {
                     Text(text = stringResource(id = R.string.undo))
-                }
+                })
                 DropdownMenuItem(onClick = {
                     redoAction()
-                }) {
+                }, text = {
                     Text(text = stringResource(id = R.string.redo))
-                }
+                })
                 DropdownMenuItem(onClick = {
                     openFileAction()
                     expanded = false
-                }) {
+                }, text = {
                     Text(text = stringResource(id = R.string.open_file))
-                }
+                })
                 DropdownMenuItem(onClick = {
                     exportAction()
                     expanded = false
-                }) {
+                }, text = {
                     Text(stringResource(id = R.string.export_plugin))
-
-                }
+                })
                 ExpandableDropdownItem(
                     stringResource(id = R.string.change_editor_theme),
                     requestDismiss = {
@@ -348,23 +354,23 @@ fun CodeEditorTopBar(
                         DropdownMenuItem(onClick = {
                             schemeAction(editorScheme)
                             expanded = false
-                        }) {
+                        }, text = {
                             Text(text = editorScheme.displayName)
-                        }
+                        })
                     }
                 }
                 DropdownMenuItem(onClick = {
                     setArgumentsAction()
                     expanded = false
-                }) {
+                }, text = {
                     Text(text = stringResource(id = R.string.set_debug_arguments))
-                }
+                })
                 DropdownMenuItem(onClick = {
                     openPluginDocumentAction()
                     expanded = false
-                }) {
+                }, text = {
                     Text(text = stringResource(id = R.string.open_plugin_document))
-                }
+                })
             }
         }
     )

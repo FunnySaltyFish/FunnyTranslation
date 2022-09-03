@@ -1,19 +1,29 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.funny.translation.translate.ui.main
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTask
-import com.funny.translation.trans.*
+import com.funny.translation.translate.*
 import com.funny.translation.translate.ActivityViewModel
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
-import com.funny.translation.Consts
 import com.funny.translation.translate.database.DefaultData
+import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.SortResultUtils
@@ -21,11 +31,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 class MainViewModel : ViewModel() {
-    val translateText = MutableLiveData("")
+    var translateText by mutableStateOf("")
     private val actualTransText: String
-        get() = translateText.value?.trim()?.replace("#","") ?: ""
+        get() = translateText.trim().replace("#","")
 
-    val sourceLanguage: MutableLiveData<Language> = MutableLiveData(
+    var sourceLanguage by mutableStateOf(
         findLanguageById(
             DataSaverUtils.readData(
                 Consts.KEY_SOURCE_LANGUAGE,
@@ -33,7 +43,7 @@ class MainViewModel : ViewModel() {
             )
         )
     )
-    val targetLanguage: MutableLiveData<Language> = MutableLiveData(
+    var targetLanguage by mutableStateOf(
         findLanguageById(
             DataSaverUtils.readData(
                 Consts.KEY_TARGET_LANGUAGE,
@@ -46,7 +56,9 @@ class MainViewModel : ViewModel() {
     var selectedEngines: HashSet<TranslationEngine> = hashSetOf()
     private var initialSelected = 0
 
-    var jsEngineInitialized = false
+    private var jsEngineInitialized = false
+
+    var showListType: ShowListType by mutableStateOf(ShowListType.History)
 
     val jsEnginesFlow : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
         list.map {
@@ -71,6 +83,14 @@ class MainViewModel : ViewModel() {
     }.sortedBy(SortResultUtils.defaultEngineSort).let {
         flowOf(it)
     }
+
+//    val transHistoryPagingSource = TransHistoryPagingSource(appDB.transHistoryDao)
+
+    val transHistories = Pager(PagingConfig(pageSize = 10)) {
+        appDB.transHistoryDao.queryAll()
+    }.flow.cachedIn(viewModelScope)
+
+//    val
 
 //    private val localEnginesFlow : Flow<List<TranslationEngine>>
 //        get() = bindEnginesFlow.combine(jsEnginesFlow){ bindEngines, jsEngines ->
@@ -98,9 +118,9 @@ class MainViewModel : ViewModel() {
     }
 
 
-    val resultList: MutableLiveData<ArrayList<TranslationResult>> = MutableLiveData(arrayListOf())
+    val resultList = mutableStateListOf<TranslationResult>()
 
-    val progress: MutableLiveData<Float> = MutableLiveData(100f)
+    var progress by mutableStateOf(100f)
 
     private val totalProgress: Int
         get() = selectedEngines.size
@@ -118,7 +138,7 @@ class MainViewModel : ViewModel() {
 
     fun cancel() {
         translateJob?.cancel()
-        progress.value = 100f
+        progress = 100f
     }
 
     fun isTranslating(): Boolean = translateJob?.isActive ?: false
@@ -126,8 +146,10 @@ class MainViewModel : ViewModel() {
     fun translate() {
         if (translateJob?.isActive == true) return
         if (actualTransText.isEmpty()) return
-        resultList.value?.clear()
-        progress.value = 0f
+        resultList.clear()
+        progress = 0f
+        addTransHistory(actualTransText, sourceLanguage, targetLanguage)
+        showListType = ShowListType.Result
         translateJob = viewModelScope.launch {
             createFlow().buffer().collect { task ->
                 try {
@@ -137,13 +159,13 @@ class MainViewModel : ViewModel() {
                         this.sourceString   = task.sourceString
                     }
 
-                    task.result.targetLanguage = targetLanguage.value!!
+                    task.result.targetLanguage = targetLanguage
                     withContext(Dispatchers.IO) {
                         task.translate(translateMode.value!!)
                     }
 
                     updateTranslateResult(task.result)
-                    Log.d(TAG, "translate : ${progress.value} ${task.result}")
+                    Log.d(TAG, "translate : $progress ${task.result}")
 
                 } catch (e: TranslationException) {
                     e.printStackTrace()
@@ -164,6 +186,20 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    private fun addTransHistory(sourceString: String, sourceLanguage: Language, targetLanguage: Language){
+        viewModelScope.launch(Dispatchers.IO) {
+            appDB.transHistoryDao.insertTransHistory(
+                TransHistoryBean(0, sourceString, sourceLanguage.id, targetLanguage.id, selectedEngines.map { it.name })
+            )
+        }
+    }
+
+    fun deleteTransHistory(id: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            appDB.transHistoryDao.deleteTransHistory(id)
+        }
+    }
+
     private fun createFlow() =
         flow {
             selectedEngines.forEach {
@@ -171,14 +207,14 @@ class MainViewModel : ViewModel() {
                     val task = if (it is TranslationEngines) {
                         it.createTask(
                             actualTransText,
-                            sourceLanguage.value!!,
-                            targetLanguage.value!!
+                            sourceLanguage,
+                            targetLanguage
                         )
                     } else {
                         val jsTask = it as JsTranslateTask
                         jsTask.sourceString = actualTransText
-                        jsTask.sourceLanguage = sourceLanguage.value!!
-                        jsTask.targetLanguage = targetLanguage.value!!
+                        jsTask.sourceLanguage = sourceLanguage
+                        jsTask.targetLanguage = targetLanguage
                         jsTask
                     }
                     emit(task)
@@ -192,8 +228,8 @@ class MainViewModel : ViewModel() {
         }
 
     private fun updateTranslateResult(result: TranslationResult) {
-        progress.value = progress.value!! + 100f / totalProgress
-        resultList.value?.let {
+        progress += 100f / totalProgress
+        resultList.let {
             val currentKey = it.find { r -> r.engineName == result.engineName }
             // 绝大多数情况下应该是没有的
             // 但是线上的报错显示有时候会有，所以判断一下吧
@@ -204,7 +240,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun support(supportLanguages: List<Language>) =
-        supportLanguages.contains(sourceLanguage.value) && supportLanguages.contains(targetLanguage.value)
+        supportLanguages.contains(sourceLanguage) && supportLanguages.contains(targetLanguage)
 
 
     companion object {

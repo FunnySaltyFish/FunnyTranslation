@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +26,7 @@ class FunnyIcon(
 @Composable
 fun IconWidget(
     funnyIcon : FunnyIcon,
-    tintColor : Color = MaterialTheme.colors.secondary
+    tintColor : Color = MaterialTheme.colorScheme.secondary
 ) {
     val icon = funnyIcon.get()
     val modifier = Modifier

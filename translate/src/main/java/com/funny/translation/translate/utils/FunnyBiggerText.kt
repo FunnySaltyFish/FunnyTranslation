@@ -1,6 +1,6 @@
 package com.funny.translation.translate.utils
 
-import com.funny.translation.trans.TranslationException
+import com.funny.translation.translate.TranslationException
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.Consts
 

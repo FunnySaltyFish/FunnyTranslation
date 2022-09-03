@@ -1,6 +1,6 @@
 package com.funny.translation.translation;
 
-import com.funny.translation.trans.TranslationException;
+import com.funny.translation.translate.TranslationException;
 
 import java.util.HashMap;
 import java.util.Map;

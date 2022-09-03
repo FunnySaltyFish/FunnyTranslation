@@ -1,6 +1,5 @@
 package com.funny.translation.js
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.funny.translation.js.bean.JsBean
 import kotlinx.coroutines.flow.Flow

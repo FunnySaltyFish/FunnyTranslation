@@ -3,7 +3,7 @@ package com.funny.translation.utils;
 import android.content.Context;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.trans.TranslationException;
+import com.funny.translation.translate.TranslationException;
 
 import java.io.InputStream;
 

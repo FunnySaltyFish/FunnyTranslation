@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "cecb691421661b6f525dee571e4cd2b1",
+    "identityHash": "091308ef9b54c028e47c8d4b985cf240",
     "entities": [
       {
         "tableName": "table_js",
@@ -95,12 +95,62 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "table_trans_history",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sourceString` TEXT NOT NULL, `sourceLanguageId` INTEGER NOT NULL, `targetLanguageId` INTEGER NOT NULL, `engineNames` TEXT NOT NULL, `time` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceString",
+            "columnName": "sourceString",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceLanguageId",
+            "columnName": "sourceLanguageId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetLanguageId",
+            "columnName": "targetLanguageId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "engineNames",
+            "columnName": "engineNames",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cecb691421661b6f525dee571e4cd2b1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '091308ef9b54c028e47c8d4b985cf240')"
     ]
   }
 }

@@ -1,6 +1,11 @@
 package com.funny.trans.login.utils
 
+import android.os.Build
+import android.util.Log
 import com.funny.trans.login.bean.UserBean
+import com.funny.translation.Consts
+import com.funny.translation.helper.BiometricUtils
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.CommonData
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.Dispatchers
@@ -8,62 +13,6 @@ import kotlinx.coroutines.withContext
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
-
-/**
- * ```python
- * @bp_user.route("/login", methods=["POST"])
-def login():
-username = request.form.get("username", "")
-password = request.form.get("password", "")
-password_type = request.form.get("password_type", "1")
-email = request.form.get("email", "")
-phone = request.form.get("phone", "")
-response = {
-"code": 50,
-"error_msg": "",
-"message": ""
-}
-try:
-user = sign_in(username, password, password_type, email, phone)
-response["message"] = "登陆成功！"
-print(user)
-response["data"] = user
-except SignInException as e:
-response["code"] = -1
-response["error_msg"] = str(e)
-return make_response(jsonify(response), 200)
-
-@bp_user.route("/register", methods=["POST"])
-def register():
-username = request.form.get("username", "")
-password = request.form.get("password", "")
-password_type = request.form.get("password_type", "1")
-email = request.form.get("email", "")
-phone = request.form.get("phone", "")
-response = {
-"code": 50,
-"error_msg": "",
-"message": ""
-}
-try:
-sign_up(username, password, password_type, email, phone)
-except SignUpException as e:
-response["code"] = -1
-response["error_msg"] = str(e)
-if username in SPEACIAL_USERNAME_TIP:
-response["error_msg"] += "("+ SPEACIAL_USERNAME_TIP[username] +")"
-return make_response(jsonify(response), 200)
-response["message"] = "注册成功！"
-
-if appDB.col_sponsor.find_one({"name": username}) is not None:
-response["message"] += f"(您的用户名在赞助列表里哦，如果你是赞助者本人，可以凭相关证明免费领永久会员！感谢您在应用初期的支持~)"
-
-if username in SPEACIAL_USERNAME_TIP:
-response["message"] += "("+ SPEACIAL_USERNAME_TIP[username] +")"
-return make_response(jsonify(response), 200)
-
- * ```
- */
 
 interface UserService {
 
@@ -101,9 +50,23 @@ interface UserService {
         @Field("phone") phone: String
     ): CommonData<UserBean>
 
+    @POST("user/get_user_info")
+    @FormUrlEncoded
+    suspend fun getInfo(
+        @Field("uid") uid: Int
+    ): CommonData<UserBean>
+
+    @POST("user/refresh_token")
+    @FormUrlEncoded
+    suspend fun refreshToken(
+        @Field("uid") uid: Int
+    ): CommonData<String>
+
 }
 
 object UserUtils {
+    private const val TAG = "UserUtils"
+
     private val userService by lazy(LazyThreadSafetyMode.PUBLICATION){
         ServiceCreator.create(UserService::class.java)
     }
@@ -115,6 +78,7 @@ object UserUtils {
     }
 
     fun isValidEmail(email: String): Boolean {
+        // 只允许主流邮箱后缀
         if (VALID_POSTFIX.all { !email.endsWith(it) }) {
             return false
         }
@@ -130,7 +94,6 @@ object UserUtils {
      * @param password String 密码格式： did#encrypted_info#iv
      * @param password_type String
      * @param email String
-     * @param verifyCode String
      * @return UserBean?
      */
     suspend fun login(
@@ -159,6 +122,7 @@ object UserUtils {
         if (verifyData.code != 50) {
             throw SignUpException("邮箱验证码错误")
         }
+
         val registerData = userService.register(username, password, password_type, email, phone)
         if (registerData.code != 50) {
             throw SignUpException(registerData.error_msg ?: "未知错误")
@@ -173,6 +137,33 @@ object UserUtils {
         }
     }
 
+    suspend fun getUserInfo() = withContext(Dispatchers.IO){
+        val uid = DataSaverUtils.readData(Consts.KEY_USER_UID, -1)
+        if (uid < 0) return@withContext null
+        val userInfoData = userService.getInfo(uid)
+        if (userInfoData.code != 50){
+            throw Exception("获取用户信息失败")
+        }
+        userInfoData.data
+//        UserBean(username = "FunnySaltyFish", uid = 1, avatar_url = "https://img2.woyaogexing.com/2022/08/27/667cc0590584fd54!400x400.jpg", email = "", password = "", phone = "")
+    }
+
+    // 依据uid刷新JWT Token，并保存到本地
+    // 错误会在内部捕获
+    suspend fun refreshJwtToken() = withContext(Dispatchers.IO){
+        val uid = DataSaverUtils.readData(Consts.KEY_USER_UID, -1)
+        if (uid < 0) return@withContext
+        try {
+            val data = userService.refreshToken(uid)
+            if (data.code == 50) {
+                DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, data.data ?: "")
+                Log.i(TAG, "refreshJwtToken: 刷新Token成功")
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            Log.e(TAG, "refreshJwtToken: 失败")
+        }
+    }
 }
 
 class SignInException(s: String) : Exception(s)

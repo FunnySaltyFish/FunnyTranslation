@@ -2,8 +2,8 @@ package com.funny.translation.translate.task
 
 import android.net.Uri
 import com.funny.translation.network.OkHttpUtils
-import com.funny.translation.trans.TranslationEngine
-import com.funny.translation.trans.TranslationException
+import com.funny.translation.translate.TranslationEngine
+import com.funny.translation.translate.TranslationException
 import com.funny.translation.Consts
 import com.funny.translation.translate.engine.TranslationEngines
 import org.json.JSONArray

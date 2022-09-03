@@ -1,6 +1,6 @@
 package com.funny.translation.translate.task
 
-import com.funny.translation.trans.*
+import com.funny.translation.translate.*
 import com.funny.translation.Consts
 
 

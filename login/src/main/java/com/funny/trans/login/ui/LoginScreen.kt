@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.funny.trans.login.ui
 
 import android.content.Intent
@@ -129,7 +131,7 @@ fun LoginScreen(
             verticalAlignment = Alignment.Top
         ) { page ->
             when (page) {
-                0 -> LoginForm(vm, activityLauncher, onLoginSuccess = onLoginSuccess)
+                0 -> LoginForm(vm, onLoginSuccess = onLoginSuccess)
                 1 -> RegisterForm(vm, activityLauncher, onRegisterSuccess = { changePage(0) })
             }
         }
@@ -137,7 +139,7 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<*>, onLoginSuccess: (UserBean) -> Unit = {}) {
+fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
@@ -156,7 +158,7 @@ fun LoginForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<*>, o
             })
         } else CompletableButton(
             onClick = {
-                if (Build.VERSION_CODES.M <= Build.VERSION.SDK_INT) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     BiometricUtils.validateFingerPrint(
                         context as AppCompatActivity,
                         data = vm.loginData,
@@ -173,9 +175,10 @@ fun LoginForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<*>, o
                             if(email.isNotEmpty()){
                                 try{
                                     scope.launch {
-                                        UserUtils.sendVerifyEmail(vm.username, email)
                                         vm.shouldVerifyEmailWhenLogin = true
                                         vm.email = email
+                                        BiometricUtils.uploadFingerPrint(username = vm.username)
+                                        UserUtils.sendVerifyEmail(vm.username, email)
                                         context.toastOnUi("邮件发送成功，请注意查收！")
                                     }
                                 }catch (e: Exception){
@@ -248,12 +251,12 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
             CompletableButton(
                     modifier = Modifier.fillMaxWidth(),
             enabled = true,
-            onClick = { activityLauncher.launch(Intent(context as AppCompatActivity, GameActivity::class.java)) }) {
+            onClick = { activityLauncher.launch(Intent(context, GameActivity::class.java)) }) {
                 Text(text = "点我输入密码")
             }
         } else CompletableButton(
             onClick = {
-                if (Build.VERSION_CODES.M <= Build.VERSION.SDK_INT) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     BiometricUtils.setFingerPrint(
                         context as AppCompatActivity,
                         data = vm.loginData,
@@ -273,6 +276,7 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
                     )
                 } else {
                     context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)
+                    vm.passwordType = "2"
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -295,7 +299,11 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
                 )
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.finishSetFingerPrint
+            enabled =
+                if(vm.passwordType == "1")
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.finishSetFingerPrint
+                else
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.password.length >= 8
         ) {
             Text("注册")
         }
@@ -377,7 +385,7 @@ fun InputEmail(
                     CountDownTimeButton(
                         modifier = Modifier.weight(1f),
                         onClick = onClick,
-                        enabled = !isError
+                        enabled = value != "" && !isError
                     )
                 }
             )

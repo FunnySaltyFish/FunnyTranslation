@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
+import com.funny.translation.translate.ui.theme.isLight
 import com.funny.translation.translate.ui.widget.LoadingContent
 
 @Composable
@@ -41,7 +42,7 @@ fun OpenSourceLib() {
                 .fillMaxWidth()
                 .padding(12.dp)) {
             items(list){ info ->
-                val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colors.isLight) MaterialColors.Orange200 else MaterialTheme.colors.surface
+                val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.surface
                 OpenSourceLibItem(
                     modifier = Modifier
                         .fillMaxWidth()

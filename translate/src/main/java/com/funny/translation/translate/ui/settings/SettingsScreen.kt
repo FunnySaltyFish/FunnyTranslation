@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -28,7 +28,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.trans.allLanguages
+import com.funny.translation.translate.allLanguages
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
@@ -37,7 +37,7 @@ import com.funny.translation.Consts
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.SimpleDialog
-import com.funny.translation.translate.utils.DateUtils
+import com.funny.translation.helper.DateUtils
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -221,7 +221,7 @@ fun SortResult(
                 modifier = Modifier
                     .fillMaxWidth()
                     .draggedItem(state.offsetByIndex(i))
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .detectReorderAfterLongPress(state)
             ) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -281,7 +281,7 @@ fun SelectLanguage(modifier: Modifier) {
                 // 当所有开始都被选上时，默认就是全选状态
                 mutableStateOf(data.firstOrNull { !it } == null )
             }
-            val tintColor by animateColorAsState(targetValue = if (selectAll) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground)
+            val tintColor by animateColorAsState(targetValue = if (selectAll) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
             IconButton(onClick = {
                 selectAll = !selectAll
                 setAllState(selectAll)

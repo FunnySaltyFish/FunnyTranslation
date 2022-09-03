@@ -11,10 +11,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.trans.login.ui.LoginScreen
-import com.funny.trans.login.ui.LoginTheme
 import com.funny.translation.Consts
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.translate.ui.theme.TransTheme
 import com.smarx.notchlib.NotchScreenManager
 
 class LoginActivity : AppCompatActivity() {
@@ -31,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         NotchScreenManager.getInstance().setDisplayInNotch(this)
 
-//        SoterUtils.init()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             BiometricUtils.init()
         }
@@ -46,13 +45,16 @@ class LoginActivity : AppCompatActivity() {
 
         setContent {
             CompositionLocalProvider(LocalDataSaver provides DataSaverUtils) {
-                LoginTheme {
+                TransTheme {
                     LoginScreen(onLoginSuccess = {
                         Log.d(TAG, "登录成功: 用户: $it")
                         DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, it.jwt_token)
+                        DataSaverUtils.saveData(Consts.KEY_USER_UID, it.uid)
                         setResult(RESULT_OK, Intent().apply {
+                            putExtra(Consts.KEY_USER_UID, it.uid)
                             putExtra(Consts.KEY_JWT_TOKEN, it.jwt_token)
                         })
+                        finish()
                     })
                 }
             }

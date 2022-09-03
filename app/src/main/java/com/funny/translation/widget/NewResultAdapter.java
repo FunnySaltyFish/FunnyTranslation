@@ -10,7 +10,7 @@ import com.funny.translation.R;
 import com.funny.translation.bean.Consts;
 import com.funny.translation.js.config.JsConfig;
 import com.funny.translation.js.core.JsTranslateTask;
-import com.funny.translation.trans.CoreTranslationTask;
+import com.funny.translation.translate.CoreTranslationTask;
 
 import org.jetbrains.annotations.NotNull;
 

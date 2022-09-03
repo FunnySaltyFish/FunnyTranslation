@@ -6,9 +6,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.FontRes
 import androidx.annotation.IdRes
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.LocalTextStyle
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import coil.ImageLoader
+import coil.memory.MemoryCache
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
@@ -47,7 +47,7 @@ fun MarkdownText(
     selectable : Boolean = false,
     @IdRes viewId: Int? = null
 ) {
-    val defaultColor: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
+    val defaultColor: Color = LocalContentColor.current
     val context: Context = LocalContext.current
     val markdownRender: Markwon = remember { createMarkdownRender(context) }
     AndroidView(
@@ -120,8 +120,9 @@ private fun createTextView(
 private fun createMarkdownRender(context: Context): Markwon {
     val imageLoader = ImageLoader.Builder(context)
         .apply {
-            availableMemoryPercentage(IMAGE_MEMORY_PERCENTAGE)
-            bitmapPoolPercentage(IMAGE_MEMORY_PERCENTAGE)
+            memoryCache {
+                MemoryCache.Builder(context).maxSizePercent(IMAGE_MEMORY_PERCENTAGE).build()
+            }
             crossfade(true)
         }.build()
 

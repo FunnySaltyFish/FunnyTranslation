@@ -1,4 +1,4 @@
-package com.funny.translation.translate.utils
+package com.funny.translation.helper
 
 class MarkdownTextBuilder(var lineSeparator: String = "  \n") {
     private val lines = arrayListOf<String>()

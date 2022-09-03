@@ -1,6 +1,6 @@
 package com.funny.translation.translate.ui.bean
 
-import com.funny.translation.trans.Language
+import com.funny.translation.translate.Language
 
 data class TranslationConfig(
     var sourceString: String? = null,

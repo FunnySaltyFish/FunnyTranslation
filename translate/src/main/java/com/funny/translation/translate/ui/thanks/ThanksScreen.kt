@@ -2,13 +2,18 @@ package com.funny.translation.translate.ui.thanks
 
 import android.content.Intent
 import android.util.Log
-import androidx.compose.animation.animateContentSize
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,71 +22,55 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.ExtraBold
 import androidx.compose.ui.text.font.FontWeight.Companion.W800
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import coil.compose.AsyncImage
+import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.trans.login.LoginActivity
+import com.funny.trans.login.utils.UserUtils
+import com.funny.translation.Consts
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.ui.widget.DefaultFailure
 import com.funny.translation.translate.ui.widget.DefaultLoading
+import com.funny.translation.translate.ui.widget.HeadingText
+import com.funny.translation.translate.ui.widget.LoadingContent
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ThanksScreen() {
-    val vm : ThanksViewModel = viewModel()
+    val vm: ThanksViewModel = viewModel()
     val sponsors = vm.sponsors.collectAsLazyPagingItems()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
-        ,
-        horizontalAlignment = Alignment.Start
-    ){
+            .padding(horizontal = 24.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            UserInfoPanel()
+        }
+        item {
+            HeadingText(text = stringResource(id = R.string.join_sponsor))
+        }
         item {
             Row(
-                Modifier
+                modifier = Modifier
+                    .height(80.dp)
                     .fillMaxWidth()
-                    .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = stringResource(id = R.string.thanks), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
-            }
-        }
-
-        item {
-            SponsorList(sponsors = sponsors)
-        }
-
-//        item {
-//            LoadingContent(modifier = Modifier ,loader = (vm.sponsorService::getAllSponsor) ) { sponsorList ->
-//                sponsorList.let{
-//                    Column {
-//                        SponsorList(it)
-//                        Text(modifier = Modifier.fillMaxWidth(),text = stringResource(id = R.string.sponsor_tip), textAlign = TextAlign.Center, fontSize = 12.sp, color = LocalContentColor.current.copy(0.5f))
-//                    }
-//                }
-//            }
-//        }
-        item{
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            Text(text = stringResource(id = R.string.join_sponsor), fontSize = 32.sp, fontWeight = FontWeight.ExtraBold)
-        }
-        item{
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-        item {
-            Row(modifier = Modifier
-                .height(80.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colors.surface),
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 SponsorIcon(
                     load_url = "https://afdian.net/@funnysaltyfish?tab=home",
                     resourceId = R.drawable.ic_aifadian,
@@ -99,19 +88,18 @@ fun ThanksScreen() {
                 )
             }
         }
-    }
-}
+        stickyHeader {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(vertical = 4.dp)
+            ) {
+                HeadingText(text = stringResource(id = R.string.thanks))
+            }
 
-@Composable
-fun SponsorList(
-    sponsors : LazyPagingItems<Sponsor>,
-) {
-    LazyColumn(
-        modifier = Modifier.requiredHeightIn(0.dp, 380.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
-    ) {
-        items(sponsors){ sponsor ->
+        }
+        items(sponsors) { sponsor ->
             sponsor?.let {
                 SponsorItem(sponsor = it)
             }
@@ -151,23 +139,96 @@ fun SponsorList(
                 }
             }
         }
+
+        item {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.sponsor_tip),
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                color = LocalContentColor.current.copy(0.5f),
+                lineHeight = 15.sp
+            )
+        }
     }
 }
 
 @Composable
+fun UserInfoPanel() {
+    val TAG = "UserInfoPanel"
+    var uid by rememberDataSaverState(Consts.KEY_USER_UID, default = -1)
+    var token by rememberDataSaverState(Consts.KEY_JWT_TOKEN, default = "")
+    val context = LocalContext.current
+
+    val startLoginLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        Log.d(TAG, "UserInfoPanel: resultData: ${it.data}")
+        if (it.data != null) {
+            val resUid = it.data!!.extras?.getInt(Consts.KEY_USER_UID) ?: -1
+            val resToken = it.data!!.extras?.getString(Consts.KEY_JWT_TOKEN) ?: ""
+            Log.d(TAG, "UserInfoPanel: resUid: $resUid, resToken: $resToken")
+            if (resUid <= 0 || resToken == "") return@rememberLauncherForActivityResult
+            uid = resUid
+            token = resToken
+        }
+    }
+
+    LoadingContent(
+        key = uid,
+        updateKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+            .clickable {
+                if (uid <= 0) { // 未登录
+                    startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
+                }
+            }
+            .padding(vertical = 12.dp), loader = UserUtils::getUserInfo
+    ) { userBean ->
+        if (userBean != null) {
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                AsyncImage(
+                    model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape),
+                    placeholder = painterResource(R.drawable.ic_loading)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${userBean.username} | uid: ${userBean.uid}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W400,
+                    color = LocalContentColor.current.copy(0.8f)
+                )
+            }
+        } else {
+            Text(
+                text = "登录/注册",
+                fontSize = 24.sp,
+                fontWeight = ExtraBold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+
+}
+
+@Composable
 fun SponsorIcon(
-    load_url : String,
-    resourceId : Int,
-    contentDes : String
+    load_url: String,
+    resourceId: Int,
+    contentDes: String
 ) {
     val context = LocalContext.current
     IconButton(onClick = {
         val intent = Intent(context, WebViewActivity::class.java)
-        intent.putExtra("load_url",load_url)
+        intent.putExtra("load_url", load_url)
         context.startActivity(intent)
     }, modifier = Modifier.size(64.dp)) {
         Icon(
-            modifier = Modifier.size(48.dp) ,
+            modifier = Modifier.size(48.dp),
             painter = painterResource(id = resourceId),
             contentDescription = contentDes,
             tint = Color.Unspecified
@@ -177,42 +238,48 @@ fun SponsorIcon(
 
 @Composable
 fun SponsorItem(
-    sponsor : Sponsor,
+    sponsor: Sponsor,
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(16.dp))
-        .background(MaterialTheme.colors.surface)
-        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
-        .animateContentSize(),
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Column(
-            modifier = Modifier.weight(7f)
-        ){
+            modifier = Modifier.weight(1f)
+        ) {
             Text(sponsor.name, fontSize = 18.sp, fontWeight = FontWeight.W600)
             sponsor.message?.let {
                 Text(
                     it,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W500,
-                    modifier = Modifier.padding(start = 4.dp, bottom = 8.dp, top = 2.dp),
+                    modifier = Modifier.padding(bottom = 8.dp, top = 2.dp, end = 4.dp),
                     color = LocalContentColor.current.copy(0.7f)
                 )
             }
         }
-        Column(
-            modifier = Modifier.weight(3f)
-        ) {
-            val fontSize = when(sponsor.money.moneyText.length){
+
+        val fontSize = rememberSaveable {
+            when (sponsor.money.moneyText.length) {
                 in 1..5 -> 28
                 else -> 24
             }
-            Text(text = sponsor.money.moneyText, Modifier.padding(end = 4.dp), fontWeight = W800, fontSize = fontSize.sp)
         }
+
+        Text(
+            text = sponsor.money.moneyText,
+            Modifier.padding(end = 4.dp),
+            fontWeight = W800,
+            fontSize = fontSize.sp
+        )
     }
 }
 
-private val Int.moneyText : String
+
+private val Int.moneyText: String
     get() = String.format("%.2f元", this / 100f)

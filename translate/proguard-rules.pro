@@ -30,11 +30,11 @@
 
 #工具类
 -keep class com.funny.translation.network.OkHttpUtils {*;}
--keep class com.funny.translation.trans.TranslationResult {*;}
--keep class com.funny.translation.trans.Language {*;}
+-keep class com.funny.translation.translate.TranslationResult {*;}
+-keep class com.funny.translation.translate.Language {*;}
 
 -keep class com.funny.translation.translate.engine.TranslationEngines {*;}
--keep interface com.funny.translation.trans.TranslationEngine {*;}
+-keep interface com.funny.translation.translate.TranslationEngine {*;}
 -keep class com.funny.translation.Consts {*;}
 
 #Debug保留

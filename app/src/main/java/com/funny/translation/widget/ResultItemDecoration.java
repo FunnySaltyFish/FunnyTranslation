@@ -8,7 +8,7 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.funny.translation.trans.CoreTranslationTask;
+import com.funny.translation.translate.CoreTranslationTask;
 
 import java.util.ArrayList;
 

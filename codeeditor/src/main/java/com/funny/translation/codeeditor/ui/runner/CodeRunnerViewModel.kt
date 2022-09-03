@@ -6,11 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.debug.Debug
-import com.funny.translation.helper.coroutine.Coroutine
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.core.JsTranslateTask
-import com.funny.translation.trans.Language
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -1,5 +1,9 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.funny.trans.login.ui
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.trans.login.GameActivity
 import com.funny.trans.login.R
 import com.funny.trans.login.bean.GameStatus
 import com.funny.trans.login.bean.IGameListener
@@ -46,7 +52,7 @@ val GAME_TIP = """
     2. 右侧为输入区
     您可以点击输入框以指定当前的文本会被输入到哪个输入框中
     
-    当完成输入后，您可以使用返回键直接回到上一级页面，此时的结果将作为您的密码
+    当完成输入后，您可以点击 完成输入 按钮回到上一级页面，此时的结果将作为您的密码
     祝你好运！
 """.trimIndent()
 
@@ -112,6 +118,7 @@ fun GameScreen(modifier: Modifier) {
 @Composable
 fun InputContainer(modifier: Modifier, showTip: ()->Unit = {}) {
     val vm: GameViewModel = viewModel()
+    val context = LocalContext.current as GameActivity
     Column(
         modifier
             .verticalScroll(rememberScrollState())
@@ -147,9 +154,15 @@ fun InputContainer(modifier: Modifier, showTip: ()->Unit = {}) {
                 .size(24.dp)
                 .clickable { showTip() })
         }
-
-
-
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedButton(onClick = {
+            context.setResult(RESULT_OK, Intent().apply {
+                putExtra("password", vm.password)
+            })
+            context.finish()
+        }, enabled = !vm.isPwdError && !vm.isRepeatPwdError) {
+            Text(text = "完成输入")
+        }
     }
 }
 

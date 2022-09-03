@@ -2,7 +2,7 @@ package com.funny.translation.translate.ui.widget
 
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -56,9 +56,9 @@ fun FrameAnimationIcon(
     contentDescription: String = "",
     tint: Color = Color.Unspecified
 ) {
-    val currentFrame by derivedStateOf {
+    val currentFrame by remember { derivedStateOf {
         state.currentFrameIdx
-    }
+    }}
 
     LaunchedEffect(state.isPlaying){
 //        Log.d(TAG, "FrameAnimationIcon: Launched $state")

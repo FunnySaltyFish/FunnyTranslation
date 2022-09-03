@@ -8,7 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,9 +39,9 @@ fun CustomNavigationItem(
     onClick: () -> Unit
 ) {
     val background =
-        if (isSelected) MaterialTheme.colors.surface.copy(alpha = 0.2f) else Color.Transparent
+        if (isSelected) MaterialTheme.colorScheme.surface.copy(alpha = 0.2f) else Color.Transparent
     val contentColor =
-        if (isSelected) MaterialTheme.colors.onSurface.copy(1.0f) else MaterialTheme.colors.onBackground
+        if (isSelected) MaterialTheme.colorScheme.onSurface.copy(1.0f) else MaterialTheme.colorScheme.onBackground
     Box(
         Modifier
             .clip(CircleShape)
@@ -76,9 +76,9 @@ val BottomNavigationHeight = 56.dp
 fun CustomNavigation(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    backgroundColor: Color = MaterialTheme.colors.primarySurface,
+    backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = contentColorFor(backgroundColor),
-    elevation: Dp = BottomNavigationDefaults.Elevation,
+    elevation: Dp = 8.dp,
     screens: Array<TranslateScreen>,
     currentScreen: TranslateScreen = screens[0],
     onItemClick: (TranslateScreen) -> Unit
@@ -88,8 +88,8 @@ fun CustomNavigation(
         Surface(
             color = backgroundColor,
             contentColor = contentColor,
-            elevation = elevation,
             modifier = modifier,
+            tonalElevation = elevation
         ) {
             Row(
                 modifier = Modifier
@@ -108,7 +108,7 @@ fun CustomNavigation(
         }
     } else {
         val height = with(LocalDensity.current) { BottomNavigationHeight.toPx().toInt() }
-        val highlightColor = MaterialTheme.colors.primary.toArgb()
+        val highlightColor = MaterialTheme.colorScheme.primary.toArgb()
         var firstInit by remember {
             mutableStateOf(true)
         }
@@ -117,8 +117,8 @@ fun CustomNavigation(
         Surface(
             color = backgroundColor,
             contentColor = contentColor,
-            elevation = elevation,
             modifier = modifier,
+            tonalElevation = elevation
         ) {
             AndroidView(
                 modifier = Modifier
@@ -131,7 +131,7 @@ fun CustomNavigation(
                         imageWidth = height * 2 / 5
                         imageHeight = height * 2 / 5
                         this.highlightColor = highlightColor
-                        navigationBgColor = (backgroundColor.toArgb())
+                        navigationBgColor = backgroundColor.toArgb()
                         normalColor = contentColor.toArgb()
                         clickMargin = 24 // 拓宽点击边界
                         animationDuration = 500
@@ -144,7 +144,9 @@ fun CustomNavigation(
                             onItemClick(screens[position])
                         }
                         scope.launch {
-                            delay(300)
+                            while (!hasInitialized()){
+                                delay(100)
+                            }
                             firstInit = false
                         }
                     }

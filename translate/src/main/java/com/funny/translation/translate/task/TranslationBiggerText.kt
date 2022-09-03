@@ -1,9 +1,8 @@
 package com.funny.translation.translate.task
 
 import android.preference.PreferenceManager
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.TranslationEngine
-import com.funny.translation.trans.TranslationException
+import com.funny.translation.translate.TranslationEngine
+import com.funny.translation.translate.TranslationException
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.engine.TranslationEngines
 import com.funny.translation.translate.utils.FunnyBiggerText

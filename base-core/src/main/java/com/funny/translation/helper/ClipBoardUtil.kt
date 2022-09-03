@@ -1,4 +1,4 @@
-package com.funny.translation.translate.utils
+package com.funny.translation.helper
 
 import android.content.ClipData
 import android.content.ClipboardManager

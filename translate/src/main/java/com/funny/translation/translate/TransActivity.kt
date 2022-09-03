@@ -19,16 +19,13 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.utils.ApkUtil
+import com.funny.trans.login.utils.UserUtils
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.NetworkReceiver
 import com.funny.translation.sign.SignUtils
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.findLanguageById
-import com.funny.translation.trans.initLanguageDisplay
-import com.funny.trans.login.LoginActivity
 import com.funny.translation.Consts
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
@@ -59,11 +56,7 @@ class TransActivity : AppCompatActivity() {
         const val TAG = "TransActivity"
     }
 
-    @OptIn(
-        ExperimentalComposeUiApi::class,
-        ExperimentalMaterialApi::class,
-        ExperimentalAnimationApi::class
-    )
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Debug.addTarget(DefaultDebugTarget)
@@ -92,6 +85,7 @@ class TransActivity : AppCompatActivity() {
 
         // 做一些耗时的后台任务
         lifecycleScope.launch(Dispatchers.IO) {
+            UserUtils.refreshJwtToken()
             MobileAds.initialize(context) {}
             SignUtils.loadJs()
             SortResultUtils.init()
@@ -110,7 +104,7 @@ class TransActivity : AppCompatActivity() {
             EasyFloatUtils.showFloatBall(this)
         }
 
-        startActivity(Intent(this, LoginActivity::class.java))
+        // startActivity(Intent(this, LoginActivity::class.java))
     }
 
     override fun onNewIntent(intent: Intent?) {

@@ -1,38 +1,43 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.funny.translation.translate.ui.main
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -40,29 +45,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.translation.Consts
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.trans.*
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.WebViewActivity
-import com.funny.translation.Consts
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
-import com.funny.translation.translate.utils.ClipBoardUtil
+import com.funny.translation.helper.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 private const val TAG = "MainScreen"
@@ -71,6 +76,10 @@ private const val TAG = "MainScreen"
 private interface UpdateSelectedEngine {
     fun add(engine: TranslationEngine)
     fun remove(engine: TranslationEngine)
+}
+
+enum class ShowListType {
+    History, Result
 }
 
 /**
@@ -114,6 +123,10 @@ fun MainScreen() {
     val activityVM: ActivityViewModel = LocalActivityVM.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
+    fun updateShowListType(type: ShowListType){
+        vm.showListType = type
+    }
+
     // 使用 BoxWithConstraints 用于适配横竖屏
     BoxWithConstraints(Modifier.fillMaxSize()) {
         if (maxWidth > 720.dp) { // 横屏
@@ -132,143 +145,74 @@ fun MainScreen() {
                     modifier = Modifier
                         .fillMaxHeight(0.95f)
                         .width(2.dp)
-                        .background(MaterialTheme.colors.surface)
+                        .background(MaterialTheme.colorScheme.surface)
                 )
                 Column(
                     Modifier
                         .fillMaxHeight()
                         .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TranslatePart(
+                    InputPart(
                         vm = vm,
                         showSnackbar = showSnackbar,
-                        modifier = Modifier
+                        modifier = Modifier,
+                        expandEngineSelect = {},
+                        updateShowListType = ::updateShowListType
                     )
                 }
             }
         } else {
-            // 下面的几个对象干这么一件事：
-            // 当 竖屏页面、有翻译结果且引擎选择展开 时，可以通过上滑结果列表关闭引擎选择
-            var expandEngineSelect by remember { mutableStateOf(false) }
-            var engineSelectHeight by remember { mutableStateOf(0) }
-            // 此变量用于模拟“上滑到一半时松后后回弹”的效果
-            // 动画的教程可以参考 https://juejin.cn/post/7038528545374765064
-            val swipeOffset = remember { Animatable(0f) }
-            // NestedScrollConnection 用于嵌套滑动时对手势的自定义消费
-            // 可以参考 https://jetpackcompose.cn/docs/design/gesture/nestedScroll
-            val nestedScrollConnection = remember {
-                object : NestedScrollConnection {
-                    override fun onPostScroll(
-                        consumed: Offset,
-                        available: Offset,
-                        source: NestedScrollSource
-                    ): Offset {
-                        // 仅在展开时处理嵌套滑动（向上收回）
-                        if (!expandEngineSelect) return super.onPostScroll(
-                            consumed,
-                            available,
-                            source
-                        )
-//                        Log.d(TAG, "onPostScroll: source: $source available: $available offset: ${swipeOffset.value}")
-                        if (source == NestedScrollSource.Drag) { // 如果在拖动
-                            if (swipeOffset.value > 0.2 * engineSelectHeight) {
-                                expandEngineSelect = false
-                                scope.launch { swipeOffset.snapTo(0f) }
-                                return Offset(0f, available.y)
-                            }
-                            // 如果向上拖并且展开了
-                            if (available.y < 0 && expandEngineSelect) {
-                                // -负数等于加上正数
-                                scope.launch { swipeOffset.snapTo(swipeOffset.value - available.y) }
-                                return Offset(0f, available.y)
-                            }
-                        } else if (source == NestedScrollSource.Fling) { // 手已经松了，但还开着
-                            if (abs(available.y) < 1f && swipeOffset.value > 0f && !swipeOffset.isRunning) {
-                                Log.d(TAG, "onPostScroll: 手松了但还展开着，手动关闭")
-                                scope.launch { swipeOffset.animateTo(0f) }
-                                return Offset(0f, available.y)
-                            }
-                        }
-                        return super.onPostScroll(consumed, available, source)
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier
-                    // 注意这个 .offset 使用的是 lambda 表达式的形式，这可以将计算的过程推后
-                    // 具体到此处，会将变动的流程局限在 layout->drawing ，而无需 recomposition
-                    // 三个流程可以参考 https://juejin.cn/post/7063451846861406245
-                    // 这个优化的点可以参考  https://juejin.cn/post/7103336251645755429#heading-6
-                    .offset { IntOffset(0, -swipeOffset.value.roundToInt()) }
-                    .padding(horizontal = 12.dp, vertical = 12.dp)
-                    .fillMaxWidth()
-                    .nestedScroll(nestedScrollConnection),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AnimatedVisibility(visible = expandEngineSelect) {
+            val modalBottomSheetState =
+                rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+            ModalBottomSheetLayout(
+                sheetShape = RoundedCornerShape(
+                    topStart = 12.dp,
+                    topEnd = 12.dp
+                ), sheetState = modalBottomSheetState, sheetContent = {
                     EngineSelect(
                         modifier = Modifier
-                            // onGloballyPositioned 可以获取到 Composable 放置完后的大小
-                            // 但注意，随着UI变动，此方法会被多次回调
-                            .onGloballyPositioned {
-                                if (engineSelectHeight == 0) engineSelectHeight = it.size.height
-//                                Log.d(TAG, "MainScreen: EngineSelect Height :$engineSelectHeight")
-                            }
-                            .padding(8.dp),
-                        bindEngines, jsEngines,
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(12.dp),
+                        bindEngines,
+                        jsEngines,
                         updateSelectedEngine
                     )
-                }
-                Spacer(modifier = Modifier.height(6.dp))
-                Box(modifier = Modifier
-                    .clip(CircleShape)
-                    .fillMaxWidth(0.4f)
-                    .height(12.dp)
-                    .background(MaterialTheme.colors.secondary)
-                    .clickable() {
-                        expandEngineSelect = !expandEngineSelect
-                    }
-                    // 用于优化无障碍体验，talkback会读出 contentDescription
-                    // 无障碍相关见：https://developer.android.google.cn/jetpack/compose/accessibility?hl=zh-cn
-                    .semantics {
-                        contentDescription = appCtx.getString(
-                            R.string.action_expand_or_close_select_engines,
-                            if (!expandEngineSelect) appCtx.getString(R.string.expand) else appCtx.getString(
-                                R.string.close
-                            )
+                }) {
+                SubcomposeBottomFirstLayout(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 12.dp)
+                        .imePadding()
+                        .fillMaxWidth(),
+                    other = {
+                        Crossfade (vm.showListType) {
+                            when(it) {
+                                ShowListType.Result -> TranslationList(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp),
+                                    resultList = vm.resultList,
+                                    showSnackbar = showSnackbar
+                                )
+
+                                ShowListType.History -> TransHistoryList(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp),
+                                )
+                            }
+                        }
+                    },
+                    bottom = {
+                        InputPart(
+                            vm = vm,
+                            showSnackbar = showSnackbar,
+                            modifier = Modifier.fillMaxWidth(),
+                            expandEngineSelect = { scope.launch { modalBottomSheetState.show() } },
+                            updateShowListType = ::updateShowListType
                         )
                     }
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                TranslatePart(
-                    vm = vm,
-                    showSnackbar = showSnackbar,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-
-                var singleLine by remember {
-                    mutableStateOf(true)
-                }
-                val notice by activityVM.noticeInfo
-                notice?.let {
-                    NoticeBar(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentHeight(Alignment.Bottom)
-                            .clickable(onClickLabel = stringResource(R.string.action_see_notice_detail)) {
-                                if (it.url.isNullOrEmpty()) singleLine = !singleLine
-                                else WebViewActivity.start(context, it.url)
-                            }
-                            .background(MaterialTheme.colors.surface, RoundedCornerShape(8.dp))
-                            .padding(8.dp)
-                            .animateContentSize(),
-                        text = it.message,
-                        singleLine = singleLine,
-                        showClose = true,
-                    )
-                }
-
             }
         }
     }
@@ -279,17 +223,15 @@ fun MainScreen() {
     // 此处用于观察生命周期
     DisposableEffect(key1 = lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-//            Log.d(TAG, "MainScreen: event: $event")
-            // onResume 时执行
             if (event == Lifecycle.Event.ON_RESUME) {
                 val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
                 if (text != "") {
-                    vm.translateText.value = text
+                    vm.translateText = text
                     if (activityVM.tempTransConfig.sourceLanguage != null) {
-                        vm.sourceLanguage.value = activityVM.tempTransConfig.sourceLanguage
+                        vm.sourceLanguage = activityVM.tempTransConfig.sourceLanguage!!
                     }
                     if (activityVM.tempTransConfig.targetLanguage != null) {
-                        vm.targetLanguage.value = activityVM.tempTransConfig.targetLanguage
+                        vm.targetLanguage = activityVM.tempTransConfig.targetLanguage!!
                     }
                     vm.translate()
                     activityVM.tempTransConfig.clear()
@@ -309,19 +251,78 @@ fun MainScreen() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TransHistoryList(modifier: Modifier) {
+    val vm: MainViewModel = viewModel()
+    val context = LocalContext.current
+    val transHistories = vm.transHistories.collectAsLazyPagingItems()
+    LazyColumn(
+        modifier = modifier.background(
+            MaterialTheme.colorScheme.primaryContainer,
+            RoundedCornerShape(4.dp)
+        ), reverseLayout = true // 这一条使得最新的历史会在最下面
+    ) {
+        items(transHistories) { transHistory ->
+            transHistory ?: return@items
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        vm.translateText = transHistory.sourceString
+                        vm.sourceLanguage = findLanguageById(transHistory.sourceLanguageId)
+                        vm.targetLanguage = findLanguageById(transHistory.targetLanguageId)
+                        vm.translate()
+                    }
+                    .padding(start = 8.dp)
+                    .animateItemPlacement(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = transHistory.sourceString,
+                    fontWeight = W600,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontSize = 16.sp
+                )
+                Row {
+                    IconButton(onClick = {
+                        ClipBoardUtil.copy(
+                            context,
+                            transHistory.sourceString
+                        )
+                    }) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_copy_content),
+                            stringResource(R.string.copy)
+                        )
+                    }
+                    IconButton(onClick = {
+                        vm.deleteTransHistory(transHistory.id)
+                    }) {
+                        Icon(Icons.Default.Delete, "删除此历史记录")
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun TranslatePart(
+fun InputPart(
+    modifier: Modifier,
     vm: MainViewModel,
     showSnackbar: (String) -> Unit,
-    modifier: Modifier
+    expandEngineSelect: () -> Unit,
+    updateShowListType: (ShowListType) -> Unit,
 ) {
-    val transText by vm.translateText.observeAsState("")
-    val sourceLanguage by vm.sourceLanguage.observeAsState()
-    val targetLanguage by vm.targetLanguage.observeAsState()
+    val transText = vm.translateText
+    val sourceLanguage = vm.sourceLanguage
+    val targetLanguage = vm.targetLanguage
+    val context = LocalContext.current
 
-    val resultList by vm.resultList.observeAsState()
-    val translateProgress by vm.progress.observeAsState()
     val animateProgress = remember {
         Animatable(100f)
     }
@@ -332,56 +333,18 @@ fun TranslatePart(
         }
     }
 
-    LaunchedEffect(translateProgress){
-        animateProgress.animateTo(translateProgress!!)
+    LaunchedEffect(vm.progress) {
+        animateProgress.animateTo(vm.progress)
     }
 
     val softKeyboardController = LocalSoftwareKeyboardController.current
-    Row( // 语种选择
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        LanguageSelect(
-            Modifier.semantics {
-                contentDescription = appCtx.getString(R.string.des_current_source_lang,)
-            },
-            language = sourceLanguage!!,
-            languages = enabledLanguages,
-            updateLanguage = {
-                vm.sourceLanguage.value = it
-                DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
-            }
-        )
-        ExchangeButton {
-            Log.d(TAG, "MainScreen: clicked")
-            val temp = sourceLanguage
-            vm.sourceLanguage.value = targetLanguage
-            vm.targetLanguage.value = temp
+    val focusRequester = remember { FocusRequester() }
 
-            DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.value!!.id)
-            DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.value!!.id)
-        }
-        LanguageSelect(
-            Modifier.semantics {
-                contentDescription = appCtx.getString(R.string.des_current_target_lang)
-            },
-            language = targetLanguage!!,
-            languages = enabledLanguages,
-            updateLanguage = {
-                vm.targetLanguage.value = it
-                DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
-            }
-        )
-    }
-    Spacer(modifier = Modifier.height(12.dp))
-    InputText(text = transText, updateText = { vm.translateText.value = it }) // 输入框
-    Spacer(modifier = Modifier.height(12.dp))
-    TranslateButton(animateProgress.value.toInt()) { // 翻译按钮
+    fun startTranslate() {
         val selectedEngines = vm.selectedEngines
         if (selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
-            return@TranslateButton
+            return
         }
         val selectedSize = selectedEngines.size
         if (selectedSize > Consts.MAX_SELECT_ENGINES) {
@@ -389,18 +352,102 @@ fun TranslatePart(
                 FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit)
                     .format(Consts.MAX_SELECT_ENGINES, selectedSize)
             )
-            return@TranslateButton
+            return
         }
         if (!vm.isTranslating()) {
             vm.translate()
+            updateShowListType(ShowListType.Result)
             softKeyboardController?.hide()
         } else {
             vm.cancel()
-            showSnackbar(FunnyApplication.resources.getString(R.string.message_stop_translate))
+            context.toastOnUi(FunnyApplication.resources.getString(R.string.message_stop_translate))
         }
     }
-    Spacer(modifier = Modifier.height(18.dp))
-    TranslationList(resultList!!, showSnackbar) // 结果列表
+
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .clip(RoundedCornerShape(4.dp))
+            .padding(8.dp)
+    ) {
+        InputText(
+            text = transText,
+            updateText = {
+                vm.translateText = it
+                if(it == "") updateShowListType(ShowListType.History)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            translateAction = ::startTranslate
+        ) // 输入框
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(Modifier.horizontalScroll(rememberScrollState())) {
+                LanguageSelect(
+                    Modifier.semantics {
+                        contentDescription = appCtx.getString(R.string.des_current_source_lang)
+                    },
+                    language = sourceLanguage,
+                    languages = enabledLanguages,
+                    updateLanguage = {
+                        vm.sourceLanguage = it
+                        DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
+                    }
+                )
+                ExchangeButton {
+                    Log.d(TAG, "MainScreen: clicked")
+                    val temp = sourceLanguage
+                    vm.sourceLanguage = targetLanguage
+                    vm.targetLanguage = temp
+
+                    DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.id)
+                    DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.id)
+                }
+                LanguageSelect(
+                    Modifier.semantics {
+                        contentDescription = appCtx.getString(R.string.des_current_target_lang)
+                    },
+                    language = targetLanguage,
+                    languages = enabledLanguages,
+                    updateLanguage = {
+                        vm.targetLanguage = it
+                        DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
+                    }
+                )
+            }
+            Row {
+                IconButton(onClick = expandEngineSelect) {
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = "expand",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        updateShowListType(ShowListType.History)
+                        vm.translateText = ""
+                        focusRequester.requestFocus()
+                        softKeyboardController?.show()
+                        Log.d(TAG, "InputText: 手动展示软键盘")
+                    }
+                ) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "clear",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                TranslateButton(
+                    animateProgress.value.roundToInt(),
+                    vm.isTranslating(),
+                    onClick = ::startTranslate
+                )
+            }
+        }
+    }
 }
 
 @ExperimentalAnimationApi
@@ -427,13 +474,19 @@ private fun EngineSelect(
             crossAxisSpacing = 0.dp
         ) {
             bindEngines.forEachIndexed { index, task ->
-                SelectableChip(initialSelect = task.selected, text = task.name) {
-                    if (!task.selected) { // 选中了
+                var taskSelected by rememberDataSaverState(
+                    key = task.selectKey,
+                    default = task.selected
+                )
+                FilterChip(selected = taskSelected, onClick = {
+                    if (!taskSelected) { // 选中了
                         updateSelectEngine.add(task)
                     } else updateSelectEngine.remove(task)
                     bindEngines[index].selected = !task.selected
-                    DataSaverUtils.saveData(task.selectKey, task.selected)
-                }
+                    taskSelected = !taskSelected
+                }, label = {
+                    Text(text = task.name)
+                })
             }
         }
 
@@ -451,15 +504,19 @@ private fun EngineSelect(
                 crossAxisSpacing = 0.dp
             ) {
                 jsEngines.forEachIndexed { index, task ->
-                    //临时出来的解决措施，因为ArrayList单个值更新不会触发LiveData的更新。更新自己
-                    SelectableChip(initialSelect = task.selected, text = task.name) {
-                        if (!task.selected) { // 选中了
+                    var taskSelected by rememberDataSaverState(
+                        key = task.selectKey,
+                        default = task.selected
+                    )
+                    FilterChip(selected = taskSelected, onClick = {
+                        if (!taskSelected) { // 选中了
                             updateSelectEngine.add(task)
                         } else updateSelectEngine.remove(task)
-
-                        jsEngines[index].selected = !task.selected
-                        DataSaverUtils.saveData(task.selectKey, task.selected)
-                    }
+                        bindEngines[index].selected = !task.selected
+                        taskSelected = !taskSelected
+                    }, label = {
+                        Text(text = task.name)
+                    })
                 }
             }
         }
@@ -476,9 +533,10 @@ fun LanguageSelect(
     var expanded by remember {
         mutableStateOf(false)
     }
-    RoundCornerButton(text = language.displayText, modifier = modifier , onClick = {
-            expanded = true
-        }) {
+    TextButton(modifier = modifier, onClick = {
+        expanded = true
+    }) {
+        Text(text = language.displayText)
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -487,9 +545,9 @@ fun LanguageSelect(
                 DropdownMenuItem(onClick = {
                     updateLanguage(it)
                     expanded = false
-                }) {
+                }, text = {
                     Text(it.displayText)
-                }
+                })
             }
         }
     }
@@ -497,14 +555,16 @@ fun LanguageSelect(
 
 @Composable
 fun TranslationList(
+    modifier: Modifier,
     resultList: List<TranslationResult>,
-    showSnackbar: (String) -> Unit
+    showSnackbar: (String) -> Unit,
 ) {
     val size = resultList.size
     LazyColumn(
-        modifier = Modifier,
-        verticalArrangement = spacedBy(4.dp)
-    ) {
+        modifier = modifier,
+        verticalArrangement = spacedBy(4.dp),
+
+        ) {
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
 //            Log.d(TAG, "TranslationList: $result")
             TranslationItem(
@@ -522,41 +582,37 @@ fun TranslationList(
 @Composable
 fun TranslateButton(
     progress: Int = 100,
+    isTranslating: Boolean = false,
     onClick: () -> Unit
 ) {
-    val bgColor = MaterialTheme.colors.primary
-    Box(
-        modifier = Modifier
-            .height(48.dp)
-            .fillMaxWidth()
-            .padding(0.dp)
-            .clip(CircleShape)
-            .drawWithContent {
-                drawRect(
-                    MaterialColors.Grey200,
-                    Offset.Zero,
-                    size,
-                )
-                drawRoundRect(
-                    bgColor,
-                    Offset.Zero,
-                    size.copy(width = size.width * progress / 100f),
-                    CornerRadius(size.height / 2)
-                )
-                drawContent()
-            }
-            .clickable(onClick = onClick),
+    val borderColor = MaterialTheme.colorScheme.secondary
+    val size48dp = with(LocalDensity.current) { 48.dp.toPx() }
+    val size12dp = with(LocalDensity.current) { 12.dp.toPx() }
+
+    IconButton(
+        modifier =
+        Modifier.drawBehind {
+            if (progress < 100) drawArc(
+                borderColor,
+                startAngle = -90f,
+                360f * progress / 100,
+                false,
+                style = Stroke(width = 4f),
+                topLeft = Offset(size12dp / 2, size12dp / 2),
+                size = size.copy(size48dp - size12dp, size48dp - size12dp)
+            )
+        }, onClick = onClick
     ) {
-        Text(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center),
-            text = stringResource(id = R.string.translate),
-            color = Color.White,
-            fontSize = 22.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = W500,
-            letterSpacing = 8.sp
+        if (!isTranslating) Icon(
+            Icons.Default.Done,
+            contentDescription = "开始翻译",
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        else Icon(
+            painter = painterResource(id = R.drawable.ic_pause),
+            contentDescription = "停止翻译",
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
 
@@ -580,11 +636,16 @@ fun TranslationItem(
         is RoundCornerConfig.All -> RoundedCornerShape(cornerSize)
         is RoundCornerConfig.None -> RectangleShape
     }
+    val offsetAnim = remember { Animatable(100f) }
+    LaunchedEffect(Unit) {
+        offsetAnim.animateTo(0f)
+    }
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = MaterialTheme.colors.surface, shape = shape)
+            .background(color = MaterialTheme.colorScheme.primaryContainer, shape = shape)
             .padding(12.dp)
+            .offset { IntOffset(offsetAnim.value.roundToInt(), 0) }
             .animateContentSize()
 
     ) {
@@ -606,7 +667,7 @@ fun TranslationItem(
             SelectionContainer {
                 Text(
                     text = result.basicResult.trans,
-                    color = MaterialTheme.colors.onSurface,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontSize = fontSize.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -620,7 +681,7 @@ fun TranslationItem(
                     }, modifier = Modifier
 //                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
-                        .background(MaterialTheme.colors.secondary)
+                        .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     Icon(
                         painterResource(id = R.drawable.ic_copy_content),
@@ -633,23 +694,23 @@ fun TranslationItem(
                     listOf(R.drawable.ic_speaker_2, R.drawable.ic_speaker_1),
                 )
                 val text = result.basicResult.trans.trim()
-                LaunchedEffect(AudioPlayer.currentPlayingText){
+                LaunchedEffect(AudioPlayer.currentPlayingText) {
                     // 修正：当列表划出屏幕后state与实际播放不匹配的情况
-                    if (AudioPlayer.currentPlayingText != text && speakerState.isPlaying){
+                    if (AudioPlayer.currentPlayingText != text && speakerState.isPlaying) {
                         speakerState.reset()
                     }
                 }
                 IconButton(
                     onClick = {
-                        if (text == AudioPlayer.currentPlayingText){
+                        if (text == AudioPlayer.currentPlayingText) {
                             speakerState.reset()
                             AudioPlayer.pause()
-                        }else{
+                        } else {
                             speakerState.play()
                             AudioPlayer.play(
                                 text,
                                 result.targetLanguage!!,
-                                onError =  {
+                                onError = {
                                     showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
                                 },
                                 onComplete = {
@@ -661,7 +722,7 @@ fun TranslationItem(
 //                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
                         .size(48.dp)
-                        .background(MaterialTheme.colors.secondary)
+                        .background(MaterialTheme.colorScheme.secondary)
                 ) {
                     FrameAnimationIcon(
                         state = speakerState,

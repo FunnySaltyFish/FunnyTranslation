@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.*
@@ -146,7 +146,7 @@ fun LocalPluginPart(
             IconButton(onClick = { showAddPluginMenu = true }) {
                 Icon(
                     Icons.Default.AddCircle,
-                    tint = MaterialTheme.colors.onBackground,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     contentDescription = "Add plugins"
                 )
                 DropdownMenu(
@@ -155,18 +155,18 @@ fun LocalPluginPart(
                     DropdownMenuItem(onClick = {
                         showAddPluginMenu = false
                         importPluginLauncher.launch(arrayOf("application/javascript"))
-                    }) {
+                    }, text = {
                         Text(stringResource(id = R.string.import_plugin))
-                    }
+                    })
                     DropdownMenuItem(onClick = {
                         showAddPluginMenu = false
                         val clazz =
                             Class.forName("com.funny.translation.codeeditor.CodeEditorActivity")
                         val intent = Intent(context, clazz)
                         context.startActivity(intent)
-                    }) {
+                    }, text = {
                         Text(stringResource(id = R.string.create_plugin))
-                    }
+                    })
                 }
             }
         }
@@ -226,7 +226,7 @@ fun PluginItem(
     Column(modifier = Modifier
         .fillMaxWidth()
         .clip(RoundedCornerShape(16.dp))
-        .background(MaterialTheme.colors.surface)
+        .background(MaterialTheme.colorScheme.primaryContainer)
         .clickable { expand = !expand }
         .animateContentSize()
     ){
@@ -241,7 +241,7 @@ fun PluginItem(
             Checkbox(checked = selected, onCheckedChange = {
                 updateSelect(plugin)
                 selected = !selected
-            }, colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colors.onSurface))
+            }, colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.onSurface))
         }
         if (expand){
             Column(
@@ -252,7 +252,7 @@ fun PluginItem(
                 Row(horizontalArrangement = End, modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)) {
-                    Text(stringResource(id = R.string.delete_plugin), color = MaterialTheme.colors.onSurface, fontWeight = W600, modifier = Modifier
+                    Text(stringResource(id = R.string.delete_plugin), color = MaterialTheme.colorScheme.onSurface, fontWeight = W600, modifier = Modifier
                         .padding(4.dp)
                         .clickable {
                             deletePlugin(plugin)

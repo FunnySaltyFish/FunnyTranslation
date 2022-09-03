@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
+import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.sign.SignUtils
@@ -56,6 +57,7 @@ object OkHttpUtils {
             response
         }
         // set request cookie
+        // 添加自定义请求头
         addInterceptor {
             val request = it.request()
             val builder = request.newBuilder()
@@ -73,6 +75,12 @@ object OkHttpUtils {
             if (newUrl.host.contains(NetworkConfig.API_HOST)){
                 builder.addHeader("Referer", "FunnyTranslation")
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
+            }
+
+            // 访问 trans/v1下的所有api均带上请求头-jwt
+            if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH)){
+                val jwt = DataSaverUtils.readData(Consts.KEY_JWT_TOKEN, "")
+                if (jwt != "") builder.addHeader("Authorization", "Bearer $jwt")
             }
 
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/translate")){

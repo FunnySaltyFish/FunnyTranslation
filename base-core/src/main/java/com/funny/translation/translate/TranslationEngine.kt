@@ -1,4 +1,4 @@
-package com.funny.translation.trans
+package com.funny.translation.translate
 
 import kotlin.reflect.KClass
 

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.funny.translation.codeeditor.ui.runner
 
 import android.annotation.SuppressLint
@@ -7,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -47,7 +49,7 @@ fun ComposeCodeRunner(
             }
         ) }
     ) {
-        SelectionContainer {
+        SelectionContainer(modifier = Modifier.padding(it)) {
             CodeRunnerText(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -65,7 +67,7 @@ fun ComposeCodeRunner(
 fun CodeRunnerTopBar(
     backAction : ()->Unit
 ){
-    TopAppBar(
+    SmallTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.code_run))
         },

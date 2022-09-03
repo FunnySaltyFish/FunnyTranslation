@@ -1,9 +1,9 @@
 package com.funny.translation.translate.engine
 
-import com.funny.translation.trans.CoreTranslationTask
-import com.funny.translation.trans.Language
-import com.funny.translation.trans.TranslationEngine
-import com.funny.translation.trans.allLanguages
+import com.funny.translation.translate.CoreTranslationTask
+import com.funny.translation.translate.Language
+import com.funny.translation.translate.TranslationEngine
+import com.funny.translation.translate.allLanguages
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.task.*

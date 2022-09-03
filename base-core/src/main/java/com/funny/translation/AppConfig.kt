@@ -2,7 +2,7 @@ package com.funny.translation
 
 import android.annotation.SuppressLint
 import android.provider.Settings
-import com.funny.translation.trans.Language
+import com.funny.translation.translate.Language
 
 object AppConfig {
     var SCREEN_WIDTH = 0

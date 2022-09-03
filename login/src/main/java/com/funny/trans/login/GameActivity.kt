@@ -1,7 +1,6 @@
 package com.funny.trans.login
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
@@ -16,10 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.trans.login.ui.GameScreen
 import com.funny.trans.login.ui.GameViewModel
-import com.funny.trans.login.ui.LoginScreen
-import com.funny.trans.login.ui.LoginTheme
-import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.translate.ui.theme.TransTheme
 import com.smarx.notchlib.NotchScreenManager
 
 class GameActivity : AppCompatActivity() {
@@ -49,7 +46,7 @@ class GameActivity : AppCompatActivity() {
 
         setContent {
             CompositionLocalProvider(LocalDataSaver provides DataSaverUtils) {
-                LoginTheme {
+                TransTheme {
                     GameScreen(
                         Modifier
                             .fillMaxSize()
@@ -61,11 +58,6 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy: vm.password: ${vm.password}, vm.pwdError: ${vm.isPwdError},")
-        if(!vm.isPwdError && !vm.isRepeatPwdError){
-            setResult(RESULT_OK, Intent().apply {
-                putExtra("password", vm.password)
-            })
-        }
         super.onDestroy()
     }
 }

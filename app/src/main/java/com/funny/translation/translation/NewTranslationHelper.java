@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.funny.translation.bean.Consts;
 import com.funny.translation.js.core.JsTranslateTask;
-import com.funny.translation.trans.CoreTranslationTask;
-import com.funny.translation.trans.TranslationException;
+import com.funny.translation.translate.CoreTranslationTask;
+import com.funny.translation.translate.TranslationException;
 
 import java.util.ArrayList;
 import java.util.HashMap;

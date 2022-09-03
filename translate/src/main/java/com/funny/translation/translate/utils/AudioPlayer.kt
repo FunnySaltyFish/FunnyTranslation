@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.funny.translation.trans.Language
+import com.funny.translation.translate.Language
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.engine.TranslationEngines
 import java.io.IOException

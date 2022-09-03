@@ -2,8 +2,6 @@ package com.funny.translation.codeeditor.ui.editor;
 
 import static io.github.rosemoe.editor.langs.universal.UniversalTokens.EOF;
 
-import com.funny.translation.trans.Language;
-
 import java.util.Stack;
 
 import io.github.rosemoe.editor.interfaces.AutoCompleteProvider;

@@ -9,8 +9,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.trans.login.bean.UserBean
+import com.funny.trans.login.utils.SignUpException
 import com.funny.trans.login.utils.UserUtils
 import com.funny.translation.AppConfig
+import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.toastOnUi
 import kotlinx.coroutines.launch
 
@@ -77,6 +79,9 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 if (passwordType == "1"){
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
+                        throw SignUpException("当前用户名与设置指纹时用户名不同，请重新设置指纹")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) BiometricUtils.uploadFingerPrint(username)
                     UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")
                 } else {
                     UserUtils.register(username, password, passwordType, email, verifyCode, "")

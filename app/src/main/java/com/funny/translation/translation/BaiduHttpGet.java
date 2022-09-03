@@ -1,7 +1,7 @@
 package com.funny.translation.translation;
 
 import com.funny.translation.bean.Consts;
-import com.funny.translation.trans.TranslationException;
+import com.funny.translation.translate.TranslationException;
 
 import java.io.BufferedReader;
 import java.io.Closeable;

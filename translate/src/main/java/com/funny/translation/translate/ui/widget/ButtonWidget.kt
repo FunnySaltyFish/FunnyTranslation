@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.material.ButtonDefaults.buttonColors
+import androidx.compose.material3.*
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
@@ -26,11 +26,11 @@ import com.funny.translation.translate.R
 fun RoundCornerButton(
     text : String,
     modifier: Modifier = Modifier,
-    background : Color = MaterialTheme.colors.secondary,
+    background : Color = MaterialTheme.colorScheme.secondary,
     onClick : ()->Unit = {},
     extraContent : @Composable ()->Unit
 ) {
-    Button(onClick = onClick, shape = CircleShape, modifier=modifier, colors = buttonColors(backgroundColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
+    Button(onClick = onClick, shape = CircleShape, modifier=modifier, colors = buttonColors(containerColor = background), contentPadding = PaddingValues(horizontal = 36.dp,vertical = 12.dp)) {
         Text(text = text, color = Color.White)
         extraContent()
     }
@@ -46,8 +46,8 @@ fun SelectableChip(
     var selected by remember {
         mutableStateOf(initialSelect)
     }
-    val background by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.secondary else MaterialTheme.colors.surface)
-    val textColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colors.onSecondary else MaterialTheme.colors.onSurface.copy(0.5f))
+    val background by animateColorAsState(targetValue = if(selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surface)
+    val textColor by animateColorAsState(targetValue = if(selected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onSurface.copy(0.5f))
 
     //val border = if (selected) BorderStroke(0.dp, Color.Transparent) else BorderStroke(1.dp, textColor)
     Button(
@@ -57,7 +57,7 @@ fun SelectableChip(
         },
         shape = CircleShape,
         modifier = Modifier.selectable(selected, true, null, {}),
-        colors = buttonColors(contentColor = textColor, backgroundColor = background),
+        colors = buttonColors(contentColor = textColor, containerColor = background),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(text, color = textColor, fontSize = 12.sp)
@@ -73,17 +73,15 @@ fun ExchangeButton(
     IconButton(
         onClick = {
             onClick()
-            //clickOnce=!clickOnce
         },
         Modifier
             .background(
-                MaterialTheme.colors.surface,
+                Color.Transparent,
                 CircleShape
             )
-            .size(48.dp)
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_exchange), tint = Color.White,
+            painterResource(id = R.drawable.ic_exchange), tint = MaterialTheme.colorScheme.onPrimaryContainer,
             contentDescription = stringResource(R.string.exchange),
             modifier = Modifier.size(24.dp)
         )

@@ -5,9 +5,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
+import com.funny.data_saver.core.LocalDataSaver
 import com.funny.translation.codeeditor.ui.AppNavigation
-import com.funny.translation.codeeditor.ui.theme.CodeEditorTheme
+import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.translate.ui.theme.TransTheme
 
 class CodeEditorActivity : ComponentActivity() {
     private val TAG = "CodeEditorActivity"
@@ -28,13 +31,10 @@ class CodeEditorActivity : ComponentActivity() {
 @Composable
 fun Home(){
     //Text(text = "尼玛的",modifier = Modifier.fillMaxSize(),fontSize = 40.sp)
-    CodeEditorTheme {
-        AppNavigation()
-//        Box(modifier = Modifier
-//            .fillMaxWidth()
-//            .height(64.dp)
-//            .background(Color.Black)){
-//
-//        }
+    CompositionLocalProvider(LocalDataSaver provides DataSaverUtils) {
+        TransTheme {
+            AppNavigation()
+        }
     }
+
 }

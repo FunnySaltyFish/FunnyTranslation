@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.readAssets
-import com.funny.translation.trans.Language
+import com.funny.translation.translate.Language
 import io.github.rosemoe.editor.text.Content
 
 class ActivityCodeViewModel(application: Application) : BaseViewModel(application) {
