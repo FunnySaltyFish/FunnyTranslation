@@ -1,4 +1,4 @@
-package com.funny.trans.login.bean
+package com.funny.translation.bean
 
 import androidx.annotation.Keep
 

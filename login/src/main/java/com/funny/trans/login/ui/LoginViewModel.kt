@@ -8,9 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.trans.login.bean.UserBean
-import com.funny.trans.login.utils.SignUpException
-import com.funny.trans.login.utils.UserUtils
+import com.funny.translation.bean.UserBean
+import com.funny.translation.helper.SignUpException
+import com.funny.translation.helper.UserUtils
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.toastOnUi

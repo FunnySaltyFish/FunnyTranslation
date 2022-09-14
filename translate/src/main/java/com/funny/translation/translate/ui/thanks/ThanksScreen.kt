@@ -35,7 +35,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.funny.trans.login.LoginActivity
-import com.funny.trans.login.utils.UserUtils
+import com.funny.translation.helper.UserUtils
 import com.funny.translation.Consts
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
@@ -161,12 +161,10 @@ fun ThanksScreen(navHostController: NavHostController) {
 fun UserInfoPanel(navHostController: NavHostController) {
     val TAG = "UserInfoPanel"
     val activityVM = LocalActivityVM.current
-    var uid = activityVM.uid
-    var token = activityVM.token
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = uid){
-        Log.d(TAG, "UserInfoPanel: uid is: $uid, token is: $token")
+    LaunchedEffect(key1 = activityVM.uid){
+        Log.d(TAG, "UserInfoPanel: uid is: ${activityVM.uid}, token is: ${activityVM.token}")
     }
 
     val startLoginLauncher = rememberLauncherForActivityResult(
@@ -178,25 +176,25 @@ fun UserInfoPanel(navHostController: NavHostController) {
             val resToken = it.data!!.extras?.getString(Consts.KEY_JWT_TOKEN) ?: ""
             Log.d(TAG, "UserInfoPanel: resUid: $resUid, resToken: $resToken")
             if (resUid <= 0 || resToken == "") return@rememberLauncherForActivityResult
-            uid = resUid
-            token = resToken
+            activityVM.uid = resUid
+            activityVM.token = resToken
         }
     }
 
     LoadingContent(
-        key = uid,
+        key = activityVM.uid,
         updateKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
             .clickable {
-                if (uid <= 0) { // 未登录
+                if (activityVM.uid <= 0) { // 未登录
                     startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
                 } else {
-                    navHostController.navigateSingleTop(TranslateScreen.UserProfileScreen.route)
+                    navHostController.navigateSingleTop(TranslateScreen.UserProfileScreen.route, false)
                 }
             }
-            .padding(vertical = 12.dp), loader = { UserUtils.getUserInfo(uid) }
+            .padding(vertical = 12.dp), loader = { UserUtils.getUserInfo(activityVM.uid) }
     ) { userBean ->
         if (userBean != null) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

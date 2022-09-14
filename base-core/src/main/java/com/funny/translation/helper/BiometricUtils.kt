@@ -14,6 +14,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.Consts
 import com.funny.translation.helper.handler.runOnUI
+import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -213,7 +214,8 @@ object BiometricUtils {
 
     fun validateFingerPrint(
         activity: FragmentActivity,
-        data: String,
+        username: String,
+        did: String,
         onNotSupport: (msg: String) -> Unit = { _ -> },
         onSuccess: (String, String) -> Unit = { _, _ -> },
         onFail: () -> Unit = {},
@@ -228,15 +230,19 @@ object BiometricUtils {
             return
         }
 
+        val data = "$username@$did"
+
         val secretKey: SecretKey? = getSecretKey(data)
         if (secretKey == null) {
-            val email = DataSaverUtils.readData(Consts.KEY_EMAIL, "")
-            if (email != ""){
-                activity.toastOnUi("您似乎没有注册过，请先注册账号吧~")
-                return
-            }
 
             scope.launch {
+                val email = kotlin.runCatching { UserUtils.getUserEmail(username) }.getOrDefault("")
+                if (email == ""){
+                    activity.toastOnUi("您似乎没有注册过，请先注册账号吧~")
+                    return@launch
+                }
+
+
                 if (awaitDialog(
                         activity,
                         "提示",
@@ -265,8 +271,8 @@ object BiometricUtils {
             kotlin.runCatching {
                 scope.launch {
                     val fingerPrintInfo = fingerPrintService.getFingerPrintInfo(
-                        username = data.split("@")[0],
-                        did = data.split("@")[1]
+                        username = username,
+                        did = did
                     )
                     val ivBytes = convertStringToByteArray(fingerPrintInfo.iv)
                     if (ivBytes != null) {

@@ -19,7 +19,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.utils.ApkUtil
-import com.funny.trans.login.utils.UserUtils
+import com.funny.translation.helper.UserUtils
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget

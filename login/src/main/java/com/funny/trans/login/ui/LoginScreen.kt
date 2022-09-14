@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.trans.login.GameActivity
 import com.funny.trans.login.R
-import com.funny.trans.login.bean.UserBean
-import com.funny.trans.login.utils.UserUtils
+import com.funny.translation.bean.UserBean
+import com.funny.translation.helper.UserUtils
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.toastOnUi
@@ -149,7 +149,7 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
         InputUserName(vm)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.shouldVerifyEmailWhenLogin){
-            InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, shouldInputEmail = false)
+            InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, shouldInputEmail = true, initialSent = true)
             Spacer(modifier = Modifier.height(12.dp))
         }
         if (vm.passwordType == "2"){
@@ -163,7 +163,8 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     BiometricUtils.validateFingerPrint(
                         context as AppCompatActivity,
-                        data = vm.loginData,
+                        username = vm.username,
+                        did = AppConfig.androidId,
                         onNotSupport = { msg: String -> context.toastOnUi(msg) },
                         onFail = { context.toastOnUi("认证失败！") },
                         onSuccess = { encryptedInfo, iv ->
@@ -345,7 +346,7 @@ fun InputUserName(vm: LoginViewModel) {
 }
 
 @Composable
-private fun InputEmailWrapper(modifier: Modifier, vm: LoginViewModel, shouldInputEmail: Boolean = true) {
+private fun InputEmailWrapper(modifier: Modifier, vm: LoginViewModel, shouldInputEmail: Boolean = true, initialSent: Boolean = false) {
     val context = LocalContext.current
     InputEmail(
         value = vm.email,
@@ -355,6 +356,7 @@ private fun InputEmailWrapper(modifier: Modifier, vm: LoginViewModel, shouldInpu
         verifyCode = vm.verifyCode,
         onVerifyCodeChange = { vm.verifyCode = it },
         shouldInputEmail = shouldInputEmail,
+        initialSent = initialSent,
         onClick = { vm.sendVerifyEmail(context) }
     )
 }
@@ -368,10 +370,10 @@ fun InputEmail(
     verifyCode: String,
     onVerifyCodeChange: (String) -> Unit = {},
     shouldInputEmail: Boolean,
+    initialSent: Boolean,
     onClick: () -> Unit
 ) {
     Column(modifier) {
-
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,
@@ -387,10 +389,10 @@ fun InputEmail(
                 CountDownTimeButton(
                     modifier = Modifier.weight(1f),
                     onClick = onClick,
-                    enabled = value != "" && !isError
+                    enabled = value != "" && !isError,
+                    initialSent = initialSent // 当需要
                 )
             },
-            readOnly = !shouldInputEmail
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -419,10 +421,11 @@ fun CountDownTimeButton(
     onClick: () -> Unit,
     countDownTime: Int = 60,
     text: String = "获取验证码",
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    initialSent: Boolean = false
 ) {
     var time by remember { mutableStateOf(countDownTime) }
-    var isTiming by remember { mutableStateOf(false) }
+    var isTiming by remember { mutableStateOf(initialSent) }
     LaunchedEffect(isTiming) {
         while (isTiming) {
             delay(1000)

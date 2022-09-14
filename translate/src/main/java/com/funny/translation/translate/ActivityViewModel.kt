@@ -31,8 +31,8 @@ class ActivityViewModel : ViewModel() {
     val tempTransConfig = TranslationConfig()
     var noticeInfo : MutableState<NoticeInfo?> = mutableStateOf(null)
 
-    var uid by DataSaverMutableState(DataSaverUtils, Consts.KEY_USER_UID, -1)
-    var token by DataSaverMutableState(DataSaverUtils, Consts.KEY_JWT_TOKEN, "")
+    var uid by DataSaverMutableState(DataSaverUtils, Consts.KEY_USER_UID, DataSaverUtils.readData(Consts.KEY_USER_UID, -1))
+    var token by DataSaverMutableState(DataSaverUtils, Consts.KEY_JWT_TOKEN, DataSaverUtils.readData(Consts.KEY_JWT_TOKEN, ""))
 
     companion object{
         const val TAG = "ActivityVM"

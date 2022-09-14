@@ -1,11 +1,8 @@
-package com.funny.trans.login.utils
+package com.funny.translation.helper
 
-import android.os.Build
 import android.util.Log
-import com.funny.trans.login.bean.UserBean
 import com.funny.translation.Consts
-import com.funny.translation.helper.BiometricUtils
-import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.bean.UserBean
 import com.funny.translation.network.CommonData
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +52,12 @@ interface UserService {
     suspend fun getInfo(
         @Field("uid") uid: Int
     ): CommonData<UserBean>
+
+    @POST("user/get_user_email")
+    @FormUrlEncoded
+    suspend fun getUserEmail(
+        @Field("username") username: String
+    ): CommonData<String>
 
     @POST("user/refresh_token")
     @FormUrlEncoded
@@ -144,6 +147,16 @@ object UserUtils {
             throw Exception("获取用户信息失败")
         }
         userInfoData.data
+//        UserBean(username = "FunnySaltyFish", uid = 1, avatar_url = "https://img2.woyaogexing.com/2022/08/27/667cc0590584fd54!400x400.jpg", email = "", password = "", phone = "")
+    }
+
+    suspend fun getUserEmail(username: String) = withContext(Dispatchers.IO){
+        if (username == "") return@withContext ""
+        val userInfoData = userService.getUserEmail(username)
+        if (userInfoData.code != 50){
+            throw Exception(userInfoData.error_msg ?: "获取用户邮箱失败")
+        }
+        userInfoData.data ?: ""
 //        UserBean(username = "FunnySaltyFish", uid = 1, avatar_url = "https://img2.woyaogexing.com/2022/08/27/667cc0590584fd54!400x400.jpg", email = "", password = "", phone = "")
     }
 

@@ -90,13 +90,16 @@ enum class ShowListType {
 fun MainScreen() {
     val vm: MainViewModel = viewModel()
 
-    val updateSelectedEngine = object : UpdateSelectedEngine {
-        override fun add(engine: TranslationEngine) {
-            vm.addSelectedEngines(engine)
-        }
+    // Compose函数会被反复重新调用（重组），所以变量要remember
+    val updateSelectedEngine = remember {
+        object : UpdateSelectedEngine {
+            override fun add(engine: TranslationEngine) {
+                vm.addSelectedEngines(engine)
+            }
 
-        override fun remove(engine: TranslationEngine) {
-            vm.removeSelectedEngine(engine)
+            override fun remove(engine: TranslationEngine) {
+                vm.removeSelectedEngine(engine)
+            }
         }
     }
 
@@ -116,7 +119,6 @@ fun MainScreen() {
         }
     }
 
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val activityVM: ActivityViewModel = LocalActivityVM.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
@@ -134,7 +136,7 @@ fun MainScreen() {
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(0.3f)
-                        .padding(8.dp)
+                        .padding(start = 16.dp, top = 6.dp)
                         .verticalScroll(scrollState),
                     bindEngines, jsEngines,
                     updateSelectedEngine
@@ -142,21 +144,24 @@ fun MainScreen() {
                 Box(
                     modifier = Modifier
                         .fillMaxHeight(0.95f)
-                        .width(2.dp)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .width(0.16f.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                 )
                 Column(
                     Modifier
-                        .fillMaxHeight()
-                        .padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxSize()
+                        .padding(0.dp), horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Spacer(modifier = Modifier.height(8.dp))
                     InputPart(
+                        modifier = Modifier.fillMaxWidth(),
                         vm = vm,
                         showSnackbar = showSnackbar,
-                        modifier = Modifier,
-                        expandEngineSelect = {},
+                        expandEngineSelect = null,
                         updateShowListType = ::updateShowListType
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ResultPart(vm = vm, showSnackbar = showSnackbar)
                 }
             }
         } else {
@@ -180,26 +185,10 @@ fun MainScreen() {
                 SubcomposeBottomFirstLayout(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp).imePadding(),
-
+                        .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp)
+                        .imePadding(),
                     other = {
-                        Crossfade (vm.showListType) {
-                            when(it) {
-                                ShowListType.Result -> TranslationList(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 8.dp),
-                                    resultList = vm.resultList,
-                                    showSnackbar = showSnackbar
-                                )
-
-                                ShowListType.History -> TransHistoryList(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 8.dp),
-                                )
-                            }
-                        }
+                        ResultPart(vm = vm, showSnackbar = showSnackbar)
                     },
                     bottom = {
                         InputPart(
@@ -245,6 +234,27 @@ fun MainScreen() {
         // When the effect leaves the Composition, remove the observer
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+}
+
+@Composable
+fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
+    Crossfade (vm.showListType) {
+        when(it) {
+            ShowListType.Result -> TranslationList(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                resultList = vm.resultList,
+                showSnackbar = showSnackbar
+            )
+
+            ShowListType.History -> TransHistoryList(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+            )
         }
     }
 }
@@ -313,7 +323,7 @@ fun InputPart(
     modifier: Modifier,
     vm: MainViewModel,
     showSnackbar: (String) -> Unit,
-    expandEngineSelect: () -> Unit,
+    expandEngineSelect: (() -> Unit)?,
     updateShowListType: (ShowListType) -> Unit,
 ) {
     val transText = vm.translateText
@@ -416,13 +426,16 @@ fun InputPart(
                 )
             }
             Row {
-                IconButton(onClick = expandEngineSelect) {
-                    Icon(
-                        Icons.Default.ArrowDropDown,
-                        contentDescription = "expand",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                expandEngineSelect?.let {
+                    IconButton(onClick = it) {
+                        Icon(
+                            Icons.Default.ArrowDropDown,
+                            contentDescription = "expand",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
                 }
+
                 IconButton(
                     onClick = {
                         updateShowListType(ShowListType.History)
