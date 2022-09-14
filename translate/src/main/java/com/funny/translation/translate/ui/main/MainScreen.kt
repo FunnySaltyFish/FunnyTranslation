@@ -47,9 +47,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -181,9 +179,9 @@ fun MainScreen() {
                 }) {
                 SubcomposeBottomFirstLayout(
                     modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 12.dp)
-                        .imePadding()
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp).imePadding(),
+
                     other = {
                         Crossfade (vm.showListType) {
                             when(it) {

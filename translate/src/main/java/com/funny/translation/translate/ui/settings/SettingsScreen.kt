@@ -38,6 +38,7 @@ import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.helper.DateUtils
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -154,6 +155,15 @@ fun SettingsScreen() {
         }
         Spacer(modifier = Modifier.height(8.dp))
         HeadingText(stringResource(id = R.string.others))
+        JetSettingCheckbox(
+            key = Consts.KEY_ENTER_TO_TRANSLATE,
+            default = true,
+            text = stringResource(R.string.setting_enter_to_translate),
+            resourceId = R.drawable.ic_enter,
+            iconTintColor = MaterialColors.Teal700
+        ) {
+            if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
+        }
         JetSettingTile(
             text = stringResource(R.string.sort_result),
             resourceId = R.drawable.ic_sort,

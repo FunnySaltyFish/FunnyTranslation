@@ -16,11 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navDeepLink
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.helper.DataSaverUtils
@@ -33,6 +31,7 @@ import com.funny.translation.translate.ui.settings.SelectLanguage
 import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
+import com.funny.translation.translate.ui.thanks.UserProfileScreen
 import com.funny.translation.translate.ui.theme.TransTheme
 import com.funny.translation.translate.ui.theme.isLight
 import com.funny.translation.translate.ui.widget.CustomNavigation
@@ -135,17 +134,7 @@ fun AppNavigation(
                         Log.d(TAG, "AppNavigation: $currentRoute")
 
                         //currentScreen = screen
-                        navController.navigate(screen.route) {
-                            //当底部导航导航到在非首页的页面时，执行手机的返回键 回到首页
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                                //currentScreen = TranslateScreen.MainScreen
-                            }
-                            //从名字就能看出来 跟activity的启动模式中的SingleTop模式一样 避免在栈顶创建多个实例
-                            launchSingleTop = true
-                            //切换状态的时候保存页面状态
-                            restoreState = true
-                        }
+                        navController.navigateSingleTop(route = screen.route)
                     }
                 },
                 snackbarHost = {
@@ -171,46 +160,22 @@ fun AppNavigation(
                     val animDuration = 700
                     navigation(
                         startDestination = TranslateScreen.SettingScreen.route,
-                        route = "nav_composition_setting",
-                        enterTransition = {
-                            slideIntoContainer(
-                                AnimatedContentScope.SlideDirection.Left,
-                                animationSpec = tween(animDuration)
-                            )
-                        },
-                        exitTransition = {
-                            slideOutOfContainer(
-                                AnimatedContentScope.SlideDirection.Left,
-                                animationSpec = tween(animDuration)
-                            )
-                        },
-                        popEnterTransition = {
-                            slideIntoContainer(
-                                AnimatedContentScope.SlideDirection.Right,
-                                animationSpec = tween(animDuration)
-                            )
-                        },
-                        popExitTransition = {
-                            slideOutOfContainer(
-                                AnimatedContentScope.SlideDirection.Right,
-                                animationSpec = tween(animDuration)
-                            )
-                        }
+                        route = "nav_1_setting",
                     ) {
                         composable(TranslateScreen.SettingScreen.route) {
                             SettingsScreen()
                         }
-                        composable(
+                        animateComposable(
                             TranslateScreen.AboutScreen.route,
                         ) {
                             AboutScreen()
                         }
-                        composable(
+                        animateComposable(
                             TranslateScreen.SortResultScreen.route,
                         ) {
                             SortResult(Modifier.fillMaxSize())
                         }
-                        composable(
+                        animateComposable(
                             TranslateScreen.SelectLanguageScreen.route
                         ) {
                             SelectLanguage(modifier = Modifier.fillMaxSize())
@@ -220,8 +185,9 @@ fun AppNavigation(
                     composable(TranslateScreen.PluginScreen.route) {
                         PluginScreen()
                     }
-                    composable(TranslateScreen.ThanksScreen.route) {
-                        ThanksScreen()
+                    navigation(startDestination = TranslateScreen.ThanksScreen.route, route = "nav_1_thanks") {
+                        composable(TranslateScreen.ThanksScreen.route){ ThanksScreen(navController) }
+                        animateComposable(TranslateScreen.UserProfileScreen.route){ UserProfileScreen(navController) }
                     }
                 }
             }
@@ -234,7 +200,7 @@ fun AppNavigation(
                 AlertDialog(
                     onDismissRequest = { },
                     text = {
-                        MarkdownText(markdown = "我们更新了新的[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)，请认真阅读并同意后，方可使用本应用")
+                        MarkdownText(markdown = "我们更新了新的[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)和[用户协议](https://api.funnysaltyfish.fun/trans/v1/api/user_agreement)，请认真阅读并同意后，方可使用本应用")
                     },
                     confirmButton = {
                         Button(onClick = { firstOpenApplication = false }) {
@@ -251,6 +217,58 @@ fun AppNavigation(
         }
     }
 
+}
+
+fun NavHostController.navigateSingleTop(route: String){
+    val navController = this
+    navController.navigate(route) {
+        //当底部导航导航到在非首页的页面时，执行手机的返回键 回到首页
+        popUpTo(navController.graph.startDestinationId) {
+            saveState = true
+            //currentScreen = TranslateScreen.MainScreen
+        }
+        //从名字就能看出来 跟activity的启动模式中的SingleTop模式一样 避免在栈顶创建多个实例
+        launchSingleTop = true
+        //切换状态的时候保存页面状态
+        restoreState = true
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.animateComposable(
+    route: String,
+    animDuration: Int = 700,
+    content: @Composable () -> Unit,
+) {
+    composable(
+        route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentScope.SlideDirection.Left,
+                animationSpec = tween(animDuration)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentScope.SlideDirection.Left,
+                animationSpec = tween(animDuration)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                AnimatedContentScope.SlideDirection.Right,
+                animationSpec = tween(animDuration)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentScope.SlideDirection.Right,
+                animationSpec = tween(animDuration)
+            )
+        }
+    ) {
+        content()
+    }
 }
 
 @Stable

@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,16 +29,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
-import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.trans.login.LoginActivity
 import com.funny.trans.login.utils.UserUtils
 import com.funny.translation.Consts
+import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.translate.navigateSingleTop
+import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.DefaultFailure
 import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
@@ -45,7 +49,7 @@ import com.funny.translation.translate.ui.widget.LoadingContent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ThanksScreen() {
+fun ThanksScreen(navHostController: NavHostController) {
     val vm: ThanksViewModel = viewModel()
     val sponsors = vm.sponsors.collectAsLazyPagingItems()
     LazyColumn(
@@ -56,7 +60,7 @@ fun ThanksScreen() {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            UserInfoPanel()
+            UserInfoPanel(navHostController)
         }
         item {
             HeadingText(text = stringResource(id = R.string.join_sponsor))
@@ -154,11 +158,16 @@ fun ThanksScreen() {
 }
 
 @Composable
-fun UserInfoPanel() {
+fun UserInfoPanel(navHostController: NavHostController) {
     val TAG = "UserInfoPanel"
-    var uid by rememberDataSaverState(Consts.KEY_USER_UID, default = -1)
-    var token by rememberDataSaverState(Consts.KEY_JWT_TOKEN, default = "")
+    val activityVM = LocalActivityVM.current
+    var uid = activityVM.uid
+    var token = activityVM.token
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = uid){
+        Log.d(TAG, "UserInfoPanel: uid is: $uid, token is: $token")
+    }
 
     val startLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -183,9 +192,11 @@ fun UserInfoPanel() {
             .clickable {
                 if (uid <= 0) { // 未登录
                     startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
+                } else {
+                    navHostController.navigateSingleTop(TranslateScreen.UserProfileScreen.route)
                 }
             }
-            .padding(vertical = 12.dp), loader = UserUtils::getUserInfo
+            .padding(vertical = 12.dp), loader = { UserUtils.getUserInfo(uid) }
     ) { userBean ->
         if (userBean != null) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

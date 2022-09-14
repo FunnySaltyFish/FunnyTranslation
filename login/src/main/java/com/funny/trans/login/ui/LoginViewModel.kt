@@ -81,7 +81,6 @@ class LoginViewModel : ViewModel() {
                 if (passwordType == "1"){
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
                         throw SignUpException("当前用户名与设置指纹时用户名不同，请重新设置指纹")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) BiometricUtils.uploadFingerPrint(username)
                     UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")
                 } else {
                     UserUtils.register(username, password, passwordType, email, verifyCode, "")

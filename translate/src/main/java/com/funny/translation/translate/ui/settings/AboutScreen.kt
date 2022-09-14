@@ -42,7 +42,7 @@ fun OpenSourceLib() {
                 .fillMaxWidth()
                 .padding(12.dp)) {
             items(list){ info ->
-                val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.surface
+                val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.primaryContainer
                 OpenSourceLibItem(
                     modifier = Modifier
                         .fillMaxWidth()

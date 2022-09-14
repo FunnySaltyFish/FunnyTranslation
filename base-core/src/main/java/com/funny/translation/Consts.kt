@@ -2,6 +2,7 @@ package com.funny.translation
 
 object Consts {
 
+    const val KEY_EMAIL = "email"
     const val KEY_USER_UID = "uid"
     const val KEY_ENTER_TO_TRANSLATE = "enter_to_trans"
 

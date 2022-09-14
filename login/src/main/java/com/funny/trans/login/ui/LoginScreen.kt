@@ -155,6 +155,8 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
         if (vm.passwordType == "2"){
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
                 Text(text = "长度8-16位，包含大小写字母和数字")
+            }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), label = {
+                Text(text = "密码")
             })
         } else CompletableButton(
             onClick = {
@@ -369,28 +371,29 @@ fun InputEmail(
     onClick: () -> Unit
 ) {
     Column(modifier) {
-        if (shouldInputEmail) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = value,
-                onValueChange = onValueChange,
-                isError = isError,
-                label = { Text(text = "邮箱") },
-                placeholder = { Text("请输入主流的合法邮箱") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email
-                ),
-                trailingIcon = {
-                    CountDownTimeButton(
-                        modifier = Modifier.weight(1f),
-                        onClick = onClick,
-                        enabled = value != "" && !isError
-                    )
-                }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            isError = isError,
+            label = { Text(text = "邮箱") },
+            placeholder = { Text("请输入主流的合法邮箱") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email
+            ),
+            trailingIcon = {
+                CountDownTimeButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = onClick,
+                    enabled = value != "" && !isError
+                )
+            },
+            readOnly = !shouldInputEmail
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = verifyCode,

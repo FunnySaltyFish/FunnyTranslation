@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
+import com.funny.translation.Consts
 import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.CoroutineScope
@@ -74,26 +75,6 @@ object BiometricUtils {
     var tempSetFingerPrintInfo = FingerPrintInfo()
     var tempSetUserName = ""
 
-    private fun getSecretKey(): SecretKey? {
-        val keyStore = KeyStore.getInstance("AndroidKeyStore")
-        keyStore.load(null)
-        // keyAlias 为密钥别名，可自己定义，加密解密要一致
-        if (!keyStore.containsAlias(KEY_NAME)) {
-            // 不包含改别名，重新生成
-            // 秘钥生成器
-            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
-            val builder = KeyGenParameterSpec.Builder(
-                KEY_NAME,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setUserAuthenticationRequired(false)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-            keyGenerator.init(builder.build())
-            keyGenerator.generateKey()
-        }
-        return keyStore.getKey(KEY_NAME, "FunnyTrans".toCharArray()) as? SecretKey
-    }
-
     private val biometricManager by lazy {
         BiometricManager.from(BaseApplication.ctx)
     }
@@ -153,6 +134,28 @@ object BiometricUtils {
             return
         }
 
+        var secretKey = getSecretKey(data)
+        if (secretKey == null) {
+            generateSecretKey(KeyGenParameterSpec.Builder(
+                KEY_NAME,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            )
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .setUserAuthenticationRequired(true)
+                // Invalidate the keys if the user has registered a new biometric
+                // credential, such as a new fingerprint. Can call this method only
+                // on Android 7.0 (API level 24) or higher. The variable
+                // "invalidatedByBiometricEnrollment" is true by default.
+                .apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        setInvalidatedByBiometricEnrollment(true)
+                    }
+                }
+                .build())
+            secretKey = getSecretKey(data)
+        }
+
         val biometricPrompt = BiometricPrompt(activity, ContextCompat.getMainExecutor(activity),
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -171,8 +174,7 @@ object BiometricUtils {
                         data.toByteArray(Charset.defaultCharset())
                     )
                     Log.d(
-                        TAG, "Encrypted information: " +
-                                encryptedInfo.contentToString()
+                        TAG, "setFingerPrint->AuthSucceed : Encrypted information: ${encryptedInfo.contentToString()} "
                     )
 
                     kotlin.runCatching {
@@ -200,7 +202,7 @@ object BiometricUtils {
 
         try {
             val cipher = getCipher()
-            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
             runOnUI {
                 biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
             }
@@ -226,110 +228,157 @@ object BiometricUtils {
             return
         }
 
-        val decodeCipher = getCipher()
-        kotlin.runCatching {
+        val secretKey: SecretKey? = getSecretKey(data)
+        if (secretKey == null) {
+            val email = DataSaverUtils.readData(Consts.KEY_EMAIL, "")
+            if (email != ""){
+                activity.toastOnUi("您似乎没有注册过，请先注册账号吧~")
+                return
+            }
+
             scope.launch {
-                val fingerPrintInfo = fingerPrintService.getFingerPrintInfo(
-                    username = data.split("@")[0],
-                    did = data.split("@")[1]
-                )
-                val ivBytes = convertStringToByteArray(fingerPrintInfo.iv)
-                if (ivBytes != null) {
-                    Log.d(TAG, "validateFingerPrint: loaded iv: ${ivBytes.joinToString(",")}")
-                    val iv = IvParameterSpec(ivBytes)
-                    decodeCipher.init(Cipher.DECRYPT_MODE, getSecretKey(), iv)
-
-                    val biometricPrompt =
-                        BiometricPrompt(activity, ContextCompat.getMainExecutor(activity),
-                            object : BiometricPrompt.AuthenticationCallback() {
-                                override fun onAuthenticationError(
-                                    errorCode: Int,
-                                    errString: CharSequence
-                                ) {
-                                    super.onAuthenticationError(errorCode, errString)
-                                    if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                                        onUsePassword()
-                                    } else {
-                                        onError(errorCode, errString)
-                                    }
-                                }
-
-                                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                                    super.onAuthenticationSucceeded(result)
-                                    val cipher =
-                                        result.cryptoObject?.cipher ?: error("cipher is null")
-                                    runCatching {
-                                        val decryptedInfo: ByteArray = cipher.doFinal(
-                                            convertStringToByteArray(fingerPrintInfo.encrypted_info)
-                                        )
-                                        val decryptedText = String(decryptedInfo)
-                                        Log.d(
-                                            TAG,
-                                            "onAuthenticationSucceeded: decrypted text: $decryptedText"
-                                        )
-                                        if (data == decryptedText) {
-                                            onSuccess(
-                                                fingerPrintInfo.encrypted_info,
-                                                fingerPrintInfo.iv
-                                            )
-                                        } else {
-                                            throw Exception("指纹验证失败！")
-                                        }
-
-                                    }.onFailure {
-                                        it.printStackTrace()
-                                        onError(-2, it.message ?: "未知错误(${it.javaClass})")
-                                    }
-                                }
-
-                                override fun onAuthenticationFailed() {
-                                    super.onAuthenticationFailed()
-                                    onFail()
-                                }
-                            })
-
-                    withContext(Dispatchers.Main) {
-                        biometricPrompt.authenticate(
-                            promptInfo,
-                            BiometricPrompt.CryptoObject(decodeCipher)
-                        )
-                    }
-                } else {
-                    when {
-                        fingerPrintInfo.extra == EXTRA_NO_USER -> onError(-3, "用户不存在！")
-
-                        fingerPrintInfo.extra.startsWith(EXTRA_NEW_DEVICE) ->
-                            if (awaitDialog(
-                                    activity,
-                                    "提示",
-                                    "您当前为新设备，是否录入此指纹并发送验证码以验证您的邮箱？",
-                                    "是",
-                                    "否",
-                                )
-                            ) {
-                                setFingerPrint(
-                                    activity,
-                                    data,
-                                    onSuccess = { encryptedInfo, iv ->
-                                        onSuccess(encryptedInfo, iv)
-                                        onNewFingerPrint(fingerPrintInfo.extra.substringAfter("#"))
-                                    },
-                                    onFail = {
-                                        onError(-2, "新指纹录入失败")
-                                    },
-                                    onError = onError,
-                                    onUsePassword = onUsePassword
-                                )
-                            }
-                        else -> onError(-5, "未知错误！")
-                    }
+                if (awaitDialog(
+                        activity,
+                        "提示",
+                        "您本机保存的指纹信息似乎已被清空，是否重新验证此指纹并发送验证码以验证您的邮箱？",
+                        "是",
+                        "否",
+                    )
+                ) {
+                    setFingerPrint(
+                        activity,
+                        data,
+                        onSuccess = { encryptedInfo, iv ->
+                            onSuccess(encryptedInfo, iv)
+                            onNewFingerPrint(email)
+                        },
+                        onFail = {
+                            onError(-2, "指纹验证失败")
+                        },
+                        onError = onError,
+                        onUsePassword = onUsePassword
+                    )
                 }
             }
-        }.onFailure {
-            it.printStackTrace()
-            onError(-1, it.message ?: "未知错误")
+        }else {
+            val decodeCipher = getCipher()
+            kotlin.runCatching {
+                scope.launch {
+                    val fingerPrintInfo = fingerPrintService.getFingerPrintInfo(
+                        username = data.split("@")[0],
+                        did = data.split("@")[1]
+                    )
+                    val ivBytes = convertStringToByteArray(fingerPrintInfo.iv)
+                    if (ivBytes != null) {
+                        Log.d(TAG, "validateFingerPrint: loaded iv: ${ivBytes.joinToString(",")}")
+                        val iv = IvParameterSpec(ivBytes)
+                        decodeCipher.init(Cipher.DECRYPT_MODE, secretKey, iv)
+
+                        val biometricPrompt =
+                            BiometricPrompt(activity, ContextCompat.getMainExecutor(activity),
+                                object : BiometricPrompt.AuthenticationCallback() {
+                                    override fun onAuthenticationError(
+                                        errorCode: Int,
+                                        errString: CharSequence
+                                    ) {
+                                        super.onAuthenticationError(errorCode, errString)
+                                        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                                            onUsePassword()
+                                        } else {
+                                            onError(errorCode, errString)
+                                        }
+                                    }
+
+                                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                        super.onAuthenticationSucceeded(result)
+                                        val cipher =
+                                            result.cryptoObject?.cipher ?: error("cipher is null")
+                                        runCatching {
+                                            Log.d(
+                                                TAG,
+                                                "validate: onAuthenticationSucceeded: fingerPrintInfo: $fingerPrintInfo"
+                                            )
+                                            val decryptedInfo: ByteArray = cipher.doFinal(
+                                                convertStringToByteArray(fingerPrintInfo.encrypted_info)
+                                            )
+                                            val decryptedText = String(decryptedInfo)
+                                            Log.d(
+                                                TAG,
+                                                "validate: onAuthenticationSucceeded: decrypted text: $decryptedText"
+                                            )
+                                            if (data == decryptedText) {
+                                                onSuccess(
+                                                    fingerPrintInfo.encrypted_info,
+                                                    fingerPrintInfo.iv
+                                                )
+                                            } else {
+                                                throw Exception("指纹验证失败！")
+                                            }
+
+                                        }.onFailure {
+                                            it.printStackTrace()
+                                            onError(-2, it.message ?: "未知错误(${it.javaClass})")
+                                        }
+                                    }
+
+                                    override fun onAuthenticationFailed() {
+                                        super.onAuthenticationFailed()
+                                        onFail()
+                                    }
+                                })
+
+                        withContext(Dispatchers.Main) {
+                            biometricPrompt.authenticate(
+                                promptInfo,
+                                BiometricPrompt.CryptoObject(decodeCipher)
+                            )
+                        }
+                    } else {
+                        when {
+                            fingerPrintInfo.extra == EXTRA_NO_USER -> onError(-3, "用户不存在！")
+
+                            fingerPrintInfo.extra.startsWith(EXTRA_NEW_DEVICE) ->
+                                if (awaitDialog(
+                                        activity,
+                                        "提示",
+                                        "您当前为新设备，是否录入此指纹并发送验证码以验证您的邮箱？",
+                                        "是",
+                                        "否",
+                                    )
+                                ) {
+                                    setFingerPrint(
+                                        activity,
+                                        data,
+                                        onSuccess = { encryptedInfo, iv ->
+                                            onSuccess(encryptedInfo, iv)
+                                            onNewFingerPrint(fingerPrintInfo.extra.substringAfter("#"))
+                                        },
+                                        onFail = {
+                                            onError(-2, "新指纹录入失败")
+                                        },
+                                        onError = onError,
+                                        onUsePassword = onUsePassword
+                                    )
+                                }
+                            else -> onError(-5, "未知错误！")
+                        }
+                    }
+                }
+            }.onFailure {
+                it.printStackTrace()
+                onError(-1, it.message ?: "未知错误")
+            }
         }
 
+    }
+
+    private fun getSecretKey(data: String): SecretKey? {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+
+        // Before the keystore can be accessed, it must be loaded.
+        keyStore.load(null)
+        Log.d(TAG, "getSecretKey: Data: $data")
+        return keyStore.getKey(KEY_NAME, data.toCharArray()) as? SecretKey
     }
 
     private fun generateSecretKey(keyGenParameterSpec: KeyGenParameterSpec) {

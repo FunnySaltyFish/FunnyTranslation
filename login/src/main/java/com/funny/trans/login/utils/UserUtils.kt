@@ -74,7 +74,7 @@ object UserUtils {
     private val VALID_POSTFIX = arrayOf("163.com", "qq.com", "gmail.com", "126.com", "sina.com", "sohu.com", "hotmail.com", "yahoo.com", "foxmail.com", "funnysaltyfish.fun")
 
     fun isValidUsername(username: String): Boolean {
-        return "^[\\w\\W\\u4e00-\\u9fff_]{3,16}\$".toRegex().matches(username)
+        return "^[\\w\\u4e00-\\u9fff]{3,16}\$".toRegex().matches(username)
     }
 
     fun isValidEmail(email: String): Boolean {
@@ -137,8 +137,7 @@ object UserUtils {
         }
     }
 
-    suspend fun getUserInfo() = withContext(Dispatchers.IO){
-        val uid = DataSaverUtils.readData(Consts.KEY_USER_UID, -1)
+    suspend fun getUserInfo(uid: Int) = withContext(Dispatchers.IO){
         if (uid < 0) return@withContext null
         val userInfoData = userService.getInfo(uid)
         if (userInfoData.code != 50){

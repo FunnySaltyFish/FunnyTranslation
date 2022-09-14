@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
+import com.funny.data_saver.core.DataSaverMutableState
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.OkHttpUtils
@@ -29,6 +30,9 @@ class ActivityViewModel : ViewModel() {
     // 由悬浮窗或其他应用传过来的临时翻译参数
     val tempTransConfig = TranslationConfig()
     var noticeInfo : MutableState<NoticeInfo?> = mutableStateOf(null)
+
+    var uid by DataSaverMutableState(DataSaverUtils, Consts.KEY_USER_UID, -1)
+    var token by DataSaverMutableState(DataSaverUtils, Consts.KEY_JWT_TOKEN, "")
 
     companion object{
         const val TAG = "ActivityVM"

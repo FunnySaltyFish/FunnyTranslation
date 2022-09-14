@@ -29,7 +29,6 @@ import com.funny.translation.sign.SignUtils
 import com.funny.translation.Consts
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
-import com.google.android.gms.ads.MobileAds
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,7 +85,7 @@ class TransActivity : AppCompatActivity() {
         // 做一些耗时的后台任务
         lifecycleScope.launch(Dispatchers.IO) {
             UserUtils.refreshJwtToken()
-            MobileAds.initialize(context) {}
+            // MobileAds.initialize(context) {}
             SignUtils.loadJs()
             SortResultUtils.init()
             activityViewModel.checkUpdate(context)

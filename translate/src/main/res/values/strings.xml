@@ -81,4 +81,6 @@
     <string name="des_current_target_lang">当前选中的目标语言</string>
     <string name="float_window_tip">悬浮窗说明</string>
     <string name="empty_plugin_tip">空空如也~\n去添加一个插件试试吧</string>
+    <string name="user_profile">用户信息</string>
+    <string name="setting_enter_to_translate">回车键翻译</string>
 </resources>
