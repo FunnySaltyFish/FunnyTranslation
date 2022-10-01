@@ -37,6 +37,13 @@ data class FrameAnimationIconState(
     }
 }
 
+/**
+ * 帧动画Icon对应状态，可用来手动控制动画
+ * @param frameIds List<Int> 每一帧对应的 DrawableId
+ * @param initialPlaying Boolean 最初时是播放还是暂停
+ * @param duration Long 从第一帧到最后一帧一共要多久
+ * @return FrameAnimationIconState
+ */
 @Composable
 fun rememberFrameAnimIconState(
     frameIds: List<Int> = listOf(),
@@ -49,6 +56,13 @@ fun rememberFrameAnimIconState(
     FrameAnimationIconState(frameIds, initialPlaying, duration)
 }
 
+/**
+ * 简单的帧动画Icon
+ * @param modifier Modifier
+ * @param state FrameAnimationIconState, see [rememberFrameAnimIconState]
+ * @param contentDescription String
+ * @param tint Color
+ */
 @Composable
 fun FrameAnimationIcon(
     modifier: Modifier = Modifier,
