@@ -34,23 +34,25 @@ fun SimpleDialog(
                 Text(message)
             },
             confirmButton = {
-                if(confirmButtonAction!=emptyAction)
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                        confirmButtonAction?.invoke()
-                    }) {
-                    Text(confirmButtonText)
+                if(confirmButtonAction!=emptyAction) {
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                            confirmButtonAction?.invoke()
+                        }) {
+                        Text(confirmButtonText)
+                    }
                 }
             },
             dismissButton = {
-                if(dismissButtonText.isNotEmpty())
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                        dismissButtonAction?.invoke()
-                    }) {
-                    Text(dismissButtonText)
+                if(dismissButtonText.isNotEmpty()) {
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                            dismissButtonAction?.invoke()
+                        }) {
+                        Text(dismissButtonText)
+                    }
                 }
             }
         )
