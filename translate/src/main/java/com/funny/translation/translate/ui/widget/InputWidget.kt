@@ -1,34 +1,19 @@
 package com.funny.translation.translate.ui.widget
 
+import android.content.Context
 import android.util.Log
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.funny.data_saver.core.rememberDataSaverState
-import com.funny.translation.Consts
-import com.funny.translation.translate.R
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.widget.doOnTextChanged
+import com.funny.translation.AppConfig
+import com.funny.translation.translate.FunnyApplication
 
 private const val TAG = "InputWidget"
 
@@ -38,23 +23,64 @@ fun InputText(
     modifier: Modifier,
     text: String,
     updateText: (String) -> Unit,
+    shouldRequest: Boolean,
+    updateFocusRequest: (Boolean) -> Unit,
     translateAction: (() -> Unit)? = null
 ) {
-    val enterToTranslate by rememberDataSaverState(Consts.KEY_ENTER_TO_TRANSLATE, default = true)
+    val enterToTranslate by AppConfig.sEnterToTranslate
+    // 因为 Compose 的 BasicTextField 下某些输入法的部分功能不能用，所以临时改回 EditText
+    val textColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb()
+    val inputMethodManager = FunnyApplication.ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-    BasicTextField(
-        modifier = modifier.padding(8.dp),
-        value = text,
-        onValueChange = updateText,
-        maxLines = 6,
-        decorationBox = { innerTextField ->
-            if (text == "") Text(text = "译你所译……", color = LocalContentColor.current.copy(0.8f))
-            innerTextField()
-        },
-        keyboardActions = KeyboardActions(onDone = {
-            if (enterToTranslate) translateAction?.invoke()
-        }),
-        textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 16.sp),
-        keyboardOptions = if (enterToTranslate) KeyboardOptions(imeAction = ImeAction.Done) else KeyboardOptions.Default
-    )
+    AndroidView(factory = {
+        EditText(it).apply {
+            doOnTextChanged { text, start, before, count -> updateText(text.toString()) }
+            maxLines = 6
+            hint = "译你所译……"
+            background = null
+            textSize = 16f
+            setTextColor(textColor)
+
+            if (enterToTranslate){
+                imeOptions = EditorInfo.IME_ACTION_DONE
+                inputType = EditorInfo.TYPE_CLASS_TEXT
+                setImeActionLabel("翻译", EditorInfo.IME_ACTION_DONE)
+                setOnEditorActionListener { v, actionId, event ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        translateAction?.invoke()
+                        false
+                    }else {
+                        true
+                    }
+                }
+            }
+
+            setOnFocusChangeListener { v, hasFocus -> updateFocusRequest(hasFocus) }
+        }
+    }, update = {
+        if (it.text.toString() != text) it.setText(text).also { Log.d(TAG, "InputText: 手动设置文本") }
+        if (shouldRequest && !it.isFocused){
+            it.requestFocus().also { Log.d(TAG, "InputText: requestFocus") }
+            inputMethodManager.showSoftInput(it, 0)
+        }
+        else if(!shouldRequest && it.isFocused) {
+            it.clearFocus().also { Log.d(TAG, "InputText: clearFocus") }
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }, modifier = modifier)
+//    BasicTextField(
+//        modifier = modifier.padding(8.dp),
+//        value = text,
+//        onValueChange = updateText,
+//        maxLines = 6,
+//        decorationBox = { innerTextField ->
+//            if (text == "") Text(text = "译你所译……", color = LocalContentColor.current.copy(0.8f))
+//            innerTextField()
+//        },
+//        keyboardActions = KeyboardActions(onDone = {
+//            if (enterToTranslate) translateAction?.invoke()
+//        }),
+//        textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 16.sp),
+//        keyboardOptions = if (enterToTranslate) KeyboardOptions(imeAction = ImeAction.Done) else KeyboardOptions.Default
+//    )
 }

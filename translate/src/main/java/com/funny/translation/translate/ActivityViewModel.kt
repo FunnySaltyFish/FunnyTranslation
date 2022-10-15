@@ -3,22 +3,30 @@ package com.funny.translation.translate
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.data_saver.core.DataSaverMutableState
+import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.AppConfig
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.Consts
+import com.funny.translation.bean.UserBean
+import com.funny.translation.helper.UserUtils
 import com.funny.translation.translate.bean.NoticeInfo
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager
 import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.funny.translation.translate.utils.ApplicationUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 
@@ -31,11 +39,24 @@ class ActivityViewModel : ViewModel() {
     val tempTransConfig = TranslationConfig()
     var noticeInfo : MutableState<NoticeInfo?> = mutableStateOf(null)
 
-    var uid by DataSaverMutableState(DataSaverUtils, Consts.KEY_USER_UID, DataSaverUtils.readData(Consts.KEY_USER_UID, -1))
-    var token by DataSaverMutableState(DataSaverUtils, Consts.KEY_JWT_TOKEN, DataSaverUtils.readData(Consts.KEY_JWT_TOKEN, ""))
+    var userInfo by AppConfig.userInfo
+    val uid by derivedStateOf { userInfo.uid }
+    val token by derivedStateOf { userInfo.jwt_token }
 
     companion object{
         const val TAG = "ActivityVM"
+    }
+
+    init {
+        if (userInfo.isValid() && userInfo.email == "") {
+            viewModelScope.launch {
+                kotlin.runCatching {
+                    UserUtils.getUserInfo(userInfo.uid)?.let {
+                        userInfo = it
+                    }
+                }
+            }
+        }
     }
 
     private val Int.toSize : String

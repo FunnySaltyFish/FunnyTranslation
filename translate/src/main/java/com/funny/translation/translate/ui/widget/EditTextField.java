@@ -12,15 +12,12 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
+import com.funny.translation.helper.BitmapUtil;
 import com.funny.translation.translate.R;
 /*来源https://github.com/opprime/EditTextField
 	修改byFunnySaltyFish 2020.2.8

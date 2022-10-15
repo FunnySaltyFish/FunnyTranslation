@@ -194,9 +194,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun deleteTransHistory(id: Int){
+    fun deleteTransHistory(sourceString: String){
         viewModelScope.launch(Dispatchers.IO) {
-            appDB.transHistoryDao.deleteTransHistory(id)
+            appDB.transHistoryDao.deleteTransHistoryByContent(sourceString)
         }
     }
 

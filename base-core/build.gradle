@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdk 21
-        targetSdk 30
+        targetSdk Versions.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -86,7 +86,7 @@ dependencies {
 
     // Material Design Color
     api "com.github.FunnySaltyFish:CMaterialColors:1.0.21"
-    api ("androidx.biometric:biometric:1.2.0-alpha04")
+    api "androidx.biometric:biometric:1.2.0-alpha04"
 
 
     // Markwon
@@ -98,7 +98,7 @@ dependencies {
     api "io.noties.markwon:image-coil:$markwon_version"
     api "io.noties.markwon:linkify:$markwon_version"
 
-    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.4.0'
+    api 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.4.0'
 
     def room_version = Versions.roomVersion
     api "androidx.room:room-runtime:$room_version"
@@ -125,6 +125,12 @@ dependencies {
     def material3Version = "1.0.0-alpha16"
     api "androidx.compose.material3:material3:$material3Version"
     api "androidx.compose.material3:material3-window-size-class:$material3Version"
+
+    def accompanist_version = "0.24.9-beta"
+    api "com.google.accompanist:accompanist-insets:$accompanist_version"
+    api "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    api "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+    api "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
 
     api project(path: ":jet_setting_core")
 

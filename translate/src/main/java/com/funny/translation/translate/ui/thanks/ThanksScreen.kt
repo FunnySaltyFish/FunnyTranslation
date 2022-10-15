@@ -35,8 +35,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.funny.trans.login.LoginActivity
-import com.funny.translation.helper.UserUtils
 import com.funny.translation.Consts
+import com.funny.translation.bean.UserBean
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
@@ -46,6 +46,7 @@ import com.funny.translation.translate.ui.widget.DefaultFailure
 import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.LoadingContent
+import com.funny.translation.translate.utils.localDataGson
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -171,14 +172,6 @@ fun UserInfoPanel(navHostController: NavHostController) {
         contract = ActivityResultContracts.StartActivityForResult(),
     ) {
         Log.d(TAG, "UserInfoPanel: resultData: ${it.data}")
-        if (it.data != null) {
-            val resUid = it.data!!.extras?.getInt(Consts.KEY_USER_UID) ?: -1
-            val resToken = it.data!!.extras?.getString(Consts.KEY_JWT_TOKEN) ?: ""
-            Log.d(TAG, "UserInfoPanel: resUid: $resUid, resToken: $resToken")
-            if (resUid <= 0 || resToken == "") return@rememberLauncherForActivityResult
-            activityVM.uid = resUid
-            activityVM.token = resToken
-        }
     }
 
     LoadingContent(
@@ -194,9 +187,9 @@ fun UserInfoPanel(navHostController: NavHostController) {
                     navHostController.navigateSingleTop(TranslateScreen.UserProfileScreen.route, false)
                 }
             }
-            .padding(vertical = 12.dp), loader = { UserUtils.getUserInfo(activityVM.uid) }
+            .padding(vertical = 12.dp), loader = { activityVM.userInfo }
     ) { userBean ->
-        if (userBean != null) {
+        if (userBean.isValid()) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 AsyncImage(
                     model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier

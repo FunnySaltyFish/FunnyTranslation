@@ -157,7 +157,6 @@ fun AppNavigation(
                     )) {
                         MainScreen()
                     }
-                    val animDuration = 700
                     navigation(
                         startDestination = TranslateScreen.SettingScreen.route,
                         route = "nav_1_setting",

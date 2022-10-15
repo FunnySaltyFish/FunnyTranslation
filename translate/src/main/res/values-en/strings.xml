@@ -81,4 +81,7 @@
     <string name="des_current_target_lang">Current selected target language is </string>
     <string name="float_window_tip">About Float Window</string>
     <string name="empty_plugin_tip">It seems that nothing is here.\\n Try to add a new plugin to explore more.</string>
+    <string name="user_profile">User Profile</string>
+    <string name="setting_enter_to_translate">"Click Enter To Translate "</string>
+    <string name="setting_show_history">Show Histories</string>
 </resources>

@@ -58,6 +58,20 @@ abstract class AppDatabase : RoomDatabase(){
             }
         }
 
+        private val MIGRATION_4_5 = object : Migration(4,5){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""create table if not exists table_temp(
+                    |id integer primary key autoincrement not null,
+                    |sourceString text not null,
+                    |sourceLanguageId integer not null default 0,
+                    |targetLanguageId integer not null default 0,
+                    |engineNames text not null default '[]',
+                    |lastTime integer not null,
+                    |times integer not null default 1)""".trimMargin())
+                database.execSQL("""""")
+            }
+        }
+
         private val callback = object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)

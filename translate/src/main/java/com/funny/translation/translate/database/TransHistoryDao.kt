@@ -35,6 +35,9 @@ interface TransHistoryDao {
     @Query("delete from table_trans_history where id = :id")
     fun deleteTransHistory(id: Int)
 
+    @Query("delete from table_trans_history where sourceString = :sourceString")
+    fun deleteTransHistoryByContent(sourceString: String)
+
     @Insert
     fun insertTransHistory(transHistoryBean: TransHistoryBean)
 }

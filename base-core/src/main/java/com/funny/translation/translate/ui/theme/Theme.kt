@@ -8,8 +8,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.funny.cmaterialcolors.MaterialColors
-import com.funny.data_saver.core.LocalDataSaver
-import com.funny.translation.Consts
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.DateUtils
 
 
@@ -89,14 +88,13 @@ fun TransTheme(
     dynamic: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
     content: @Composable () -> Unit
 ) {
-    val dataSaver = LocalDataSaver.current
     val colorScheme = if (dynamic) {
         val context = LocalContext.current
         if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     } else {
         if (dark) DarkColors else
-            if (dataSaver.readData(Consts.KEY_SPRING_THEME, true)
-                && DateUtils.isSpringFestival) SpringFestivalColorPalette
+            if (AppConfig.sSpringFestivalTheme.value && DateUtils.isSpringFestival)
+                SpringFestivalColorPalette
             else LightColors
     }
     MaterialTheme(

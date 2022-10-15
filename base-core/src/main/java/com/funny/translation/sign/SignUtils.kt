@@ -3,15 +3,21 @@ package com.funny.translation.sign
 import com.funny.translation.BaseApplication
 import com.funny.translation.helper.readAssets
 import com.funny.translation.js.config.JsConfig
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.script.Invocable
 
 
 object SignUtils {
+    private var hasInitJs = false
     fun encodeSign(uid : Long, appVersionCode: Int, sourceLanguageCode: Int, targetLanguageCode: Int, text: String, extra: String = "") = try {
+        while (!hasInitJs){
+            Thread.sleep(100)
+        }
         (JsConfig.SCRIPT_ENGINE as? Invocable)?.invokeFunction(
-            "encode_sign", uid, appVersionCode, sourceLanguageCode, targetLanguageCode, text, extra
+            "encode_sign", maxOf(uid, 0L), appVersionCode, sourceLanguageCode, targetLanguageCode, text, extra
         ).toString()
     } catch (e: Exception) {
         e.printStackTrace()
@@ -35,6 +41,8 @@ object SignUtils {
             if (jsText != ""){
                 JsConfig.SCRIPT_ENGINE.eval(jsText)
             }
+        }.also {
+            hasInitJs = true
         }
     }
 }

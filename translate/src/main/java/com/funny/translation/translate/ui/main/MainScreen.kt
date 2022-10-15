@@ -3,7 +3,6 @@
 package com.funny.translation.translate.ui.main
 
 import android.util.Log
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -47,23 +46,29 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.translation.AppConfig
 import com.funny.translation.Consts
+import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
+import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
-import com.funny.translation.helper.ClipBoardUtil
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -89,6 +94,7 @@ enum class ShowListType {
 @Composable
 fun MainScreen() {
     val vm: MainViewModel = viewModel()
+    val context = LocalContext.current
 
     // Compose函数会被反复重新调用（重组），所以变量要remember
     val updateSelectedEngine = remember {
@@ -113,9 +119,11 @@ fun MainScreen() {
     // CompositionLocal 相关知识可参阅 https://developer.android.google.cn/jetpack/compose/compositionlocal?hl=zh-cn
     val snackbarHostState = LocalSnackbarState.current
 
-    val showSnackbar: (String) -> Unit = {
-        scope.launch {
-            snackbarHostState.showSnackbar(it)
+    val showSnackbar: (String) -> Unit = remember {
+        {
+            scope.launch {
+                snackbarHostState.showSnackbar(it)
+            }
         }
     }
 
@@ -123,8 +131,10 @@ fun MainScreen() {
     val activityVM: ActivityViewModel = LocalActivityVM.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
-    fun updateShowListType(type: ShowListType){
-        vm.showListType = type
+    val updateShowListType: (type: ShowListType) -> Unit = remember {
+        {
+            vm.showListType = it
+        }
     }
 
     // 使用 BoxWithConstraints 用于适配横竖屏
@@ -158,13 +168,14 @@ fun MainScreen() {
                         vm = vm,
                         showSnackbar = showSnackbar,
                         expandEngineSelect = null,
-                        updateShowListType = ::updateShowListType
+                        updateShowListType = updateShowListType
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     ResultPart(vm = vm, showSnackbar = showSnackbar)
                 }
             }
         } else {
+
             val modalBottomSheetState =
                 rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
             ModalBottomSheetLayout(
@@ -182,25 +193,67 @@ fun MainScreen() {
                         updateSelectedEngine
                     )
                 }) {
-                SubcomposeBottomFirstLayout(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp)
-                        .imePadding(),
-                    other = {
-                        ResultPart(vm = vm, showSnackbar = showSnackbar)
-                    },
-                    bottom = {
+                if (AppConfig.sTransPageInputBottom.value) { // 如果输入框在下面
+                    SubcomposeBottomFirstLayout(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp)
+                            .imePadding(),
+                        other = {
+                            ResultPart(vm = vm, showSnackbar = showSnackbar)
+                        },
+                        bottom = {
+                            InputPart(
+                                vm = vm,
+                                showSnackbar = showSnackbar,
+                                modifier = Modifier.fillMaxWidth(),
+                                expandEngineSelect = { scope.launch { modalBottomSheetState.show() } },
+                                updateShowListType = updateShowListType
+                            )
+                        }
+                    )
+                } else { // 输入框在上面
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(8.dp))
                         InputPart(
+                            modifier = Modifier.fillMaxWidth(),
                             vm = vm,
                             showSnackbar = showSnackbar,
-                            modifier = Modifier.fillMaxWidth(),
                             expandEngineSelect = { scope.launch { modalBottomSheetState.show() } },
-                            updateShowListType = ::updateShowListType
+                            updateShowListType = updateShowListType
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        ResultPart(vm = vm, showSnackbar = showSnackbar)
                     }
-                )
+                }
             }
+        }
+
+        var singleLine by remember {
+            mutableStateOf(true)
+        }
+        val notice by activityVM.noticeInfo
+        notice?.let {
+            NoticeBar(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentHeight(Alignment.Bottom)
+                    .clickable {
+                        if (it.url.isNullOrEmpty()) singleLine = !singleLine
+                        else WebViewActivity.start(context, it.url)
+                    }
+                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+                    .padding(8.dp)
+                    .animateContentSize(),
+                text = it.message,
+                singleLine = singleLine,
+                showClose = true,
+            )
         }
     }
 
@@ -240,31 +293,43 @@ fun MainScreen() {
 
 @Composable
 fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
-    Crossfade (vm.showListType) {
-        when(it) {
-            ShowListType.Result -> TranslationList(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                resultList = vm.resultList,
-                showSnackbar = showSnackbar
-            )
-
-            ShowListType.History -> TransHistoryList(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-            )
-        }
+    val showHistory by rememberDataSaverState(key = Consts.KEY_SHOW_HISTORY, default = false)
+    if (showHistory && vm.showListType == ShowListType.History) {
+        TransHistoryList(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            transHistories = vm.transHistories.collectAsLazyPagingItems(),
+            onClickHistory = { transHistory ->
+                vm.translateText = transHistory.sourceString
+                vm.sourceLanguage = findLanguageById(transHistory.sourceLanguageId)
+                vm.targetLanguage = findLanguageById(transHistory.targetLanguageId)
+                vm.translate()
+            },
+            onDeleteHistory = { sourceString ->
+                vm.deleteTransHistory(sourceString)
+            }
+        )
+    } else {
+        TranslationList(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            resultList = vm.resultList,
+            showSnackbar = showSnackbar
+        )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TransHistoryList(modifier: Modifier) {
-    val vm: MainViewModel = viewModel()
+private fun TransHistoryList(
+    modifier: Modifier,
+    transHistories: LazyPagingItems<TransHistoryBean>,
+    onClickHistory: (TransHistoryBean) -> Unit,
+    onDeleteHistory: (String) -> Unit,
+) {
     val context = LocalContext.current
-    val transHistories = vm.transHistories.collectAsLazyPagingItems()
     LazyColumn(
         modifier = modifier.background(
             MaterialTheme.colorScheme.primaryContainer,
@@ -277,10 +342,7 @@ fun TransHistoryList(modifier: Modifier) {
                 Modifier
                     .fillMaxWidth()
                     .clickable {
-                        vm.translateText = transHistory.sourceString
-                        vm.sourceLanguage = findLanguageById(transHistory.sourceLanguageId)
-                        vm.targetLanguage = findLanguageById(transHistory.targetLanguageId)
-                        vm.translate()
+                        onClickHistory(transHistory)
                     }
                     .padding(start = 8.dp)
                     .animateItemPlacement(),
@@ -307,7 +369,7 @@ fun TransHistoryList(modifier: Modifier) {
                         )
                     }
                     IconButton(onClick = {
-                        vm.deleteTransHistory(transHistory.id)
+                        onDeleteHistory(transHistory.sourceString)
                     }) {
                         Icon(Icons.Default.Delete, "删除此历史记录")
                     }
@@ -319,7 +381,7 @@ fun TransHistoryList(modifier: Modifier) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun InputPart(
+private fun InputPart(
     modifier: Modifier,
     vm: MainViewModel,
     showSnackbar: (String) -> Unit,
@@ -345,8 +407,7 @@ fun InputPart(
         animateProgress.animateTo(vm.progress)
     }
 
-    val softKeyboardController = LocalSoftwareKeyboardController.current
-    val focusRequester = remember { FocusRequester() }
+    var shouldRequestFocus by remember { mutableStateOf(true) }
 
     fun startTranslate() {
         val selectedEngines = vm.selectedEngines
@@ -365,13 +426,12 @@ fun InputPart(
         if (!vm.isTranslating()) {
             vm.translate()
             updateShowListType(ShowListType.Result)
-            softKeyboardController?.hide()
+            shouldRequestFocus = false
         } else {
             vm.cancel()
             context.toastOnUi(FunnyApplication.resources.getString(R.string.message_stop_translate))
         }
     }
-
 
     Column(
         modifier = modifier
@@ -384,11 +444,14 @@ fun InputPart(
             text = transText,
             updateText = {
                 vm.translateText = it
-                if(it == "") updateShowListType(ShowListType.History)
+                if (it == "") updateShowListType(ShowListType.History)
+            },
+            shouldRequest = shouldRequestFocus,
+            updateFocusRequest = {
+                if (it != shouldRequestFocus) shouldRequestFocus = it
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
+                .fillMaxWidth(),
             translateAction = ::startTranslate
         ) // 输入框
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -440,8 +503,7 @@ fun InputPart(
                     onClick = {
                         updateShowListType(ShowListType.History)
                         vm.translateText = ""
-                        focusRequester.requestFocus()
-                        softKeyboardController?.show()
+                        shouldRequestFocus = true
                         Log.d(TAG, "InputText: 手动展示软键盘")
                     }
                 ) {
@@ -574,8 +636,7 @@ fun TranslationList(
     LazyColumn(
         modifier = modifier,
         verticalArrangement = spacedBy(4.dp),
-
-        ) {
+    ) {
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
 //            Log.d(TAG, "TranslationList: $result")
             TranslationItem(
@@ -597,8 +658,9 @@ fun TranslateButton(
     onClick: () -> Unit
 ) {
     val borderColor = MaterialTheme.colorScheme.secondary
-    val size48dp = with(LocalDensity.current) { 48.dp.toPx() }
-    val size12dp = with(LocalDensity.current) { 12.dp.toPx() }
+    val density = LocalDensity.current
+    val size48dp = remember { with(density) { 48.dp.toPx() } }
+    val size12dp = remember { with(density) { 12.dp.toPx() } }
 
     IconButton(
         modifier =
@@ -690,7 +752,6 @@ fun TranslationItem(
                         ClipBoardUtil.copy(FunnyApplication.ctx, result.basicResult.trans)
                         showSnackbar(FunnyApplication.resources.getString(R.string.snack_finish_copy))
                     }, modifier = Modifier
-//                        .then(Modifier.size(36.dp))
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondary)
                 ) {

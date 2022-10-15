@@ -83,4 +83,7 @@
     <string name="empty_plugin_tip">空空如也~\n去添加一个插件试试吧</string>
     <string name="user_profile">用户信息</string>
     <string name="setting_enter_to_translate">回车键翻译</string>
+    <string name="setting_show_history">显示历史记录</string>
+    <string name="setting_trans_page_input_bottom">输入栏置底</string>
+    <string name="avatar">头像</string>
 </resources>
