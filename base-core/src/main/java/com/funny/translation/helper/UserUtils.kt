@@ -1,12 +1,21 @@
 package com.funny.translation.helper
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import com.funny.translation.Consts
 import com.funny.translation.bean.UserBean
 import com.funny.translation.network.CommonData
+import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -65,10 +74,17 @@ interface UserService {
         @Field("uid") uid: Int
     ): CommonData<String>
 
+    @POST("user/change_avatar")
+    suspend fun uploadAvatar(
+        @Body body: MultipartBody
+    ): CommonData<String>
+
 }
 
 object UserUtils {
     private const val TAG = "UserUtils"
+    // 头像最高尺寸
+    private const val TARGET_AVATAR_SIZE = 256
 
     private val userService by lazy(LazyThreadSafetyMode.PUBLICATION){
         ServiceCreator.create(UserService::class.java)
@@ -175,6 +191,37 @@ object UserUtils {
             e.printStackTrace()
             Log.e(TAG, "refreshJwtToken: 失败")
         }
+    }
+
+    suspend fun uploadUserAvatar(context: Context, imgUri: Uri, filename: String, width: Int, height: Int, uid: Int) : String {
+        var scale = 1
+        while (width > TARGET_AVATAR_SIZE * scale || height > TARGET_AVATAR_SIZE * scale){
+            scale *= 2
+        }
+        val bitmapOptions = BitmapFactory.Options().apply {
+            inSampleSize = scale
+            inPreferredConfig = Bitmap.Config.ARGB_8888
+        }
+        val ins = context.contentResolver.openInputStream(imgUri) ?: return ""
+        ins.use {
+//            val data = ins.readBytes()
+            try {
+                val bitmap = BitmapFactory.decodeStream(ins, null, bitmapOptions)
+                val data = BitmapUtil.compressImage(bitmap, 1024 * 100) // 最大100kb
+                val body = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("uid", uid.toString())
+                    .addFormDataPart("avatar", filename, data.toRequestBody())
+                    .build()
+                val response = userService.uploadAvatar(body)
+                if (response.code == 50){
+                    return response.data ?: ""
+                }
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+        }
+        return ""
     }
 }
 

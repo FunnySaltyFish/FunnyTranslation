@@ -42,7 +42,7 @@ android {
 
 dependencies {
     api 'com.tencent:mmkv:1.2.12'
-    api 'com.github.FunnySaltyFish.ComposeDataSaver:data-saver:v1.0.2'
+    api 'com.github.FunnySaltyFish.ComposeDataSaver:data-saver:v1.1.0'
 
     def compose_version = Versions.composeVersion
     api "androidx.compose.ui:ui:$compose_version"

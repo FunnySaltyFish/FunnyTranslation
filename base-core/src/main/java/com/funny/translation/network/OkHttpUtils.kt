@@ -1,12 +1,19 @@
 package com.funny.translation.network
 
+import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Keep
+import androidx.core.os.bundleOf
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
+import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.sign.SignUtils
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -42,20 +49,6 @@ object OkHttpUtils {
         readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
         cache(cache)
         addInterceptor(HttpCacheInterceptor())
-        // get response cookie
-        addInterceptor {
-            val request = it.request()
-            val response = it.proceed(request)
-            val requestUrl = request.url.toString()
-            val domain = request.url.host
-            // set-cookie maybe has multi, login to save cookie
-            if (response.headers(SET_COOKIE_KEY).isNotEmpty()) {
-                val cookies = response.headers(SET_COOKIE_KEY)
-                val cookie = encodeCookie(cookies)
-                saveCookie(requestUrl, domain, cookie)
-            }
-            response
-        }
         // set request cookie
         // 添加自定义请求头
         addInterceptor {
@@ -85,7 +78,7 @@ object OkHttpUtils {
 
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/translate")){
                 builder.addHeader("sign", SignUtils.encodeSign(
-                    uid = AppConfig.uid, appVersionCode = AppConfig.versionCode,
+                    uid = AppConfig.uid.toLong(), appVersionCode = AppConfig.versionCode,
                     sourceLanguageCode = TranslateConfig.sourceLanguage.id,
                     targetLanguageCode = TranslateConfig.targetLanguage.id,
                     text = TranslateConfig.sourceString,
@@ -95,6 +88,39 @@ object OkHttpUtils {
 
             it.proceed(builder.build())
         }
+
+        // get response cookie
+        addInterceptor { chain ->
+            val request = chain.request()
+            val response = chain.proceed(request)
+            val requestUrl = request.url.toString()
+            val domain = request.url.host
+
+            // token 过期了
+            if (response.code == 401 && requestUrl.startsWith(NetworkConfig.BASE_URL)){
+                val clazz = Class.forName("com.funny.trans.login.LoginActivity")
+                val intent = Intent().apply {
+                    setClass(BaseApplication.ctx, clazz)
+                }
+                val activity = BaseApplication.getCurrentActivity()
+                activity?.let {
+                    AppConfig.userInfo.value = UserBean()
+                    it.startActivity(intent)
+                    it.toastOnUi("您的登录状态已过期，请重新登陆")
+                }
+
+                return@addInterceptor response
+            }
+
+            // set-cookie maybe has multi, login to save cookie
+            if (response.headers(SET_COOKIE_KEY).isNotEmpty()) {
+                val cookies = response.headers(SET_COOKIE_KEY)
+                val cookie = encodeCookie(cookies)
+                saveCookie(requestUrl, domain, cookie)
+            }
+            response
+        }
+
     }.build()
 
     val okHttpClient by lazy {
@@ -169,6 +195,21 @@ object OkHttpUtils {
             builder.add(key, value)
         }
         val body: RequestBody = builder.build()
+        val requestBuilder = Request.Builder()
+            .url(url)
+            .post(body)
+        headers?.let {
+            requestBuilder.addHeaders(headers)
+        }
+        val response: Response = okHttpClient.newCall(requestBuilder.build()).execute()
+        return response.body?.string() ?: ""
+    }
+
+    fun postMultiForm(
+        url: String,
+        body: RequestBody,
+        headers: HashMap<String, String>? = null,
+    ): String {
         val requestBuilder = Request.Builder()
             .url(url)
             .post(body)

@@ -2,9 +2,14 @@ package com.funny.translation
 
 object Consts {
 
+    const val KEY_SHOW_HISTORY = "show_history"
     const val KEY_EMAIL = "email"
     const val KEY_USER_UID = "uid"
     const val KEY_ENTER_TO_TRANSLATE = "enter_to_trans"
+    const val KEY_TRANS_PAGE_INPUT_BOTTOM = "trans_page_input_bottom"
+    const val KEY_USER_INFO = "user_info"
+
+    const val EXTRA_USER_INFO = "extra_user_info"
 
     //错误常量
     const val ERROR_UNKNOWN = "未知错误！翻译失败！"

@@ -17,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.funny.data_saver.core.LocalDataSaver
+import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.ui.FunnyIcon
 import com.funny.jetsetting.core.ui.IconWidget
@@ -29,16 +31,14 @@ private val EmptyAction = {}
 
 @Composable
 fun JetSettingCheckbox(
-    key: String,
     modifier: Modifier = DefaultJetSettingModifier,
+    state: MutableState<Boolean>,
     imageVector: ImageVector? = null,
     resourceId: Int? = null,
     iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
     text: String,
-    default: Boolean = false,
     onCheck: (Boolean) -> Unit
 ) {
-    var checked by rememberDataSaverState(key, default)
     Row(
         modifier,
         horizontalArrangement = Arrangement.Start,
@@ -50,8 +50,38 @@ fun JetSettingCheckbox(
             Spacer(modifier = Modifier.width(24.dp))
         }
         Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))
-        Checkbox(checked = checked, onCheckedChange = {
-            checked = it
+        Checkbox(checked = state.value, onCheckedChange = {
+            state.value = it
+            onCheck(it)
+        })
+    }
+}
+
+@Composable
+fun JetSettingCheckbox(
+    key: String,
+    default: Boolean = false,
+    modifier: Modifier = DefaultJetSettingModifier,
+    imageVector: ImageVector? = null,
+    resourceId: Int? = null,
+    iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
+    text: String,
+    onCheck: (Boolean) -> Unit
+) {
+    val state = rememberDataSaverState(key = key, default = default)
+    Row(
+        modifier,
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val funnyIcon = FunnyIcon(imageVector, resourceId)
+        funnyIcon.get()?.let {
+            IconWidget(funnyIcon, tintColor = iconTintColor)
+            Spacer(modifier = Modifier.width(24.dp))
+        }
+        Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))
+        Checkbox(checked = state.value, onCheckedChange = {
+            state.value = it
             onCheck(it)
         })
     }

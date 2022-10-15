@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.funny.trans.login">
 
-    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-sdk tools:overrideLibrary="cn.qhplus.emo.ui.core, cn.qhplus.emo.photo, cn.qhplus.emo.fs, cn.qhplus.emo.core"/>
+
 
     <application>
         <activity
             android:name="com.funny.trans.login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
             android:exported="false" />
 
         <activity

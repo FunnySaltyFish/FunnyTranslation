@@ -22,11 +22,11 @@ import androidx.annotation.Keep
  */
 @Keep
 data class UserBean(
-    val uid: Int,
-    val username: String,
-    val password: String,
-    val email: String,
-    val phone: String,
+    val uid: Int = -1,
+    val username: String = "",
+    val password: String = "",
+    val email: String = "",
+    val phone: String = "",
     val password_type: String = "1",
     val avatar_url: String = "",
     val vip_level: Int = 0,
@@ -34,6 +34,8 @@ data class UserBean(
     val vip_duration: Long = -1,
 
     val jwt_token: String = ""
-)
+){
+    fun isValid() = uid >= 0 && jwt_token != ""
+}
 
 

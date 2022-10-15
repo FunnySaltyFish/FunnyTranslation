@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
 import com.funny.jetsetting.core.JetSettingTile
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.allLanguages
 import com.funny.translation.translate.FunnyApplication
@@ -96,8 +97,7 @@ fun SettingsScreen() {
             systemUiController.isNavigationBarVisible = !it
         }
         JetSettingCheckbox(
-            key = Consts.KEY_CUSTOM_NAVIGATION,
-            default = true,
+            state = AppConfig.sUseNewNavigation,
             text = stringResource(id = R.string.custom_nav),
             resourceId = R.drawable.ic_custom_nav,
             iconTintColor = MaterialColors.DeepOrangeA200
@@ -109,8 +109,16 @@ fun SettingsScreen() {
                     } else {
                         "关闭"
                     }
-                }新导航栏，下次启动应用生效", Toast.LENGTH_SHORT
+                }新导航栏", Toast.LENGTH_SHORT
             ).show()
+        }
+        JetSettingCheckbox(
+            state = AppConfig.sTransPageInputBottom,
+            text = stringResource(R.string.setting_trans_page_input_bottom),
+            resourceId = R.drawable.ic_input_bottom,
+            iconTintColor = MaterialColors.Brown800
+        ) {
+
         }
         JetSettingCheckbox(
             key = Consts.KEY_SHOW_FLOAT_WINDOW,
@@ -136,11 +144,10 @@ fun SettingsScreen() {
         )
         if (DateUtils.isSpringFestival) {
             JetSettingCheckbox(
-                key = Consts.KEY_SPRING_THEME,
+                state = AppConfig.sSpringFestivalTheme,
                 text = stringResource(R.string.setting_spring_theme),
                 resourceId = R.drawable.ic_theme,
                 iconTintColor = MaterialColors.Red700,
-                default = true
             ) {
                 Toast.makeText(
                     context, "已${
@@ -156,13 +163,20 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(8.dp))
         HeadingText(stringResource(id = R.string.others))
         JetSettingCheckbox(
-            key = Consts.KEY_ENTER_TO_TRANSLATE,
-            default = true,
+            state = AppConfig.sEnterToTranslate,
             text = stringResource(R.string.setting_enter_to_translate),
             resourceId = R.drawable.ic_enter,
             iconTintColor = MaterialColors.Teal700
         ) {
             if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
+        }
+        JetSettingCheckbox(
+            state = AppConfig.sShowTransHistory,
+            text = stringResource(R.string.setting_show_history),
+            resourceId = R.drawable.ic_history,
+            iconTintColor = MaterialColors.Lime700
+        ) {
+
         }
         JetSettingTile(
             text = stringResource(R.string.sort_result),
@@ -216,7 +230,7 @@ fun SortResult(
 ) {
     val state = rememberReorderState()
     val vm : SettingsScreenViewModel = viewModel()
-    val data = vm.localEngineNamesState.toMutableStateList()
+    val data = remember { vm.localEngineNamesState.toMutableStateList() }
     LazyColumn(
         state = state.listState,
         modifier = modifier
