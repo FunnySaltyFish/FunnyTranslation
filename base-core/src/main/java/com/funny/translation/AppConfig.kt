@@ -30,6 +30,8 @@ object AppConfig {
     val sShowTransHistory = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SHOW_HISTORY, false)
     val sSpringFestivalTheme = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SPRING_THEME, false)
     val sEnterToTranslate = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_ENTER_TO_TRANSLATE, true)
+    val sHideStatusBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_HIDE_STATUS_BAR, true)
+    val sHideBottomNav = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
 }
 
 object TranslateConfig {

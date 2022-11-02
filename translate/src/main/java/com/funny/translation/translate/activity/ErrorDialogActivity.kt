@@ -2,18 +2,23 @@ package com.funny.translation.translate.activity
 
 import android.os.Bundle
 import android.os.Process
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
+import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.extentions.trimLineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
+import java.io.BufferedReader
+import java.io.DataOutputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
 import kotlin.system.exitProcess
 
 
@@ -23,6 +28,7 @@ class ErrorDialogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crashMessage = intent.getStringExtra("CRASH_MESSAGE")
+
         val dialog = AlertDialog.Builder(this)
             .setTitle("抱歉，应用程序发生了崩溃！")
             .setMessage(
@@ -38,12 +44,9 @@ class ErrorDialogActivity : AppCompatActivity() {
             .setPositiveButton(
                 "发送报告"
             ) { _,_ ->
-                GlobalScope.launch {
-                    withContext(Dispatchers.IO){
-                        reportCrash()
-                    }
-                    destroy()
-                }
+                runBlocking(Dispatchers.IO) { sendCrashReport() }
+                Log.d("ErrorHandler", "错误报告发送完毕！ ")
+                destroy()
             }
             .setNegativeButton(
                 "退出"
@@ -54,25 +57,44 @@ class ErrorDialogActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun reportCrash(){
+    private fun destroy() {
+        Process.killProcess(Process.myPid())
+        exitProcess(0)
+    }
+
+    private fun sendCrashReport(){
         crashMessage?.let {
-            try {
-                val packageInfo = BaseApplication.getLocalPackageInfo()
-                OkHttpUtils.postForm(
-                    url = "${ServiceCreator.BASE_URL}/api/report_crash",
-                    form = hashMapOf(
-                        "text" to it,
-                        "version" to "${packageInfo?.versionName}(${packageInfo?.versionCode})"
-                    )
-                )
-            }catch (e:Exception){
-                Toast.makeText(this,"发送失败！",Toast.LENGTH_SHORT).show()
+            kotlin.runCatching {
+                val url = OkHttpUtils.removeExtraSlashOfUrl("${ServiceCreator.BASE_URL}/api/report_crash")
+                val postData = "text=${URLEncoder.encode(it,"utf-8")}&version=${BaseApplication.getLocalPackageInfo()?.versionName}(${AppConfig.versionCode})"
+                doPost(url, postData)
+            }.onFailure {
+                toastOnUi("发送错误报告失败，请联系开发者提交错误信息")
+                it.printStackTrace()
             }
         }
     }
 
-    private fun destroy() {
-        Process.killProcess(Process.myPid())
-        exitProcess(0)
+    // OkHttp 的连接池已经被关了，这里手动 HttpUrlConnection 实现 post 请求
+    private fun doPost(url: String, postData: String){
+        val conn = URL(url).openConnection() as HttpURLConnection
+        conn.requestMethod = "POST"
+        conn.doOutput = true
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        conn.setRequestProperty("Content-Length", postData.length.toString())
+        conn.useCaches = false
+
+        DataOutputStream(conn.outputStream).use { it.writeBytes(postData) }
+
+        Log.d("doPost", "doPost:url: $url conn.code: ${conn.responseCode}")
+        when (conn.responseCode){
+            301, 302, 307, 308 -> doPost(conn.getHeaderField("Location"), postData)
+            else -> BufferedReader(InputStreamReader(conn.inputStream)).use { br ->
+                var line: String?
+                while (br.readLine().also { line = it } != null) {
+                    println(line)
+                }
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.funny.translation
 
 object Consts {
 
+    const val KEY_CRASH_MSG = "crash_message"
     const val KEY_SHOW_HISTORY = "show_history"
     const val KEY_EMAIL = "email"
     const val KEY_USER_UID = "uid"

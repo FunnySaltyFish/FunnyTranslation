@@ -21,6 +21,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.Consts
 import com.funny.translation.translate.ui.main.MainScreen
@@ -102,18 +103,23 @@ fun AppNavigation(
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = MaterialTheme.colorScheme.isLight
             val navigationBarColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
-            LaunchedEffect(key1 = systemUiController) {
+            SideEffect {
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
                 systemUiController.setNavigationBarColor(
                     if (!useDarkIcons) Color.Transparent else navigationBarColor,
                     darkIcons = useDarkIcons
                 )
-
-                systemUiController.isNavigationBarVisible =
-                    !DataSaverUtils.readData(Consts.KEY_HIDE_NAVIGATION_BAR, false)
-                systemUiController.isStatusBarVisible =
-                    !DataSaverUtils.readData(Consts.KEY_HIDE_STATUS_BAR, true)
             }
+
+            LaunchedEffect(AppConfig.sHideBottomNav.value) {
+                systemUiController.isNavigationBarVisible =
+                    !AppConfig.sHideBottomNav.value
+            }
+
+            LaunchedEffect(AppConfig.sHideStatusBar.value) {
+                systemUiController.isStatusBarVisible = !AppConfig.sHideStatusBar.value
+            }
+
             Scaffold(
                 bottomBar = {
                     val currentScreen = navController.currentScreenAsState()
