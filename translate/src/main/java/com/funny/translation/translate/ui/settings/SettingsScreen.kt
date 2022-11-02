@@ -79,22 +79,20 @@ fun SettingsScreen() {
         HeadingText(stringResource(id = R.string.setting_ui))
         Spacer(modifier = Modifier.height(8.dp))
         JetSettingCheckbox(
-            key = Consts.KEY_HIDE_STATUS_BAR,
-            default = true,
+            state = AppConfig.sHideStatusBar,
             text = stringResource(R.string.setting_hide_status_bar),
             resourceId = R.drawable.ic_status_bar,
             iconTintColor = MaterialColors.BlueGrey700
         ) {
-            systemUiController.isStatusBarVisible = !it
+
         }
         JetSettingCheckbox(
-            key = Consts.KEY_HIDE_NAVIGATION_BAR,
-            default = false,
+            state = AppConfig.sHideBottomNav,
             text = stringResource(R.string.setting_hide_nav_bar),
             resourceId = R.drawable.ic_bottom_bar,
             iconTintColor = MaterialColors.Blue700
         ) {
-            systemUiController.isNavigationBarVisible = !it
+
         }
         JetSettingCheckbox(
             state = AppConfig.sUseNewNavigation,
