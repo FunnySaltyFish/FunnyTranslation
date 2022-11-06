@@ -2,11 +2,7 @@ package com.funny.translation.network
 
 import android.content.Intent
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Keep
-import androidx.core.os.bundleOf
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.Consts

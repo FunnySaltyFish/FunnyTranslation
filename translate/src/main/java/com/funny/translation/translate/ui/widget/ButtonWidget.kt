@@ -3,6 +3,7 @@ package com.funny.translation.translate.ui.widget
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -91,15 +92,15 @@ fun ExchangeButton(
 @Composable
 fun ExpandMoreButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    expand: Boolean,
+    onClick: (Boolean) -> Unit
 ) {
-    var expand by remember {
-        mutableStateOf(false)
-    }
-    val rotationValue by animateFloatAsState(targetValue = if (expand) -180f else 0f)
+    val rotationValue by animateFloatAsState(
+        targetValue = if (expand) -180f else 0f,
+        animationSpec = tween(700)
+    )
     IconButton(onClick = {
-        expand = !expand
-        onClick()
+        onClick(!expand)
     }, modifier = modifier) {
         Icon(
             Icons.Default.ArrowDropDown,

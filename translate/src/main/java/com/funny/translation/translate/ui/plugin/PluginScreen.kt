@@ -34,6 +34,7 @@ import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
+import com.funny.translation.translate.extentions.trimLineStart
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.funny.translation.translate.ui.widget.SimpleDialog
@@ -90,7 +91,7 @@ fun PluginScreen() {
 }
 
 @Composable
-fun LocalPluginPart(
+private fun LocalPluginPart(
     modifier: Modifier,
     vm : PluginViewModel,
     showSnackbar: (String) -> Unit,
@@ -191,7 +192,7 @@ fun OnlinePluginPart(modifier: Modifier, showSnackbar: (String) -> Unit) {
 }
 
 @Composable
-fun PluginList(
+private fun PluginList(
     plugins : List<JsBean>,
     updateSelect: (JsBean) -> Unit,
     deletePlugin : (JsBean)->Unit
@@ -212,7 +213,7 @@ fun PluginList(
 }
 
 @Composable
-fun PluginItem(
+private fun PluginItem(
     plugin : JsBean,
     updateSelect : (JsBean)->Unit,
     deletePlugin : (JsBean)->Unit
@@ -269,9 +270,4 @@ private val JsBean.markdown
     get() = """
         By **${this.author}**    **v${this.version}**  
         ${this.description.replace("[Markdown]","")}  
-    """.trimPreSpace.also {
-        Log.d(TAG, "显示的东西:\n $it")
-    }
-
-private val String.trimPreSpace
-    get() = this.split("\n").joinToString("\n") { it.trimStart() }.trimStart()
+    """.trimLineStart

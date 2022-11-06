@@ -29,8 +29,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -247,7 +245,10 @@ fun MainScreen() {
                         if (it.url.isNullOrEmpty()) singleLine = !singleLine
                         else WebViewActivity.start(context, it.url)
                     }
-                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(8.dp)
                     .animateContentSize(),
                 text = it.message,
@@ -292,7 +293,7 @@ fun MainScreen() {
 }
 
 @Composable
-fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
+private fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
     val showHistory by rememberDataSaverState(key = Consts.KEY_SHOW_HISTORY, default = false)
     if (showHistory && vm.showListType == ShowListType.History) {
         TransHistoryList(
@@ -408,6 +409,10 @@ private fun InputPart(
     }
 
     var shouldRequestFocus by remember { mutableStateOf(true) }
+
+    DisposableEffect(Unit){
+        onDispose { shouldRequestFocus = false }
+    }
 
     fun startTranslate() {
         val selectedEngines = vm.selectedEngines
@@ -555,7 +560,6 @@ private fun EngineSelect(
                     if (!taskSelected) { // 选中了
                         updateSelectEngine.add(task)
                     } else updateSelectEngine.remove(task)
-                    bindEngines[index].selected = !task.selected
                     taskSelected = !taskSelected
                 }, label = {
                     Text(text = task.name)
@@ -585,7 +589,6 @@ private fun EngineSelect(
                         if (!taskSelected) { // 选中了
                             updateSelectEngine.add(task)
                         } else updateSelectEngine.remove(task)
-                        bindEngines[index].selected = !task.selected
                         taskSelected = !taskSelected
                     }, label = {
                         Text(text = task.name)
@@ -597,7 +600,7 @@ private fun EngineSelect(
 }
 
 @Composable
-fun LanguageSelect(
+private fun LanguageSelect(
     modifier: Modifier = Modifier,
     language: Language,
     languages: List<Language>,
@@ -627,7 +630,7 @@ fun LanguageSelect(
 }
 
 @Composable
-fun TranslationList(
+private fun TranslationList(
     modifier: Modifier,
     resultList: List<TranslationResult>,
     showSnackbar: (String) -> Unit,
@@ -652,7 +655,7 @@ fun TranslationList(
 }
 
 @Composable
-fun TranslateButton(
+private fun TranslateButton(
     progress: Int = 100,
     isTranslating: Boolean = false,
     onClick: () -> Unit
@@ -693,7 +696,7 @@ fun TranslateButton(
 
 
 @Composable
-fun TranslationItem(
+private fun TranslationItem(
     modifier: Modifier,
     result: TranslationResult,
     roundCornerConfig: RoundCornerConfig,
@@ -805,8 +808,8 @@ fun TranslationItem(
                 }
                 if (!result.detailText.isNullOrEmpty()) {
                     Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
-                        ExpandMoreButton {
-                            expandDetail = !expandDetail
+                        ExpandMoreButton(expand = expandDetail) {
+                            expandDetail = it
                         }
                     }
                 }
@@ -820,7 +823,6 @@ fun TranslationItem(
                     selectable = false
                 )
             }
-
         }
     }
 }

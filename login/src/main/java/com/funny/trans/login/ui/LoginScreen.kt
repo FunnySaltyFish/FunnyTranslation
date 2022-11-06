@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -205,6 +206,10 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
         ) {
             Text("验证指纹")
         }
+        ExchangePasswordType(
+            passwordType = vm.passwordType,
+            updatePasswordType = { vm.passwordType = it }
+        )
         Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = {
@@ -238,6 +243,9 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
 @Composable
 fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<Intent>, onRegisterSuccess: () -> Unit = {}) {
     val context = LocalContext.current
+    var gameInputMode by remember {
+        mutableStateOf(true)
+    }
     Column(
         Modifier.fillMaxWidth(WIDTH_FRACTION),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -249,44 +257,49 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
         if (vm.passwordType == "2"){
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
                 Text(text = "长度8-16位，包含大小写字母和数字")
-            }, label = { Text(text = "密码") }, readOnly = !AppConfig.lowerThanM)
+            }, label = { Text(text = "密码") }, readOnly = !AppConfig.lowerThanM && gameInputMode)
             Spacer(modifier = Modifier.height(8.dp))
-            CompletableButton(
+            if (gameInputMode) {
+                CompletableButton(
                     modifier = Modifier.fillMaxWidth(),
-            enabled = true,
-            onClick = { activityLauncher.launch(Intent(context, GameActivity::class.java)) }) {
-                Text(text = "点我输入密码")
+                    enabled = true,
+                    onClick = { activityLauncher.launch(Intent(context, GameActivity::class.java)) }
+                ) { Text(text = "玩游戏输入密码") }
+                Text(modifier = Modifier.clickable { gameInputMode = false }, text = "我想自己输密码", style = MaterialTheme.typography.labelSmall)
             }
-        } else CompletableButton(
-            onClick = {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    BiometricUtils.setFingerPrint(
-                        context as AppCompatActivity,
-                        data = vm.loginData,
-                        onNotSupport = { msg: String -> context.toastOnUi(msg) },
-                        onFail = { context.toastOnUi("认证失败！") },
-                        onSuccess = { encryptedInfo, iv ->
-                            context.toastOnUi("添加指纹成功！")
-                            vm.finishSetFingerPrint = true
-                            vm.encryptedInfo = encryptedInfo
-                            vm.iv = iv
-                        },
-                        onError = { errorCode, errorMsg -> context.toastOnUi("认证失败！（$errorCode: $errorMsg）") },
-                        onUsePassword = {
-                            vm.passwordType = "2"
-                            vm.password = ""
-                        }
-                    )
-                } else {
-                    context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)
-                    vm.passwordType = "2"
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = vm.isValidUsername,
-            completed = vm.finishSetFingerPrint
-        ) {
-            Text("添加指纹")
+        }
+        else {
+            CompletableButton(
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        BiometricUtils.setFingerPrint(
+                            context as AppCompatActivity,
+                            data = vm.loginData,
+                            onNotSupport = { msg: String -> context.toastOnUi(msg) },
+                            onFail = { context.toastOnUi("认证失败！") },
+                            onSuccess = { encryptedInfo, iv ->
+                                context.toastOnUi("添加指纹成功！")
+                                vm.finishSetFingerPrint = true
+                                vm.encryptedInfo = encryptedInfo
+                                vm.iv = iv
+                            },
+                            onError = { errorCode, errorMsg -> context.toastOnUi("认证失败！（$errorCode: $errorMsg）") },
+                            onUsePassword = {
+                                vm.passwordType = "2"
+                                vm.password = ""
+                            }
+                        )
+                    } else {
+                        context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)
+                        vm.passwordType = "2"
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = vm.isValidUsername,
+                completed = vm.finishSetFingerPrint
+            ) {
+                Text("添加指纹")
+            }
         }
         Spacer(modifier = Modifier.height(12.dp))
         Button(
@@ -310,6 +323,20 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
         ) {
             Text("注册")
         }
+    }
+}
+
+@Composable
+private fun ColumnScope.ExchangePasswordType(
+    passwordType: String,
+    updatePasswordType: (String)-> Unit
+){
+    if (passwordType == "2" && !AppConfig.lowerThanM){
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(modifier = Modifier.clickable { updatePasswordType("1") }, text = "切换指纹登录", style = MaterialTheme.typography.labelSmall)
+    } else if (passwordType == "1") {
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(modifier = Modifier.clickable { updatePasswordType("2") }, text = "切换密码登录", style = MaterialTheme.typography.labelSmall)
     }
 }
 

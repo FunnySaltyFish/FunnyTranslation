@@ -26,10 +26,10 @@ object AppConfig {
 
     // 下面为可设置的状态
     val sUseNewNavigation = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CUSTOM_NAVIGATION, true)
-    val sTransPageInputBottom = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_TRANS_PAGE_INPUT_BOTTOM, true)
+    val sTransPageInputBottom = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_TRANS_PAGE_INPUT_BOTTOM, false)
     val sShowTransHistory = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SHOW_HISTORY, false)
     val sSpringFestivalTheme = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SPRING_THEME, false)
-    val sEnterToTranslate = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_ENTER_TO_TRANSLATE, true)
+    val sEnterToTranslate = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_ENTER_TO_TRANSLATE, false)
     val sHideStatusBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_HIDE_STATUS_BAR, true)
     val sHideBottomNav = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
 }
