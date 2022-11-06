@@ -19,9 +19,6 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTask
 import com.funny.translation.translate.*
-import com.funny.translation.translate.ActivityViewModel
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.R
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
@@ -146,6 +143,7 @@ class MainViewModel : ViewModel() {
     fun translate() {
         if (translateJob?.isActive == true) return
         if (actualTransText.isEmpty()) return
+
         resultList.clear()
         progress = 0f
         addTransHistory(actualTransText, sourceLanguage, targetLanguage)

@@ -17,8 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.funny.data_saver.core.LocalDataSaver
-import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.ui.FunnyIcon
 import com.funny.jetsetting.core.ui.IconWidget
@@ -69,22 +67,7 @@ fun JetSettingCheckbox(
     onCheck: (Boolean) -> Unit
 ) {
     val state = rememberDataSaverState(key = key, default = default)
-    Row(
-        modifier,
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val funnyIcon = FunnyIcon(imageVector, resourceId)
-        funnyIcon.get()?.let {
-            IconWidget(funnyIcon, tintColor = iconTintColor)
-            Spacer(modifier = Modifier.width(24.dp))
-        }
-        Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))
-        Checkbox(checked = state.value, onCheckedChange = {
-            state.value = it
-            onCheck(it)
-        })
-    }
+    JetSettingCheckbox(state = state, modifier = modifier, imageVector = imageVector, resourceId = resourceId, iconTintColor = iconTintColor, text = text, onCheck = onCheck)
 }
 
 @Composable

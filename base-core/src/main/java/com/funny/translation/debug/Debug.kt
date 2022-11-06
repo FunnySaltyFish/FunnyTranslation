@@ -1,5 +1,8 @@
 package com.funny.translation.debug
 
+/**
+ * 用于 JS 调试输出
+ */
 object Debug {
     private val targets : ArrayList<DebugTarget> = arrayListOf()
     fun addTarget(target: DebugTarget){

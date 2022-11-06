@@ -1,9 +1,7 @@
 package com.funny.translation.translate.ui.plugin
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.helper.coroutine.Coroutine.Companion.async
@@ -60,10 +58,10 @@ class PluginViewModel : ViewModel() {
      * 根据jsBean判断这个在线插件是否已经被安装/需要升级
      * @param jsBean JsBean
      */
+
      fun checkPluginState(jsBean: JsBean) : MutableState<OnlinePluginState>{
         val state = mutableStateOf(OnlinePluginState.NotInstalled)
-        async {
-//            Log.d(TAG, "checkPluginState: 准备检查js")
+        async(viewModelScope) {
             appDB.jsDao.queryJsByName(jsBean.fileName)
         }.onSuccess { data ->
             if(data!=null){

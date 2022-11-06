@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -29,11 +30,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import cn.qhplus.emo.photo.activity.PhotoPickResult
-import cn.qhplus.emo.photo.activity.PhotoPickerActivity
-import cn.qhplus.emo.photo.activity.getPhotoPickResult
+import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.coil.CoilPhotoProvider
+import cn.qhplus.emo.photo.data.PhotoProvider
 import cn.qhplus.emo.photo.ui.PhotoThumbnailWithViewer
 import coil.compose.AsyncImage
 import com.funny.cmaterialcolors.MaterialColors
@@ -68,26 +68,45 @@ fun UserProfileScreen(navHostController: NavHostController) {
 //            Log.d(TAG, "UserProfileScreen: imgUrl: $imageUri")
 //        }
 //    }
+    var photoName by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    val clipperLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == RESULT_OK) {
+            it.data?.getPhotoClipperResult()?.let { img ->
+                if (photoName == "") return@rememberLauncherForActivityResult
+                scope.launch {
+                    val avatarUrl = UserUtils.uploadUserAvatar(context, img.uri, photoName, img.width, img.height, activityVM.uid)
+                    if (avatarUrl != ""){
+                        activityVM.userInfo = activityVM.userInfo.copy(avatar_url = avatarUrl)
+                        context.toastOnUi("头像上传成功！")
+                        avatarPickResult.value = null
+                    } else {
+                        context.toastOnUi("头像上传失败！")
+                    }
+                }
+            }
+        }
+    }
 
     val pickLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 it.data?.getPhotoPickResult()?.let { result ->
                     avatarPickResult.value = result
-
                     val img = result.list[0]
-                    scope.launch {
-                        val avatarUrl = UserUtils.uploadUserAvatar(context, img.uri, img.name, img.width, img.height, activityVM.uid)
-                        if (avatarUrl != ""){
-                            activityVM.userInfo = activityVM.userInfo.copy(avatar_url = avatarUrl)
-                            context.toastOnUi("头像上传成功！")
-                        } else {
-                            context.toastOnUi("头像上传失败！")
-                        }
-                    }
+                    photoName = img.name
+                    clipperLauncher.launch(
+                        PhotoClipperActivity.intentOf(
+                            context,
+                            CoilPhotoProvider(img.uri, ratio = img.ratio())
+                        )
+                    )
                 }
             }
         }
+
 
     Column(
         Modifier
@@ -95,24 +114,6 @@ fun UserProfileScreen(navHostController: NavHostController) {
             .padding(top = 24.dp, start = 12.dp, end = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-//        Row(onClick = {
-//            pickLauncher.launch(
-//                PhotoPickerActivity.intentOf(
-//                    context,
-//                    CoilMediaPhotoProviderFactory::class.java,
-//                    CustomPhotoPickerActivity::class.java,
-//                    pickedItems = arrayListOf<Uri>().apply {
-//                        avatarPickResult.value?.list?.mapTo(
-//                            this
-//                        ) { it.uri }
-//                    },
-//                    pickLimitCount = 1,
-//                )
-//            )
-//        }) {
-//            Text(text = "头像")
-//        }
         Row(
             Modifier
                 .fillMaxWidth()

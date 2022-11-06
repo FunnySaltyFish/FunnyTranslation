@@ -67,7 +67,7 @@ fun ComposeCodeRunner(
 fun CodeRunnerTopBar(
     backAction : ()->Unit
 ){
-    SmallTopAppBar(
+    TopAppBar(
         title = {
             Text(text = stringResource(id = R.string.code_run))
         },

@@ -52,7 +52,7 @@ fun OnlinePluginList(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            itemsIndexed(pluginList){ _, item : JsBean ->
+            itemsIndexed(pluginList, key = { _, item -> item.fileName}){ _, item : JsBean ->
                 var onlinePluginState by remember {
                     vm.checkPluginState(item)
                 }

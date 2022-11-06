@@ -84,4 +84,7 @@
     <string name="user_profile">User Profile</string>
     <string name="setting_enter_to_translate">"Click Enter To Translate "</string>
     <string name="setting_show_history">Show Histories</string>
+    <string name="setting_trans_page_input_bottom">Place Input At Bottom</string>
+    <string name="avatar">Avatar</string>
+    <string name="send_report">Send Report</string>
 </resources>
