@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.theme
+package com.funny.translation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

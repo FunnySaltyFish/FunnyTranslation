@@ -15,7 +15,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.ui.theme.TransTheme
+import com.funny.translation.theme.TransTheme
 import com.smarx.notchlib.NotchScreenManager
 
 class LoginActivity : AppCompatActivity() {

@@ -3,14 +3,14 @@ package com.funny.translation.translate.task
 import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.TranslationException
 import com.funny.translation.Consts
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.utils.FunnyEachText
 import com.funny.translation.translate.utils.StringUtil
 import org.json.JSONException
 import java.io.IOException
 
-class TranslationEachText() :
-    BasicTranslationTask(), TranslationEngine by TranslationEngines.EachText{
+class TextTranslationEachText() :
+    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.EachText{
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {

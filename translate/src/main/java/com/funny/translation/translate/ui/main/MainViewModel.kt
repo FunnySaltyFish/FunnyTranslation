@@ -17,12 +17,12 @@ import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
-import com.funny.translation.js.core.JsTranslateTask
+import com.funny.translation.js.core.JsTranslateTaskText
 import com.funny.translation.translate.*
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -57,9 +57,9 @@ class MainViewModel : ViewModel() {
 
     var showListType: ShowListType by mutableStateOf(ShowListType.History)
 
-    val jsEnginesFlow : Flow<List<JsTranslateTask>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
+    val jsEnginesFlow : Flow<List<JsTranslateTaskText>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
         list.map {
-            JsTranslateTask(jsEngine = JsEngine(jsBean = it)).apply {
+            JsTranslateTaskText(jsEngine = JsEngine(jsBean = it)).apply {
                 this.selected = DataSaverUtils.readData(this.selectKey, false)
                 if(this.selected){
                     addSelectedEngines(this)
@@ -103,13 +103,13 @@ class MainViewModel : ViewModel() {
             }
             if(initialSelected == 0) {
                 // 默认选两个
-                TranslationEngines.BaiduNormal.selected = true
-                TranslationEngines.Youdao.selected = true
+                TextTranslationEngines.BaiduNormal.selected = true
+                TextTranslationEngines.Youdao.selected = true
 
-                DataSaverUtils.saveData(TranslationEngines.BaiduNormal.selectKey, true)
-                DataSaverUtils.saveData(TranslationEngines.Youdao.selectKey, true)
+                DataSaverUtils.saveData(TextTranslationEngines.BaiduNormal.selectKey, true)
+                DataSaverUtils.saveData(TextTranslationEngines.Youdao.selectKey, true)
 
-                addSelectedEngines(TranslationEngines.BaiduNormal, TranslationEngines.Youdao)
+                addSelectedEngines(TextTranslationEngines.BaiduNormal, TextTranslationEngines.Youdao)
             }
         }
     }
@@ -202,14 +202,14 @@ class MainViewModel : ViewModel() {
         flow {
             selectedEngines.forEach {
                 if (support(it.supportLanguages)) {
-                    val task = if (it is TranslationEngines) {
+                    val task = if (it is TextTranslationEngines) {
                         it.createTask(
                             actualTransText,
                             sourceLanguage,
                             targetLanguage
                         )
                     } else {
-                        val jsTask = it as JsTranslateTask
+                        val jsTask = it as JsTranslateTaskText
                         jsTask.sourceString = actualTransText
                         jsTask.sourceLanguage = sourceLanguage
                         jsTask.targetLanguage = targetLanguage

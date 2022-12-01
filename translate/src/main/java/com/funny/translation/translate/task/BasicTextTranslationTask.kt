@@ -4,8 +4,8 @@ import com.funny.translation.translate.*
 import com.funny.translation.Consts
 
 
-abstract class BasicTranslationTask() :
-    CoreTranslationTask(){
+abstract class BasicTextTranslationTask() :
+    CoreTextTranslationTask(){
 
     @Throws(TranslationException::class)
     override fun translate(mode: Int) {

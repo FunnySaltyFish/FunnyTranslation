@@ -1,14 +1,14 @@
 package com.funny.translation.translate
 
 abstract class CoreTranslationTask(
-    var sourceString: String = "",
     var sourceLanguage: Language = Language.AUTO,
     var targetLanguage: Language = Language.ENGLISH
-) : TranslationEngine {
+) : TranslationEngine
+
+abstract class CoreTextTranslationTask(
+    var sourceString: String = "",
+) : CoreTranslationTask() {
     val result = TranslationResult()
-//    abstract val languageMapping : Map<Language, String>
-//    abstract val supportLanguages: List<Language>
-//    abstract val name : String
     @Throws(TranslationException::class)
     abstract fun getBasicText(url: String): String
     @Throws(TranslationException::class)

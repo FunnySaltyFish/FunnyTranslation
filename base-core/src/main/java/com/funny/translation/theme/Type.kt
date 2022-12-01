@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.theme
+package com.funny.translation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

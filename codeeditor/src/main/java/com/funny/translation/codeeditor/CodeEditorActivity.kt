@@ -10,7 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.translation.codeeditor.ui.AppNavigation
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.ui.theme.TransTheme
+import com.funny.translation.theme.TransTheme
 
 class CodeEditorActivity : ComponentActivity() {
     private val TAG = "CodeEditorActivity"

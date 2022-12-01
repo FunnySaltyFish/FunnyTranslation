@@ -12,10 +12,10 @@ import kotlin.reflect.KClass
 
 private const val TAG = "JsTranslateTask"
 
-class JsTranslateTask(
+class JsTranslateTaskText(
     val jsEngine: JsEngine,
 ):
-    CoreTranslationTask(){
+    CoreTextTranslationTask(){
 
     override val languageMapping: Map<Language, String>
         get() = mapOf()
@@ -28,7 +28,7 @@ class JsTranslateTask(
     override val name: String
         get() = jsEngine.jsBean.fileName
 
-    override val taskClass: KClass<out CoreTranslationTask>
+    override val taskClass: KClass<out CoreTextTranslationTask>
         get() = this::class
 
     override fun getBasicText(url: String): String {

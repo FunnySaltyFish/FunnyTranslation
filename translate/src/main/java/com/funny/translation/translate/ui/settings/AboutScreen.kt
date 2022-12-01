@@ -25,7 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
-import com.funny.translation.translate.ui.theme.isLight
+import com.funny.translation.theme.isLight
 import com.funny.translation.translate.ui.widget.LoadingContent
 
 @Composable

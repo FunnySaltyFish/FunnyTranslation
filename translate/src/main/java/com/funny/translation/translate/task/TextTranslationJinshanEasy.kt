@@ -5,7 +5,7 @@ import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.TranslationException
 import com.funny.translation.Consts
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.helper.buildMarkdown
 import org.json.JSONException
 import org.json.JSONObject
@@ -17,8 +17,8 @@ import java.security.MessageDigest
 import java.util.*
 import kotlin.math.min
 
-class TranslationJinshanEasy() :
-    BasicTranslationTask(), TranslationEngine by TranslationEngines.Jinshan {
+class TextTranslationJinshanEasy() :
+    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.Jinshan {
 
     companion object{
         const val TAG = "TranslationJinshanEasy"

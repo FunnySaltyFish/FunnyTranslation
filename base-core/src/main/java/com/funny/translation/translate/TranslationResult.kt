@@ -42,6 +42,3 @@ data class Translation(
     var phoneticNotation: String? = null,//注音
     var partOfSpeech: String? = null //词性
 )
-
-//艹，就因为这个折腾了一天
-val EmptyTranslation = Translation("")

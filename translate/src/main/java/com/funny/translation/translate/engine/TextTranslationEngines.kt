@@ -1,18 +1,17 @@
 package com.funny.translation.translate.engine
 
-import com.funny.translation.translate.CoreTranslationTask
-import com.funny.translation.translate.Language
-import com.funny.translation.translate.TranslationEngine
-import com.funny.translation.translate.allLanguages
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.R
+import com.funny.translation.translate.*
 import com.funny.translation.translate.task.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 private fun stringResource(id : Int) = FunnyApplication.resources.getString(id)
 
-sealed class TranslationEngines : TranslationEngine{
+abstract class TextTranslationEngine: TranslationEngine {
+    abstract override val taskClass: KClass<out CoreTextTranslationTask>
+}
+
+sealed class TextTranslationEngines : TextTranslationEngine() {
     override var selected: Boolean = false
     override val supportLanguages: List<Language>
         get() = languageMapping.map { it.key }
@@ -21,7 +20,7 @@ sealed class TranslationEngines : TranslationEngine{
         sourceString: String = "",
         sourceLanguage: Language = Language.AUTO,
         targetLanguage: Language = Language.ENGLISH
-    ) : CoreTranslationTask {
+    ) : CoreTextTranslationTask {
         val instance = taskClass.createInstance()
         instance.sourceString = sourceString
         instance.sourceLanguage = sourceLanguage
@@ -29,9 +28,8 @@ sealed class TranslationEngines : TranslationEngine{
         return instance
     }
 
-    object BaiduNormal : TranslationEngines() {
-        override val name: String
-            get() = stringResource(R.string.engine_baidu)
+    object BaiduNormal : TextTranslationEngines() {
+        override val name: String = stringResource(R.string.engine_baidu)
 
         override val languageMapping: HashMap<Language, String>
             get() = hashMapOf(
@@ -51,11 +49,10 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.CHINESE_YUE to "yue"
             )
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationBaiduNormal::class
+        override val taskClass: KClass<out CoreTextTranslationTask> = TextTranslationBaiduNormal::class
     }
 
-    object Jinshan : TranslationEngines() {
+    object Jinshan : TextTranslationEngines() {
         override val name: String
             get() = stringResource(R.string.engine_jinshan)
 
@@ -75,14 +72,13 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.ITALIAN to "it"
             )
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationJinshanEasy::class
+        override val taskClass: KClass<out CoreTextTranslationTask> = TextTranslationJinshanEasy::class
 
         override val supportLanguages: List<Language>
             get() = listOf(Language.AUTO, Language.CHINESE, Language.ENGLISH)
     }
 
-    object GoogleNormal : TranslationEngines() {
+    object GoogleNormal : TextTranslationEngines() {
         override val languageMapping: Map<Language, String>
             get() = mapOf(
                 Language.AUTO to "auto",
@@ -102,11 +98,11 @@ sealed class TranslationEngines : TranslationEngine{
         override val name: String
             get() = stringResource(R.string.engine_google)
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationGoogleNormal::class
+        override val taskClass: KClass<out CoreTextTranslationTask>
+            get() = TextTranslationGoogleNormal::class
     }
 
-    object Youdao : TranslationEngines(){
+    object Youdao : TextTranslationEngines(){
         override val name: String
             get() = FunnyApplication.resources.getString(R.string.engine_youdao_normal)
 
@@ -126,11 +122,11 @@ sealed class TranslationEngines : TranslationEngine{
                 Language.ITALIAN to "it"
             )
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationYouDaoNormal::class
+        override val taskClass: KClass<out CoreTextTranslationTask>
+            get() = TextTranslationYouDaoNormal::class
     }
 
-    object BiggerText : TranslationEngines(){
+    object BiggerText : TextTranslationEngines(){
         override val name: String
             get() = stringResource(R.string.engine_bigger_text)
 
@@ -140,11 +136,11 @@ sealed class TranslationEngines : TranslationEngine{
         override val supportLanguages: List<Language>
             get() = arrayListOf(Language.CHINESE, Language.ENGLISH, Language.AUTO)
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationBiggerText::class
+        override val taskClass: KClass<out CoreTextTranslationTask>
+            get() = TextTranslationBiggerText::class
     }
 
-    object Bv2Av : TranslationEngines(){
+    object Bv2Av : TextTranslationEngines(){
         override val name: String
             get() = stringResource(R.string.engine_bv2av)
 
@@ -154,11 +150,11 @@ sealed class TranslationEngines : TranslationEngine{
         override val supportLanguages: List<Language>
             get() = allLanguages
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationBV2AV::class
+        override val taskClass: KClass<out CoreTextTranslationTask>
+            get() = TextTranslationBV2AV::class
     }
 
-    object EachText : TranslationEngines() {
+    object EachText : TextTranslationEngines() {
         override val languageMapping: Map<Language, String>
             get() = mapOf()
 
@@ -168,8 +164,8 @@ sealed class TranslationEngines : TranslationEngine{
         override val supportLanguages: List<Language>
             get() = arrayListOf(Language.CHINESE, Language.ENGLISH, Language.AUTO)
 
-        override val taskClass: KClass<out CoreTranslationTask>
-            get() = TranslationEachText::class
+        override val taskClass: KClass<out CoreTextTranslationTask>
+            get() = TextTranslationEachText::class
     }
 
 }

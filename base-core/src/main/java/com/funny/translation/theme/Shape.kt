@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.theme
+package com.funny.translation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

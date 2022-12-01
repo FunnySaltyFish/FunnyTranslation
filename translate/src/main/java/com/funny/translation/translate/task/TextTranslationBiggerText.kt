@@ -4,11 +4,11 @@ import android.preference.PreferenceManager
 import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.TranslationException
 import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.utils.FunnyBiggerText
 
-class TranslationBiggerText() :
-    BasicTranslationTask(), TranslationEngine by TranslationEngines.BiggerText{
+class TextTranslationBiggerText() :
+    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.BiggerText{
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {

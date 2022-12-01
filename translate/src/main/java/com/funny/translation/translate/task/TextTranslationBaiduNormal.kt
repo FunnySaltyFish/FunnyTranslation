@@ -5,11 +5,11 @@ import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator.BASE_URL
 import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.TranslationException
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import org.json.JSONObject
 
-class TranslationBaiduNormal :
-    BasicTranslationTask(), TranslationEngine by TranslationEngines.BaiduNormal {
+class TextTranslationBaiduNormal :
+    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.BaiduNormal {
     companion object{
         var TAG = "BaiduTranslation"
     }

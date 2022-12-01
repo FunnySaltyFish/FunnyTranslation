@@ -5,12 +5,12 @@ import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.TranslationException
 import com.funny.translation.Consts
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import org.json.JSONArray
 import org.json.JSONException
 
-class TranslationGoogleV2() :
-    BasicTranslationTask(), TranslationEngine by TranslationEngines.GoogleNormal{
+class TextTranslationGoogleV2() :
+    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.GoogleNormal{
 
     companion object{
         private const val TAG = "TransGoogle"
