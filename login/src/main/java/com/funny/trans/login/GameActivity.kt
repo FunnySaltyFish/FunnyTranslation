@@ -16,7 +16,7 @@ import com.funny.data_saver.core.LocalDataSaver
 import com.funny.trans.login.ui.GameScreen
 import com.funny.trans.login.ui.GameViewModel
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.ui.theme.TransTheme
+import com.funny.translation.theme.TransTheme
 import com.smarx.notchlib.NotchScreenManager
 
 class GameActivity : AppCompatActivity() {

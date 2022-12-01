@@ -8,7 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import java.io.IOException
 
 object AudioPlayer {
@@ -67,7 +67,7 @@ object AudioPlayer {
     }
 
     private val languageMapping: Map<Language, String>
-        get() = TranslationEngines.BaiduNormal.languageMapping.apply {
+        get() = TextTranslationEngines.BaiduNormal.languageMapping.apply {
             this[Language.CHINESE_YUE] = "cte"
         }
 

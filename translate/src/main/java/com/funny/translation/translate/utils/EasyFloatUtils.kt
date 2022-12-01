@@ -23,7 +23,7 @@ import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
@@ -157,7 +157,7 @@ object EasyFloatUtils {
                         val sourceLanguage = findLanguageById(spinnerSource.selectedItemPosition)
                         val targetLanguage = findLanguageById(spinnerTarget.selectedItemPosition)
                         val task = TranslateUtils.createTask(
-                            TranslationEngines.BaiduNormal,
+                            TextTranslationEngines.BaiduNormal,
                             it.sourceString!!,
                             sourceLanguage,
                             targetLanguage

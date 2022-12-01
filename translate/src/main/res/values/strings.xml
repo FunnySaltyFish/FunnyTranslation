@@ -87,4 +87,5 @@
     <string name="setting_trans_page_input_bottom">输入栏置底</string>
     <string name="avatar">头像</string>
     <string name="send_report">发送报告</string>
+    <string name="engine_tencent">腾讯翻译</string>
 </resources>

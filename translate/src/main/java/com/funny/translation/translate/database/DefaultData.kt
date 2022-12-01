@@ -5,7 +5,7 @@ import com.funny.translation.helper.readAssets
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.engine.TranslationEngines
+import com.funny.translation.translate.engine.TextTranslationEngines
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,12 +38,12 @@ object DefaultData {
     }
 
     val bindEngines = listOf(
-        TranslationEngines.BaiduNormal,
-        TranslationEngines.Youdao,
-        TranslationEngines.Jinshan,
+        TextTranslationEngines.BaiduNormal,
+        TextTranslationEngines.Youdao,
+        TextTranslationEngines.Jinshan,
 
-        TranslationEngines.BiggerText,
-        TranslationEngines.EachText,
-        TranslationEngines.Bv2Av
+        TextTranslationEngines.BiggerText,
+        TextTranslationEngines.EachText,
+        TextTranslationEngines.Bv2Av
     )
 }

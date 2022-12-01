@@ -211,6 +211,20 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
             updatePasswordType = { vm.passwordType = it }
         )
         Spacer(modifier = Modifier.height(12.dp))
+
+        val enabledLogin by remember {
+            derivedStateOf {
+                if (vm.shouldVerifyEmailWhenLogin) {
+                    vm.isValidUsername && vm.finishValidateFingerPrint && vm.isValidEmail && vm.verifyCode.length == 6
+                } else {
+                    when(vm.passwordType){
+                        "1" -> vm.isValidUsername && vm.finishValidateFingerPrint
+                        "2" -> vm.isValidUsername && vm.password.length >= 8 && vm.password.length <= 16
+                        else -> false
+                    }
+                }
+            }
+        }
         Button(
             onClick = {
                 vm.login(
@@ -224,16 +238,7 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
                 )
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled =
-                if (vm.shouldVerifyEmailWhenLogin) {
-                    vm.isValidUsername && vm.finishValidateFingerPrint && vm.isValidEmail && vm.verifyCode.length == 6
-                } else {
-                    when(vm.passwordType){
-                        "1" -> vm.isValidUsername && vm.finishValidateFingerPrint
-                        "2" -> vm.isValidUsername && vm.password.length >= 8 && vm.password.length <= 16
-                        else -> false
-                    }
-                }
+            enabled = enabledLogin
         ) {
             Text("登录")
         }

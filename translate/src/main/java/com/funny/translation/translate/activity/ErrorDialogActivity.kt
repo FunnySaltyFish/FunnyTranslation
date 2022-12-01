@@ -22,7 +22,7 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
-import com.funny.translation.translate.ui.theme.TransTheme
+import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.R
 import com.funny.translation.translate.extentions.trimLineStart
 import kotlinx.coroutines.Dispatchers

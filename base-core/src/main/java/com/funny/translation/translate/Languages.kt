@@ -23,11 +23,13 @@ enum class Language(val id : Int,var displayText : String = "") {
     ;
 
     val selectedKey get() = this.name + "_selected"
+    val imgSelectedKey get() = this.name + "_img_selected"
+
 }
 
-fun findLanguageById(id : Int) = try {
+fun findLanguageById(id : Int) = if(id in allLanguages.indices) {
     allLanguages[id]
-}catch (e:Exception){
+} else {
     Language.AUTO
 }
 

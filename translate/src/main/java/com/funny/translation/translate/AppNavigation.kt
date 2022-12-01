@@ -33,8 +33,8 @@ import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.UserProfileScreen
-import com.funny.translation.translate.ui.theme.TransTheme
-import com.funny.translation.translate.ui.theme.isLight
+import com.funny.translation.theme.TransTheme
+import com.funny.translation.theme.isLight
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.google.accompanist.navigation.animation.AnimatedNavHost

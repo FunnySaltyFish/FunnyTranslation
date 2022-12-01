@@ -120,7 +120,6 @@ dependencies {
 
     implementation 'com.github.princekin-f:EasyFloat:2.0.4'
     implementation 'com.github.thomhurst:RoundImageView:1.0.2'
-//    implementation "com.github.skydoves:powerspinner:1.1.9"
     implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     implementation("org.burnoutcrew.composereorderable:reorderable:0.7.4")
 //    implementation "com.github.leavesCZY:Matisse:0.0.6"
@@ -128,6 +127,8 @@ dependencies {
     // 图片选择器
     implementation("cn.qhplus.emo:photo-coil:0.1.0")
 
+    // To recognize Latin script
+    implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
 
     // Google Ad
 //    implementation 'com.google.android.gms:play-services-ads:21.1.0'
