@@ -65,7 +65,7 @@
         <activity
             android:name=".activity.WebViewActivity"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ErrorDialogActivity"
             android:label="@string/crash"
