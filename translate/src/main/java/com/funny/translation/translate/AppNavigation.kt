@@ -37,6 +37,7 @@ import com.funny.translation.theme.TransTheme
 import com.funny.translation.theme.isLight
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.funny.translation.translate.ui.widget.MarkdownText
+import com.funny.translation.ui.SystemBarSettings
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
@@ -100,26 +101,7 @@ fun AppNavigation(
         LocalDataSaver provides DataSaverUtils
     ) {
         TransTheme {
-            val systemUiController = rememberSystemUiController()
-            val useDarkIcons = MaterialTheme.colorScheme.isLight
-            val navigationBarColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
-            SideEffect {
-                systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
-                systemUiController.setNavigationBarColor(
-                    if (!useDarkIcons) Color.Transparent else navigationBarColor,
-                    darkIcons = useDarkIcons
-                )
-            }
-
-            LaunchedEffect(AppConfig.sHideBottomNav.value) {
-                systemUiController.isNavigationBarVisible =
-                    !AppConfig.sHideBottomNav.value
-            }
-
-            LaunchedEffect(AppConfig.sHideStatusBar.value) {
-                systemUiController.isStatusBarVisible = !AppConfig.sHideStatusBar.value
-            }
-
+            SystemBarSettings()
             Scaffold(
                 bottomBar = {
                     val currentScreen = navController.currentScreenAsState()

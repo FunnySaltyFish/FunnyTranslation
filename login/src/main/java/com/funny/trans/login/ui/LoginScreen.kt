@@ -279,7 +279,8 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         BiometricUtils.setFingerPrint(
                             context as AppCompatActivity,
-                            data = vm.loginData,
+                            username = vm.username,
+                            did = AppConfig.androidId,
                             onNotSupport = { msg: String -> context.toastOnUi(msg) },
                             onFail = { context.toastOnUi("认证失败！") },
                             onSuccess = { encryptedInfo, iv ->
