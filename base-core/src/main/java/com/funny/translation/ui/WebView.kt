@@ -16,7 +16,10 @@
 
 package com.funny.translation.ui
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -234,7 +237,31 @@ open class AccompanistWebViewClient : WebViewClient() {
         request?.let {
             state.content = state.content.withUrl(it.url.toString())
         }
-        return true
+
+        val url = request?.url?.toString() ?: return true
+
+        if (
+            url.startsWith("wechat://") || url.startsWith("weixin://") || url.startsWith("alipays://") || (url.startsWith("alipay://")) || url.startsWith("afd://")
+        ) {
+            val intent = Intent()
+            intent.action = Intent.ACTION_VIEW
+            intent.data = Uri.parse(url)
+            view?.context?.startActivity(intent)
+            view?.goBack()
+            return true
+        }else if (url.startsWith("https://wx.tenpay.com")) {
+            // H5微信支付要用，不然说"商家参数格式有误"
+            val extraHeaders = HashMap<String, String>()
+            extraHeaders["Referer"] = "https://afdian.net/"
+            view?.loadUrl(url, extraHeaders)
+            return true
+        }
+
+        return false
+    }
+
+    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        return super.shouldOverrideUrlLoading(view, url)
     }
 }
 
@@ -283,7 +310,7 @@ sealed class WebContent {
     }
 }
 
-internal fun WebContent.withUrl(url: String) = when (this) {
+fun WebContent.withUrl(url: String) = when (this) {
     is WebContent.Url -> copy(url = url)
     else -> WebContent.Url(url)
 }
