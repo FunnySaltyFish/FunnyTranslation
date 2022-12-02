@@ -136,7 +136,7 @@ dependencies {
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")
     implementation project(path: ":login")
-    implementation project(path: ":jet_setting_core")
+    implementation project(path: ':jet-setting-core')
     implementation project(path: ":bottom-navigation")
 
     testImplementation 'junit:junit:4.13.2'

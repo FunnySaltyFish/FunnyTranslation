@@ -29,7 +29,7 @@ include ":language-base"
 include ":language-universal"
 include ':base-core'
 include ':translate'
-include ':jet_setting_core'
+include ':jet-setting-core'
 //include ':float_window'
 include ':bottom-navigation'
 include ':login'
