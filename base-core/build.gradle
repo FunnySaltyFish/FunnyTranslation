@@ -131,8 +131,8 @@ dependencies {
     api "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     api "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     api "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
+    api project(path: ':jet-setting-core')
 
-    api project(path: ":jet_setting_core")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
