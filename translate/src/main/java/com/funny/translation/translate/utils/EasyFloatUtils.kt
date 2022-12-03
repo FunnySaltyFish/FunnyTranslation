@@ -23,6 +23,7 @@ import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.sign.SignUtils
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat
@@ -43,12 +44,14 @@ object EasyFloatUtils {
     private const val TAG_TRANS_WINDOW = "window"
     private const val TAG = "EasyFloat"
     private var vibrating = false
-    private var initTransWindow = false
-    private var initFloatBall = false
+    var initTransWindow = false
+    var initFloatBall = false
 
     private var translateConfigFlow =
         MutableStateFlow(TranslationConfig("", Language.AUTO, Language.CHINESE))
     private var translateJob: Job? = null
+
+    private var inputTextFlow = MutableStateFlow("")
 
     fun initScreenSize(activity: Activity) {
         val displayMetrics = DisplayMetrics()
@@ -61,6 +64,15 @@ object EasyFloatUtils {
         view.layoutParams.width = (AppConfig.SCREEN_WIDTH * 0.9).toInt()
 
         val edittext = view.findViewById<EditText>(R.id.float_window_input)
+
+        GlobalScope.launch {
+            inputTextFlow.collect {
+                withContext(Dispatchers.Main){
+                    edittext.setText(it)
+                    edittext.setSelection(it.length)
+                }
+            }
+        }
 
         val spinnerSource: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_source).apply {
@@ -183,6 +195,7 @@ object EasyFloatUtils {
                     }
                 }.onFailure {
                     withContext(Dispatchers.Main) {
+                        it.printStackTrace()
                         resultText.text = FunnyApplication.ctx.resources.getString(R.string.trans_error).format(it)
                     }
                 }
@@ -215,15 +228,15 @@ object EasyFloatUtils {
                 Intent().apply {
                     action = Intent.ACTION_VIEW
                     data = Uri.parse("funny://translation/translate?text=${edittext.text}&sourceId=${spinnerSource.selectedItemPosition}&targetId=${spinnerTarget.selectedItemPosition}")
-                    flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
-                }.also {
+                    flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK
+                }.let {
                     context.startActivity(it)
                 }
             }
         }
     }
 
-    private fun showTransWindow(){
+     fun showTransWindow(){
         if(!initTransWindow){
             EasyFloat.with(FunnyApplication.ctx)
                 .setTag(TAG_TRANS_WINDOW)
@@ -240,6 +253,11 @@ object EasyFloatUtils {
         }else{
             EasyFloat.show(TAG_TRANS_WINDOW)
         }
+    }
+
+    fun startTranslate(sourceString: String, sourceLanguage: Language, targetLanguage: Language){
+        inputTextFlow.value = sourceString
+        translateConfigFlow.value = translateConfigFlow.value.copy(sourceString, sourceLanguage, targetLanguage)
     }
 
     @SuppressLint("MissingPermission")
@@ -260,7 +278,6 @@ object EasyFloatUtils {
                 .setLayout(R.layout.layout_float_ball) { view ->
                     view.findViewById<RoundImageView>(R.id.float_ball_image).apply {
                         setOnClickListener {
-                            Log.d(TAG, "_showFloatBall: clip:${ClipBoardUtil.read(FunnyApplication.ctx)}")
                             showTransWindow()
                         }
                     }

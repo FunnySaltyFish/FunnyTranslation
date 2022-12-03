@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.DateUtils
+import com.funny.translation.ui.SystemBarSettings
 
 
 private val LightColors = lightColorScheme(
@@ -97,6 +98,7 @@ fun TransTheme(
                 SpringFestivalColorPalette
             else LightColors
     }
+//    SystemBarSettings()
     MaterialTheme(
         colorScheme = colorScheme,
         content = content

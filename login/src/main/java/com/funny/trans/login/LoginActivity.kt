@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
 import com.funny.data_saver.core.LocalDataSaver
-import com.funny.trans.login.ui.LoginScreen
+import com.funny.trans.login.ui.LoginNavigation
+import com.funny.trans.login.ui.LoginPage
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.BiometricUtils
@@ -47,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
         setContent {
             CompositionLocalProvider(LocalDataSaver provides DataSaverUtils) {
                 TransTheme {
-                    LoginScreen(onLoginSuccess = {
+                    LoginNavigation(onLoginSuccess = {
                         Log.d(TAG, "登录成功: 用户: $it")
                         DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, it.jwt_token)
                         if(it.isValid()) AppConfig.userInfo.value = it

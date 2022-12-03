@@ -76,6 +76,7 @@
             android:background="@drawable/bg_edittext"
             android:maxLines="1"
             android:textColor="@color/white"
+            android:textCursorDrawable="@drawable/item_white_cursor"
             app:clearButtonDrawable="@drawable/ic_clear_button"
             app:clearButtonMode="whileEditing"
             />

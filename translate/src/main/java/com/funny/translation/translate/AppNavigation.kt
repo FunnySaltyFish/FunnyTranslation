@@ -101,7 +101,6 @@ fun AppNavigation(
         LocalDataSaver provides DataSaverUtils
     ) {
         TransTheme {
-            SystemBarSettings()
             Scaffold(
                 bottomBar = {
                     val currentScreen = navController.currentScreenAsState()

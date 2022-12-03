@@ -15,7 +15,7 @@ fun SystemBarSettings() {
     val useDarkIcons = MaterialTheme.colorScheme.isLight
     val navigationBarColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
     SideEffect {
-        systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
+        systemUiController.setStatusBarColor(Color.Transparent, darkIcons = useDarkIcons)
         systemUiController.setNavigationBarColor(
             if (!useDarkIcons) Color.Transparent else navigationBarColor,
             darkIcons = useDarkIcons
