@@ -16,7 +16,7 @@ object ClipBoardUtil {
      * @return
      */
     fun read(ctx: Context): String {
-        val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return ""
         if (manager.hasPrimaryClip() && manager.primaryClip!!.itemCount > 0) {
             val addedText = manager.primaryClip!!.getItemAt(0).text
             val addedTextString = addedText.toString()
@@ -30,7 +30,7 @@ object ClipBoardUtil {
     fun copy(ctx: Context, content: String?) {
         //获取剪贴板管理器：
         // 获取系统剪贴板
-        val clipboard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
         // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
         val clipData = ClipData.newPlainText(null, content)
         // 把数据集设置（复制）到剪贴板
@@ -45,7 +45,7 @@ object ClipBoardUtil {
      * 清空剪切板
      */
     fun clear(ctx: Context) {
-        val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
         try {
             manager.setPrimaryClip(manager.primaryClip!!)
             manager.setPrimaryClip(ClipData.newPlainText("", ""))

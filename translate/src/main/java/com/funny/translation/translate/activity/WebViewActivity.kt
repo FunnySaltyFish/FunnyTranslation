@@ -8,17 +8,13 @@ import android.os.Bundle
 import android.webkit.*
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -50,9 +46,10 @@ class WebViewActivity : AppCompatActivity() {
 
         setContent {
             TransTheme {
-                SystemBarSettings()
                 if (url.isNotEmpty()){
                     WebViewPage(url = url)
+                } else {
+                    Text("当前没有打开的页面~", Modifier.fillMaxSize().wrapContentSize(Center))
                 }
             }
         }
@@ -76,7 +73,7 @@ fun WebViewPage(url: String) {
             )
         }
 
-        Box(Modifier.fillMaxWidth()) {
+        Surface(Modifier.fillMaxWidth()) {
             webViewState.pageTitle?.let {
                 Text(text = if (it.length <= 16) it else it.substring(0, 16) + "...", modifier = Modifier
                     .fillMaxWidth()

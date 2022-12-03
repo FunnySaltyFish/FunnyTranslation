@@ -49,7 +49,6 @@ private const val TAG = "SettingScreen"
 
 @Composable
 fun SettingsScreen() {
-    val systemUiController = rememberSystemUiController()
     val navController = LocalNavController.current
     val context = LocalContext.current
 

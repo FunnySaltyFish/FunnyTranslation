@@ -13,9 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,32 +27,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.funny.trans.login.GameActivity
 import com.funny.trans.login.R
-import com.funny.translation.bean.UserBean
-import com.funny.translation.helper.UserUtils
 import com.funny.translation.AppConfig
+import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.BiometricUtils
+import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private const val WIDTH_FRACTION = 0.8f
+internal const val WIDTH_FRACTION = 0.8f
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun LoginScreen(
+fun LoginPage(
+    navController: NavController,
     onLoginSuccess: (UserBean) -> Unit,
 ) {
     val vm: LoginViewModel = viewModel()
-    val infiniteTransition = rememberInfiniteTransition()
     val activityLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         Log.d("GameActivityResult", "LoginScreen: data: ${result.data?.extras}")
         result.data?.getStringExtra("password")?.let {
@@ -62,36 +63,9 @@ fun LoginScreen(
         }
     }
 
-    val systemUiController = rememberSystemUiController()
-    val useDarkIcons = isSystemInDarkTheme()
-    LaunchedEffect(key1 = systemUiController) {
-        systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
-    }
-
-    val offset by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.7f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = TweenSpec(
-                durationMillis = 10000,
-                easing = FastOutSlowInEasing
-            ),
-            repeatMode = RepeatMode.Reverse,
-        )
-    )
-
     Column(
-        Modifier
-            .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    0f to MaterialTheme.colorScheme.surface,
-                    offset to MaterialTheme.colorScheme.tertiaryContainer,
-                    1f to MaterialTheme.colorScheme.surface,
-                )
-            )
-            .statusBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        Modifier.fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -132,7 +106,7 @@ fun LoginScreen(
             verticalAlignment = Alignment.Top
         ) { page ->
             when (page) {
-                0 -> LoginForm(vm, onLoginSuccess = onLoginSuccess)
+                0 -> LoginForm(navController, vm, onLoginSuccess = onLoginSuccess)
                 1 -> RegisterForm(vm, activityLauncher, onRegisterSuccess = { changePage(0) })
             }
         }
@@ -140,25 +114,21 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
+fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
         Modifier.fillMaxWidth(WIDTH_FRACTION),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        InputUserName(vm)
+        InputUserName(vm, if (vm.passwordType == "1") ImeAction.Done else ImeAction.Next)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.shouldVerifyEmailWhenLogin){
-            InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, shouldInputEmail = true, initialSent = true)
+            InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, initialSent = true)
             Spacer(modifier = Modifier.height(12.dp))
         }
         if (vm.passwordType == "2"){
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
-                Text(text = "长度8-16位，包含大小写字母和数字")
-            }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), label = {
-                Text(text = "密码")
-            })
+            InputPassword(vm = vm, readonly = false)
         } else CompletableButton(
             onClick = {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -212,6 +182,7 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
         )
         Spacer(modifier = Modifier.height(12.dp))
 
+        // 因为下面的表达式变化速度快过UI的变化速度，为了减少重组次数，此处使用 derivedStateOf
         val enabledLogin by remember {
             derivedStateOf {
                 if (vm.shouldVerifyEmailWhenLogin) {
@@ -219,7 +190,7 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
                 } else {
                     when(vm.passwordType){
                         "1" -> vm.isValidUsername && vm.finishValidateFingerPrint
-                        "2" -> vm.isValidUsername && vm.password.length >= 8 && vm.password.length <= 16
+                        "2" -> vm.isValidUsername && UserUtils.isValidPassword(vm.password)
                         else -> false
                     }
                 }
@@ -242,6 +213,41 @@ fun LoginForm(vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
         ) {
             Text("登录")
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            TextButton(
+                onClick = {
+                    navController.navigate(LoginRoute.FindUsernamePage.route){
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(LoginRoute.LoginPage.route){
+                            inclusive = false
+                        }
+                    }
+                }
+            ) {
+                Text("忘记用户名？")
+            }
+            TextButton(
+                onClick = {
+                    navController.navigate(LoginRoute.ResetPasswordPage.route){
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(LoginRoute.LoginPage.route){
+                            inclusive = false
+                        }
+                    }
+                }
+            ) {
+                Text("忘记密码？")
+            }
+        }
     }
 }
 
@@ -260,9 +266,7 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.passwordType == "2"){
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
-                Text(text = "长度8-16位，包含大小写字母和数字")
-            }, label = { Text(text = "密码") }, readOnly = !AppConfig.lowerThanM && gameInputMode)
+            InputPassword(vm = vm, readonly = !AppConfig.lowerThanM && gameInputMode)
             Spacer(modifier = Modifier.height(8.dp))
             if (gameInputMode) {
                 CompletableButton(
@@ -308,6 +312,14 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
             }
         }
         Spacer(modifier = Modifier.height(12.dp))
+        val enableRegister by remember {
+            derivedStateOf {
+                if(vm.passwordType == "1")
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.finishSetFingerPrint
+                else
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(vm.password)
+            }
+        }
         Button(
             onClick = {
                 vm.register(
@@ -321,11 +333,7 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
                 )
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled =
-                if(vm.passwordType == "1")
-                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.finishSetFingerPrint
-                else
-                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.password.length >= 8
+            enabled = enableRegister
         ) {
             Text("注册")
         }
@@ -366,7 +374,7 @@ fun CompletableButton(
 }
 
 @Composable
-fun InputUserName(vm: LoginViewModel) {
+fun InputUserName(vm: LoginViewModel, imeAction: ImeAction = ImeAction.Next) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = vm.username,
@@ -374,21 +382,26 @@ fun InputUserName(vm: LoginViewModel) {
         isError = vm.username != "" && !vm.isValidUsername,
         label = { Text(text = "用户名") },
         placeholder = { Text("3-16位，无特殊符号") },
-        singleLine = true
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = imeAction
+        ),
     )
 }
 
 @Composable
-private fun InputEmailWrapper(modifier: Modifier, vm: LoginViewModel, shouldInputEmail: Boolean = true, initialSent: Boolean = false) {
+private fun InputEmailWrapper(
+    modifier: Modifier, vm: LoginViewModel, initialSent: Boolean = false
+) {
     val context = LocalContext.current
     InputEmail(
+        modifier = modifier,
         value = vm.email,
         onValueChange = { vm.email = it },
         isError = vm.email != "" && !vm.isValidEmail,
-        modifier = modifier,
         verifyCode = vm.verifyCode,
         onVerifyCodeChange = { vm.verifyCode = it },
-        shouldInputEmail = shouldInputEmail,
         initialSent = initialSent,
         onClick = { vm.sendVerifyEmail(context) }
     )
@@ -402,7 +415,6 @@ fun InputEmail(
     isError: Boolean = false,
     verifyCode: String,
     onVerifyCodeChange: (String) -> Unit = {},
-    shouldInputEmail: Boolean,
     initialSent: Boolean,
     onClick: () -> Unit
 ) {
@@ -416,7 +428,8 @@ fun InputEmail(
             placeholder = { Text("请输入主流的合法邮箱") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
             ),
             trailingIcon = {
                 CountDownTimeButton(
@@ -438,10 +451,27 @@ fun InputEmail(
             placeholder = { Text("请输入收到的验证码") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
             )
         )
     }
+}
+
+@Composable
+fun InputPassword(
+    vm: LoginViewModel,
+    readonly: Boolean
+) {
+    val isPwdError by remember {
+        derivedStateOf { vm.password != "" && !UserUtils.isValidPassword(vm.password) }
+    }
+    OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
+        Text(text = "长度8-16位，包含大小写字母和数字")
+    }, label = { Text(text = "密码") }, readOnly = readonly, isError = isPwdError, keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Password,
+        imeAction = ImeAction.Next
+    ))
 }
 
 /**

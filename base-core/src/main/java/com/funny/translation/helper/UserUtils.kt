@@ -36,6 +36,22 @@ interface UserService {
         @Field("email") email: String
     ): CommonData<Unit>
 
+    // sendFindUsernameEmail
+    @POST("user/send_find_username_email")
+    @FormUrlEncoded
+    suspend fun sendFindUsernameEmail(
+        @Field("email") email: String
+    ): CommonData<Unit>
+
+    // sendResetPasswordEmail
+    @POST("user/send_reset_password_email")
+    @FormUrlEncoded
+    suspend fun sendResetPasswordEmail(
+        @Field("username") username: String,
+        @Field("email") email: String
+    ): CommonData<Unit>
+
+
     @POST("user/register")
     @FormUrlEncoded
     suspend fun register(
@@ -79,6 +95,23 @@ interface UserService {
         @Body body: MultipartBody
     ): CommonData<String>
 
+    // resetPassword
+    @POST("user/reset_password")
+    @FormUrlEncoded
+    suspend fun resetPassword(
+        @Field("username") username: String,
+        @Field("password") password: String,
+        @Field("code") code: String
+    ): CommonData<Unit>
+
+    // findUsername
+    @POST("user/find_username_by_email")
+    @FormUrlEncoded
+    suspend fun findUsername(
+        @Field("email") email: String,
+        @Field("code") code: String
+    ): CommonData<List<String>>
+
 }
 
 object UserUtils {
@@ -105,7 +138,14 @@ object UserUtils {
     }
 
     // 密码校验
-    // 长度8-16位，包含大小写字母和数字，可以包含
+    // 长度8-16位，包含且必须至少包含大小写字母和数字，可以包含 [].#*
+    fun isValidPassword(password: String): Boolean {
+        if (password.length < 8 || password.length > 16) {
+            return false
+        }
+        return "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d\\[\\]\\.#*]{8,16}\$".toRegex().matches(password)
+    }
+
 
     /**
      * 注册
@@ -151,6 +191,20 @@ object UserUtils {
 
     suspend fun sendVerifyEmail(username: String, email: String) = withContext(Dispatchers.IO){
         val sendData = userService.sendVerifyEmail(username, email)
+        if (sendData.code != 50) {
+            throw Exception("发送验证码失败！（${sendData.error_msg}）")
+        }
+    }
+
+    suspend fun sendResetPasswordEmail(username: String, email: String) = withContext(Dispatchers.IO){
+        val sendData = userService.sendResetPasswordEmail(username, email)
+        if (sendData.code != 50) {
+            throw Exception("发送验证码失败！（${sendData.error_msg}）")
+        }
+    }
+
+    suspend fun sendFindUsernameEmail(email: String) = withContext(Dispatchers.IO){
+        val sendData = userService.sendFindUsernameEmail(email)
         if (sendData.code != 50) {
             throw Exception("发送验证码失败！（${sendData.error_msg}）")
         }
@@ -222,6 +276,22 @@ object UserUtils {
             }
         }
         return ""
+    }
+
+    suspend fun resetPassword(username: String, password: String, verifyCode: String) = withContext(Dispatchers.IO){
+        val resetData = userService.resetPassword(username, password, verifyCode)
+        if (resetData.code != 50) {
+            throw Exception(resetData.error_msg ?: "未知错误")
+        }
+        return@withContext resetData.data
+    }
+
+    suspend fun findUsername(email: String, verifyCode: String) = withContext(Dispatchers.IO){
+        val findData = userService.findUsername(email, verifyCode)
+        if (findData.code != 50) {
+            throw Exception(findData.error_msg ?: "未知错误")
+        }
+        return@withContext findData.data
     }
 }
 

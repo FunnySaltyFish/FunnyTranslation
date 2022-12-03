@@ -30,8 +30,6 @@ include ":language-universal"
 include ':base-core'
 include ':translate'
 include ':jet-setting-core'
-//include ':float_window'
 include ':bottom-navigation'
 include ':login'
-//include ':photo'
-//include ':fs'
+

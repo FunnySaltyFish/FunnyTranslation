@@ -18,17 +18,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.Consts
-import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.network.NetworkReceiver
-import com.funny.translation.sign.SignUtils
 import com.funny.translation.translate.utils.EasyFloatUtils
-import com.funny.translation.translate.utils.SortResultUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +49,7 @@ class TransActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "TransActivity"
+        var initialized = false
     }
 
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
@@ -65,7 +62,6 @@ class TransActivity : AppCompatActivity() {
 
         registerNetworkReceiver()
         getIntentData(intent)
-        initLanguageDisplay(resources)
 
         // 状态栏沉浸
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -82,28 +78,23 @@ class TransActivity : AppCompatActivity() {
             }
         }
 
-        // 做一些耗时的后台任务
-        lifecycleScope.launch(Dispatchers.IO) {
-            UserUtils.refreshJwtToken()
-            // MobileAds.initialize(context) {}
-            SignUtils.loadJs()
-            SortResultUtils.init()
-            activityViewModel.checkUpdate(context)
-            activityViewModel.getNotice()
-            ApkUtil.deleteOldApk(
-                context,
-                context.externalCache.absolutePath + "/update_apk.apk"
-            )
-        }
+        if (!initialized) {
+            // 做一些耗时的后台任务
+            lifecycleScope.launch(Dispatchers.IO) {
+                UserUtils.refreshJwtToken()
+                // MobileAds.initialize(context) {}
+                activityViewModel.getNotice()
+            }
 
-        // 显示悬浮窗
-        EasyFloatUtils.initScreenSize(this)
-        val showFloatWindow = DataSaverUtils.readData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
-        if (showFloatWindow) {
-            EasyFloatUtils.showFloatBall(this)
-        }
+            // 显示悬浮窗
+            EasyFloatUtils.initScreenSize(this)
+            val showFloatWindow = DataSaverUtils.readData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
+            if (showFloatWindow) {
+                EasyFloatUtils.showFloatBall(this)
+            }
 
-        // startActivity(Intent(this, LoginActivity::class.java))
+            initialized = true
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -122,12 +113,14 @@ class TransActivity : AppCompatActivity() {
      */
     private fun registerNetworkReceiver() {
         netWorkReceiver = NetworkReceiver()
-        val filter = IntentFilter().apply {
+        IntentFilter().apply {
             addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
             addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
             addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+        }.let {
+            registerReceiver(netWorkReceiver, it)
         }
-        registerReceiver(netWorkReceiver, filter)
+
         // 初始化一下最开始的网络状态
         NetworkReceiver.setNetworkState(context)
     }

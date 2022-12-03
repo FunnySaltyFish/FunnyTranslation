@@ -1,6 +1,7 @@
 package com.funny.translation.translate.utils
 
 import java.lang.StringBuilder
+import java.text.DecimalFormat
 import java.util.regex.Pattern
 
 object StringUtil {
@@ -54,5 +55,18 @@ object StringUtil {
         return if (m.find()) {
             m.group(0)!!
         } else ""
+    }
+
+    fun convertIntToSize(size: Int): String {
+        val GB = 1024 * 1024 * 1024
+        val MB = 1024 * 1014
+        val KB = 1024
+        val df = DecimalFormat("0.00")
+        return when {
+            size / GB >= 1 -> df.format(size / GB.toFloat()) + "GB"
+            size / MB >= 1 -> df.format(size / MB.toFloat()) + "MB"
+            size / KB >= 1 -> df.format(size / KB.toFloat()) + "KB"
+            else -> size.toString() + "B"
+        }
     }
 }

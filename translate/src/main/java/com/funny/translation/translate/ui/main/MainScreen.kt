@@ -120,7 +120,7 @@ fun MainScreen() {
     val showSnackbar: (String) -> Unit = remember {
         {
             scope.launch {
-                snackbarHostState.showSnackbar(it)
+                snackbarHostState.showSnackbar(it, withDismissAction = true)
             }
         }
     }

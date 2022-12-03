@@ -79,7 +79,9 @@ object OkHttpUtils {
                     targetLanguageCode = TranslateConfig.targetLanguage.id,
                     text = TranslateConfig.sourceString,
                     extra = ""
-                ))
+                ).also {
+                    Log.d(TAG, "createBaseClient: add sign: $it")
+                })
             }
 
             it.proceed(builder.build())

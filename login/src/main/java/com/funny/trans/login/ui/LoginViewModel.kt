@@ -106,4 +106,54 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    fun sendResetPasswordEmail(context: Context){
+        viewModelScope.launch {
+            try {
+                UserUtils.sendResetPasswordEmail(username, email)
+                context.toastOnUi("重置密码邮件已发送，请注意查收~")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            }
+        }
+    }
+
+    fun sendFindUsernameEmail(context: Context){
+        viewModelScope.launch {
+            try {
+                UserUtils.sendFindUsernameEmail(email)
+                context.toastOnUi("找回用户名邮件已发送，请注意查收~")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            }
+        }
+    }
+
+    fun resetPassword(context: Context, onSuccess: () -> Unit){
+        viewModelScope.launch {
+            try {
+                UserUtils.resetPassword(username, password, verifyCode)
+                onSuccess()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                context.toastOnUi(e.message ?: "重置密码失败，未知错误！")
+            }
+        }
+    }
+
+    fun findUsername(context: Context, onSuccess: (List<String>) -> Unit){
+        viewModelScope.launch {
+            try {
+                val username = UserUtils.findUsername(email, verifyCode)
+                onSuccess(username ?: emptyList())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                context.toastOnUi(e.message ?: "找回用户名失败，未知错误！")
+            }
+        }
+    }
+
+
 }

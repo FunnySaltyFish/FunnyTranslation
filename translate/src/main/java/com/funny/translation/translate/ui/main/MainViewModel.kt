@@ -48,7 +48,6 @@ class MainViewModel : ViewModel() {
             )
         )
     )
-    private val translateMode: MutableLiveData<Int> = MutableLiveData(0)
 
     var selectedEngines: HashSet<TranslationEngine> = hashSetOf()
     private var initialSelected = 0
@@ -159,7 +158,7 @@ class MainViewModel : ViewModel() {
 
                     task.result.targetLanguage = targetLanguage
                     withContext(Dispatchers.IO) {
-                        task.translate(translateMode.value!!)
+                        task.translate()
                     }
 
                     updateTranslateResult(task.result)
