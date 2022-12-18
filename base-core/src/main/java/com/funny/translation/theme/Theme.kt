@@ -98,7 +98,7 @@ fun TransTheme(
                 SpringFestivalColorPalette
             else LightColors
     }
-//    SystemBarSettings()
+    SystemBarSettings()
     MaterialTheme(
         colorScheme = colorScheme,
         content = content

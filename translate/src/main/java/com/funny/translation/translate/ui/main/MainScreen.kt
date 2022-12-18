@@ -195,7 +195,7 @@ fun MainScreen() {
                     SubcomposeBottomFirstLayout(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp)
+                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
                             .imePadding(),
                         other = {
                             ResultPart(vm = vm, showSnackbar = showSnackbar)
@@ -214,7 +214,7 @@ fun MainScreen() {
                     Column(
                         Modifier
                             .fillMaxSize()
-                            .padding(start = 12.dp, end = 12.dp, top = 24.dp, bottom = 12.dp),
+                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(8.dp))
