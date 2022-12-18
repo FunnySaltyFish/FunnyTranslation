@@ -42,8 +42,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdk Versions.targetSdkVersion
-        versionCode 45
-        versionName "2.4.2"
+        versionCode 46
+        versionName "2.4.3"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86_64'
@@ -128,7 +128,7 @@ dependencies {
     implementation("cn.qhplus.emo:photo-coil:0.1.0")
 
     // To recognize Latin script
-    implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
+//    implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
 
     // Google Ad
 //    implementation 'com.google.android.gms:play-services-ads:21.1.0'

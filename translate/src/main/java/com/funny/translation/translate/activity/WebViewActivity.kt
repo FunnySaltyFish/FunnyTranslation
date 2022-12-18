@@ -28,7 +28,6 @@ private const val TAG = "WebViewActivity"
 class WebViewActivity : AppCompatActivity() {
 
     companion object {
-
         fun start(context: Context, url: String){
             val intent = Intent(context, WebViewActivity::class.java)
             intent.putExtra("load_url",url)
