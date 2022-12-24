@@ -26,6 +26,7 @@ import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.LoadingContent
 import com.funny.translation.translate.ui.widget.MarkdownText
+import com.funny.translation.ui.touchToScale
 
 
 private const val TAG = "OnlinePlugin"
@@ -92,10 +93,10 @@ fun OnlinePluginItem(
         mutableStateOf(false)
     }
     Column(modifier = Modifier
+        .touchToScale { expand = !expand }
         .fillMaxWidth()
         .clip(RoundedCornerShape(16.dp))
         .background(MaterialTheme.colorScheme.primaryContainer)
-        .clickable { expand = !expand }
         .animateContentSize()
     ) {
         Row(

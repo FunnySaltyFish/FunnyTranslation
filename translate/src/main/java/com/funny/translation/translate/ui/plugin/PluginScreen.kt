@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -38,6 +39,7 @@ import com.funny.translation.translate.extentions.trimLineStart
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.funny.translation.translate.ui.widget.SimpleDialog
+import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
 
 private const val TAG = "PluginScreen"
@@ -213,6 +215,21 @@ private fun PluginList(
 }
 
 @Composable
+private fun LazyListScope.localPlugins(
+    plugins : List<JsBean>,
+    updateSelect: (JsBean) -> Unit,
+    deletePlugin : (JsBean)->Unit
+) {
+    if (plugins.isNotEmpty()) {
+        itemsIndexed(plugins) { _: Int, item: JsBean ->
+            PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
+        }
+    }else{
+        Text(text = stringResource(id = R.string.empty_plugin_tip), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
+    }
+}
+
+@Composable
 private fun PluginItem(
     plugin : JsBean,
     updateSelect : (JsBean)->Unit,
@@ -225,10 +242,10 @@ private fun PluginItem(
         mutableStateOf(false)
     }
     Column(modifier = Modifier
+        .touchToScale { expand = !expand }
         .fillMaxWidth()
         .clip(RoundedCornerShape(16.dp))
         .background(MaterialTheme.colorScheme.primaryContainer)
-        .clickable { expand = !expand }
         .animateContentSize()
     ){
         Row(
