@@ -11,6 +11,7 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.Consts
 import com.funny.translation.bean.UserBean
 import com.funny.translation.codeeditor.extensions.externalCache
+import com.funny.translation.codeeditor.ui.editor.EditorSchemes
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.sign.SignUtils
 import com.funny.translation.translate.network.TransNetwork
@@ -38,9 +39,14 @@ class FunnyApplication : BaseApplication() {
         }
 
         // For ComposeDataSaver
-        registerTypeConverters(
+        registerTypeConverters<UserBean>(
             save = { localDataGson.toJson(it) },
             restore = { localDataGson.fromJson(it, UserBean::class.java) as UserBean }
+        )
+
+        registerTypeConverters<EditorSchemes>(
+            save = { it.name },
+            restore = { EditorSchemes.valueOf(it) }
         )
     }
 
@@ -50,7 +56,7 @@ class FunnyApplication : BaseApplication() {
         const val TAG = "FunnyApplication"
     }
 
-    suspend fun checkUpdate(context : Context){
+    private suspend fun checkUpdate(context : Context){
         if(hasCheckedUpdate) return
         kotlin.runCatching {
             val manager = DownloadManager.getInstance(context)

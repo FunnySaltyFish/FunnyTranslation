@@ -25,11 +25,6 @@ android {
                         "room.expandProjection":"true"]
             }
         }
-//        externalNativeBuild {
-//            cmake {
-//                cppFlags ''
-//            }
-//        }
     }
 
     buildTypes {
@@ -51,12 +46,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion Versions.composeVersion
     }
-//    externalNativeBuild {
-//        cmake {
-//            path file('src/main/cpp/CMakeLists.txt')
-//            version '3.18.1'
-//        }
-//    }
 }
 
 dependencies {
@@ -79,15 +68,15 @@ dependencies {
     api 'com.github.gedoor:rhino-android:1.6'
 
     // Coil
-    api ("io.coil-kt:coil-compose:2.2.0")
+    api "io.coil-kt:coil-compose:2.2.0"
 
     // 刘海屏适配
     api 'com.github.smarxpan:NotchScreenTool:0.0.1'
 
     // Material Design Color
     api "com.github.FunnySaltyFish:CMaterialColors:1.0.21"
-    api "androidx.biometric:biometric:1.2.0-alpha05"
 
+    api "androidx.biometric:biometric:1.2.0-alpha05"
 
     // Markwon
     final def markwon_version = '4.6.2'
@@ -112,7 +101,6 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    def compose_version = Versions.composeVersion
     // Import the Compose BOM
     api platform('androidx.compose:compose-bom:2022.12.00')
     api "androidx.compose.ui:ui"

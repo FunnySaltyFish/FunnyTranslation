@@ -14,11 +14,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,10 +36,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.funny.translation.BaseApplication
 import com.funny.translation.codeeditor.R
-import com.funny.translation.codeeditor.ui.Screen
 import com.funny.translation.codeeditor.ui.base.ComposeSpinner
 import com.funny.translation.codeeditor.ui.base.ExpandableDropdownItem
 import com.funny.translation.codeeditor.ui.base.SimpleDialog
+import com.funny.translation.codeeditor.ui.runner.CodeRunnerText
+import com.funny.translation.codeeditor.ui.runner.CodeRunnerViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readText
@@ -46,13 +53,15 @@ import io.github.rosemoe.editor.text.Content
 import io.github.rosemoe.editor.widget.CodeEditor
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ComposeCodeEditor(
     navController: NavController,
     activityViewModel: ActivityCodeViewModel
 ) {
     val viewModel: CodeEditorViewModel = viewModel()
-    val snackbarHostState = remember{ SnackbarHostState() }
+    val codeRunnerVM: CodeRunnerViewModel = viewModel()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val confirmOpenFile = remember { mutableStateOf(false) }
     val settingArgumentsDialog = remember { mutableStateOf(false) }
@@ -66,7 +75,10 @@ fun ComposeCodeEditor(
         try {
             val text = it.readText(context)
             activityViewModel.codeState.value = Content(text)
-            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            context.contentResolver.takePersistableUriPermission(
+                it,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
             activityViewModel.openFileUri = it
         } catch (e: Exception) {
             activityViewModel.codeState.value = Content("打开文件失败！${e.localizedMessage}")
@@ -74,16 +86,6 @@ fun ComposeCodeEditor(
             viewModel.textChanged.value = true
         }
     }
-
-//    val permissionLauncher =
-//        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted ->
-//            if(!isGranted){
-//                scope.launch {
-//                    scaffoldState.snackbarHostState.showSnackbar("未获取到授权，无法写入文件")
-//                }
-//            }
-//
-//        }
 
     fun saveFile(uri: Uri) {
         try {
@@ -102,7 +104,10 @@ fun ComposeCodeEditor(
         Log.d(TAG, "ComposeCodeEditor: Finish Created file : uri:$uri")
         uri?.let {
             activityViewModel.openFileUri = it
-            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            context.contentResolver.takePersistableUriPermission(
+                it,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
             saveFile(it)
         }
     }
@@ -114,9 +119,11 @@ fun ComposeCodeEditor(
         uri?.writeText(context, activityViewModel.exportText)
     }
 
-    val sourceString = activityViewModel.sourceString.observeAsState()
-    val sourceLanguage = activityViewModel.sourceLanguage.observeAsState()
-    val targetLanguage = activityViewModel.targetLanguage.observeAsState()
+    val sourceString = activityViewModel.sourceString
+    val sourceLanguage = activityViewModel.sourceLanguage
+    val targetLanguage = activityViewModel.targetLanguage
+
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
     fun finish() {
         (context as ComponentActivity).finish()
@@ -130,21 +137,38 @@ fun ComposeCodeEditor(
         }
     }
 
-    Scaffold(
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            SelectionContainer(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+                .background(
+                    MaterialTheme.colorScheme.primaryContainer,
+                    RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+                )) {
+                CodeRunnerText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .verticalScroll(rememberScrollState()),
+                    viewModel = codeRunnerVM,
+                    activityCodeViewModel = activityViewModel
+                )
+            }
+        },
+        sheetPeekHeight = 16.dp,
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
             CodeEditorTopBar(
                 debugAction = {
-                    navController.navigate(Screen.ScreenCodeRunner.route) {
-                        //当底部导航导航到在非首页的页面时，执行手机的返回键 回到首页
-//                        popUpTo(navController.graph.startDestinationId){saveState = true}
-                        //从名字就能看出来 跟activity的启动模式中的SingleTop模式一样 避免在栈顶创建多个实例
-                        launchSingleTop = true
-                        //切换状态的时候保存页面状态
-                        restoreState = true
-                    }
+                    activityViewModel.shouldExecuteCode.value = true
+                    if (scaffoldState.bottomSheetState.isCollapsed)
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                        }
                 },
                 saveAction = {
                     //permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -163,9 +187,7 @@ fun ComposeCodeEditor(
                 redoAction = {
                     viewModel.shouldRedo.value = true
                 },
-                schemeAction = {
-                    viewModel.updateEditorColorScheme(it)
-                },
+                schemeAction = viewModel::updateEditorColorScheme,
                 openFileAction = {
                     if (!viewModel.hasSaved) {
                         confirmOpenFile.value = true
@@ -189,12 +211,20 @@ fun ComposeCodeEditor(
                                 activityViewModel.exportText = JsBean.GSON.toJson(jsBean)
                                 exportLauncher.launch("${jsBean.fileName}.json")
                                 scope.launch {
-                                    snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_success))
+                                    snackbarHostState.showSnackbar(
+                                        BaseApplication.resources.getString(
+                                            R.string.export_plugin_success
+                                        )
+                                    )
                                 }
                             },
                             onError = {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar(BaseApplication.resources.getString(R.string.export_plugin_error))
+                                    snackbarHostState.showSnackbar(
+                                        BaseApplication.resources.getString(
+                                            R.string.export_plugin_error
+                                        )
+                                    )
                                 }
                             }
                         )
@@ -203,86 +233,83 @@ fun ComposeCodeEditor(
                 }
             )
         },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(it)) {
-            Editor(
-                viewModel = viewModel,
-                activityViewModel = activityViewModel
-            )
+        Editor(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            viewModel = viewModel,
+            activityViewModel = activityViewModel
+        )
 
-            SimpleDialog(
-                openDialog = confirmOpenFile,
-                title = stringResource(R.string.message_hint),
-                message = stringResource(R.string.message_open_while_not_saved),
-                confirmButtonAction = {
-                    filePickerLauncher.launch(
-                        arrayOf(
-                            "application/javascript",
-                        )
+        SimpleDialog(
+            openDialog = confirmOpenFile,
+            title = stringResource(R.string.message_hint),
+            message = stringResource(R.string.message_open_while_not_saved),
+            confirmButtonAction = {
+                filePickerLauncher.launch(
+                    arrayOf(
+                        "application/javascript",
                     )
-                }
-            )
-
-            SimpleDialog(
-                openDialog = confirmLeave,
-                title = "提示",
-                message = stringResource(R.string.message_leave_not_saved),
-                confirmButtonAction = {
-                    finish()
-                })
-
-            if (settingArgumentsDialog.value) {
-                AlertDialog(
-                    onDismissRequest = { },
-                    title = {
-                        Text(text = stringResource(id = R.string.change_debug_args))
-                    },
-                    text = {
-                        Column {
-                            TextField(
-                                value = sourceString.value!!,
-                                onValueChange = { value ->
-                                    activityViewModel.sourceString.value = value
-                                    //JsConfig.SCRIPT_ENGINE.put("sourceString",value)
-                                },
-                                label = { Text(stringResource(R.string.trans_text)) },
-                                placeholder = { Text(sourceString.value!!) }
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            ComposeSpinner(
-                                data = activityViewModel.allLanguageNames,
-                                initialData = sourceLanguage.value!!.name,
-                                selectAction = { index ->
-                                    activityViewModel.sourceLanguage.value = allLanguages[index]
-                                    //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
-                                },
-                                label = stringResource(R.string.source_language)
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            ComposeSpinner(
-                                data = activityViewModel.allLanguageNames,
-                                initialData = targetLanguage.value!!.name,
-                                selectAction = { index ->
-                                    activityViewModel.targetLanguage.value = allLanguages[index]
-                                    //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
-                                },
-                                label = stringResource(R.string.target_language)
-                            )
-                        }
-                    },
-                    confirmButton = {
-                        Button(onClick = { settingArgumentsDialog.value = false }) {
-                            Text(text = stringResource(R.string.close))
-                        }
-                    }
                 )
             }
+        )
 
+        SimpleDialog(
+            openDialog = confirmLeave,
+            title = "提示",
+            message = stringResource(R.string.message_leave_not_saved),
+            confirmButtonAction = {
+                finish()
+            })
+
+        if (settingArgumentsDialog.value) {
+            AlertDialog(
+                onDismissRequest = { },
+                title = {
+                    Text(text = stringResource(id = R.string.change_debug_args))
+                },
+                text = {
+                    Column {
+                        TextField(
+                            value = sourceString.value,
+                            onValueChange = { value ->
+                                activityViewModel.sourceString.value = value
+                                //JsConfig.SCRIPT_ENGINE.put("sourceString",value)
+                            },
+                            label = { Text(stringResource(R.string.trans_text)) },
+                            placeholder = { Text(sourceString.value) }
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        ComposeSpinner(
+                            data = activityViewModel.allLanguageNames,
+                            initialData = sourceLanguage.value.name,
+                            selectAction = { index ->
+                                activityViewModel.sourceLanguage.value = allLanguages[index]
+                                //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
+                            },
+                            label = stringResource(R.string.source_language)
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        ComposeSpinner(
+                            data = activityViewModel.allLanguageNames,
+                            initialData = targetLanguage.value.name,
+                            selectAction = { index ->
+                                activityViewModel.targetLanguage.value = allLanguages[index]
+                                //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
+                            },
+                            label = stringResource(R.string.target_language)
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { settingArgumentsDialog.value = false }) {
+                        Text(text = stringResource(R.string.close))
+                    }
+                }
+            )
         }
-
     }
 }
 
@@ -301,11 +328,13 @@ fun CodeEditorTopBar(
     var expanded by remember {
         mutableStateOf(false)
     }
-    SmallTopAppBar(
+    TopAppBar(
         title = {
             Text("编辑代码")
         },
-        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer),
         actions = {
             IconButton(onClick = debugAction) {
                 Icon(painterResource(id = R.drawable.ic_debug), contentDescription = "Debug")
@@ -380,7 +409,7 @@ fun CodeEditorTopBar(
 @Composable
 fun rememberCodeEditor(viewModel: CodeEditorViewModel): CodeEditor {
     val ctx = LocalContext.current
-    val scheme = viewModel.editorColorScheme.observeAsState()
+    val scheme = viewModel.editorColorScheme
     return remember(scheme) {
         Log.d(TAG, "rememberCodeEditor: ${scheme.value}")
         CodeEditor(ctx).apply {
@@ -396,11 +425,12 @@ fun rememberCodeEditor(viewModel: CodeEditorViewModel): CodeEditor {
 
 @Composable
 fun Editor(
+    modifier: Modifier,
     viewModel: CodeEditorViewModel,
     activityViewModel: ActivityCodeViewModel
 ) {
     val editor = rememberCodeEditor(viewModel)
-    val scheme = viewModel.editorColorScheme.observeAsState()
+    val scheme = viewModel.editorColorScheme
     val symbolChannel = remember {
         editor.createNewSymbolChannel()
     }
@@ -413,8 +443,7 @@ fun Editor(
         viewModel.hasSaved = false
     }
 
-    Column {
-
+    Column(modifier) {
         DisposableEffect(key1 = editor) {
             onDispose {
 //                Log.d(TAG, "Editor: onDispose")
@@ -423,9 +452,9 @@ fun Editor(
             }
         }
 
-        val textChange = viewModel.textChanged.observeAsState()
-        val shouldUndo = viewModel.shouldUndo.observeAsState()
-        val shouldRedo = viewModel.shouldRedo.observeAsState()
+        val textChange = viewModel.textChanged
+        val shouldUndo = viewModel.shouldUndo
+        val shouldRedo = viewModel.shouldRedo
         AndroidView(
             factory = {
                 editor.apply {
@@ -474,30 +503,28 @@ fun Editor(
                 .fillMaxWidth()
                 .weight(if (symbolChannel == null) 100f else 95f),
             update = {
-                it.colorScheme = scheme.value!!.scheme
-                if (textChange.value == true) {
+                it.colorScheme = scheme.value.scheme
+                if (textChange.value) {
                     it.setText(codeText.value)
                     viewModel.textChanged.value = false
                 }
-                if (shouldRedo.value == true) {
+                if (shouldRedo.value) {
                     it.redo()
                     viewModel.shouldRedo.value = false
                 }
-                if (shouldUndo.value == true) {
+                if (shouldUndo.value) {
                     it.undo()
                     viewModel.shouldUndo.value = false
                 }
-//                Log.d(TAG, "Editor: updated! editor:$editor\n symbolChannel:$symbolChannel text:${it.text}")
-//                Log.d(TAG, "Editor: rememberedTExt:$codeText")
             }
         )
-        val symbols = viewModel.symbolsData.observeAsState()
+        val symbols = viewModel.symbolsData
         symbolChannel?.let { channel ->
             LazyRow(
-                modifier = Modifier.weight(5f),
+                modifier = Modifier.weight(5f).padding(top = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                itemsIndexed(symbols.value!!) { _, item ->
+                itemsIndexed(symbols) { _, item ->
                     //Log.d(TAG, "ComposeSymbolInsert: channel:${channel}")
                     ComposeSymbolInsertItem(symbolChannel = channel, symbol = item)
                 }

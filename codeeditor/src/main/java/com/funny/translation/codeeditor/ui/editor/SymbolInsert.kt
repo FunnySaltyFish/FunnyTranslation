@@ -25,7 +25,7 @@ fun ComposeSymbolInsertItem(
 ){
     Text(
         text = symbol.show,
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier
             .clickable { symbolChannel.insertSymbol(symbol.insert, 1) }
             .padding(PaddingValues(horizontal = 12.dp,vertical = 0.dp))
     )

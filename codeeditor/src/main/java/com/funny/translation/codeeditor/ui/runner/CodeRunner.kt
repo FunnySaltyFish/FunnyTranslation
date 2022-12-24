@@ -12,9 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +23,7 @@ import com.funny.translation.codeeditor.R
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
+import io.github.rosemoe.editor.text.Content
 
 private const val TAG = "CodeRunner"
 
@@ -85,12 +84,19 @@ fun CodeRunnerText(
     viewModel: CodeRunnerViewModel,
     activityCodeViewModel: ActivityCodeViewModel
 ) {
-    val code = activityCodeViewModel.codeState.value
-    LaunchedEffect(key1 = code){
+    val code by activityCodeViewModel.codeState
+    var shouldExecuteCode by activityCodeViewModel.shouldExecuteCode
+
+    LaunchedEffect(shouldExecuteCode){
         //Log.d(TAG, "CodeRunnerText: $code")
-        viewModel.initJs(activityCodeViewModel,code.toString())
+        if (shouldExecuteCode) {
+            viewModel.clearDebug()
+            viewModel.initJs(activityCodeViewModel,code.toString())
+            shouldExecuteCode = false
+        }
     }
-    val output = viewModel.outputDebug.observeAsState("")
+
+    val output = viewModel.outputDebug
     Text(
         output.value,
         modifier = modifier,

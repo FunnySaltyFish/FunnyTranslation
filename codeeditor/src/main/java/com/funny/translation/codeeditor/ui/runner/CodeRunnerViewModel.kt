@@ -1,7 +1,7 @@
 package com.funny.translation.codeeditor.ui.runner
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
@@ -17,7 +17,7 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
     Debug.DebugTarget {
     private var jsEngine: JsEngine? = null
 
-    val outputDebug = MutableLiveData("")
+    val outputDebug = mutableStateOf("执行代码以查看输出结果")
 
     fun initJs(activityCodeViewModel: ActivityCodeViewModel,code: String) {
         val jsBean = JsBean(999, code = code)
@@ -29,9 +29,9 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
                         val jsTranslateTask = JsTranslateTaskText(
                             jsEngine = this,
                         ).apply {
-                            sourceLanguage = activityCodeViewModel.sourceLanguage.value!!
-                            targetLanguage = activityCodeViewModel.targetLanguage.value!!
-                            sourceString = activityCodeViewModel.sourceString.value!!
+                            sourceLanguage = activityCodeViewModel.sourceLanguage.value
+                            targetLanguage = activityCodeViewModel.targetLanguage.value
+                            sourceString = activityCodeViewModel.sourceString.value
                         }
                         jsTranslateTask.translate()
                     },
@@ -42,6 +42,10 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
             }
         }
 
+    }
+
+    fun clearDebug(){
+        outputDebug.value = ""
     }
 
     init {

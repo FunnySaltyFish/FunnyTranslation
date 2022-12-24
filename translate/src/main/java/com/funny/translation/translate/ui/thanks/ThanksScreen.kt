@@ -47,6 +47,7 @@ import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.LoadingContent
 import com.funny.translation.translate.utils.localDataGson
+import com.funny.translation.ui.touchToScale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -69,6 +70,7 @@ fun ThanksScreen(navHostController: NavHostController) {
         item {
             Row(
                 modifier = Modifier
+                    .touchToScale()
                     .height(80.dp)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
@@ -178,16 +180,17 @@ fun UserInfoPanel(navHostController: NavHostController) {
         key = activityVM.uid,
         updateKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
         modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
-            .clickable {
+            .touchToScale {
                 if (activityVM.uid <= 0) { // 未登录
                     startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
                 } else {
                     navHostController.navigateSingleTop(TranslateScreen.UserProfileScreen.route, false)
                 }
             }
-            .padding(vertical = 12.dp), loader = { activityVM.userInfo }
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+            .padding(vertical = 12.dp),
+        loader = { activityVM.userInfo }
     ) { userBean ->
         if (userBean.isValid()) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -244,6 +247,7 @@ fun SponsorItem(
 ) {
     Row(
         modifier = Modifier
+            .touchToScale()
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.primaryContainer)
