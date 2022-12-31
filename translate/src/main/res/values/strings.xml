@@ -39,7 +39,7 @@
     <string name="nav_thanks">致谢</string>
     <string name="thanks">致谢</string>
     <string name="join_sponsor">成为赞助者</string>
-    <string name="loading_error">加载错误~</string>
+    <string name="loading_error">加载错误，点击重试</string>
     <string name="dialog_new_size">新版本大小：%s</string>
     <string name="install_plugin">安装</string>
     <string name="update_plugin">更新</string>

@@ -10,10 +10,11 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HeadingText(
-    text : String
+    text : String,
+    modifier: Modifier = Modifier,
 ) {
     Text(
-        modifier = Modifier.semantics { heading() },
+        modifier = modifier.semantics { heading() },
         text = text,
         fontSize = 32.sp,
         fontWeight = FontWeight.ExtraBold

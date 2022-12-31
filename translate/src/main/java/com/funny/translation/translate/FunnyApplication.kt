@@ -24,7 +24,6 @@ import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
 class FunnyApplication : BaseApplication() {
-    private var hasCheckedUpdate = false
     override fun onCreate() {
         super.onCreate()
         ctx = this
@@ -34,8 +33,7 @@ class FunnyApplication : BaseApplication() {
             initLanguageDisplay(resources)
             SignUtils.loadJs()
             SortResultUtils.init()
-            checkUpdate(ctx)
-            ApkUtil.deleteOldApk(ctx, ctx.externalCache.absolutePath + "/update_apk.apk")
+
         }
 
         // For ComposeDataSaver
@@ -56,43 +54,7 @@ class FunnyApplication : BaseApplication() {
         const val TAG = "FunnyApplication"
     }
 
-    private suspend fun checkUpdate(context : Context){
-        if(hasCheckedUpdate) return
-        kotlin.runCatching {
-            val manager = DownloadManager.getInstance(context)
-            withContext(Dispatchers.IO){
-                val versionCode = ApplicationUtil.getAppVersionCode(ctx)
-                Log.d(ActivityViewModel.TAG, "checkUpdate: VersionCode:$versionCode")
-                val channel = DataSaverUtils.readData(Consts.KEY_APP_CHANNEL, "stable")
-                val updateInfo = TransNetwork.appUpdateService.getUpdateInfo(versionCode, channel)
-                Log.i(ActivityViewModel.TAG, "checkUpdate: $updateInfo")
-                if (updateInfo.should_update){
-                    val configuration = UpdateConfiguration().apply {
-                        httpManager = UpdateDownloadManager(ctx.externalCache.absolutePath)
-                        isForcedUpgrade = updateInfo.force_update == true
-                    }
 
-                    manager.setApkName("update_apk.apk")
-                        .setApkUrl(updateInfo.apk_url)
-                        .setApkMD5(updateInfo.apk_md5)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        //非必须参数
-                        .setConfiguration(configuration)
-                        //设置了此参数，那么会自动判断是否需要更新弹出提示框
-                        .setApkVersionCode(updateInfo.version_code!!)
-                        .setApkDescription(updateInfo.update_log)
-                        .setApkVersionName(updateInfo.version_name)
-                        .setApkSize(StringUtil.convertIntToSize(updateInfo.apk_size!!))
-                    withContext(Dispatchers.Main){
-                        manager.download()
-                    }
-                }
-            }
-            hasCheckedUpdate = true
-        }.onFailure {
-            it.printStackTrace()
-        }
-    }
 }
 
 val appCtx = FunnyApplication.ctx

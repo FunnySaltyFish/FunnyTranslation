@@ -1,10 +1,12 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.funny.translation.translate.ui.plugin
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,21 +26,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.translation.codeeditor.CodeEditorActivity
 import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
 import com.funny.translation.translate.extentions.trimLineStart
-import com.funny.translation.translate.ui.widget.HeadingText
-import com.funny.translation.translate.ui.widget.MarkdownText
-import com.funny.translation.translate.ui.widget.SimpleDialog
+import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
 
@@ -56,60 +57,12 @@ fun PluginScreen() {
         }
     }
 
-    BoxWithConstraints(Modifier.fillMaxSize()) {
-        val maxW = maxWidth
-        if (maxWidth > 720.dp){ //宽屏
-            Row(
-                Modifier
-                    .fillMaxSize()
-                    .padding(12.dp), horizontalArrangement = Arrangement.SpaceAround) {
-                LocalPluginPart(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(0.45f),
-                    vm = vm,
-                    showSnackbar = showSnackbar
-                )
-                OnlinePluginPart(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(maxW * 0.45f),
-                    showSnackbar = showSnackbar
-                )
-            }
-
-        }else{
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(start = 24.dp, end = 24.dp, top = 16.dp)) {
-                LocalPluginPart(modifier = Modifier.fillMaxWidth(), vm = vm, showSnackbar = showSnackbar)
-                OnlinePluginPart(modifier = Modifier.fillMaxWidth(), showSnackbar = showSnackbar)
-            }
-        }
-    }
-
-
-}
-
-@Composable
-private fun LocalPluginPart(
-    modifier: Modifier,
-    vm : PluginViewModel,
-    showSnackbar: (String) -> Unit,
-){
-    val plugins by vm.plugins.collectAsState(initial = arrayListOf())
-
-    var needToDeletePlugin: JsBean? = null
-    val showDeleteDialog = remember {
-        mutableStateOf(false)
-    }
-
-    var showAddPluginMenu by remember {
-        mutableStateOf(false)
-    }
+    val showDeleteDialogState = remember { mutableStateOf(false) }
+    var showAddPluginMenu by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+
+    val localPlugins by vm.plugins.collectAsState(initial = arrayListOf())
 
     val importPluginLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -127,94 +80,189 @@ private fun LocalPluginPart(
         }
     }
 
+    val showDeleteDialogAction = remember {
+        { plugin: JsBean ->
+            showDeleteDialogState.value = true
+            vm.needToDeletePlugin = plugin
+        }
+    }
+
     SimpleDialog(
-        openDialog = showDeleteDialog,
+        openDialogState = showDeleteDialogState,
         title = stringResource(id = R.string.message_confirm),
         message = stringResource(id = R.string.message_delete_plugin),
         confirmButtonText = stringResource(R.string.message_yes),
         confirmButtonAction = {
-            needToDeletePlugin?.let { vm.deletePlugin(it) }
+            vm.needToDeletePlugin?.let(vm::deletePlugin)
         }
     )
 
-    Column(
-        modifier = modifier
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            HeadingText(stringResource(id = R.string.manage_plugins))
-            IconButton(onClick = { showAddPluginMenu = true }) {
-                Icon(
-                    Icons.Default.AddCircle,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    contentDescription = "Add plugins"
+    val localPluginPartWrapper : LazyListScope.() -> Unit = remember {
+        {
+            localPluginPart(
+                plugins = localPlugins,
+                deletePlugin = showDeleteDialogAction,
+                showAddPluginMenu = showAddPluginMenu,
+                updateShowAddPluginMenu = { showAddPluginMenu = it },
+                importPluginAction = { importPluginLauncher.launch(arrayOf("application/javascript")) },
+                newFileAction = {
+                    ContextCompat.startActivity(
+                        context,
+                        Intent(context, CodeEditorActivity::class.java),
+                        null
+                    )
+                },
+                updateSelect = vm::updateLocalPluginSelect
+            )
+        }
+    }
+
+    val (onlinePluginLoadingState, retryLoadOnlinePlugin) = rememberRetryableLoadingState(loader = vm::getOnlinePlugins)
+
+    val onlinePluginListWrapper: LazyListScope.() -> Unit = remember {
+        {
+            stickyHeader {
+                HeadingText(stringResource(R.string.online_plugin), modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background))
+            }
+            loadingList(onlinePluginLoadingState, retryLoadOnlinePlugin, key = { it.fileName }) { jsBean ->
+                var onlinePluginState by remember {
+                    vm.checkPluginState(jsBean)
+                }
+                OnlinePluginItem(
+                    plugin = jsBean,
+                    onlinePluginState = onlinePluginState,
+                    clickOnlinePluginAction = object : ClickOnlinePluginAction{
+                        override fun install(jsBean: JsBean) {
+                            vm.installOrUpdatePlugin(jsBean,{
+                                onlinePluginState = OnlinePluginState.Installed
+                                showSnackbar(it)
+                            },{
+                                showSnackbar(it)
+                            })
+                        }
+
+                        override fun delete(jsBean: JsBean) {
+                            vm.deletePlugin(jsBean)
+                            onlinePluginState = OnlinePluginState.NotInstalled
+                        }
+
+                        override fun update(jsBean: JsBean) {
+                            vm.updatePlugin(jsBean)
+                            onlinePluginState = OnlinePluginState.Installed
+                        }
+                    }
                 )
-                DropdownMenu(
-                    expanded = showAddPluginMenu,
-                    onDismissRequest = { showAddPluginMenu = false }) {
-                    DropdownMenuItem(onClick = {
-                        showAddPluginMenu = false
-                        importPluginLauncher.launch(arrayOf("application/javascript"))
-                    }, text = {
-                        Text(stringResource(id = R.string.import_plugin))
-                    })
-                    DropdownMenuItem(onClick = {
-                        showAddPluginMenu = false
-                        val clazz =
-                            Class.forName("com.funny.translation.codeeditor.CodeEditorActivity")
-                        val intent = Intent(context, clazz)
-                        context.startActivity(intent)
-                    }, text = {
-                        Text(stringResource(id = R.string.create_plugin))
-                    })
+            }
+        }
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        if (maxWidth > 720.dp){ //宽屏
+            Row(
+                Modifier
+                    .fillMaxSize()
+                    .padding(12.dp), horizontalArrangement = Arrangement.SpaceAround) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.45f),
+                ){
+                    localPluginPartWrapper()
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.45f),
+                ){
+                    onlinePluginListWrapper()
                 }
             }
-        }
 
-        PluginList(plugins = plugins, deletePlugin = {
-            showDeleteDialog.value = true
-            needToDeletePlugin = it
-        }, updateSelect = {
-            it.enabled = 1 - it.enabled
-            vm.updatePlugin(it)
-        })
-    }
-}
-
-@Composable
-fun OnlinePluginPart(modifier: Modifier, showSnackbar: (String) -> Unit) {
-    Column(modifier = modifier) {
-        HeadingText(stringResource(id = R.string.online_plugin))
-        Spacer(modifier = Modifier.height(8.dp))
-        OnlinePluginList(modifier = Modifier.fillMaxWidth(), showSnackbar = showSnackbar)
-    }
-}
-
-@Composable
-private fun PluginList(
-    plugins : List<JsBean>,
-    updateSelect: (JsBean) -> Unit,
-    deletePlugin : (JsBean)->Unit
-) {
-    if (plugins.isNotEmpty()) {
-        LazyColumn(
-            verticalArrangement = spacedBy(12.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
-            modifier = Modifier.heightIn(0.dp, 300.dp)
-        ) {
-            itemsIndexed(plugins) { _: Int, item: JsBean ->
-                PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
+        }else{
+            LazyColumn(
+                Modifier
+                    .fillMaxSize()
+                    .padding(start = 24.dp, end = 24.dp, top = 16.dp),
+                verticalArrangement = spacedBy(8.dp)
+            ) {
+                localPluginPartWrapper()
+                onlinePluginListWrapper()
             }
         }
-    }else{
-        Text(text = stringResource(id = R.string.empty_plugin_tip), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
     }
 }
 
+private fun LazyListScope.localPluginPart(
+    plugins: List<JsBean>,
+    deletePlugin: (JsBean) -> Unit,
+    showAddPluginMenu: Boolean,
+    updateShowAddPluginMenu: (Boolean) -> Unit,
+    importPluginAction: () -> Unit,
+    newFileAction: () -> Unit,
+    updateSelect: (JsBean) -> Unit
+){
+    stickyHeader {
+        PluginManageTitleRow(
+            showAddPluginMenu = showAddPluginMenu,
+            updateShowAddPluginMenu = updateShowAddPluginMenu,
+            importPluginAction = importPluginAction,
+            newFileAction = newFileAction
+        )
+    }
+
+    localPlugins(plugins = plugins, deletePlugin = deletePlugin, updateSelect = updateSelect)
+}
+
+
 @Composable
+fun PluginManageTitleRow(
+    showAddPluginMenu: Boolean,
+    updateShowAddPluginMenu: (Boolean) -> Unit,
+    importPluginAction: () -> Unit,
+    newFileAction: () -> Unit
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        HeadingText(text = stringResource(id = R.string.manage_plugins))
+        IconButton(onClick = { updateShowAddPluginMenu(true) }) {
+            Icon(
+                Icons.Default.AddCircle,
+                tint = MaterialTheme.colorScheme.onBackground,
+                contentDescription = "Add plugins"
+            )
+            DropdownMenu(
+                expanded = showAddPluginMenu,
+                onDismissRequest = { updateShowAddPluginMenu(false) }) {
+                DropdownMenuItem(onClick = {
+                    updateShowAddPluginMenu(false)
+                    importPluginAction()
+//                    importPluginLauncher.launch(arrayOf("application/javascript"))
+                }, text = {
+                    Text(stringResource(id = R.string.import_plugin))
+                })
+                DropdownMenuItem(onClick = {
+                    updateShowAddPluginMenu(false)
+                    newFileAction()
+//                    val clazz =
+//                        Class.forName("com.funny.translation.codeeditor.CodeEditorActivity")
+//                    val intent = Intent(context, clazz)
+//                    context.startActivity(intent)
+                }, text = {
+                    Text(stringResource(id = R.string.create_plugin))
+                })
+            }
+        }
+    }
+}
+
+
 private fun LazyListScope.localPlugins(
     plugins : List<JsBean>,
     updateSelect: (JsBean) -> Unit,
@@ -225,7 +273,9 @@ private fun LazyListScope.localPlugins(
             PluginItem(plugin = item, updateSelect = updateSelect, deletePlugin = deletePlugin)
         }
     }else{
-        Text(text = stringResource(id = R.string.empty_plugin_tip), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
+        item {
+            Text(text = stringResource(id = R.string.empty_plugin_tip), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontWeight = W400, color = Color.Gray)
+        }
     }
 }
 
