@@ -67,6 +67,7 @@ import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
+import com.funny.translation.ui.touchToScale
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -342,7 +343,7 @@ private fun TransHistoryList(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .clickable {
+                    .touchToScale {
                         onClickHistory(transHistory)
                     }
                     .padding(start = 8.dp)
@@ -718,6 +719,7 @@ private fun TranslationItem(
     }
     Box(
         modifier = modifier
+            .touchToScale()
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.primaryContainer, shape = shape)
             .padding(12.dp)

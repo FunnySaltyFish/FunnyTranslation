@@ -42,7 +42,6 @@ import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.burnoutcrew.reorderable.*
 
 private const val TAG = "SettingScreen"
@@ -63,7 +62,7 @@ fun SettingsScreen() {
     """.trimIndent()
 
     SimpleDialog(
-        openDialog = showFloatWindowTipDialog,
+        openDialogState = showFloatWindowTipDialog,
         title = stringResource(R.string.float_window_tip),
         message = floatWindowTip,
         dismissButtonText = ""

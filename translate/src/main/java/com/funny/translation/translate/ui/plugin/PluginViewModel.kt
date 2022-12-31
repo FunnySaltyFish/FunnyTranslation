@@ -1,7 +1,9 @@
 package com.funny.translation.translate.ui.plugin
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.helper.coroutine.Coroutine.Companion.async
@@ -21,22 +23,28 @@ class PluginViewModel : ViewModel() {
     companion object {
         private const val TAG = "PluginVM"
     }
-    private val pluginService : PluginService
 
-        get() = TransNetwork.pluginService
+    private val pluginService = TransNetwork.pluginService
 
     private val _onlinePlugins by lazyPromise(viewModelScope){
         pluginService.getOnlinePlugins()
-    }
-
-    suspend fun getOnlinePlugins(): List<JsBean> {
-        return _onlinePlugins.await()
     }
 
     val plugins : Flow<List<JsBean>>
         get() {
             return appDB.jsDao.getAllJs()
         }
+
+    var needToDeletePlugin: JsBean? by mutableStateOf(null)
+
+    suspend fun getOnlinePlugins(): List<JsBean> {
+        return _onlinePlugins.await()
+    }
+
+    fun updateLocalPluginSelect(jsBean: JsBean) {
+        jsBean.enabled = 1 - jsBean.enabled
+        updatePlugin(jsBean)
+    }
 
     fun deletePlugin(jsBean: JsBean){
         viewModelScope.launch(Dispatchers.IO) {

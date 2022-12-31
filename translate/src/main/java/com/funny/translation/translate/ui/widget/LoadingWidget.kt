@@ -1,18 +1,22 @@
 package com.funny.translation.translate.ui.widget
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import androidx.paging.*
 import com.funny.translation.translate.R
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 
 private const val TAG = "LoadingWidget"
@@ -34,7 +38,10 @@ fun DefaultLoading(modifier: Modifier = Modifier) {
 
 @Composable
 fun DefaultFailure(modifier: Modifier = Modifier, retry: () -> Unit) {
-    Text(text = stringResource(id = R.string.loading_error), modifier = Modifier.clickable(onClick = retry))
+    Text(text = stringResource(id = R.string.loading_error), modifier = modifier
+        .clickable(onClick = retry)
+        .fillMaxWidth()
+        .wrapContentWidth(CenterHorizontally))
 }
 
 /**
@@ -58,15 +65,7 @@ fun <T,K> LoadingContent(
     },
     success : @Composable BoxScope.(data : T)->Unit
 ) {
-    val state : LoadingState<T> by produceState<LoadingState<T>>(initialValue = LoadingState.Loading, key){
-        value = try {
-            Log.d(TAG, "LoadingContent: loading...")
-            LoadingState.Success(loader())
-        }catch (e: Exception){
-            e.printStackTrace()
-            LoadingState.Failure(e)
-        }
-    }
+    val state : LoadingState<T> by rememberRetryableLoadingState(loader = loader, key = key)
     Box(modifier = modifier){
         when(state){
             is LoadingState.Loading -> loading()
@@ -77,6 +76,8 @@ fun <T,K> LoadingContent(
         }
     }
 }
+
+
 
 @Composable
 fun <T> LoadingContent(
@@ -94,18 +95,62 @@ fun <T> LoadingContent(
     LoadingContent(modifier, key, { k -> key = !k }, loader, loading, failure, success)
 }
 
-fun <T> loadingState(
-    scope : CoroutineScope = MainScope(),
-    loader: suspend () -> T
-): MutableState<LoadingState<T>> {
-    val state : MutableState<LoadingState<T>> = mutableStateOf(LoadingState.Loading)
-        scope.launch {
-            try {
-                val data = loader()
-                state.value = LoadingState.Success(data)
-            } catch(e : Exception) {
-                state.value = LoadingState.Failure(e)
-            }
+
+fun <T : Any> LazyListScope.loadingList(
+    value: State<LoadingState<List<T>>>,
+    retry: () -> Unit,
+    key : ((T) -> Any)?,
+    loading : @Composable ()->Unit = { DefaultLoading() },
+    failure : @Composable (error : Throwable, retry : ()->Unit) -> Unit = { err, re->
+        DefaultFailure(retry = re)
+    },
+    success : @Composable (data : T)->Unit,
+){
+    when(value.value){
+        is LoadingState.Loading -> item(key = "loading"){ loading() }
+        is LoadingState.Success<*> -> items((value.value as LoadingState.Success<List<T>>).data, key){
+            success(it)
         }
-    return state
+        is LoadingState.Failure -> item { failure((value.value as LoadingState.Failure).error, retry) }
+    }
+}
+
+/**
+ * 可重试的 LoadingState，由于 Key 内部持有，额外返回一个修改 Key 的函数
+ * @param initialValue LoadingState<T> 初始加载状态，默认为 [LoadingState.Loading]
+ * @param loader 加载值的函数
+ * @return Pair<State<LoadingState<T>>, () -> Unit>
+ */
+@Composable
+fun <T> rememberRetryableLoadingState(
+    initialValue: LoadingState<T> = LoadingState.Loading,
+    loader: suspend () -> T,
+): Pair<State<LoadingState<T>>, () -> Unit> {
+    var key by remember {
+        mutableStateOf(false)
+    }
+    val update = remember {
+        {
+            key = !key
+        }
+    }
+    val loadingState: State<LoadingState<T>> = rememberRetryableLoadingState(key = key, loader = loader, initialValue = initialValue)
+    return (loadingState to update)
+}
+
+@Composable
+fun <T, K> rememberRetryableLoadingState(
+    initialValue: LoadingState<T> = LoadingState.Loading,
+    key: K,
+    loader: suspend () -> T,
+): State<LoadingState<T>> {
+    val loadingState: State<LoadingState<T>> = produceState(initialValue = initialValue, key) {
+        value = try {
+            LoadingState.Success(loader())
+        }catch (e: Exception){
+            e.printStackTrace()
+            LoadingState.Failure(e)
+        }
+    }
+    return loadingState
 }

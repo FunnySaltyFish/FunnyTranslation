@@ -18,7 +18,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.Consts
+import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
@@ -84,6 +86,8 @@ class TransActivity : AppCompatActivity() {
                 UserUtils.refreshJwtToken()
                 // MobileAds.initialize(context) {}
                 activityViewModel.getNotice()
+                activityViewModel.checkUpdate(context)
+                ApkUtil.deleteOldApk(context, FunnyApplication.ctx.externalCache.absolutePath + "/update_apk.apk")
             }
 
             // 显示悬浮窗
