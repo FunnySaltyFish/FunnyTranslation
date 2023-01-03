@@ -6,14 +6,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +35,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
+import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.trans.login.LoginActivity
-import com.funny.translation.Consts
-import com.funny.translation.bean.UserBean
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
@@ -46,14 +46,25 @@ import com.funny.translation.translate.ui.widget.DefaultFailure
 import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.LoadingContent
-import com.funny.translation.translate.utils.localDataGson
 import com.funny.translation.ui.touchToScale
+
+enum class SponsorSortType(val value: String){
+    Date("date"), Money("money")
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ThanksScreen(navHostController: NavHostController) {
     val vm: ThanksViewModel = viewModel()
     val sponsors = vm.sponsors.collectAsLazyPagingItems()
+    var sponsorSortType : SponsorSortType by rememberDataSaverState("KEY_SPONSOR_SORT_TYPE", SponsorSortType.Money)
+    var sponsorSortOrder by rememberDataSaverState(key = "KEY_SPONSOR_SORT_ORDER", default = -1) // 1 升序; -1 降序
+
+    LaunchedEffect(sponsorSortType, sponsorSortOrder){
+        vm.updateSort(sponsorSortType, sponsorSortOrder)
+        sponsors.refresh()
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -96,17 +107,19 @@ fun ThanksScreen(navHostController: NavHostController) {
             }
         }
         stickyHeader {
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 HeadingText(text = stringResource(id = R.string.thanks))
+                SortSponsor(sortType = sponsorSortType, updateSortType = { sponsorSortType = it }, sortOrder = sponsorSortOrder, updateSortOrder = { sponsorSortOrder = it})
             }
 
         }
-        items(sponsors) { sponsor ->
+        items(sponsors, key = { it.key }) { sponsor ->
             sponsor?.let {
                 SponsorItem(sponsor = it)
             }
@@ -161,6 +174,77 @@ fun ThanksScreen(navHostController: NavHostController) {
 }
 
 @Composable
+fun SortSponsor(
+    sortType: SponsorSortType,
+    updateSortType: (SponsorSortType) -> Unit,
+    sortOrder: Int,
+    updateSortOrder: (Int) -> Unit
+) {
+    // Menu
+    var expanded by remember { mutableStateOf(false) }
+
+    IconButton(onClick = {
+        expanded = true
+    }) {
+        Icon(Icons.Default.Sort, contentDescription = stringResource(id = R.string.sort))
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+            },
+            modifier = Modifier
+                .width(200.dp)
+                .height(200.dp)
+        ) {
+            DropdownMenuItem(onClick = {
+                updateSortType(SponsorSortType.Date)
+                updateSortOrder(1)
+                expanded = false
+            } ,text = {
+                Text(text = stringResource(id = R.string.sort_by_date_asc))
+            }, trailingIcon = {
+                if(sortType == SponsorSortType.Date && sortOrder == 1){
+                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_date_asc))
+                }
+            })
+            DropdownMenuItem(onClick = {
+                updateSortType(SponsorSortType.Date)
+                updateSortOrder(-1)
+                expanded = false
+            } ,text = {
+                Text(text = stringResource(id = R.string.sort_by_date_desc))
+            }, trailingIcon = {
+                if(sortType == SponsorSortType.Date && sortOrder == -1){
+                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_date_desc))
+                }
+            })
+            DropdownMenuItem(onClick = {
+                updateSortType(SponsorSortType.Money)
+                updateSortOrder(1)
+                expanded = false
+            } ,text = {
+                Text(text = stringResource(id = R.string.sort_by_money_asc))
+            }, trailingIcon = {
+                if(sortType == SponsorSortType.Money && sortOrder == 1){
+                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_money_asc))
+                }
+            })
+            DropdownMenuItem(onClick = {
+                updateSortType(SponsorSortType.Money)
+                updateSortOrder(-1)
+                expanded = false
+            } ,text = {
+                Text(text = stringResource(id = R.string.sort_by_money_desc))
+            }, trailingIcon = {
+                if(sortType == SponsorSortType.Money && sortOrder == -1){
+                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_money_desc))
+                }
+            })
+        }
+    }
+}
+
+@Composable
 fun UserInfoPanel(navHostController: NavHostController) {
     val TAG = "UserInfoPanel"
     val activityVM = LocalActivityVM.current
@@ -184,7 +268,10 @@ fun UserInfoPanel(navHostController: NavHostController) {
                 if (activityVM.uid <= 0) { // 未登录
                     startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
                 } else {
-                    navHostController.navigateSingleTop(TranslateScreen.UserProfileScreen.route, false)
+                    navHostController.navigateSingleTop(
+                        TranslateScreen.UserProfileScreen.route,
+                        false
+                    )
                 }
             }
             .fillMaxWidth()
@@ -210,7 +297,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
             }
         } else {
             Text(
-                text = "登录/注册",
+                text = stringResource(R.string.login_or_register),
                 fontSize = 24.sp,
                 fontWeight = ExtraBold,
                 modifier = Modifier.align(Alignment.Center)

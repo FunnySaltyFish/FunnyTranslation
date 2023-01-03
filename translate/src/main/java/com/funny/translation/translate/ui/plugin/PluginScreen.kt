@@ -167,14 +167,17 @@ fun PluginScreen() {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(0.45f),
+                        .weight(0.45f),
+                    verticalArrangement = spacedBy(8.dp)
                 ){
                     localPluginPartWrapper()
                 }
+                Spacer(modifier = Modifier.weight(0.015f))
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(0.45f),
+                        .weight(0.45f),
+                    verticalArrangement = spacedBy(8.dp)
                 ){
                     onlinePluginListWrapper()
                 }

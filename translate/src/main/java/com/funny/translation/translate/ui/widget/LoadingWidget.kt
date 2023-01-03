@@ -33,7 +33,7 @@ sealed class LoadingState<out R> {
 
 @Composable
 fun DefaultLoading(modifier: Modifier = Modifier) {
-    CircularProgressIndicator(modifier)
+    CircularProgressIndicator(modifier.fillMaxWidth().wrapContentWidth())
 }
 
 @Composable

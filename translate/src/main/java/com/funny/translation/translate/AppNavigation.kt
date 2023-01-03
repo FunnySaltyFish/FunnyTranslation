@@ -13,7 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
@@ -22,8 +22,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
-import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.Consts
+import com.funny.translation.bean.UserBean
+import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.toastOnUi
+import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
@@ -32,17 +35,13 @@ import com.funny.translation.translate.ui.settings.SelectLanguage
 import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
 import com.funny.translation.translate.ui.thanks.ThanksScreen
-import com.funny.translation.translate.ui.thanks.UserProfileScreen
-import com.funny.translation.theme.TransTheme
-import com.funny.translation.theme.isLight
+import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.funny.translation.translate.ui.widget.MarkdownText
-import com.funny.translation.ui.SystemBarSettings
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"
@@ -61,14 +60,28 @@ val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
 @ExperimentalAnimationApi
 @Composable
 fun AppNavigation(
+    shouldJumpToMainContent: MutableState<Boolean>,
     exitAppAction: () -> Unit
 ) {
     val navController = rememberAnimatedNavController()
 
+    LaunchedEffect(shouldJumpToMainContent.value){
+        if (shouldJumpToMainContent.value){
+            if (navController.currentBackStackEntry != null){
+
+                navController.navigate(TranslateScreen.MainScreen.route){
+                    launchSingleTop = true
+                    popUpTo(TranslateScreen.MainScreen.route)
+                }
+            }
+            shouldJumpToMainContent.value = false
+        }
+    }
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val activityVM: ActivityViewModel = viewModel()
-
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember {
         SnackbarHostState()
@@ -173,7 +186,17 @@ fun AppNavigation(
                     }
                     navigation(startDestination = TranslateScreen.ThanksScreen.route, route = "nav_1_thanks") {
                         composable(TranslateScreen.ThanksScreen.route){ ThanksScreen(navController) }
-                        animateComposable(TranslateScreen.UserProfileScreen.route){ UserProfileScreen(navController) }
+                        addUserProfileRoutes(navHostController = navController,
+                            currentUserBean = activityVM.userInfo,
+                            onLoginSuccess = { userBean ->
+                            Log.d(TAG, "登录成功: 用户: $userBean")
+                            DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, userBean.jwt_token)
+                            if (userBean.isValid()) AppConfig.userInfo.value = userBean
+                        }, onResetPasswordSuccess = {
+                            context.toastOnUi("修改密码成功，请重新登陆~")
+                            activityVM.userInfo = UserBean()
+                            navController.popBackStack(navController.graph.startDestinationId, false)
+                        })
                     }
                 }
             }

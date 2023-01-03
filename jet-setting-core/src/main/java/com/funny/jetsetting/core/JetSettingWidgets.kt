@@ -15,8 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.ui.FunnyIcon
 import com.funny.jetsetting.core.ui.IconWidget
@@ -35,23 +39,41 @@ fun JetSettingCheckbox(
     resourceId: Int? = null,
     iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
     text: String,
+    description: String? = null,
     onCheck: (Boolean) -> Unit
 ) {
-    Row(
-        modifier,
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    ConstraintLayout(modifier) {
+        val (icon, textColumn, checkbox) = createRefs()
+
         val funnyIcon = FunnyIcon(imageVector, resourceId)
         funnyIcon.get()?.let {
-            IconWidget(funnyIcon, tintColor = iconTintColor)
-            Spacer(modifier = Modifier.width(24.dp))
+            IconWidget(Modifier.constrainAs(icon){
+                start.linkTo(parent.start)
+                centerVerticallyTo(parent)
+            }, funnyIcon, tintColor = iconTintColor)
         }
-        Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))
+
         Checkbox(checked = state.value, onCheckedChange = {
             state.value = it
             onCheck(it)
+        }, modifier = Modifier.constrainAs(checkbox){
+            end.linkTo(parent.end)
+            centerVerticallyTo(parent)
         })
+
+        Column(modifier = Modifier.constrainAs(textColumn){
+            start.linkTo(icon.end, margin = 24.dp)
+            end.linkTo(checkbox.start)
+            centerVerticallyTo(parent)
+            width = Dimension.preferredWrapContent
+        }, horizontalAlignment = Alignment.Start) {
+            Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, textAlign = TextAlign.Start, modifier = Modifier.fillMaxWidth())
+            description?.let{
+                Text(text = it, fontSize = 12.sp, fontWeight = FontWeight.W400, textAlign = TextAlign.Start, lineHeight = 15.sp, color = contentColorFor(
+                    backgroundColor = MaterialTheme.colorScheme.background
+                ).copy(0.8f), modifier = Modifier.fillMaxWidth())
+            }
+        }
     }
 }
 
@@ -64,10 +86,11 @@ fun JetSettingCheckbox(
     resourceId: Int? = null,
     iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
     text: String,
+    description: String? = null,
     onCheck: (Boolean) -> Unit
 ) {
     val state = rememberDataSaverState(key = key, default = default)
-    JetSettingCheckbox(state = state, modifier = modifier, imageVector = imageVector, resourceId = resourceId, iconTintColor = iconTintColor, text = text, onCheck = onCheck)
+    JetSettingCheckbox(state = state, modifier = modifier, imageVector = imageVector, resourceId = resourceId, iconTintColor = iconTintColor, text = text, description = description, onCheck = onCheck)
 }
 
 @Composable
@@ -86,7 +109,7 @@ fun JetSettingTile(
     ) {
         val funnyIcon = FunnyIcon(imageVector, resourceId)
         funnyIcon.get()?.let {
-            IconWidget(funnyIcon, tintColor = iconTintColor)
+            IconWidget(funnyIcon = funnyIcon, tintColor = iconTintColor)
             Spacer(modifier = Modifier.width(24.dp))
         }
         Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))
@@ -156,7 +179,7 @@ fun JetSettingDialog(
     ) {
         val funnyIcon = FunnyIcon(imageVector, resourceId)
         funnyIcon.get()?.let {
-            IconWidget(funnyIcon, tintColor = iconTintColor)
+            IconWidget(funnyIcon = funnyIcon, tintColor = iconTintColor)
             Spacer(modifier = Modifier.width(24.dp))
         }
         Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))

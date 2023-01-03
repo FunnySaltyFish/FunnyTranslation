@@ -2,7 +2,10 @@ package com.funny.translation.translate
 
 import android.content.res.Resources
 import androidx.annotation.Keep
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.jsBean.core.R
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Keep
 enum class Language(val id : Int,var displayText : String = "") {
@@ -34,6 +37,7 @@ fun findLanguageById(id : Int) = if(id in allLanguages.indices) {
 }
 
 val allLanguages = Language.values().asList()
+val enabledLanguages = MutableStateFlow(allLanguages.filter { DataSaverUtils.readData(it.selectedKey, false) })
 
 fun initLanguageDisplay(resources : Resources){
     Language.AUTO.displayText = resources.getString(R.string.language_auto)

@@ -140,6 +140,7 @@ class MainViewModel : ViewModel() {
     fun isTranslating(): Boolean = translateJob?.isActive ?: false
 
     fun translate() {
+
         if (translateJob?.isActive == true) return
         if (actualTransText.isEmpty()) return
 
@@ -148,6 +149,10 @@ class MainViewModel : ViewModel() {
         addTransHistory(actualTransText, sourceLanguage, targetLanguage)
         showListType = ShowListType.Result
         translateJob = viewModelScope.launch {
+            // 延时，等待插件加载完
+            while (!jsEngineInitialized) {
+                delay(100)
+            }
             createFlow().buffer().collect { task ->
                 try {
                     with(TranslateConfig){

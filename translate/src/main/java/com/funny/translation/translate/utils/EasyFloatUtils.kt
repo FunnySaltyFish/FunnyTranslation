@@ -12,18 +12,11 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.*
-import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.Language
-import com.funny.translation.translate.allLanguages
-import com.funny.translation.translate.findLanguageById
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.R
 import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.VibratorUtils
-import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
-import com.funny.translation.sign.SignUtils
+import com.funny.translation.translate.*
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat
@@ -76,12 +69,11 @@ object EasyFloatUtils {
 
         val spinnerSource: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_source).apply {
-                adapter =
-                    ArrayAdapter<String>(context, R.layout.view_spinner_text_item).apply {
-                        addAll(allLanguages.map { it.displayText })
-                        setDropDownViewResource(R.layout.view_spinner_dropdown_item)
-                    }
-                setSelection(Language.AUTO.id)
+                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+                    addAll(enabledLanguages.value.map { it.displayText })
+                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+                }
+                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.sourceLanguage ?: Language.AUTO))
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -91,7 +83,7 @@ object EasyFloatUtils {
                     ) {
                         translateConfigFlow.value = translateConfigFlow.value.copy(
                             sourceString = edittext.text.trim().toString(),
-                            sourceLanguage = findLanguageById(position)
+                            sourceLanguage = enabledLanguages.value[position]
                         )
                     }
 
@@ -103,12 +95,11 @@ object EasyFloatUtils {
 
         val spinnerTarget: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_target).apply {
-                adapter =
-                    ArrayAdapter<String>(context, R.layout.view_spinner_text_item).apply {
-                        addAll(allLanguages.map { it.displayText })
-                        setDropDownViewResource(R.layout.view_spinner_dropdown_item)
-                    }
-                setSelection(Language.CHINESE.id)
+                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+                    addAll(enabledLanguages.value.map { it.displayText })
+                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+                }
+                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.targetLanguage ?: Language.CHINESE))
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -118,7 +109,7 @@ object EasyFloatUtils {
                     ) {
                         translateConfigFlow.value = translateConfigFlow.value.copy(
                             sourceString = edittext.text.trim().toString(),
-                            targetLanguage = findLanguageById(position)
+                            targetLanguage = enabledLanguages.value[position]
                         )
                     }
 
@@ -127,6 +118,24 @@ object EasyFloatUtils {
                     }
                 }
             }
+
+        GlobalScope.launch {
+            enabledLanguages.collect {
+                withContext(Dispatchers.Main){
+                    spinnerSource.adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+                        addAll(enabledLanguages.value.map { it.displayText })
+                        setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+                    }
+                    spinnerSource.setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.sourceLanguage ?: Language.AUTO))
+
+                    spinnerTarget.adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+                        addAll(enabledLanguages.value.map { it.displayText })
+                        setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+                    }
+                    spinnerTarget.setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.targetLanguage ?: Language.CHINESE))
+                }
+            }
+        }
 
         val rotateAnimation = RotateAnimation(
             0f, 360f,
@@ -166,8 +175,8 @@ object EasyFloatUtils {
             translateConfigFlow.collect {
                 kotlin.runCatching {
                     if (it.sourceString!=null && it.sourceString!="") {
-                        val sourceLanguage = findLanguageById(spinnerSource.selectedItemPosition)
-                        val targetLanguage = findLanguageById(spinnerTarget.selectedItemPosition)
+                        val sourceLanguage = enabledLanguages.value[spinnerSource.selectedItemPosition]
+                        val targetLanguage = enabledLanguages.value[spinnerTarget.selectedItemPosition]
                         val task = TranslateUtils.createTask(
                             TextTranslationEngines.BaiduNormal,
                             it.sourceString!!,
@@ -304,7 +313,6 @@ object EasyFloatUtils {
                             override fun touchUpInRange() {
                                 EasyFloat.dismiss(TAG_FLOAT_BALL)
                                 initFloatBall = false
-                                DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
                             }
                         }, showPattern = ShowPattern.ALL_TIME)
                     }
@@ -332,7 +340,7 @@ object EasyFloatUtils {
         }
     }
 
-    fun hideFloatBall(){
+    fun hideAllFloatWindow(){
         EasyFloat.hide(TAG_TRANS_WINDOW)
         EasyFloat.hide(TAG_FLOAT_BALL)
     }
@@ -342,4 +350,6 @@ object EasyFloatUtils {
         EasyFloat.dismiss(TAG_FLOAT_BALL)
         translateJob?.cancel()
     }
+
+    fun isShowingFloatBall() = EasyFloat.isShow(TAG_FLOAT_BALL)
 }

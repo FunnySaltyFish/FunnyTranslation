@@ -42,8 +42,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdk Versions.targetSdkVersion
-        versionCode 46
-        versionName "2.4.3"
+        versionCode 47
+        versionName "2.4.4"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86_64'
@@ -112,7 +112,7 @@ dependencies {
 //    implementation 'com.github.jeziellago:compose-markdown:0.2.6'
 
     // 分页加载
-    implementation "androidx.paging:paging-compose:1.0.0-alpha15"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha17"
     implementation "androidx.paging:paging-runtime-ktx:3.1.1"
 
     // 应用更新
@@ -125,7 +125,7 @@ dependencies {
 //    implementation "com.github.leavesCZY:Matisse:0.0.6"
 
     // 图片选择器
-    implementation("cn.qhplus.emo:photo-coil:0.1.0")
+    implementation("cn.qhplus.emo:photo-coil:0.3.0")
 
     // To recognize Latin script
 //    implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'

@@ -29,10 +29,6 @@ import com.funny.jetsetting.core.JetSettingCheckbox
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.allLanguages
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.LocalNavController
-import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.Consts
 import com.funny.translation.translate.ui.screen.TranslateScreen
@@ -40,6 +36,8 @@ import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.translate.*
+import com.funny.translation.translate.R
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
 import org.burnoutcrew.reorderable.*
@@ -124,7 +122,7 @@ fun SettingsScreen() {
         ) {
             try {
                 if (it) EasyFloatUtils.showFloatBall(context as Activity)
-                else EasyFloatUtils.hideFloatBall()
+                else EasyFloatUtils.hideAllFloatWindow()
             } catch (e: Exception) {
                 Toast.makeText(context, "显示悬浮窗失败，请检查是否正确授予权限！", Toast.LENGTH_LONG).show()
                 DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
@@ -167,10 +165,27 @@ fun SettingsScreen() {
             if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
         }
         JetSettingCheckbox(
+            state = AppConfig.sAutoFocus,
+            text = stringResource(R.string.setting_auto_focus),
+            resourceId = R.drawable.ic_keyboard,
+            iconTintColor = MaterialColors.Red400
+        ) {
+
+        }
+        JetSettingCheckbox(
             state = AppConfig.sShowTransHistory,
             text = stringResource(R.string.setting_show_history),
             resourceId = R.drawable.ic_history,
             iconTintColor = MaterialColors.Lime700
+        ) {
+
+        }
+        JetSettingCheckbox(
+            state = AppConfig.sTextMenuFloatingWindow,
+            text = stringResource(R.string.setting_text_menu_floaing_window),
+            description = stringResource(id = R.string.setting_text_menu_floaing_window_desc),
+            resourceId = R.drawable.ic_float_window,
+            iconTintColor = MaterialColors.DeepPurpleA200
         ) {
 
         }
@@ -188,6 +203,7 @@ fun SettingsScreen() {
         ) {
             navController.navigate(TranslateScreen.SelectLanguageScreen.route)
         }
+
         Spacer(modifier = Modifier.height(8.dp))
         HeadingText(stringResource(id = R.string.about))
 
@@ -274,10 +290,19 @@ fun SelectLanguage(modifier: Modifier) {
         allLanguages.map { DataSaverUtils.readData(it.selectedKey, true) }.toMutableStateList()
     }
 
+    fun setEnabledState(language: Language, enabled: Boolean){
+        DataSaverUtils.saveData(language.selectedKey, enabled)
+        if (enabled) {
+            enabledLanguages.value = (enabledLanguages.value + language).sortedBy { it.id }
+        }else{
+            enabledLanguages.value = (enabledLanguages.value - language).sortedBy { it.id }
+        }
+    }
+
     fun setAllState(state : Boolean){
         for (i in 0 until data.size){
             data[i] = state
-            DataSaverUtils.saveData(allLanguages[i].selectedKey, state)
+            setEnabledState(allLanguages[i], state)
         }
     }
 
@@ -286,7 +311,7 @@ fun SelectLanguage(modifier: Modifier) {
             // 如果什么都没选，退出的时候默认帮忙选几个
             data.firstOrNull{it} ?: kotlin.run {
                 for (i in 0..2){
-                    DataSaverUtils.saveData(allLanguages[i].selectedKey,true)
+                    setEnabledState(allLanguages[i], true)
                 }
             }
         }
@@ -320,7 +345,7 @@ fun SelectLanguage(modifier: Modifier) {
                 )
                 Checkbox(checked = selected, onCheckedChange = {
                     data[i] = it
-                    DataSaverUtils.saveData(allLanguages[i].selectedKey, it)
+                    setEnabledState(allLanguages[i], it)
                 })
             }
         }

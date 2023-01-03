@@ -11,8 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import com.funny.translation.bean.UserBean
+import com.funny.translation.helper.toastOnUi
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -29,6 +32,7 @@ fun LoginNavigation(
     onLoginSuccess: (UserBean) -> Unit,
 ) {
     val navController = rememberAnimatedNavController()
+    val context = LocalContext.current
     val infiniteTransition = rememberInfiniteTransition()
     val offset by infiniteTransition.animateFloat(
         initialValue = 0.3f,
@@ -56,17 +60,30 @@ fun LoginNavigation(
             )
             .statusBarsPadding(),
     ){
-        animateComposable(LoginRoute.LoginPage.route){
-            LoginPage(navController = navController, onLoginSuccess = onLoginSuccess)
-        }
-        animateComposable(LoginRoute.ResetPasswordPage.route){
-            ResetPasswordPage(navController = navController)
-        }
-        animateComposable(LoginRoute.FindUsernamePage.route){
-            FindUsernamePage()
-        }
+        addLoginRoutes(navController, onLoginSuccess = onLoginSuccess, onResetPasswordSuccess = {
+            context.toastOnUi("密码重置成功！")
+            navController.popBackStack()
+        })
     }
 }
+
+fun NavGraphBuilder.addLoginRoutes(
+    navController: NavHostController,
+    currentUserBean: UserBean? = null,
+    onLoginSuccess: (UserBean) -> Unit,
+    onResetPasswordSuccess: () -> Unit,
+){
+    animateComposable(LoginRoute.LoginPage.route){
+        LoginPage(navController = navController, onLoginSuccess = onLoginSuccess)
+    }
+    animateComposable(LoginRoute.ResetPasswordPage.route){
+        ResetPasswordPage(navController = navController, initialUserBean = currentUserBean, onSuccess = onResetPasswordSuccess)
+    }
+    animateComposable(LoginRoute.FindUsernamePage.route){
+        FindUsernamePage()
+    }
+}
+
 
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.animateComposable(

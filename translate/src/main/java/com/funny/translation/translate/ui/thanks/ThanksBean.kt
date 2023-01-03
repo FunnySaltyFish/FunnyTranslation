@@ -7,4 +7,6 @@ data class Sponsor(
     val message : String? = null,
     val date : Date,
     val money : Int
-)
+){
+    val key get() = "$name:${date.time}:${money}"
+}
