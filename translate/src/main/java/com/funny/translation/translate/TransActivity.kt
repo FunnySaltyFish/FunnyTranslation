@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +31,7 @@ import com.funny.translation.translate.utils.EasyFloatUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 /**
  * 你好，很高兴见到你！
@@ -48,6 +50,8 @@ class TransActivity : AppCompatActivity() {
     private lateinit var activityViewModel: ActivityViewModel
     private lateinit var context: Context
     private lateinit var netWorkReceiver: NetworkReceiver
+
+    private var shouldJumpToMainScreen = mutableStateOf(false)
 
     companion object {
         const val TAG = "TransActivity"
@@ -73,8 +77,10 @@ class TransActivity : AppCompatActivity() {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
                 AppNavigation(
+                    shouldJumpToMainScreen,
                     exitAppAction = {
                         this.finish()
+                        exitProcess(0)
                     }
                 )
             }
@@ -148,6 +154,7 @@ class TransActivity : AppCompatActivity() {
                     if (t != null) targetLanguage = findLanguageById(t.toInt())
                 }
                 Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
+                shouldJumpToMainScreen.value = true
             }
         }
         // 这里处理的是外部分享过来的文本
@@ -160,6 +167,7 @@ class TransActivity : AppCompatActivity() {
                     targetLanguage = Language.CHINESE
                 }
                 Log.d(TAG, "获取到其他应用传来的文本: $text")
+                shouldJumpToMainScreen.value = true
             }
         }
         // 这里是处理输入法选中后的菜单
@@ -172,6 +180,7 @@ class TransActivity : AppCompatActivity() {
                     targetLanguage = Language.CHINESE
                 }
                 Log.d(TAG, "获取到输入法菜单传来的文本: $text")
+                shouldJumpToMainScreen.value = true
             }
         }
     }

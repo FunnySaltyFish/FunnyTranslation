@@ -67,7 +67,7 @@
     <string name="setting_hide_status_bar">隐藏状态栏</string>
     <string name="open_app">打开应用查询</string>
     <string name="sort_result">结果排序</string>
-    <string name="sponsor_tip">上述排名仅以时间为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为</string>
+    <string name="sponsor_tip">上述排名仅以对应排序条件为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为</string>
     <string name="others">其他</string>
     <string name="custom_nav">新导航栏</string>
     <string name="tip">提示</string>
@@ -88,4 +88,13 @@
     <string name="avatar">头像</string>
     <string name="send_report">发送报告</string>
     <string name="engine_tencent">腾讯翻译</string>
+    <string name="login_or_register">登录/注册</string>
+    <string name="sort">排序</string>
+    <string name="sort_by_date_asc">按时间（从远到近）</string>
+    <string name="sort_by_date_desc">按时间（从近到远）</string>
+    <string name="sort_by_money_asc">按金额（从小到大）</string>
+    <string name="sort_by_money_desc">按金额（从大到小）</string>
+    <string name="setting_text_menu_floaing_window">文本菜单悬浮窗</string>
+    <string name="setting_text_menu_floaing_window_desc">长按选择文本后，跳转翻译时打开悬浮窗（首次需打开应用本体，保持在后台后即可正常使用。如没有反应，请尝试手动打开应用的悬浮窗权限）</string>
+    <string name="setting_auto_focus">自动打开软键盘</string>
 </resources>

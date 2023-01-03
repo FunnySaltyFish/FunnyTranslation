@@ -67,7 +67,7 @@
     <string name="setting_hide_status_bar">Hide Status Bar</string>
     <string name="open_app">Open app to query</string>
     <string name="sort_result">Sort Result</string>
-    <string name="sponsor_tip">The order above is sorted only by its time. It is your support that makes this application better.\n It\'s totally up to you whether to sponsor or not, \nplease do it according to your ability.</string>
+    <string name="sponsor_tip">The order above is sorted only by the corresponding condition. \nIt is your support that makes this application better.  \nIt\'s totally up to you whether to sponsor or not,  please do it according to your ability.</string>
     <string name="others">Other Settings</string>
     <string name="custom_nav">New Navigation Bar</string>
     <string name="tip">Tip</string>
@@ -87,4 +87,11 @@
     <string name="setting_trans_page_input_bottom">Place Input At Bottom</string>
     <string name="avatar">Avatar</string>
     <string name="send_report">Send Report</string>
+    <string name="engine_tencent">Tencent</string>
+    <string name="login_or_register">Login or Register</string>
+    <string name="sort">Sort</string>
+    <string name="sort_by_date_asc">By time(from old to new)</string>
+    <string name="sort_by_date_desc">By time(from new to old)</string>
+    <string name="sort_by_money_asc">By money(from small to large)</string>
+    <string name="sort_by_money_desc">By money(from large to small)</string>
 </resources>

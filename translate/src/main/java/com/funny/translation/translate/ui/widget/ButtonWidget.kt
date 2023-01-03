@@ -69,17 +69,22 @@ fun SelectableChip(
 fun ExchangeButton(
     onClick: () -> Unit = {}
 ) {
-    //var clickOnce = true
-    //val rotateValue by animateFloatAsState(targetValue = if(clickOnce) 0f else 180f)
+    var clickOnce by remember {
+        mutableStateOf(false)
+    }
+    val rotateValue by animateFloatAsState(targetValue = if(clickOnce) 0f else 180f)
     IconButton(
         onClick = {
+            clickOnce = !clickOnce
             onClick()
         },
         Modifier
             .background(
                 Color.Transparent,
                 CircleShape
-            )
+            ).graphicsLayer {
+                rotationZ = rotateValue
+            }
     ) {
         Icon(
             painterResource(id = R.drawable.ic_exchange), tint = MaterialTheme.colorScheme.onPrimaryContainer,

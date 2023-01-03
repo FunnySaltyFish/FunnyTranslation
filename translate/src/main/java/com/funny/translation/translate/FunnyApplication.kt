@@ -16,6 +16,7 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.sign.SignUtils
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager
+import com.funny.translation.translate.ui.thanks.SponsorSortType
 import com.funny.translation.translate.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,6 +46,11 @@ class FunnyApplication : BaseApplication() {
         registerTypeConverters<EditorSchemes>(
             save = { it.name },
             restore = { EditorSchemes.valueOf(it) }
+        )
+
+        registerTypeConverters<SponsorSortType>(
+            save = { it.name },
+            restore = { SponsorSortType.valueOf(it) }
         )
     }
 

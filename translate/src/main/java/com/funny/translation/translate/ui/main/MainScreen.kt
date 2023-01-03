@@ -409,7 +409,7 @@ private fun InputPart(
         animateProgress.animateTo(vm.progress)
     }
 
-    var shouldRequestFocus by remember { mutableStateOf(true) }
+    var shouldRequestFocus by remember { mutableStateOf(AppConfig.sAutoFocus.value) }
 
     DisposableEffect(Unit){
         onDispose { shouldRequestFocus = false }

@@ -18,7 +18,7 @@ interface SponsorService {
     ) : List<Sponsor>
 }
 
-class SponsorPagingSource(private val sponsorService: SponsorService) : PagingSource<Int, Sponsor>() {
+class SponsorPagingSource(private val sponsorService: SponsorService, var sort: String?) : PagingSource<Int, Sponsor>() {
     companion object {
         private const val TAG = "SponsorPagingSource"
     }
@@ -28,7 +28,7 @@ class SponsorPagingSource(private val sponsorService: SponsorService) : PagingSo
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Sponsor> {
         return try {
             val nextPage = params.key ?: 0
-            val data = sponsorService.getPagedSponsor(nextPage)
+            val data = sponsorService.getPagedSponsor(nextPage, sort = sort)
             Log.d(TAG, "load: $nextPage ${data.size}")
             LoadResult.Page(
                 data = data,

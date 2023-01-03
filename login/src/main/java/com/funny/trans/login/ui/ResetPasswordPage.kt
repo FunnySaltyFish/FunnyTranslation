@@ -17,20 +17,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 
 @Composable
 fun ResetPasswordPage(
-    navController: NavController
+    navController: NavController,
+    initialUserBean: UserBean? = null,
+    onSuccess: () -> Unit,
 ) {
     Column(
         Modifier
-            .fillMaxHeight(),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val vm = viewModel<LoginViewModel>()
         val context = LocalContext.current
+
+        SideEffect {
+            initialUserBean?.let {
+                vm.email = it.email
+                vm.username = it.username
+            }
+        }
 
         Spacer(modifier = Modifier.height(60.dp))
         Column(Modifier.fillMaxWidth(WIDTH_FRACTION)) {
@@ -73,10 +83,7 @@ fun ResetPasswordPage(
                 }
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                vm.resetPassword(context, onSuccess = {
-                    context.toastOnUi("密码重置成功！")
-                    navController.popBackStack()
-                })
+                vm.resetPassword(context, onSuccess = onSuccess)
             }, enabled = enable) {
                 Text(text = "重置密码")
             }

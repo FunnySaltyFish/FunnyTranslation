@@ -25,15 +25,12 @@ class FunnyIcon(
 
 @Composable
 fun IconWidget(
+    modifier: Modifier = Modifier,
     funnyIcon : FunnyIcon,
     tintColor : Color = MaterialTheme.colorScheme.secondary
 ) {
     val icon = funnyIcon.get()
-    val modifier = Modifier
-        .size(64.dp)
-        .clip(CircleShape)
-        .background(tintColor.copy(alpha = 0.3f))
-    Box(modifier = modifier){
+    Box(modifier = modifier.size(64.dp).clip(CircleShape).background(tintColor.copy(alpha = 0.3f))){
         if (icon is ImageVector){
             Icon(imageVector = icon, contentDescription = "", tint = tintColor, modifier = Modifier.size(32.dp).align(Alignment.Center))
         }else if(icon is Int){
