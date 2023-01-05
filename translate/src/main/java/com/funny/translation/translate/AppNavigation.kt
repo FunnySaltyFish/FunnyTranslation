@@ -34,6 +34,7 @@ import com.funny.translation.translate.ui.settings.AboutScreen
 import com.funny.translation.translate.ui.settings.SelectLanguage
 import com.funny.translation.translate.ui.settings.SettingsScreen
 import com.funny.translation.translate.ui.settings.SortResult
+import com.funny.translation.translate.ui.thanks.AnnualReportScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
 import com.funny.translation.translate.ui.widget.CustomNavigation
@@ -197,6 +198,9 @@ fun AppNavigation(
                             activityVM.userInfo = UserBean()
                             navController.popBackStack(navController.graph.startDestinationId, false)
                         })
+                        composable(TranslateScreen.AnnualReportScreen.route) {
+                            AnnualReportScreen()
+                        }
                     }
                 }
             }

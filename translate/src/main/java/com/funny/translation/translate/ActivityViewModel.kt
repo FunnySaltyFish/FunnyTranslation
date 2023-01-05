@@ -26,7 +26,6 @@ import com.funny.translation.translate.utils.StringUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.DecimalFormat
 import java.util.*
 
 
@@ -78,10 +77,10 @@ class ActivityViewModel : ViewModel() {
             val manager = DownloadManager.getInstance(context)
             withContext(Dispatchers.IO){
                 val versionCode = ApplicationUtil.getAppVersionCode(FunnyApplication.ctx)
-                Log.d(ActivityViewModel.TAG, "checkUpdate: VersionCode:$versionCode")
+                Log.d(TAG, "checkUpdate: VersionCode:$versionCode")
                 val channel = DataSaverUtils.readData(Consts.KEY_APP_CHANNEL, "stable")
                 val updateInfo = TransNetwork.appUpdateService.getUpdateInfo(versionCode, channel)
-                Log.i(ActivityViewModel.TAG, "checkUpdate: $updateInfo")
+                Log.i(TAG, "checkUpdate: $updateInfo")
                 if (updateInfo.should_update){
                     val configuration = UpdateConfiguration().apply {
                         httpManager = UpdateDownloadManager(FunnyApplication.ctx.externalCache.absolutePath)

@@ -26,6 +26,7 @@ import com.funny.bottomnavigation.FunnyBottomNavigation
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
+import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ fun CustomNavigationItem(
             .clickable(onClick = onClick)
     ) {
         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            val icon = item.icon.get()
+            val icon = item.icon?.get()
             if (icon is ImageVector) {
                 Icon(imageVector = icon, contentDescription = "", tint = contentColor)
             } else if (icon is Int) {
@@ -136,7 +137,7 @@ fun CustomNavigation(
                         normalColor = contentColor.toArgb()
                         clickMargin = 24 // 拓宽点击边界
                         animationDuration = 500
-                        initIconButtons(screens.map { screen -> screen.icon.resourceId!! }.toIntArray())
+                        initIconButtons(screens.map { screen -> screen.icon?.resourceId ?: R.drawable.ic_thanks }.toIntArray())
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             height

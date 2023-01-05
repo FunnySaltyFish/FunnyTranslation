@@ -22,11 +22,13 @@ import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.Consts
 import com.funny.translation.codeeditor.extensions.externalCache
+import com.funny.translation.codeeditor.extensions.startActivity
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.network.NetworkReceiver
+import com.funny.translation.translate.activity.AnnualReportActivity
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers

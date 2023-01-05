@@ -30,7 +30,7 @@ interface TransHistoryDao {
 
     @Query("select * from table_trans_history where id in " +
             "(select max(id) as id from table_trans_history group by sourceString) order by id desc")
-    fun queryAll(): PagingSource<Int, TransHistoryBean>
+    fun queryAllPaging(): PagingSource<Int, TransHistoryBean>
 
     @Query("delete from table_trans_history where id = :id")
     fun deleteTransHistory(id: Int)
@@ -40,6 +40,9 @@ interface TransHistoryDao {
 
     @Insert
     fun insertTransHistory(transHistoryBean: TransHistoryBean)
+
+    @Query("select * from table_trans_history where time between :startTime and :endTime")
+    fun queryAllBetween(startTime: Long, endTime: Long): List<TransHistoryBean>
 }
 
 

@@ -1,27 +1,16 @@
 package com.funny.translation.translate
 
-import android.content.Context
 import android.content.res.Resources
-import android.util.Log
-import com.azhon.appupdate.config.UpdateConfiguration
-import com.azhon.appupdate.manager.DownloadManager
-import com.azhon.appupdate.utils.ApkUtil
-import com.funny.data_saver.core.registerTypeConverters
+import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
-import com.funny.translation.Consts
 import com.funny.translation.bean.UserBean
-import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.codeeditor.ui.editor.EditorSchemes
-import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.sign.SignUtils
-import com.funny.translation.translate.network.TransNetwork
-import com.funny.translation.translate.network.UpdateDownloadManager
 import com.funny.translation.translate.ui.thanks.SponsorSortType
+import com.funny.translation.translate.ui.widget.LoadingState
 import com.funny.translation.translate.utils.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
 class FunnyApplication : BaseApplication() {
@@ -51,6 +40,11 @@ class FunnyApplication : BaseApplication() {
         registerTypeConverters<SponsorSortType>(
             save = { it.name },
             restore = { SponsorSortType.valueOf(it) }
+        )
+
+        registerTypeConverters<Pair<String, Int>>(
+            save = { "${it.first}:${it.second}" },
+            restore = { val split = it.split(":"); Pair(split[0], split[1].toInt()) }
         )
     }
 

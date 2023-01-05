@@ -97,4 +97,5 @@
     <string name="setting_text_menu_floaing_window">文本菜单悬浮窗</string>
     <string name="setting_text_menu_floaing_window_desc">长按选择文本后，跳转翻译时打开悬浮窗（首次需打开应用本体，保持在后台后即可正常使用。如没有反应，请尝试手动打开应用的悬浮窗权限）</string>
     <string name="setting_auto_focus">自动打开软键盘</string>
+    <string name="annual_report">年度翻译报告</string>
 </resources>
