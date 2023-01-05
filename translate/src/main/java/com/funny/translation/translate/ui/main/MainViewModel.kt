@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -83,7 +82,7 @@ class MainViewModel : ViewModel() {
 //    val transHistoryPagingSource = TransHistoryPagingSource(appDB.transHistoryDao)
 
     val transHistories = Pager(PagingConfig(pageSize = 10)) {
-        appDB.transHistoryDao.queryAll()
+        appDB.transHistoryDao.queryAllPaging()
     }.flow.cachedIn(viewModelScope)
 
 //    val

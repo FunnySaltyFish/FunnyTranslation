@@ -7,19 +7,20 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Arrangement.spacedBy
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -184,11 +185,16 @@ fun PluginScreen() {
             }
 
         }else{
+            val lazyListState = rememberSaveable(saver = LazyListState.Saver) {
+                LazyListState()
+            }
+
             LazyColumn(
                 Modifier
                     .fillMaxSize()
                     .padding(start = 24.dp, end = 24.dp, top = 16.dp),
-                verticalArrangement = spacedBy(8.dp)
+                verticalArrangement = spacedBy(8.dp),
+                state = lazyListState
             ) {
                 localPluginPartWrapper()
                 onlinePluginListWrapper()

@@ -39,6 +39,7 @@ import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.trans.login.LoginActivity
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
+import com.funny.translation.translate.activity.AnnualReportActivity
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.screen.TranslateScreen
@@ -74,6 +75,9 @@ fun ThanksScreen(navHostController: NavHostController) {
     ) {
         item {
             UserInfoPanel(navHostController)
+        }
+        item {
+            AnnualReportEntrance()
         }
         item {
             HeadingText(text = stringResource(id = R.string.join_sponsor))
@@ -241,6 +245,22 @@ fun SortSponsor(
                 }
             })
         }
+    }
+}
+
+@Composable
+fun AnnualReportEntrance() {
+    val context = LocalContext.current
+    Box(modifier = Modifier
+        .touchToScale {
+            Intent(context, AnnualReportActivity::class.java).let {
+                context.startActivity(it)
+            }
+        }
+        .fillMaxWidth()
+        .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+    ){
+        Text(text = stringResource(id = R.string.annual_report), modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }
 

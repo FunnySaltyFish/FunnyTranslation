@@ -69,11 +69,11 @@ object EasyFloatUtils {
 
         val spinnerSource: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_source).apply {
-                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
-                    addAll(enabledLanguages.value.map { it.displayText })
-                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
-                }
-                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.sourceLanguage ?: Language.AUTO))
+//                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+//                    addAll(enabledLanguages.value.map { it.displayText })
+//                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+//                }
+//                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.sourceLanguage ?: Language.AUTO))
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -95,11 +95,11 @@ object EasyFloatUtils {
 
         val spinnerTarget: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_target).apply {
-                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
-                    addAll(enabledLanguages.value.map { it.displayText })
-                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
-                }
-                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.targetLanguage ?: Language.CHINESE))
+//                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+//                    addAll(enabledLanguages.value.map { it.displayText })
+//                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+//                }
+//                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.targetLanguage ?: Language.CHINESE))
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,

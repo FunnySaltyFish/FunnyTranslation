@@ -37,7 +37,7 @@ fun findLanguageById(id : Int) = if(id in allLanguages.indices) {
 }
 
 val allLanguages = Language.values().asList()
-val enabledLanguages = MutableStateFlow(allLanguages.filter { DataSaverUtils.readData(it.selectedKey, false) })
+val enabledLanguages = MutableStateFlow(allLanguages.filter { DataSaverUtils.readData(it.selectedKey, true) })
 
 fun initLanguageDisplay(resources : Resources){
     Language.AUTO.displayText = resources.getString(R.string.language_auto)

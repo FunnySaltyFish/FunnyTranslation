@@ -33,7 +33,10 @@ sealed class LoadingState<out R> {
 
 @Composable
 fun DefaultLoading(modifier: Modifier = Modifier) {
-    CircularProgressIndicator(modifier.fillMaxWidth().wrapContentWidth())
+    CircularProgressIndicator(
+        modifier
+            .fillMaxWidth()
+            .wrapContentWidth())
 }
 
 @Composable
@@ -77,6 +80,30 @@ fun <T,K> LoadingContent(
     }
 }
 
+@Composable
+fun <T> LoadingContent(
+    modifier: Modifier = Modifier,
+    initialValue: LoadingState<T>,
+    retry: () -> Unit,
+    loader : suspend ()->T,
+    loading : @Composable ()->Unit = { DefaultLoading() },
+    failure : @Composable (error : Throwable, retry : ()->Unit)->Unit = { error, _->
+        DefaultFailure(retry = retry)
+    },
+    success : @Composable BoxScope.(data : T)->Unit
+) {
+    val state by rememberRetryableLoadingState(loader = loader, initialValue = initialValue, key = initialValue)
+    Box(modifier = modifier){
+        when(state){
+            is LoadingState.Loading -> loading()
+            is LoadingState.Success<T> -> success((state as LoadingState.Success<T>).data)
+            is LoadingState.Failure -> failure((state as LoadingState.Failure).error){
+                retry()
+            }
+        }
+    }
+}
+
 
 
 @Composable
@@ -102,7 +129,7 @@ fun <T : Any> LazyListScope.loadingList(
     key : ((T) -> Any)?,
     loading : @Composable ()->Unit = { DefaultLoading() },
     failure : @Composable (error : Throwable, retry : ()->Unit) -> Unit = { err, re->
-        DefaultFailure(retry = re)
+        DefaultFailure(retry = retry)
     },
     success : @Composable (data : T)->Unit,
 ){
@@ -145,12 +172,13 @@ fun <T, K> rememberRetryableLoadingState(
     loader: suspend () -> T,
 ): State<LoadingState<T>> {
     val loadingState: State<LoadingState<T>> = produceState(initialValue = initialValue, key) {
-        value = try {
-            LoadingState.Success(loader())
-        }catch (e: Exception){
-            e.printStackTrace()
-            LoadingState.Failure(e)
-        }
+        if (!initialValue.isSuccess)
+            value = try {
+                LoadingState.Success(loader())
+            }catch (e: Exception){
+                e.printStackTrace()
+                LoadingState.Failure(e)
+            }
     }
     return loadingState
 }

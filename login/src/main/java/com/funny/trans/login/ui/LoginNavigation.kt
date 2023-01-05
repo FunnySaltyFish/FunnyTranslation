@@ -16,6 +16,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -51,12 +52,9 @@ fun LoginNavigation(
         startDestination = LoginRoute.LoginPage.route,
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    0f to MaterialTheme.colorScheme.surface,
-                    offset to MaterialTheme.colorScheme.tertiaryContainer,
-                    1f to MaterialTheme.colorScheme.surface,
-                )
+            .animatedGradientBackground(
+                 MaterialTheme.colorScheme.surface,
+                 MaterialTheme.colorScheme.tertiaryContainer,
             )
             .statusBarsPadding(),
     ){
