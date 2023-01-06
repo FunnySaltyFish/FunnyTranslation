@@ -109,7 +109,7 @@ fun CustomNavigation(
         }
     } else {
         val height = with(LocalDensity.current) { BottomNavigationHeight.toPx().toInt() }
-        val width = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp }
+        val width = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx().toInt() }
         val highlightColor = MaterialTheme.colorScheme.primary.toArgb()
         var firstInit by remember {
             mutableStateOf(true)
@@ -135,7 +135,7 @@ fun CustomNavigation(
                         this.highlightColor = highlightColor
                         navigationBgColor = backgroundColor.toArgb()
                         normalColor = contentColor.toArgb()
-                        clickMargin = 24 // 拓宽点击边界
+                        clickMargin = width / 8 - imageWidth / 2 // 拓宽点击边界
                         animationDuration = 500
                         initIconButtons(screens.map { screen -> screen.icon?.resourceId ?: R.drawable.ic_thanks }.toIntArray())
                         layoutParams = ViewGroup.LayoutParams(
