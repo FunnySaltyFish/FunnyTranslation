@@ -31,7 +31,9 @@ class AnnualReportViewModel: ViewModel() {
         }
     }
     private var initialized by mutableDataSaverStateOf(DataSaverUtils, "annual_report_2022_initialized", false)
-    var loadingState: LoadingState<Unit> = if (initialized) LoadingState.Success(Unit) else LoadingState.Loading
+    var shouldLoadLatest = false
+
+    var loadingState: LoadingState<Unit> = if (initialized ) LoadingState.Success(Unit) else LoadingState.Loading
     var loadingDuration: Duration = Duration.ZERO
 
     var totalTranslateTimes by mutableDataSaverStateOf(DataSaverUtils, "annual_report_total_translate_times", 0)
@@ -54,7 +56,14 @@ class AnnualReportViewModel: ViewModel() {
         if (loadingState is LoadingState.Loading) {
             loadingDuration = measureTime {
                 // 从数据库中读取各种值
-                val allHistories = transHistoryDao.queryAllBetween(START_TIME, END_TIME)
+                var allHistories = transHistoryDao.queryAllBetween(START_TIME, END_TIME)
+                if (allHistories.isEmpty()) {
+                    allHistories = transHistoryDao.queryAllBetween(END_TIME, System.currentTimeMillis())
+                    shouldLoadLatest = true
+                }
+                if (allHistories.isEmpty()) {
+                    throw Exception("没有数据")
+                }
                 totalTranslateTimes = allHistories.size
                 val specialTimes = allHistories.findSpecialTimes()
                 earliestTime = specialTimes.first
@@ -90,7 +99,10 @@ class AnnualReportViewModel: ViewModel() {
             }
             loadingState = LoadingState.Success(Unit)
 
-            initialized = true
+            if (!shouldLoadLatest) {
+                // 如果是加载最近的数据，那么之后打开仍然需要再次加载
+                initialized = true
+            }
         }
     }
 }
