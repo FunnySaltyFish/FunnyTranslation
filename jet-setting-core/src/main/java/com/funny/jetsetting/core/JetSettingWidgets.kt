@@ -27,7 +27,7 @@ import com.funny.jetsetting.core.ui.IconWidget
 
 private val DefaultJetSettingModifier = Modifier
     .fillMaxWidth()
-    .padding(horizontal = 0.dp, vertical = 8.dp)
+    .padding(horizontal = 24.dp, vertical = 12.dp)
 
 private val EmptyAction = {}
 
@@ -62,16 +62,19 @@ fun JetSettingCheckbox(
         })
 
         Column(modifier = Modifier.constrainAs(textColumn){
-            start.linkTo(icon.end, margin = 24.dp)
+            start.linkTo(icon.end, margin = 20.dp)
             end.linkTo(checkbox.start)
             centerVerticallyTo(parent)
             width = Dimension.preferredWrapContent
         }, horizontalAlignment = Alignment.Start) {
             Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, textAlign = TextAlign.Start, modifier = Modifier.fillMaxWidth())
             description?.let{
-                Text(text = it, fontSize = 12.sp, fontWeight = FontWeight.W400, textAlign = TextAlign.Start, lineHeight = 15.sp, color = contentColorFor(
-                    backgroundColor = MaterialTheme.colorScheme.background
-                ).copy(0.8f), modifier = Modifier.fillMaxWidth())
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = contentColorFor(backgroundColor = MaterialTheme.colorScheme.background).copy(0.65f),
+                )
             }
         }
     }
@@ -103,24 +106,21 @@ fun JetSettingTile(
     onClick: () -> Unit
 ) {
     Row(
-        modifier,
+        modifier = Modifier
+            .clickable {
+                 onClick()
+            }
+            .then(modifier),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         val funnyIcon = FunnyIcon(imageVector, resourceId)
         funnyIcon.get()?.let {
             IconWidget(funnyIcon = funnyIcon, tintColor = iconTintColor)
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(20.dp))
         }
         Text(text, fontSize = 24.sp, fontWeight = FontWeight.W700, modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = onClick,
-            Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface.copy(0.5f))
-        ) {
-            Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Click to jump")
-        }
+        Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Click to jump")
     }
 }
 
