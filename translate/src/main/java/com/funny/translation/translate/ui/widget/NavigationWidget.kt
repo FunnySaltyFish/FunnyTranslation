@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,9 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.funny.bottomnavigation.FunnyBottomNavigation
-import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
-import com.funny.translation.Consts
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import kotlinx.coroutines.delay
@@ -110,6 +109,7 @@ fun CustomNavigation(
         }
     } else {
         val height = with(LocalDensity.current) { BottomNavigationHeight.toPx().toInt() }
+        val width = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp }
         val highlightColor = MaterialTheme.colorScheme.primary.toArgb()
         var firstInit by remember {
             mutableStateOf(true)

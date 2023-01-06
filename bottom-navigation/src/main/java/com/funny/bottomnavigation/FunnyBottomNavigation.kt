@@ -181,6 +181,16 @@ class FunnyBottomNavigation @JvmOverloads constructor(
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if ((w != oldw || h != oldh) && w > 0 && h > 0 && hasInitialized()) {
+            mViewWidth = w
+            mViewHeight = h
+            initIconButtons(iconButtonList?.map { it.resId }?.toIntArray() ?: intArrayOf())
+            initGraphics()
+        }
+    }
+
     /**
      * 绘制转移时的动画
      * @param canvas 绘制的画布（此处为缓冲画布）

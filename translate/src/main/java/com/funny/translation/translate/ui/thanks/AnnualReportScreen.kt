@@ -57,7 +57,14 @@ fun AnnualReportScreen() {
     LoadingContent(
         loader = vm::loadAnnualReport,
         initialValue = vm.loadingState,
-        retry = { vm.loadingState = LoadingState.Loading }
+        retry = { vm.loadingState = LoadingState.Loading },
+        failure = { err, _ ->
+            AutoFadeInComposableColumn(modifier = Modifier
+                .fillMaxSize()
+                .animatedGradientBackground(MaterialColors.DeepPurple800, Color.Black)){
+                LabelText(text = "截至目前，你似乎还没有用过译站哦\n快去试试翻译，然后再回来看看吧~", modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).padding(24.dp))
+            }
+        }
     ) {
         AnnualReport(vm = vm)
     }
@@ -113,7 +120,7 @@ fun AnnualReport(vm : AnnualReportViewModel) {
          *
          */
         when(currentPage){
-            0 -> AnnualReportPart1(loadingDuration = vm.loadingDuration)
+            0 -> AnnualReportPart1(loadingDuration = vm.loadingDuration, loadLatest = vm.shouldLoadLatest)
             1 -> AnnualReportPart2(totalTranslateTimes = vm.totalTranslateTimes, totalTranslateWords = vm.totalTranslateWords)
             2 -> AnnualReportPart3(earliestTime = vm.earliestTime, latestTime = vm.latestTime)
             3 -> AnnualReportPart4(mostCommonSourceLanguage = vm.mostCommonSourceLanguage, mostCommonSourceLanguageTimes = vm.mostCommonSourceLanguageTimes,
@@ -126,7 +133,8 @@ fun AnnualReport(vm : AnnualReportViewModel) {
 
 @Composable
 fun AnnualReportPart1(
-    loadingDuration: Duration
+    loadingDuration: Duration,
+    loadLatest: Boolean
 ) {
     AutoFadeInComposableColumn(
         Modifier
@@ -137,7 +145,7 @@ fun AnnualReportPart1(
         LabelText(text = "你的年度报告加载完成\n耗时 ${loadingDuration.toString(DurationUnit.MILLISECONDS, decimals = 0)}")
         Spacer(height = 48.dp)
         TipText(text = "下滑开启")
-        TipText(text = "*统计数据开始于2022/09/14 v2.4.0，仅本地数据")
+        TipText(text = if (loadLatest) "*2022你似乎还不认识译站，已自动切换数据到至今" else "*统计数据开始于2022/09/14 v2.4.0，仅本地数据")
     }
 }
 
@@ -272,7 +280,7 @@ fun AnnualReportPart5(
         Spacer(height = 8.dp)
         TipText(text = "你一共使用过")
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = engineUsedList.size, startAnim = state.currentFadeIndex == 2)
+            AnimatedNumber(number = engineUsedList.size, startAnim = state.currentFadeIndex == 3)
             ResultText(text = "个引擎")
         }
         if (engineUsedList.isEmpty()){

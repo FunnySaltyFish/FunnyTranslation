@@ -14,8 +14,8 @@ import android.view.animation.RotateAnimation
 import android.widget.*
 import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
-import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.translate.*
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
@@ -30,6 +30,7 @@ import com.lzf.easyfloat.widget.BaseSwitchView
 import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.math.min
 
 
 object EasyFloatUtils {
@@ -54,7 +55,7 @@ object EasyFloatUtils {
     }
     
     private fun initTransWindow(view: View){
-        view.layoutParams.width = (AppConfig.SCREEN_WIDTH * 0.9).toInt()
+        view.layoutParams.width = (min(AppConfig.SCREEN_WIDTH, AppConfig.SCREEN_HEIGHT) * 0.9).toInt()
 
         val edittext = view.findViewById<EditText>(R.id.float_window_input)
 
@@ -69,11 +70,11 @@ object EasyFloatUtils {
 
         val spinnerSource: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_source).apply {
-//                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
-//                    addAll(enabledLanguages.value.map { it.displayText })
-//                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
-//                }
-//                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.sourceLanguage ?: Language.AUTO))
+                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+                    addAll(enabledLanguages.value.map { it.displayText })
+                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+                }
+                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.sourceLanguage ?: Language.AUTO))
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -95,11 +96,11 @@ object EasyFloatUtils {
 
         val spinnerTarget: Spinner =
             view.findViewById<Spinner?>(R.id.float_window_spinner_target).apply {
-//                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
-//                    addAll(enabledLanguages.value.map { it.displayText })
-//                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
-//                }
-//                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.targetLanguage ?: Language.CHINESE))
+                adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
+                    addAll(enabledLanguages.value.map { it.displayText })
+                    setDropDownViewResource(R.layout.view_spinner_dropdown_item)
+                }
+                setSelection(enabledLanguages.value.indexOf(translateConfigFlow.value.targetLanguage ?: Language.CHINESE))
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -262,6 +263,11 @@ object EasyFloatUtils {
         }else{
             EasyFloat.show(TAG_TRANS_WINDOW)
         }
+    }
+
+    fun resetFloatBallPlace(activity: Activity){
+        initScreenSize(activity)
+        EasyFloat.updateFloat(TAG_FLOAT_BALL, AppConfig.SCREEN_WIDTH - 200, AppConfig.SCREEN_HEIGHT * 2 / 3)
     }
 
     fun startTranslate(sourceString: String, sourceLanguage: Language, targetLanguage: Language){

@@ -94,8 +94,10 @@
     <string name="sort_by_date_desc">按时间（从近到远）</string>
     <string name="sort_by_money_asc">按金额（从小到大）</string>
     <string name="sort_by_money_desc">按金额（从大到小）</string>
-    <string name="setting_text_menu_floaing_window">文本菜单悬浮窗</string>
-    <string name="setting_text_menu_floaing_window_desc">长按选择文本后，跳转翻译时打开悬浮窗（首次需打开应用本体，保持在后台后即可正常使用。如没有反应，请尝试手动打开应用的悬浮窗权限）</string>
+    <string name="setting_text_menu_floating_window">文本菜单悬浮窗</string>
+    <string name="setting_text_menu_floating_window_desc">长按选择文本后，跳转翻译时打开悬浮窗（首次需打开应用本体，保持在后台后即可正常使用。如没有反应，请尝试手动打开应用的悬浮窗权限）</string>
     <string name="setting_auto_focus">自动打开软键盘</string>
     <string name="annual_report">年度翻译报告</string>
+    <string name="confirm_delete_history_desc">您确认删除所有本地历史记录？该操作不可逆，请谨慎选择</string>
+    <string name="clear_trans_history">清空历史记录</string>
 </resources>

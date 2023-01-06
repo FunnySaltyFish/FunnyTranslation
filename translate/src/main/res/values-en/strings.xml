@@ -94,4 +94,10 @@
     <string name="sort_by_date_desc">By time(from new to old)</string>
     <string name="sort_by_money_asc">By money(from small to large)</string>
     <string name="sort_by_money_desc">By money(from large to small)</string>
+    <string name="setting_text_menu_floating_window">Text Menu Options</string>
+    <string name="setting_text_menu_floating_window_desc">In text menu, open the floating window when jump to FunnyTranslation (the application itself needs to be opened for the first time, and can be used normally after being kept in the background. If there is no response, please try to manually open the floating window permission of the application)</string>
+    <string name="setting_auto_focus">Auto Open Keyboard</string>
+    <string name="annual_report">Annual Translation Report</string>
+    <string name="confirm_delete_history_desc">Are you sure you want to delete all local history records? This operation is irreversible, please choose carefully</string>
+    <string name="clear_trans_history">Clear Local Histories</string>
 </resources>

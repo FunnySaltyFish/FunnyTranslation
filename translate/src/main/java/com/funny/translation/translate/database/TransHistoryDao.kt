@@ -43,6 +43,9 @@ interface TransHistoryDao {
 
     @Query("select * from table_trans_history where time between :startTime and :endTime")
     fun queryAllBetween(startTime: Long, endTime: Long): List<TransHistoryBean>
+
+    @Query("delete from table_trans_history")
+    fun clearAll()
 }
 
 

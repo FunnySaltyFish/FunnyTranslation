@@ -3,6 +3,7 @@ package com.funny.translation.translate
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.wifi.WifiManager
@@ -22,13 +23,11 @@ import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.Consts
 import com.funny.translation.codeeditor.extensions.externalCache
-import com.funny.translation.codeeditor.extensions.startActivity
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.network.NetworkReceiver
-import com.funny.translation.translate.activity.AnnualReportActivity
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
@@ -75,6 +74,8 @@ class TransActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         NotchScreenManager.getInstance().setDisplayInNotch(this)
 
+        Log.d(TAG, "onCreate:")
+
         setContent {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
@@ -104,9 +105,16 @@ class TransActivity : AppCompatActivity() {
             if (showFloatWindow) {
                 EasyFloatUtils.showFloatBall(this)
             }
-
             initialized = true
         }
+
+
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "onConfigurationChanged: ")
+        EasyFloatUtils.resetFloatBallPlace(this)
     }
 
     override fun onNewIntent(intent: Intent?) {

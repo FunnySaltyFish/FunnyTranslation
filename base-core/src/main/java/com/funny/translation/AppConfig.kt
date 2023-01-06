@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.provider.Settings
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.bean.UserBean

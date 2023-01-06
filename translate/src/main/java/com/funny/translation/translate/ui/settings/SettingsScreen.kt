@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,8 +40,11 @@ import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
+import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.*
 
 private const val TAG = "SettingScreen"
@@ -65,6 +70,8 @@ fun SettingsScreen() {
         message = floatWindowTip,
         dismissButtonText = ""
     )
+
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -182,8 +189,8 @@ fun SettingsScreen() {
         }
         JetSettingCheckbox(
             state = AppConfig.sTextMenuFloatingWindow,
-            text = stringResource(R.string.setting_text_menu_floaing_window),
-            description = stringResource(id = R.string.setting_text_menu_floaing_window_desc),
+            text = stringResource(R.string.setting_text_menu_floating_window),
+            description = stringResource(id = R.string.setting_text_menu_floating_window_desc),
             resourceId = R.drawable.ic_float_window,
             iconTintColor = MaterialColors.DeepPurpleA200
         ) {
@@ -202,6 +209,25 @@ fun SettingsScreen() {
             iconTintColor = MaterialColors.LightBlueA700,
         ) {
             navController.navigate(TranslateScreen.SelectLanguageScreen.route)
+        }
+        val openConfirmDeleteDialogState = remember { mutableStateOf(false) }
+        SimpleDialog(
+            openDialogState = openConfirmDeleteDialogState,
+            title = stringResource(R.string.message_confirm),
+            message = stringResource(R.string.confirm_delete_history_desc),
+            confirmButtonAction = {
+                scope.launch(Dispatchers.IO){
+                    appDB.transHistoryDao.clearAll()
+                }
+                context.toastOnUi("已清空历史记录")
+            },
+        )
+        JetSettingTile(
+            text = stringResource(R.string.clear_trans_history),
+            imageVector =  Icons.Default.Delete,
+            iconTintColor = MaterialColors.RedA700,
+        ) {
+            openConfirmDeleteDialogState.value = true
         }
 
         Spacer(modifier = Modifier.height(8.dp))

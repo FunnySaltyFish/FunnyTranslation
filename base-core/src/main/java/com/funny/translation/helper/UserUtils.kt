@@ -123,7 +123,7 @@ object UserUtils {
         ServiceCreator.create(UserService::class.java)
     }
 
-    private val VALID_POSTFIX = arrayOf("163.com", "qq.com", "gmail.com", "126.com", "sina.com", "sohu.com", "hotmail.com", "yahoo.com", "foxmail.com", "funnysaltyfish.fun")
+    private val VALID_POSTFIX = arrayOf("163.com", "qq.com", "gmail.com", "126.com", "sina.com", "sohu.com", "hotmail.com", "yahoo.com", "foxmail.com", "funnysaltyfish.fun", "outlook.com")
 
     fun isValidUsername(username: String): Boolean {
         return "^[\\w\\u4e00-\\u9fff]{3,16}\$".toRegex().matches(username)
