@@ -2,6 +2,8 @@ package com.funny.jetsetting.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -30,12 +32,17 @@ fun IconWidget(
     tintColor : Color = MaterialTheme.colorScheme.secondary
 ) {
     val icon = funnyIcon.get()
-    Box(modifier = modifier.size(64.dp).clip(CircleShape).background(tintColor.copy(alpha = 0.3f))){
+    Box(
+        modifier = modifier
+            .size(56.dp)
+            .clip(CircleShape)
+            .background(tintColor.copy(alpha = 0.3f))
+            .padding(16.dp)
+    ) {
         if (icon is ImageVector){
-            Icon(imageVector = icon, contentDescription = "", tint = tintColor, modifier = Modifier.size(32.dp).align(Alignment.Center))
+            Icon(imageVector = icon, contentDescription = "", tint = tintColor, modifier = Modifier.fillMaxSize())
         }else if(icon is Int){
-            Icon(painter = painterResource(id = icon), contentDescription = "", tint = tintColor, modifier = Modifier.size(24.dp).align(Alignment.Center))
+            Icon(painter = painterResource(id = icon), contentDescription = "", tint = tintColor, modifier = Modifier.fillMaxSize())
         }
     }
-
 }

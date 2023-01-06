@@ -76,11 +76,10 @@ fun SettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 24.dp, end = 24.dp, top = 16.dp)
             .verticalScroll(scrollState)
     ) {
-        HeadingText(stringResource(id = R.string.setting_ui))
-        Spacer(modifier = Modifier.height(8.dp))
+
+        ItemHeading(text = stringResource(id = R.string.setting_ui))
         JetSettingCheckbox(
             state = AppConfig.sHideStatusBar,
             text = stringResource(R.string.setting_hide_status_bar),
@@ -135,13 +134,19 @@ fun SettingsScreen() {
                 DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
             }
         }
-        Text(text = stringResource(R.string.about_float_window), modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentWidth(Alignment.End)
-            .padding(8.dp)
-            .clickable {
-                showFloatWindowTipDialog.value = true
-            }, fontSize = 12.sp, fontWeight = FontWeight.W500, textAlign = TextAlign.End
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End)
+                .padding(24.dp, 8.dp)
+                .clickable {
+                    showFloatWindowTipDialog.value = true
+                },
+            text = stringResource(R.string.about_float_window),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.End,
+            color = MaterialTheme.colorScheme.primary
         )
         if (DateUtils.isSpringFestival) {
             JetSettingCheckbox(
@@ -161,8 +166,8 @@ fun SettingsScreen() {
                 ).show()
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        HeadingText(stringResource(id = R.string.others))
+
+        ItemHeading(text = stringResource(id = R.string.others))
         JetSettingCheckbox(
             state = AppConfig.sEnterToTranslate,
             text = stringResource(R.string.setting_enter_to_translate),
@@ -230,9 +235,7 @@ fun SettingsScreen() {
             openConfirmDeleteDialogState.value = true
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-        HeadingText(stringResource(id = R.string.about))
-
+        ItemHeading(text = stringResource(id = R.string.about))
         JetSettingTile(
             text = stringResource(R.string.source_code),
             resourceId = R.drawable.ic_github,
@@ -376,4 +379,12 @@ fun SelectLanguage(modifier: Modifier) {
             }
         }
     }
+}
+
+@Composable
+private fun ColumnScope.ItemHeading(text: String) {
+    HeadingText(
+        modifier = Modifier.padding(24.dp, 12.dp),
+        text = stringResource(id = R.string.about)
+    )
 }
