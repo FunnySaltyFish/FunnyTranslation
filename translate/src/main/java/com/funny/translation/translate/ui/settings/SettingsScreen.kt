@@ -382,9 +382,9 @@ fun SelectLanguage(modifier: Modifier) {
 }
 
 @Composable
-private fun ColumnScope.ItemHeading(text: String) {
+private fun ItemHeading(text: String) {
     HeadingText(
         modifier = Modifier.padding(24.dp, 12.dp),
-        text = stringResource(id = R.string.about)
+        text = text
     )
 }
