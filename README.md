@@ -88,7 +88,12 @@
 - 页面设计参考自 酷安@江戸川コナン（已授权）
 - 宣传图来自 酷安@松川吖
 - 感谢所有赞助过项目的小伙伴们！
+- 感谢所有贡献者们！
 
+### 贡献者 ❤
 
+<a href="https://github.com/FunnySaltyFish/FunnyTranslation/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=FunnySaltyFish/FunnyTranslation" />
+</a>
 
 如果此项目对您有帮助，欢迎不吝**Star**~
