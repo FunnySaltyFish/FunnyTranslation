@@ -60,6 +60,18 @@ fun NumberChangeAnimatedText(
     }
 }
 
+/**
+ * 用于显示数字变化的动画
+ * @author FunnySaltyFish
+ * @param modifier Modifier
+ * @param startAnim Boolean
+ * @param number Int
+ * @param durationMills Int
+ * @param textPadding PaddingValues
+ * @param textSize TextUnit
+ * @param textColor Color
+ * @param textWeight FontWeight
+ */
 @Composable
 fun AutoIncreaseAnimatedNumber(
     modifier: Modifier = Modifier,
@@ -71,13 +83,16 @@ fun AutoIncreaseAnimatedNumber(
     textColor: Color = Color.Black,
     textWeight: FontWeight = FontWeight.Normal
 ) {
+    // 动画，Animatable 相关介绍可以见 https://compose.funnysaltyfish.fun/docs/design/animation/animatable?source=trans
     val animatedNumber = remember {
         androidx.compose.animation.core.Animatable(0f)
     }
+    // 数字格式化后的长度
     val l = remember {
         number.toString().length
     }
 
+    // Composable 进入 Composition 阶段，且 startAnim 为 true 时开启动画
     LaunchedEffect(number, startAnim) {
         if (startAnim)
             animatedNumber.animateTo(
@@ -93,6 +108,5 @@ fun AutoIncreaseAnimatedNumber(
         textColor = textColor,
         textSize = textSize,
         textWeight = textWeight
-
     )
 }

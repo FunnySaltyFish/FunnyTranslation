@@ -18,8 +18,8 @@ private const val TAG = "AutoFadeInComposableCol"
 fun AutoFadeInComposableColumn(
     modifier: Modifier = Modifier,
     state: AutoFadeInColumnState = rememberAutoFadeInColumnState(),
-    fadeInTime: Int = 1000,
-    fadeOffsetY: Int = 100,
+    fadeInTime: Int = 1000,  // 单个微件动画的时间
+    fadeOffsetY: Int = 100,  // 单个微件动画的偏移量
     content: @Composable FadeInColumnScope.() -> Unit
 ) {
     var whetherFadeIn: List<Boolean> = arrayListOf()
@@ -63,17 +63,19 @@ fun AutoFadeInComposableColumn(
             ((placeable.parentData as? FadeInColumnData) ?: FadeInColumnData()).fade
         }
         var y = 0
+        // 宽度：父组件允许的最大宽度，高度：微件高之和
         layout(constraints.maxWidth, placeables.sumOf { it.height }) {
+            // 依次摆放
             placeables.forEachIndexed { index, placeable ->
+                // 实际的 y，对于动画中的微件减去偏移量，对于未动画的微件不变
                 val actualY = if (state.currentFadeIndex == index) {
                     y + (( 1 - fadeInAnimatable.value) * fadeOffsetY).toInt()
                 } else {
                     y
                 }
                 placeable.placeRelativeWithLayer(0, actualY){
-                    alpha = if (!whetherFadeIn[index]) 1f else
-                                if (index == state.currentFadeIndex) fadeInAnimatable.value else
-                                    if (index <= state.finishedFadeIndex) 1f else 0f
+                    alpha = if (index == state.currentFadeIndex) fadeInAnimatable.value else
+                                if (index <= state.finishedFadeIndex) 1f else 0f
                 }
                 y += placeable.height
             }.also {
