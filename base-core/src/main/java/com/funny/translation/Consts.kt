@@ -50,7 +50,6 @@ object Consts {
     const val KEY_SORT_RESULT = "sort_result"
     const val KEY_CUSTOM_NAVIGATION = "custom_nav"
     const val KEY_FIRST_OPEN_APP = "first_open_app_v2"
-    const val KEY_JWT_TOKEN = "jwt_token"
 
     const val MAX_SELECT_ENGINES = 5
 }

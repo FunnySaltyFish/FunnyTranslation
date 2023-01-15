@@ -69,7 +69,7 @@ object OkHttpUtils {
 
             // 访问 trans/v1下的所有api均带上请求头-jwt
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH)){
-                val jwt = DataSaverUtils.readData(Consts.KEY_JWT_TOKEN, "")
+                val jwt = AppConfig.jwtToken
                 if (jwt != "") builder.addHeader("Authorization", "Bearer $jwt")
             }
 

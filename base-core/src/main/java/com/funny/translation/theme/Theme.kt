@@ -87,6 +87,7 @@ private val SpringFestivalColorPalette = lightColorScheme(
 fun TransTheme(
     dark: Boolean = isSystemInDarkTheme(),
     dynamic: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+    setSystemBar: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (dynamic) {
@@ -98,7 +99,7 @@ fun TransTheme(
                 SpringFestivalColorPalette
             else LightColors
     }
-    SystemBarSettings()
+    if (setSystemBar) SystemBarSettings()
     MaterialTheme(
         colorScheme = colorScheme,
         content = content

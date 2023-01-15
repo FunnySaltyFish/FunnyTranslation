@@ -71,7 +71,6 @@ enum class UserProfileScreenRoutes {
     val route:String get() = "user_profile_route_${name.lowercase()}"
 }
 
-
 fun NavGraphBuilder.addUserProfileRoutes(navHostController: NavHostController, currentUserBean: UserBean? = null, onLoginSuccess: (UserBean) -> Unit, onResetPasswordSuccess: () -> Unit) {
     navigation(UserProfileScreenRoutes.Settings.route, TranslateScreen.UserProfileScreen.route){
         animateComposable(UserProfileScreenRoutes.Settings.route){

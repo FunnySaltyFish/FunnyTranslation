@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.provider.Settings
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
-import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.Language
@@ -16,9 +14,9 @@ object AppConfig {
     var SCREEN_WIDTH = 0
     var SCREEN_HEIGHT = 0
 
-
     var userInfo = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_USER_INFO, UserBean())
     val uid by derivedStateOf { userInfo.value.uid }
+    val jwtToken by derivedStateOf { userInfo.value.jwt_token }
 
     var versionCode = BaseApplication.getLocalPackageInfo()?.versionCode ?: 0
     @SuppressLint("HardwareIds")
@@ -36,6 +34,10 @@ object AppConfig {
     val sHideStatusBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_HIDE_STATUS_BAR, true)
     val sHideBottomNav = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
     val sAutoFocus = mutableDataSaverStateOf(DataSaverUtils, "KEY_AUTO_FOCUS", true)
+
+    fun updateJwtToken(newToken: String) {
+        userInfo.value = userInfo.value.copy(jwt_token = newToken)
+    }
 }
 
 object TranslateConfig {

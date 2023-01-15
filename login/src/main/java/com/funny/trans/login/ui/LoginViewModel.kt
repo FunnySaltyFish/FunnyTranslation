@@ -56,9 +56,9 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val userBean = if (passwordType == "1"){
-                    UserUtils.login(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email)
+                    UserUtils.login(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, if(shouldVerifyEmailWhenLogin) verifyCode else "")
                 } else {
-                    UserUtils.login(username, password, passwordType, email)
+                    UserUtils.login(username, password, passwordType, email, "")
                 }
                 if (userBean != null) {
                     onSuccess(userBean)

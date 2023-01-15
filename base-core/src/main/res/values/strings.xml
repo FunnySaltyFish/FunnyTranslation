@@ -14,4 +14,6 @@
     <string name="language_vietnamese">越南语</string>
     <string name="language_italian">意大利语</string>
     <string name="language_chinese_yue">粤语</string>
+    <string name="request_permission">请求权限</string>
+    <string name="confirm">确认</string>
 </resources>

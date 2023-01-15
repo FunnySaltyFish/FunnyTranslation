@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.bean.UserBean
 import com.funny.translation.network.CommonData
@@ -69,7 +70,8 @@ interface UserService {
         @Field("password") password: String,
         @Field("password_type") passwordType: String,
         @Field("email") email: String,
-        @Field("phone") phone: String
+        @Field("phone") phone: String,
+        @Field("verify_code") verifyCode: String
     ): CommonData<UserBean>
 
     @POST("user/get_user_info")
@@ -161,8 +163,9 @@ object UserUtils {
         password: String,
         password_type: String,
         email: String,
+        verifyCode: String
     ) = withContext(Dispatchers.IO){
-        val loginData = userService.login(username, password, password_type, email, "")
+        val loginData = userService.login(username, password, password_type, email, "", verifyCode)
         if (loginData.code != 50) {
             throw SignInException(loginData.error_msg ?: "未知错误")
         }
@@ -238,7 +241,7 @@ object UserUtils {
         try {
             val data = userService.refreshToken(uid)
             if (data.code == 50) {
-                DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, data.data ?: "")
+                AppConfig.updateJwtToken(data.data ?: "")
                 Log.i(TAG, "refreshJwtToken: 刷新Token成功")
             }
         }catch (e: Exception){

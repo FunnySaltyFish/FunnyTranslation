@@ -121,6 +121,7 @@ dependencies {
     api "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     api "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     api "com.google.accompanist:accompanist-pager:$accompanist_version"
+    api "com.google.accompanist:accompanist-permissions:$accompanist_version"
     api project(path: ':jet-setting-core')
 
 

@@ -50,7 +50,6 @@ class LoginActivity : AppCompatActivity() {
                 TransTheme {
                     LoginNavigation(onLoginSuccess = {
                         Log.d(TAG, "登录成功: 用户: $it")
-                        DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, it.jwt_token)
                         if(it.isValid()) AppConfig.userInfo.value = it
                         setResult(RESULT_OK, Intent())
                         finish()

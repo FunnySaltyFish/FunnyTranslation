@@ -88,5 +88,11 @@
     "url": "https://github.com/smarxpan/NotchScreenTool",
     "description": "Android刘海屏、水滴屏等全面屏适配工具",
     "author": "smarxpan"
+  },
+  {
+    "name": "compose-photo-integration",
+    "url": "https://github.com/gefilte/compose-photo-integration",
+    "description": "Building a Simple Photo App with Jetpack Compose, CameraX, and Kotlin coroutines",
+    "author": "David Pisoni"
   }
 ]

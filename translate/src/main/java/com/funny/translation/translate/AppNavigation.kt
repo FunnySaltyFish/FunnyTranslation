@@ -27,6 +27,7 @@ import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.TransTheme
+import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
@@ -69,7 +70,6 @@ fun AppNavigation(
     LaunchedEffect(shouldJumpToMainContent.value){
         if (shouldJumpToMainContent.value){
             if (navController.currentBackStackEntry != null){
-
                 navController.navigate(TranslateScreen.MainScreen.route){
                     launchSingleTop = true
                     popUpTo(TranslateScreen.MainScreen.route)
@@ -156,7 +156,7 @@ fun AppNavigation(
                                 "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}"
                         }
                     )) {
-                        MainScreen()
+                        ImageTransScreen(modifier = Modifier.fillMaxWidth())
                     }
                     navigation(
                         startDestination = TranslateScreen.SettingScreen.route,
@@ -191,7 +191,6 @@ fun AppNavigation(
                             currentUserBean = activityVM.userInfo,
                             onLoginSuccess = { userBean ->
                             Log.d(TAG, "登录成功: 用户: $userBean")
-                            DataSaverUtils.saveData(Consts.KEY_JWT_TOKEN, userBean.jwt_token)
                             if (userBean.isValid()) AppConfig.userInfo.value = userBean
                         }, onResetPasswordSuccess = {
                             context.toastOnUi("修改密码成功，请重新登陆~")
