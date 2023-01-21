@@ -101,4 +101,5 @@
     <string name="confirm_delete_history_desc">您确认删除所有本地历史记录？该操作不可逆，请谨慎选择</string>
     <string name="clear_trans_history">清空历史记录</string>
     <string name="need_camera_permission_tip">需要您授予拍照权限才能正常使用</string>
+    <string name="album">相册</string>
 </resources>

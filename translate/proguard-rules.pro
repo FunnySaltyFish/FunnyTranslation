@@ -33,7 +33,7 @@
 -keep class com.funny.translation.translate.TranslationResult {*;}
 -keep class com.funny.translation.translate.Language {*;}
 
--keep class com.funny.translation.translate.engine.TranslationEngines {*;}
+-keep class * extends com.funny.translation.translate.TranslationEngine {*;}
 -keep interface com.funny.translation.translate.TranslationEngine {*;}
 -keep class com.funny.translation.Consts {*;}
 
@@ -56,6 +56,11 @@
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.funny.translation.translate.ui.thanks.Sponsor { *; }
 -keep class com.funny.translation.translate.bean.UpdateInfo {*;}
+
+# 图片裁剪
+-dontwarn com.yalantis.ucrop**
+-keep class com.yalantis.ucrop** { *; }
+-keep interface com.yalantis.ucrop** { *; }
 
 #抛出异常时保留代码行号，在异常分析中可以方便定位
 -keepattributes SourceFile,LineNumberTable

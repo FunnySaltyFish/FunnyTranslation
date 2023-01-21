@@ -5,6 +5,7 @@ import com.funny.translation.helper.readAssets
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.engine.ImageTranslationEngines
 import com.funny.translation.translate.engine.TextTranslationEngines
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,4 +47,6 @@ object DefaultData {
         TextTranslationEngines.EachText,
         TextTranslationEngines.Bv2Av
     )
+
+    val bindImageEngines = listOf(ImageTranslationEngines.Baidu, ImageTranslationEngines.Tencent)
 }

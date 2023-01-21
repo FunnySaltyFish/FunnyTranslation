@@ -3,20 +3,15 @@ package com.funny.translation.translate.ui.main
 import android.annotation.SuppressLint
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.ViewGroup
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.FocusMeteringAction
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
-import androidx.camera.core.UseCase
+import androidx.camera.core.*
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +21,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.translate.utils.getCameraProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.sqrt
 
 private const val TAG = "CameraPreview"
 
@@ -33,6 +29,7 @@ private const val TAG = "CameraPreview"
 @Composable
 fun CameraPreview(
     modifier: Modifier = Modifier,
+    cameraState: MutableState<Camera?>,
     imageCaptureUseCase: ImageCapture,
     cameraSelector: CameraSelector,
     scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER,
@@ -41,9 +38,6 @@ fun CameraPreview(
     var previewUseCase by remember { mutableStateOf<UseCase>(Preview.Builder().build()) }
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
-    var camera: Camera? by remember {
-        mutableStateOf(null)
-    }
     var focusOffset: Offset? by remember {
         mutableStateOf(null)
     }
@@ -65,11 +59,32 @@ fun CameraPreview(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
             }
+            var zoomRatio = 1.0f
+            val scaleGestureListener = object : ScaleGestureDetector.OnScaleGestureListener {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    val zoomState = cameraState.value?.cameraInfo?.zoomState?.value ?: return true
+                    if (detector.scaleFactor > 1) zoomRatio += 0.05f
+                    else if (detector.scaleFactor < 1) zoomRatio -= 0.05f
+                    zoomRatio = zoomRatio.coerceIn(zoomState.minZoomRatio, zoomState.maxZoomRatio)
+                    Log.d(TAG, "onScale: scaleRatio: $zoomRatio")
+                    cameraState.value?.cameraControl?.setZoomRatio(zoomRatio)
+                    return false
+                }
+
+                override fun onScaleBegin(detector: ScaleGestureDetector) = true
+
+                override fun onScaleEnd(detector: ScaleGestureDetector): Unit = Unit
+            }
+            val scaleGestureDetector = ScaleGestureDetector(ctx, scaleGestureListener)
+
             previewView.setOnTouchListener { v, motionEvent ->
-                when (motionEvent.action) {
+                scaleGestureDetector.onTouchEvent(motionEvent)
+                if (scaleGestureDetector.isInProgress){
+                    true
+                } else when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> return@setOnTouchListener true
                     MotionEvent.ACTION_UP -> {
-                        camera ?: return@setOnTouchListener true
+                        cameraState.value ?: return@setOnTouchListener true
                         // Get the MeteringPointFactory from PreviewView
                         val factory = previewView.meteringPointFactory
 
@@ -82,8 +97,8 @@ fun CameraPreview(
 
                         // Trigger the focus and metering. The method returns a ListenableFuture since the operation
                         // is asynchronous. You can use it get notified when the focus is successful or if it fails.
-                        camera!!.cameraControl.startFocusAndMetering(action)
-
+                        cameraState.value!!.cameraControl.startFocusAndMetering(action)
+                        Log.d(TAG, "CameraPreview: request Focus manually")
                         return@setOnTouchListener true
                     }
                     else -> return@setOnTouchListener false
@@ -104,7 +119,7 @@ fun CameraPreview(
             try {
                 // Must unbind the use-cases before rebinding them.
                 cameraProvider.unbindAll()
-                camera = cameraProvider.bindToLifecycle(
+                cameraState.value = cameraProvider.bindToLifecycle(
                     lifecycleOwner, cameraSelector, previewUseCase, imageCaptureUseCase
                 )
             } catch (ex: Exception) {

@@ -34,18 +34,6 @@ fun LoginNavigation(
 ) {
     val navController = rememberAnimatedNavController()
     val context = LocalContext.current
-    val infiniteTransition = rememberInfiniteTransition()
-    val offset by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.7f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = TweenSpec(
-                durationMillis = 10000,
-                easing = FastOutSlowInEasing
-            ),
-            repeatMode = RepeatMode.Reverse,
-        )
-    )
 
     AnimatedNavHost(
         navController = navController,

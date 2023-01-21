@@ -1,6 +1,7 @@
 package com.funny.translation.bean
 
 import androidx.annotation.Keep
+import java.util.Date
 
 /**
  * class User:
@@ -30,7 +31,7 @@ data class UserBean(
     val password_type: String = "1",
     val avatar_url: String = "",
     val vip_level: Int = 0,
-    val vip_start_time: Long = -1,
+    val vip_start_time: Date? = null,
     val vip_duration: Long = -1,
 
     val jwt_token: String = ""
