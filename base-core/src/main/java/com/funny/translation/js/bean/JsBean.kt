@@ -4,12 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.funny.translation.helper.JsonX
 import com.funny.translation.translate.Language
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 
 @Entity(tableName = "table_js")
+@kotlinx.serialization.Serializable
 @TypeConverters(LanguageListConverter::class)
 data class JsBean(
     @PrimaryKey(autoGenerate = true)
@@ -51,19 +50,15 @@ data class JsBean(
         result = 31 * result + version
         return result
     }
-
-    companion object {
-        val GSON: Gson = GsonBuilder().setPrettyPrinting().create()
-    }
 }
+
 
 class LanguageListConverter{
     @TypeConverter
-    fun languagesToJson(languages : List<Language>) : String = JsBean.GSON.toJson(languages)
+    fun languagesToJson(languages : List<Language>) : String = JsonX.toJson(languages)
 
     @TypeConverter
     fun jsonToLanguages(json : String) : List<Language> {
-        val typeToken = object : TypeToken<List<Language>>(){}.type
-        return JsBean.GSON.fromJson(json, typeToken)
+        return JsonX.fromJson(json)
     }
 }

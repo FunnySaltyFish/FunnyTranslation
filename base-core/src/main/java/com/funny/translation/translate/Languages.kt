@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Keep
+@kotlinx.serialization.Serializable
 enum class Language(val id : Int,var displayText : String = "") {
     AUTO(0),
     CHINESE(1),

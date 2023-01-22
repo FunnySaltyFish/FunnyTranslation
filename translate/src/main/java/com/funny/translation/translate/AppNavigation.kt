@@ -156,7 +156,7 @@ fun AppNavigation(
                                 "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}"
                         }
                     )) {
-                        ImageTransScreen(modifier = Modifier.fillMaxWidth())
+                        MainScreen()// ImageTransScreen(modifier = Modifier.fillMaxWidth())
                     }
                     navigation(
                         startDestination = TranslateScreen.SettingScreen.route,

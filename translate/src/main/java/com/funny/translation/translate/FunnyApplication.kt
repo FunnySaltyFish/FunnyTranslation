@@ -5,10 +5,11 @@ import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
 import com.funny.translation.bean.UserBean
 import com.funny.translation.codeeditor.ui.editor.EditorSchemes
+import com.funny.translation.helper.JsonX
 import com.funny.translation.sign.SignUtils
 import com.funny.translation.translate.ui.thanks.SponsorSortType
-import com.funny.translation.translate.ui.widget.LoadingState
-import com.funny.translation.translate.utils.*
+import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
+import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
@@ -23,13 +24,12 @@ class FunnyApplication : BaseApplication() {
             initLanguageDisplay(resources)
             SignUtils.loadJs()
             SortResultUtils.init()
-
         }
 
         // For ComposeDataSaver
         registerTypeConverters<UserBean>(
-            save = { localDataGson.toJson(it) },
-            restore = { localDataGson.fromJson(it, UserBean::class.java) as UserBean }
+            save = { JsonX.toJson(it) },
+            restore = { JsonX.fromJson(it, UserBean::class) }
         )
 
         registerTypeConverters<EditorSchemes>(
@@ -53,8 +53,6 @@ class FunnyApplication : BaseApplication() {
         val resources: Resources get() = ctx.resources
         const val TAG = "FunnyApplication"
     }
-
-
 }
 
 val appCtx = FunnyApplication.ctx

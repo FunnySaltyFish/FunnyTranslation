@@ -42,10 +42,10 @@
     "author": "Tencent"
   },
   {
-    "name": "GSON",
-    "url": "https://github.com/google/gson",
-    "description": "A Java serialization/deserialization library to convert Java Objects into JSON and back",
-    "author": "Google"
+    "name": "kotlinx.serialization",
+    "url": "https://github.com/Kotlin/kotlinx.serialization",
+    "description": "Kotlin multiplatform / multi-format serialization",
+    "author": "JetBrains"
   },
   {
     "name": "Rhino-android",

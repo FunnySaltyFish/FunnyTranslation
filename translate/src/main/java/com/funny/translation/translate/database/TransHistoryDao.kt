@@ -3,8 +3,7 @@ package com.funny.translation.translate.database
 import androidx.annotation.Keep
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.funny.translation.network.ServiceCreator.gson
-import com.google.gson.reflect.TypeToken
+import com.funny.translation.helper.JsonX
 
 @Keep
 @Entity(tableName = "table_trans_history")
@@ -52,12 +51,11 @@ interface TransHistoryDao {
 class StringListConverter {
     @TypeConverter
     fun stringToObject(value: String): List<String> {
-        val listType = object : TypeToken<List<String>>() {}.type
-        return gson.fromJson(value, listType)
+        return JsonX.fromJson(value)
     }
 
     @TypeConverter
     fun objectToString(list: List<Any>): String {
-        return gson.toJson(list)
+        return JsonX.toJson(list)
     }
 }

@@ -220,12 +220,14 @@ fun SettingsScreen() {
             openDialogState = openConfirmDeleteDialogState,
             title = stringResource(R.string.message_confirm),
             message = stringResource(R.string.confirm_delete_history_desc),
-            confirmButtonAction = {
+            dismissButtonAction = {
                 scope.launch(Dispatchers.IO){
                     appDB.transHistoryDao.clearAll()
                 }
                 context.toastOnUi("已清空历史记录")
             },
+            dismissButtonText = "残忍删除",
+            confirmButtonText = "我再想想"
         )
         JetSettingTile(
             text = stringResource(R.string.clear_trans_history),

@@ -42,6 +42,7 @@ import com.funny.translation.codeeditor.ui.base.SimpleDialog
 import com.funny.translation.codeeditor.ui.runner.CodeRunnerText
 import com.funny.translation.codeeditor.ui.runner.CodeRunnerViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
+import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readText
 import com.funny.translation.helper.writeText
@@ -208,7 +209,7 @@ fun ComposeCodeEditor(
                     scope.launch {
                         jsEngine.loadBasicConfigurations(
                             onSuccess = {
-                                activityViewModel.exportText = JsBean.GSON.toJson(jsBean)
+                                activityViewModel.exportText = JsonX.toJsonPretty(jsBean)
                                 exportLauncher.launch("${jsBean.fileName}.json")
                                 scope.launch {
                                     snackbarHostState.showSnackbar(

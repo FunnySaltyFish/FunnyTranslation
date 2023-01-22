@@ -25,7 +25,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
-import com.google.gson.Gson
+import com.funny.translation.helper.JsonX
 import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -154,7 +154,7 @@ private class CryptographyManagerImpl : CryptographyManager {
         mode: Int,
         prefKey: String
     ) {
-        val json = Gson().toJson(ciphertextWrapper)
+        val json = JsonX.toJson(ciphertextWrapper)
         context.getSharedPreferences(filename, mode).edit().putString(prefKey, json).apply()
     }
 
@@ -164,12 +164,12 @@ private class CryptographyManagerImpl : CryptographyManager {
         mode: Int,
         prefKey: String
     ): CiphertextWrapper? {
-        val json = context.getSharedPreferences(filename, mode).getString(prefKey, null)
-        return Gson().fromJson(json, CiphertextWrapper::class.java)
+        val json = context.getSharedPreferences(filename, mode).getString(prefKey, null) ?: return null
+        return JsonX.fromJson(json, CiphertextWrapper::class.java)
     }
 }
 
-
+@kotlinx.serialization.Serializable
 data class CiphertextWrapper(val ciphertext: ByteArray, val initializationVector: ByteArray) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

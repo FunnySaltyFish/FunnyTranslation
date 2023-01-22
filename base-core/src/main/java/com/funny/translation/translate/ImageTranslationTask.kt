@@ -1,7 +1,6 @@
 package com.funny.translation.translate
 
-import com.google.gson.annotations.SerializedName
-import okhttp3.MediaType
+import kotlinx.serialization.SerialName
 
 data class ImageTranslationPart(
     val source: String,
@@ -13,7 +12,7 @@ data class ImageTranslationPart(
 )
 
 class ImageTranslationResult(
-    @SerializedName("erased_img")
+    @SerialName("erased_img")
     val erasedImgBase64: String? = null,
     val source: String = "",
     val target: String = "",

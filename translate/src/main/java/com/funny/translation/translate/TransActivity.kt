@@ -83,7 +83,6 @@ class TransActivity : AppCompatActivity() {
                     shouldJumpToMainScreen,
                     exitAppAction = {
                         this.finish()
-                        exitProcess(0)
                     }
                 )
             }

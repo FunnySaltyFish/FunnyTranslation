@@ -1,20 +1,17 @@
 package com.funny.translation.translate.utils
 
+import com.funny.translation.Consts
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.JsonX
 import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.TranslationResult
-import com.funny.translation.Consts
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 typealias TranslationEngineName = String
-val localDataGson: Gson = GsonBuilder().enableComplexMapKeySerialization().create()
 
 object SortResultUtils {
     var mapping : HashMap<TranslationEngineName, Int> = hashMapOf()
@@ -48,8 +45,7 @@ object SortResultUtils {
     }
 
     private fun readMapping(json : String){
-        val type = object : TypeToken<HashMap<TranslationEngineName, Int>>() {}.type
-        mapping = localDataGson.fromJson(json, type)
+        mapping = JsonX.fromJson(json)
     }
 
     fun checkEquals(list : List<TranslationEngineName>) : Boolean = when{
@@ -69,13 +65,13 @@ object SortResultUtils {
     fun resetMappingAndSave(list : List<TranslationEngineName>){
         initMapping(list)
         localEngines = localEngines.sortedBy(defaultSort)
-        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT ,localDataGson.toJson(mapping))
+        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT, JsonX.toJson(mapping))
     }
 
     fun addNew(name : TranslationEngineName){
         mapping[name] = mapping.maxOf { it.value } + 1 // 默认排最后一个
         localEngines = localEngines.toMutableList().apply { add(name) }
-        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT ,localDataGson.toJson(mapping))
+        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT, JsonX.toJson(mapping))
     }
 
     fun <K,V> HashMap<K,V>.get(key: K, default: V) = try {

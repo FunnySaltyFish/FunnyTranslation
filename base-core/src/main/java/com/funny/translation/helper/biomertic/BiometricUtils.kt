@@ -149,7 +149,9 @@ object BiometricUtils {
 
         if (ciphertextWrapper == null) {
             scope.launch(Dispatchers.IO) {
-                val email = kotlin.runCatching { UserUtils.getUserEmail(username) }.getOrDefault("")
+                val email = kotlin.runCatching { UserUtils.getUserEmail(username) }.onFailure {
+                    it.printStackTrace()
+                }.getOrDefault("")
                 if (email == ""){
                     activity.toastOnUi("您似乎没有注册过，请先注册账号吧~")
                     return@launch

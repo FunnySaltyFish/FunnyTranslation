@@ -1,7 +1,9 @@
 package com.funny.translation.bean
 
 import androidx.annotation.Keep
-import java.util.Date
+import com.funny.translation.helper.DateSerializerType1
+import kotlinx.serialization.Serializable
+import java.util.*
 
 /**
  * class User:
@@ -22,6 +24,7 @@ import java.util.Date
         vip_duration = -1
  */
 @Keep
+@kotlinx.serialization.Serializable
 data class UserBean(
     val uid: Int = -1,
     val username: String = "",
@@ -31,7 +34,7 @@ data class UserBean(
     val password_type: String = "1",
     val avatar_url: String = "",
     val vip_level: Int = 0,
-    val vip_start_time: Date? = null,
+    @Serializable(with = DateSerializerType1::class) val vip_start_time: Date? = null,
     val vip_duration: Long = -1,
 
     val jwt_token: String = ""

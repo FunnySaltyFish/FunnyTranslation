@@ -14,6 +14,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
@@ -62,7 +63,7 @@ class ActivityViewModel : ViewModel() {
             withContext(Dispatchers.IO){
                 val jsonBody = OkHttpUtils.get("${ServiceCreator.BASE_URL}/api/notice")
                 if (jsonBody != ""){
-                    noticeInfo.value = ServiceCreator.gson.fromJson(jsonBody, NoticeInfo::class.java)
+                    noticeInfo.value = JsonX.fromJson(json = jsonBody, NoticeInfo::class)
                 }
             }
         }.onFailure {

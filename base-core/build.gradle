@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id "com.google.devtools.ksp" version "1.7.10-1.0.6"
+    id 'kotlinx-serialization'
 }
 
 android {
@@ -59,10 +60,7 @@ dependencies {
     // 网络请求
     def retrofit_version = "2.9.0"
     api "com.squareup.retrofit2:retrofit:$retrofit_version"
-    api "com.squareup.retrofit2:converter-gson:$retrofit_version"
-
-    //Gson
-    api 'com.google.code.gson:gson:2.8.9'
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
     //JS rhino
     api 'com.github.gedoor:rhino-android:1.6'
@@ -100,6 +98,8 @@ dependencies {
     def coroutines_version = '1.5.1'
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 
     // Import the Compose BOM
     api platform('androidx.compose:compose-bom:2022.12.00')
