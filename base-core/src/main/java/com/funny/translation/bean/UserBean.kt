@@ -40,6 +40,9 @@ data class UserBean(
     val jwt_token: String = ""
 ){
     fun isValid() = uid >= 0 && jwt_token != ""
+    fun isValidVip() =
+        isValid() && (vip_level > 0) && vip_start_time?.time != null
+                && vip_start_time.time + vip_duration * 86400 * 1000 > System.currentTimeMillis()
 }
 
 

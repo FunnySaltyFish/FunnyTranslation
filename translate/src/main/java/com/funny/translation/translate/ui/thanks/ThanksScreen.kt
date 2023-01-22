@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,6 +41,9 @@ import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.trans.login.LoginActivity
+import com.funny.translation.AppConfig
+import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.AnnualReportActivity
@@ -48,15 +55,17 @@ import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.LoadingContent
 import com.funny.translation.ui.touchToScale
+import kotlinx.coroutines.launch
 
 enum class SponsorSortType(val value: String){
     Date("date"), Money("money")
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun ThanksScreen(navHostController: NavHostController) {
     val vm: ThanksViewModel = viewModel()
+    val context = LocalContext.current
     val sponsors = vm.sponsors.collectAsLazyPagingItems()
     var sponsorSortType : SponsorSortType by rememberDataSaverState("KEY_SPONSOR_SORT_TYPE", SponsorSortType.Money)
     var sponsorSortOrder by rememberDataSaverState(key = "KEY_SPONSOR_SORT_ORDER", default = -1) // 1 升序; -1 降序
@@ -66,114 +75,145 @@ fun ThanksScreen(navHostController: NavHostController) {
         sponsors.refresh()
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 12.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            UserInfoPanel(navHostController)
-        }
-        item {
-            AnnualReportEntrance()
-        }
-        item {
-            HeadingText(text = stringResource(id = R.string.join_sponsor))
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .touchToScale()
-                    .height(80.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SponsorIcon(
-                    load_url = "https://afdian.net/@funnysaltyfish?tab=home",
-                    resourceId = R.drawable.ic_aifadian,
-                    contentDes = "爱发电"
-                )
-                SponsorIcon(
-                    load_url = "https://api.funnysaltyfish.fun/alipay.jpg",
-                    resourceId = R.drawable.ic_alipay,
-                    contentDes = "支付宝"
-                )
-                SponsorIcon(
-                    load_url = "https://api.funnysaltyfish.fun/wechat.png",
-                    resourceId = R.drawable.ic_wechat,
-                    contentDes = "微信"
-                )
+    // 刷新用户信息
+    var refreshing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val state = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch {
+            refreshing = true
+            val user = AppConfig.userInfo.value
+            if (user.isValid()){
+                try {
+                    UserUtils.getUserInfo(user.uid)?.let {
+                        AppConfig.userInfo.value = it
+                        context.toastOnUi("更新用户信息成功~")
+                    }
+                }catch (e: Exception){
+                    e.printStackTrace()
+                    context.toastOnUi("更新用户信息失败！")
+                }
             }
+            refreshing = false
         }
-        stickyHeader {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                HeadingText(text = stringResource(id = R.string.thanks))
-                SortSponsor(sortType = sponsorSortType, updateSortType = { sponsorSortType = it }, sortOrder = sponsorSortOrder, updateSortOrder = { sponsorSortOrder = it})
-            }
+    })
 
-        }
-        items(sponsors, key = { it.key }) { sponsor ->
-            sponsor?.let {
-                SponsorItem(sponsor = it)
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 24.dp, vertical = 12.dp)
+        .pullRefresh(state)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            item {
+                UserInfoPanel(navHostController)
             }
-        }
-        val loadStates = sponsors.loadState
-        when {
-            loadStates.refresh is LoadState.Loading -> {
-                item { DefaultLoading() }
+            item {
+                AnnualReportEntrance()
             }
-            loadStates.append is LoadState.Loading -> {
-                item { DefaultLoading() }
+            item {
+                HeadingText(text = stringResource(id = R.string.join_sponsor))
             }
-            loadStates.refresh is LoadState.Error -> {
-                val e = sponsors.loadState.refresh as LoadState.Error
-                Log.e("refresh error: %s", e.toString())
-                item {
-                    DefaultFailure(modifier = Modifier.fillParentMaxSize()) {
-                        sponsors.refresh()
+            item {
+                Row(
+                    modifier = Modifier
+                        .touchToScale()
+                        .height(80.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SponsorIcon(
+                        load_url = "https://afdian.net/@funnysaltyfish?tab=home",
+                        resourceId = R.drawable.ic_aifadian,
+                        contentDes = "爱发电"
+                    )
+                    SponsorIcon(
+                        load_url = "https://api.funnysaltyfish.fun/alipay.jpg",
+                        resourceId = R.drawable.ic_alipay,
+                        contentDes = "支付宝"
+                    )
+                    SponsorIcon(
+                        load_url = "https://api.funnysaltyfish.fun/wechat.png",
+                        resourceId = R.drawable.ic_wechat,
+                        contentDes = "微信"
+                    )
+                }
+            }
+            stickyHeader {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    HeadingText(text = stringResource(id = R.string.thanks))
+                    SortSponsor(
+                        sortType = sponsorSortType,
+                        updateSortType = { sponsorSortType = it },
+                        sortOrder = sponsorSortOrder,
+                        updateSortOrder = { sponsorSortOrder = it })
+                }
+
+            }
+            items(sponsors, key = { it.key }) { sponsor ->
+                sponsor?.let {
+                    SponsorItem(sponsor = it)
+                }
+            }
+            val loadStates = sponsors.loadState
+            when {
+                loadStates.refresh is LoadState.Loading -> {
+                    item { DefaultLoading() }
+                }
+                loadStates.append is LoadState.Loading -> {
+                    item { DefaultLoading() }
+                }
+                loadStates.refresh is LoadState.Error -> {
+                    val e = sponsors.loadState.refresh as LoadState.Error
+                    Log.e("refresh error: %s", e.toString())
+                    item {
+                        DefaultFailure(modifier = Modifier.fillParentMaxSize()) {
+                            sponsors.refresh()
+                        }
+                    }
+                }
+                loadStates.append is LoadState.Error -> {
+                    val e = sponsors.loadState.append as LoadState.Error
+                    Log.e("append error: %s", e.toString())
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            DefaultFailure(retry = {
+                                sponsors.retry()
+                            })
+                        }
                     }
                 }
             }
-            loadStates.append is LoadState.Error -> {
-                val e = sponsors.loadState.append as LoadState.Error
-                Log.e("append error: %s", e.toString())
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        DefaultFailure(retry = {
-                            sponsors.retry()
-                        })
-                    }
-                }
+
+            item {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.sponsor_tip),
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                    color = LocalContentColor.current.copy(0.5f),
+                    lineHeight = 15.sp
+                )
             }
         }
-
-        item {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.sponsor_tip),
-                textAlign = TextAlign.Center,
-                fontSize = 12.sp,
-                color = LocalContentColor.current.copy(0.5f),
-                lineHeight = 15.sp
-            )
-        }
+        PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }
 }
 
@@ -301,12 +341,23 @@ fun UserInfoPanel(navHostController: NavHostController) {
     ) { userBean ->
         if (userBean.isValid()) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                AsyncImage(
-                    model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape),
-                    placeholder = painterResource(R.drawable.ic_loading)
-                )
+                Box {
+                    AsyncImage(
+                        model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape),
+                        placeholder = painterResource(R.drawable.ic_loading)
+                    )
+                    if (userBean.isValidVip()){
+                        Icon(
+
+                            modifier = Modifier.size(32.dp).offset(70.dp, 70.dp),
+                            painter = painterResource(id = R.drawable.ic_vip),
+                            contentDescription = "VIP",
+                            tint = Color.Unspecified
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "${userBean.username} | uid: ${userBean.uid}",

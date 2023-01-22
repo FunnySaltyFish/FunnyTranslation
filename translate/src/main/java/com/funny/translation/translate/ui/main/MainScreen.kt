@@ -58,7 +58,6 @@ import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
-import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
@@ -394,23 +393,14 @@ private fun InputPart(
     val sourceLanguage = vm.sourceLanguage
     val targetLanguage = vm.targetLanguage
     val context = LocalContext.current
+    val currentEnabledLanguages by enabledLanguages.collectAsState()
 
-    val animateProgress = remember {
-        Animatable(100f)
-    }
-
-    val enabledLanguages = remember {
-        allLanguages.filter {
-            DataSaverUtils.readData(it.selectedKey, true)
-        }
-    }
-
+    val animateProgress = remember { Animatable(100f) }
     LaunchedEffect(vm.progress) {
         animateProgress.animateTo(vm.progress)
     }
 
     var shouldRequestFocus by remember { mutableStateOf(AppConfig.sAutoFocus.value) }
-
     DisposableEffect(Unit){
         onDispose { shouldRequestFocus = false }
     }
@@ -461,39 +451,14 @@ private fun InputPart(
             translateAction = ::startTranslate
         ) // 输入框
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Row(Modifier.horizontalScroll(rememberScrollState())) {
-                LanguageSelect(
-                    Modifier.semantics {
-                        contentDescription = appCtx.getString(R.string.des_current_source_lang)
-                    },
-                    language = sourceLanguage,
-                    languages = enabledLanguages,
-                    updateLanguage = {
-                        vm.sourceLanguage = it
-                        DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, it.id)
-                    }
-                )
-                ExchangeButton {
-                    Log.d(TAG, "MainScreen: clicked")
-                    val temp = sourceLanguage
-                    vm.sourceLanguage = targetLanguage
-                    vm.targetLanguage = temp
-
-                    DataSaverUtils.saveData(Consts.KEY_SOURCE_LANGUAGE, vm.sourceLanguage.id)
-                    DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, vm.targetLanguage.id)
-                }
-                LanguageSelect(
-                    Modifier.semantics {
-                        contentDescription = appCtx.getString(R.string.des_current_target_lang)
-                    },
-                    language = targetLanguage,
-                    languages = enabledLanguages,
-                    updateLanguage = {
-                        vm.targetLanguage = it
-                        DataSaverUtils.saveData(Consts.KEY_TARGET_LANGUAGE, it.id)
-                    }
-                )
-            }
+            LanguageSelectRow(
+                modifier = Modifier,
+                sourceLanguage = sourceLanguage,
+                updateSourceLanguage = vm::updateSourceLanguage,
+                targetLanguage = targetLanguage,
+                updateTargetLanguage = vm::updateTargetLanguage,
+                enabledLanguages = currentEnabledLanguages
+            )
             Row {
                 expandEngineSelect?.let {
                     IconButton(onClick = it) {
@@ -529,6 +494,41 @@ private fun InputPart(
     }
 }
 
+@Composable
+fun LanguageSelectRow(
+    modifier: Modifier,
+    sourceLanguage: Language,
+    updateSourceLanguage: (Language) -> Unit,
+    targetLanguage: Language,
+    updateTargetLanguage: (Language) -> Unit,
+    enabledLanguages: List<Language>,
+) {
+    Row(modifier.horizontalScroll(rememberScrollState())) {
+        LanguageSelect(
+            Modifier.semantics {
+                contentDescription = appCtx.getString(R.string.des_current_source_lang)
+            },
+            language = sourceLanguage,
+            languages = enabledLanguages,
+            updateLanguage = updateSourceLanguage
+        )
+        ExchangeButton {
+            val temp = sourceLanguage
+            updateSourceLanguage(targetLanguage)
+            updateTargetLanguage(temp)
+        }
+        LanguageSelect(
+            Modifier.semantics {
+                contentDescription = appCtx.getString(R.string.des_current_target_lang)
+            },
+            language = targetLanguage,
+            languages = enabledLanguages,
+            updateLanguage = updateTargetLanguage
+        )
+    }
+}
+
+
 @ExperimentalAnimationApi
 @Composable
 private fun EngineSelect(
@@ -552,7 +552,7 @@ private fun EngineSelect(
             mainAxisSpacing = 8.dp,
             crossAxisSpacing = 0.dp
         ) {
-            bindEngines.forEachIndexed { index, task ->
+            bindEngines.forEach { task ->
                 var taskSelected by rememberDataSaverState(
                     key = task.selectKey,
                     default = task.selected
@@ -581,7 +581,7 @@ private fun EngineSelect(
                 mainAxisSpacing = 8.dp,
                 crossAxisSpacing = 0.dp
             ) {
-                jsEngines.forEachIndexed { index, task ->
+                jsEngines.forEach { task ->
                     var taskSelected by rememberDataSaverState(
                         key = task.selectKey,
                         default = task.selected

@@ -161,7 +161,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
                 placeholder = painterResource(R.drawable.ic_loading)
             )
         }
-        Tile(text = "修改密码", onClick = {
+        Tile(text = stringResource(R.string.modify_password), onClick = {
             navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route, false)
         })
         Divider(Modifier.fillMaxWidth())

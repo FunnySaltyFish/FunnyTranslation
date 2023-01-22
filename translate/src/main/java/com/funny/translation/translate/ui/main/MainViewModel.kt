@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
@@ -31,7 +32,9 @@ class MainViewModel : ViewModel() {
     private val actualTransText: String
         get() = translateText.trim().replace("#","")
 
-    var sourceLanguage by mutableStateOf(
+    var sourceLanguage by mutableDataSaverStateOf(
+        DataSaverUtils,
+        "key_source_lang",
         findLanguageById(
             DataSaverUtils.readData(
                 Consts.KEY_SOURCE_LANGUAGE,
@@ -39,7 +42,10 @@ class MainViewModel : ViewModel() {
             )
         )
     )
-    var targetLanguage by mutableStateOf(
+
+    var targetLanguage by mutableDataSaverStateOf(
+        DataSaverUtils,
+        "key_target_lang",
         findLanguageById(
             DataSaverUtils.readData(
                 Consts.KEY_TARGET_LANGUAGE,
@@ -47,6 +53,10 @@ class MainViewModel : ViewModel() {
             )
         )
     )
+
+    fun updateSourceLanguage(language: Language){ sourceLanguage = language }
+    fun updateTargetLanguage(language: Language){ targetLanguage = language }
+
 
     var selectedEngines: HashSet<TranslationEngine> = hashSetOf()
     private var initialSelected = 0

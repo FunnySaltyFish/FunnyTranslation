@@ -46,6 +46,11 @@ class FunnyApplication : BaseApplication() {
             save = { "${it.first}:${it.second}" },
             restore = { val split = it.split(":"); Pair(split[0], split[1].toInt()) }
         )
+
+        registerTypeConverters<Language>(
+            save = { it.name },
+            restore = { Language.valueOf(it) }
+        )
     }
 
     companion object {

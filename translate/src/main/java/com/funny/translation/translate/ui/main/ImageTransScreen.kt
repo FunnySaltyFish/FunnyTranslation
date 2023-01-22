@@ -32,6 +32,7 @@ import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.ImageTranslationPart
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
+import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -122,6 +123,7 @@ private fun ImageTranslationPart(
     val goBackTipDialogState = remember {
         mutableStateOf(false)
     }
+    val currentEnabledLanguages by enabledLanguages.collectAsState()
     val goBack = remember {
         {
             if (vm.isTranslating()) goBackTipDialogState.value = true
@@ -143,10 +145,19 @@ private fun ImageTranslationPart(
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(24.dp)) {
+                .padding(16.dp)) {
             IconButton(onClick = goBack) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
             }
+            LanguageSelectRow(
+                modifier = Modifier,
+                sourceLanguage = vm.sourceLanguage,
+                updateSourceLanguage = vm::updateSourceLanguage,
+                targetLanguage = vm.targetLanguage,
+                updateTargetLanguage = vm::updateTargetLanguage,
+                enabledLanguages = currentEnabledLanguages
+            )
+
         }
         Image(
             modifier = Modifier.fillMaxWidth(),

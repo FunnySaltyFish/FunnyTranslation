@@ -55,7 +55,7 @@ class StringListConverter {
     }
 
     @TypeConverter
-    fun objectToString(list: List<Any>): String {
+    fun objectToString(list: List<String>): String {
         return JsonX.toJson(list)
     }
 }

@@ -20,7 +20,7 @@ class OpenFloatWindowTileService: TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
-        Log.d(TAG, "onStartListening: ")
+        Log.d(TAG, "onStartListening: showing: ${EasyFloatUtils.isShowingFloatBall()}, state: ${qsTile.state}")
         // 检测状态是否匹配
         if (EasyFloatUtils.isShowingFloatBall() && qsTile.state == Tile.STATE_INACTIVE){
             qsTile.state = Tile.STATE_ACTIVE
