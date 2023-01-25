@@ -1,4 +1,5 @@
 package com.funny.translation.helper;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -8,8 +9,13 @@ import android.graphics.BitmapFactory;
 import android.content.res.Resources ;
 import android.graphics.Matrix;
 import android.graphics.Path;
+import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 public class BitmapUtil
 {
@@ -102,34 +108,58 @@ public class BitmapUtil
 		byte[] bytes;
 		while ((bytes = baos.toByteArray()).length > maxSize) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
 			baos.reset();//重置baos即清空baos
+			options -= 10;//每次都减少10
 			//第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差 ，第三个参数：保存压缩后的数据的流
 			image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
-			options -= 10;//每次都减少10
 		}
 		image.recycle();
 		return bytes;
 	}
 
-	public static Bitmap getHexagonBitmap(Bitmap bitmap){
-		int l=Math.max(bitmap.getHeight(),bitmap.getWidth());
-		Bitmap result=Bitmap.createBitmap(l,l,Bitmap.Config.ARGB_8888);
-		Canvas canvas=new Canvas(result);
-		Path path=new Path();
-		Paint p=new Paint();
-		p.setAntiAlias(true);
-		l=l/2;//六边形边长
-		float h=l*0.866f;
-		float d=l/2;
-		path.moveTo(d,0);
-		path.rLineTo(l,0);
-		path.rLineTo(d,h);
-		path.rLineTo(-d,h);
-		path.rLineTo(-l,0);
-		path.rLineTo(-d,-h);
-		path.close();
-		canvas.clipPath(path);
-		canvas.drawBitmap(bitmap,0,0,p);
-		return result;
+	public static byte[] compressImage(byte[] bytes, int width, int height, Long maxSize) {
+		Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		ByteBuffer buffer = ByteBuffer.wrap(bytes);
+		buffer.position(0);
+		image.copyPixelsFromBuffer(buffer);
+		return compressImage(image, maxSize);
+	}
+
+	/**
+	 * 通过uri获取图片并进行压缩
+	 *
+	 * @param uri
+	 */
+	public static byte[] getBitmapFormUri(Context ctx, int targetWidth, int targetHeight, Long maxSize, Uri uri) throws FileNotFoundException, IOException {
+		InputStream input = ctx.getContentResolver().openInputStream(uri);
+		BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+		onlyBoundsOptions.inJustDecodeBounds = true;
+		onlyBoundsOptions.inDither = true;//optional
+		onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//optional
+		BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+		input.close();
+		int originalWidth = onlyBoundsOptions.outWidth;
+		int originalHeight = onlyBoundsOptions.outHeight;
+		if ((originalWidth == -1) || (originalHeight == -1))
+			return null;
+		//缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
+		int be = 1; //be=1表示不缩放
+		if (originalWidth > originalHeight && originalWidth > targetWidth) {//如果宽度大的话根据宽度固定大小缩放
+			be = (int) (originalWidth / targetWidth);
+		} else if (originalWidth < originalHeight && originalHeight > targetHeight) {//如果高度高的话根据宽度固定大小缩放
+			be = (int) (originalHeight / targetHeight);
+		}
+		if (be <= 0)
+			be = 1;
+		//比例压缩
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inSampleSize = be;//设置缩放比例
+		bitmapOptions.inDither = true;//optional
+		bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//optional
+		input = ctx.getContentResolver().openInputStream(uri);
+		Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
+		input.close();
+
+		return compressImage(bitmap, maxSize); //再进行质量压缩
 	}
 
 }

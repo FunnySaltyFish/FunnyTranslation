@@ -67,7 +67,8 @@ fun SelectableChip(
 
 @Composable
 fun ExchangeButton(
-    onClick: () -> Unit = {}
+    tint: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    onClick: () -> Unit = {},
 ) {
     var clickOnce by remember {
         mutableStateOf(false)
@@ -87,7 +88,7 @@ fun ExchangeButton(
             }
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_exchange), tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            painterResource(id = R.drawable.ic_exchange), tint = tint,
             contentDescription = stringResource(R.string.exchange),
             modifier = Modifier.size(24.dp)
         )

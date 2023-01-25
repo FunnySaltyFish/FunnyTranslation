@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,7 +22,6 @@ import com.funny.translation.codeeditor.R
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
-import io.github.rosemoe.editor.text.Content
 
 private const val TAG = "CodeRunner"
 

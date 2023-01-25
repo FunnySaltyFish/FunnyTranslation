@@ -11,8 +11,8 @@ import com.funny.translation.translate.Language
 @kotlinx.serialization.Serializable
 @TypeConverters(LanguageListConverter::class)
 data class JsBean(
-    @PrimaryKey(autoGenerate = true)
     var id : Int = 0,
+    @PrimaryKey
     var fileName : String = "Plugin",
     var code : String = "",
     var author : String = "Author",

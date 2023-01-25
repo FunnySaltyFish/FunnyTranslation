@@ -8,7 +8,7 @@ import java.util.*
 data class FunnyDate(var year: Int = 0, var month: Int = 0, var day: Int = 0)
 object DateUtils {
     const val TAG = "DateUtils"
-    val isSpringFestival: Boolean by lazy {
+    val isSpringFestival: Boolean by lazy{
         val time = today
         Log.d(TAG, "isSpringFestival: today is $time")
         when (time.year) {
@@ -18,7 +18,7 @@ object DateUtils {
                 else -> false
             }
             2023 -> when (time.month) {
-                2 -> time.day in 19..26
+                1 -> time.day in 21..28
                 else -> false
             }
             2024 -> when (time.month) {

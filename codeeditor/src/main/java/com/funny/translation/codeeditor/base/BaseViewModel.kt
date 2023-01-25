@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
-import com.funny.translation.codeeditor.extensions.toastOnUi
 import com.funny.translation.helper.coroutine.Coroutine
+import com.funny.translation.helper.toastOnUi
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

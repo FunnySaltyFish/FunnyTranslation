@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class ImageTranslationBaidu(): ImageTranslationTask(), ImageTranslationEngine by ImageTranslationEngines.Baidu {
+class ImageTranslationTencent(): ImageTranslationTask(), ImageTranslationEngine by ImageTranslationEngines.Baidu {
      override suspend fun translate() {
          super.translate()
          withContext(Dispatchers.IO){
@@ -21,7 +21,7 @@ class ImageTranslationBaidu(): ImageTranslationTask(), ImageTranslationEngine by
              val file = sourceImg.toRequestBody()
              val body = MultipartBody.Builder()
                  .setType(MultipartBody.FORM)
-                 .addFormDataPart("engine", "baidu")
+                 .addFormDataPart("engine", "tencent")
                  .addFormDataPart("source", source)
                  .addFormDataPart("target", target)
                  .addFormDataPart("image", "image", file)

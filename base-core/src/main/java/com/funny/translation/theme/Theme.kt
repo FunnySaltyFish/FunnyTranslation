@@ -90,15 +90,15 @@ fun TransTheme(
     setSystemBar: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (dynamic) {
-        val context = LocalContext.current
-        if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    } else {
-        if (dark) DarkColors else
-            if (AppConfig.sSpringFestivalTheme.value && DateUtils.isSpringFestival)
-                SpringFestivalColorPalette
-            else LightColors
-    }
+    val colorScheme =
+        if (AppConfig.sSpringFestivalTheme.value && DateUtils.isSpringFestival)
+            SpringFestivalColorPalette
+        else if (dynamic) {
+            val context = LocalContext.current
+            if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        } else {
+            if (dark) DarkColors else LightColors
+        }
     if (setSystemBar) SystemBarSettings()
     MaterialTheme(
         colorScheme = colorScheme,

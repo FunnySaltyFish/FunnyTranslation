@@ -74,13 +74,13 @@
     <string name="not_agree">Deny</string>
     <string name="select_language">Select Language</string>
     <string name="agree">Agree</string>
-    <string name="tip_privacy_policy">Please read and agree [Privacy Polocy](https://api.funnysaltyfish.fun/trans/v1/api/privacy) before using the application.</string>
+    <string name="tip_privacy_policy">Please read and agree [Privacy Policy](https://api.funnysaltyfish.fun/trans/v1/api/privacy) before using the application.</string>
     <string name="action_expand_or_close_select_engines">Click to %s the engine-selecting page</string>
-    <string name="action_see_notice_detail">Show detail of the annoncement</string>
+    <string name="action_see_notice_detail">Show detail of the announcement</string>
     <string name="des_current_source_lang">Current selected source language is </string>
     <string name="des_current_target_lang">Current selected target language is </string>
     <string name="float_window_tip">About Float Window</string>
-    <string name="empty_plugin_tip">It seems that nothing is here.\\n Try to add a new plugin to explore more.</string>
+    <string name="empty_plugin_tip">It seems that nothing is here.\n Try to add a new plugin to explore more.</string>
     <string name="user_profile">User Profile</string>
     <string name="setting_enter_to_translate">"Click Enter To Translate "</string>
     <string name="setting_show_history">Show Histories</string>
@@ -100,4 +100,8 @@
     <string name="annual_report">Annual Translation Report</string>
     <string name="confirm_delete_history_desc">Are you sure you want to delete all local history records? This operation is irreversible, please choose carefully</string>
     <string name="clear_trans_history">Clear Local Histories</string>
+    <string name="need_camera_permission_tip">Picture translation function description: Image translation is based on a third-party engine. Due to its high cost, image translation is limited to login users, and the default quota of 10 points per person per month is reset on the 1st. The consumption of each translation is usually 1 point, and the other special points will be marked. \n\nYou need to grant permission to take pictures to use normally</string>
+    <string name="album">Album</string>
+    <string name="modify_password">Modify Password</string>
+    <string name="img_remaining_points">Remaining Image Points</string>
 </resources>

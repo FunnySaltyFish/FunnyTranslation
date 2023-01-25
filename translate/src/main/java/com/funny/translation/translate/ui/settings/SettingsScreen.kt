@@ -120,6 +120,24 @@ fun SettingsScreen() {
         ) {
 
         }
+        if (DateUtils.isSpringFestival) {
+            JetSettingCheckbox(
+                state = AppConfig.sSpringFestivalTheme,
+                text = stringResource(R.string.setting_spring_theme),
+                resourceId = R.drawable.ic_theme,
+                iconTintColor = MaterialColors.Red700,
+            ) {
+                Toast.makeText(
+                    context, "已${
+                        if (it) {
+                            "设置"
+                        } else {
+                            "取消"
+                        }
+                    }春节限定主题", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
         JetSettingCheckbox(
             key = Consts.KEY_SHOW_FLOAT_WINDOW,
             text = stringResource(R.string.setting_show_float_window),
@@ -130,7 +148,7 @@ fun SettingsScreen() {
                 if (it) EasyFloatUtils.showFloatBall(context as Activity)
                 else EasyFloatUtils.hideAllFloatWindow()
             } catch (e: Exception) {
-                Toast.makeText(context, "显示悬浮窗失败，请检查是否正确授予权限！", Toast.LENGTH_LONG).show()
+                context.toastOnUi("显示悬浮窗失败，请检查是否正确授予权限！")
                 DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
             }
         }
@@ -148,24 +166,6 @@ fun SettingsScreen() {
             textAlign = TextAlign.End,
             color = MaterialTheme.colorScheme.primary
         )
-        if (DateUtils.isSpringFestival) {
-            JetSettingCheckbox(
-                state = AppConfig.sSpringFestivalTheme,
-                text = stringResource(R.string.setting_spring_theme),
-                resourceId = R.drawable.ic_theme,
-                iconTintColor = MaterialColors.Red700,
-            ) {
-                Toast.makeText(
-                    context, "已${
-                        if (it) {
-                            "设置"
-                        } else {
-                            "取消"
-                        }
-                    }春节限定主题，下次启动应用生效", Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
 
         ItemHeading(text = stringResource(id = R.string.others))
         JetSettingCheckbox(
@@ -243,11 +243,7 @@ fun SettingsScreen() {
             resourceId = R.drawable.ic_github,
             iconTintColor = MaterialColors.Purple700
         ) {
-            Toast.makeText(
-                context,
-                FunnyApplication.resources.getText(R.string.welcome_star),
-                Toast.LENGTH_SHORT
-            ).show()
+            context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star),)
             WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
         }
         JetSettingTile(

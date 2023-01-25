@@ -16,6 +16,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.VibratorUtils
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.ui.bean.TranslationConfig
@@ -160,7 +161,7 @@ object EasyFloatUtils {
                 val txt = resultText.text
                 if (txt.isNotEmpty()){
                     AudioPlayer.play(txt.toString(), findLanguageById(spinnerTarget.selectedItemPosition)){
-                        Toast.makeText(context, "朗读错误", Toast.LENGTH_SHORT).show()
+                        context.toastOnUi("朗读错误")
                     }
                 }
             }

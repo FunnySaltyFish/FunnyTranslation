@@ -76,6 +76,8 @@ dependencies {
 
     api "androidx.biometric:biometric:1.2.0-alpha05"
 
+    api 'com.github.getActivity:ToastUtils:11.2'
+
     api "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 
     // Markwon
@@ -121,6 +123,7 @@ dependencies {
     api "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     api "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     api "com.google.accompanist:accompanist-pager:$accompanist_version"
+    api "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
     api "com.google.accompanist:accompanist-permissions:$accompanist_version"
     api project(path: ':jet-setting-core')
 

@@ -1,6 +1,8 @@
 package com.funny.translation.translate
 
 import android.content.res.Resources
+import android.view.Gravity
+import androidx.compose.ui.geometry.Offset
 import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
 import com.funny.translation.bean.UserBean
@@ -10,6 +12,7 @@ import com.funny.translation.sign.SignUtils
 import com.funny.translation.translate.ui.thanks.SponsorSortType
 import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
 import com.funny.translation.translate.utils.SortResultUtils
+import com.hjq.toast.ToastUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
@@ -19,6 +22,8 @@ class FunnyApplication : BaseApplication() {
         super.onCreate()
         ctx = this
         FunnyUncaughtExceptionHandler.getInstance().init(ctx)
+        ToastUtils.init(this)
+        ToastUtils.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 260)
 
         GlobalScope.launch {
             initLanguageDisplay(resources)
@@ -50,6 +55,11 @@ class FunnyApplication : BaseApplication() {
         registerTypeConverters<Language>(
             save = { it.name },
             restore = { Language.valueOf(it) }
+        )
+
+        registerTypeConverters<Offset>(
+            save = { "${it.x},${it.y}" },
+            restore = { val split = it.split(",").map { it.toFloat() }; Offset(split[0], split[1])  }
         )
     }
 

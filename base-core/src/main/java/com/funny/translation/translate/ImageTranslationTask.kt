@@ -2,6 +2,7 @@ package com.funny.translation.translate
 
 import kotlinx.serialization.SerialName
 
+@kotlinx.serialization.Serializable
 data class ImageTranslationPart(
     val source: String,
     var target: String,
@@ -11,7 +12,8 @@ data class ImageTranslationPart(
     val height: Int
 )
 
-class ImageTranslationResult(
+@kotlinx.serialization.Serializable
+data class ImageTranslationResult(
     @SerialName("erased_img")
     val erasedImgBase64: String? = null,
     val source: String = "",
@@ -20,10 +22,17 @@ class ImageTranslationResult(
 )
 
 abstract class ImageTranslationTask(
-    val sourceImg: ByteArray = byteArrayOf(),
+    var sourceImg: ByteArray = byteArrayOf(),
 ) : CoreTranslationTask() {
-    val result = ImageTranslationResult()
+    var result = ImageTranslationResult()
 
-    abstract fun translate()
+    @Throws(TranslationException::class)
+    open suspend fun translate(){
+        if (!supportLanguages.contains(sourceLanguage) || !supportLanguages.contains(targetLanguage)){
+            throw TranslationException("此语种暂不支持")
+        }
+        if (sourceLanguage == targetLanguage) return
+    }
+
     abstract val isOffline: Boolean
 }

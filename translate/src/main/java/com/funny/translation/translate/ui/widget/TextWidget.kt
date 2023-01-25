@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.widget
 
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
@@ -7,18 +8,22 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
@@ -109,4 +114,73 @@ fun AutoIncreaseAnimatedNumber(
         textSize = textSize,
         textWeight = textWeight
     )
+}
+
+@Composable
+fun AutoFillWidthText(
+    text: String,
+    fontSize: TextUnit = 40.sp,
+    fontWeight: FontWeight = FontWeight.Normal,
+    color: Color,
+) {
+    var size = rememberSaveable(saver = TextUnitSaver) { fontSize }
+    var shouldDraw by remember{ mutableStateOf(false) }
+    Text(text = text, softWrap = false, fontSize = size, fontWeight = fontWeight, color = color, onTextLayout = { res ->
+        if (res.didOverflowWidth)
+            size *= 0.95
+        else {
+            shouldDraw = true
+            Log.d("AutoFillWidthText", "shouldDraw = true: ")
+        }
+    }, modifier = Modifier.drawWithContent {
+        if (shouldDraw) drawContent()
+    })
+}
+
+@Composable
+fun AutoResizedText(
+    modifier: Modifier = Modifier,
+    text: String,
+    style: TextStyle = MaterialTheme.typography.labelLarge,
+    color: Color = style.color
+) {
+    var resizedTextStyle by remember {
+        mutableStateOf(style)
+    }
+    var shouldDraw by remember {
+        mutableStateOf(false)
+    }
+
+    val defaultFontSize = MaterialTheme.typography.labelLarge.fontSize
+
+    Text(
+        text = text,
+        color = color,
+        modifier = modifier.drawWithContent {
+            if (shouldDraw) {
+                drawContent()
+            }
+        },
+        softWrap = true,
+        style = resizedTextStyle,
+        onTextLayout = { result ->
+            if (result.didOverflowHeight) {
+                if (style.fontSize.isUnspecified) {
+                    resizedTextStyle = resizedTextStyle.copy(
+                        fontSize = defaultFontSize
+                    )
+                }
+                resizedTextStyle = resizedTextStyle.copy(
+                    fontSize = resizedTextStyle.fontSize * 0.95
+                )
+            } else {
+                shouldDraw = true
+            }
+        }
+    )
+}
+
+val TextUnitSaver = object : Saver<TextUnit, Float> {
+    override fun restore(value: Float): TextUnit = value.sp
+    override fun SaverScope.save(value: TextUnit) = value.value
 }

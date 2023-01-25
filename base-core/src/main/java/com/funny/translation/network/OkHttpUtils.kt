@@ -85,6 +85,18 @@ object OkHttpUtils {
                 })
             }
 
+            if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/image_translate")){
+                builder.addHeader("sign", SignUtils.encodeSign(
+                    uid = AppConfig.uid.toLong(), appVersionCode = AppConfig.versionCode,
+                    sourceLanguageCode = TranslateConfig.sourceLanguage.id,
+                    targetLanguageCode = TranslateConfig.targetLanguage.id,
+                    text = "Image",
+                    extra = ""
+                ).also {
+                    Log.d(TAG, "createBaseClient: add sign: $it")
+                })
+            }
+
             it.proceed(builder.build())
         }
 

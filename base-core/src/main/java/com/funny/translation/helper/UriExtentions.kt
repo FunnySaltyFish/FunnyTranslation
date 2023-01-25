@@ -27,6 +27,15 @@ fun Uri.readText(ctx: Context): String {
 }
 
 @Throws(IOException::class)
+fun Uri.readByteArray(ctx: Context): ByteArray {
+    var byteArray: ByteArray
+    ctx.contentResolver.openInputStream(this).use { inputStream ->
+        byteArray = inputStream?.readBytes() ?: byteArrayOf()
+    }
+    return byteArray
+}
+
+@Throws(IOException::class)
 fun Uri.writeText(context: Context, text: String) {
     // 加上这一行之后保存不会多保存一段?
     // 我不理解啊tmd

@@ -27,6 +27,7 @@ import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.theme.isLight
 import com.funny.translation.translate.ui.widget.LoadingContent
+import com.funny.translation.ui.touchToScale
 
 @Composable
 fun AboutScreen() {
@@ -45,6 +46,7 @@ fun OpenSourceLib() {
                 val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.primaryContainer
                 OpenSourceLibItem(
                     modifier = Modifier
+                        .touchToScale()
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(12.dp))
                         .background(color)

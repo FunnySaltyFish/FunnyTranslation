@@ -7,6 +7,9 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,6 +37,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -54,10 +60,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.data_saver.core.SavePolicy
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
@@ -86,11 +94,55 @@ enum class ShowListType {
 /**
  * 项目的翻译页面, [图片](https://web.funnysaltyfish.fun/temp_img/202111102032441.jpg)
  */
+@OptIn(
+    ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class
+)
+@Composable
+fun MainScreen() {
+    var currentScreen by rememberSaveable { mutableStateOf(0) }
+    var btnOffset by rememberDataSaverState(
+        key = "main_screen_exchange_btn_offset",
+        initialValue = Offset(-30f, -300f),
+        savePolicy = SavePolicy.DISPOSED
+    )
+
+    SimpleNavigation(currentScreen = currentScreen, modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (it) {
+                0 -> TextTransScreen()
+                1 -> ImageTransScreen(Modifier.fillMaxSize())
+            }
+            IconButton(
+                onClick = { currentScreen = 1 - currentScreen },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset { IntOffset(btnOffset.x.roundToInt(), btnOffset.y.roundToInt()) }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDrag = { change: PointerInputChange, dragAmount: Offset ->
+                                btnOffset += dragAmount
+                            }
+                        )
+                    }
+            ){
+                Icon(
+                    painterResource(id = if (currentScreen == 1) R.drawable.ic_text else R.drawable.ic_album),
+                    contentDescription = "切换图文翻译",
+                    tint = Color.Unspecified,
+                )
+            }
+        }
+    }
+}
+
+
+
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
-fun MainScreen() {
+fun TextTransScreen() {
     val vm: MainViewModel = viewModel()
     val context = LocalContext.current
 
@@ -173,7 +225,6 @@ fun MainScreen() {
                 }
             }
         } else {
-
             val modalBottomSheetState =
                 rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
             ModalBottomSheetLayout(
@@ -497,6 +548,7 @@ private fun InputPart(
 @Composable
 fun LanguageSelectRow(
     modifier: Modifier,
+    exchangeButtonTint: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     sourceLanguage: Language,
     updateSourceLanguage: (Language) -> Unit,
     targetLanguage: Language,
@@ -512,7 +564,7 @@ fun LanguageSelectRow(
             languages = enabledLanguages,
             updateLanguage = updateSourceLanguage
         )
-        ExchangeButton {
+        ExchangeButton(tint = exchangeButtonTint) {
             val temp = sourceLanguage
             updateSourceLanguage(targetLanguage)
             updateTargetLanguage(temp)

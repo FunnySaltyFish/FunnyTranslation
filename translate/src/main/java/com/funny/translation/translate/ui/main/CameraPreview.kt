@@ -2,9 +2,7 @@ package com.funny.translation.translate.ui.main
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.ViewGroup
+import android.view.*
 import androidx.camera.core.*
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.Animatable
@@ -32,6 +30,7 @@ fun CameraPreview(
     cameraState: MutableState<Camera?>,
     imageCaptureUseCase: ImageCapture,
     cameraSelector: CameraSelector,
+    rotationProvider: () -> Int,
     scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER,
 ) {
     val context = LocalContext.current
@@ -41,12 +40,17 @@ fun CameraPreview(
     var focusOffset: Offset? by remember {
         mutableStateOf(null)
     }
+    val rotation = rotationProvider()
 
     LaunchedEffect(key1 = focusOffset){
         if (focusOffset != null){
             delay(3000)
             focusOffset = null
         }
+    }
+
+    LaunchedEffect(key1 = rotation){
+        imageCaptureUseCase.targetRotation = rotation
     }
 
     AndroidView(

@@ -3,7 +3,6 @@ package com.funny.translation.codeeditor.vm
 import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.lazyPromise

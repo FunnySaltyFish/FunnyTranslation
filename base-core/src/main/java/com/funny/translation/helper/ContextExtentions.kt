@@ -3,13 +3,13 @@ package com.funny.translation.helper
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import com.funny.translation.helper.handler.runOnUI
+import com.hjq.toast.ToastUtils
+import java.io.File
 import java.io.InputStream
 
 private const val TAG = "ContextExtensions"
@@ -100,12 +100,19 @@ fun Context.openUrl(uri: Uri) {
 
 fun Context.toastOnUi(message: Int) {
     runOnUI {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        ToastUtils.showShort(message)
     }
 }
 
 fun Context.toastOnUi(message: CharSequence?, length: Int = Toast.LENGTH_SHORT) {
     runOnUI {
-        Toast.makeText(this, message, length).show()
+        if (length == Toast.LENGTH_SHORT){
+            ToastUtils.showShort(message)
+        }else{
+            ToastUtils.showLong(message)
+        }
     }
 }
+
+val Context.externalCache: File
+    get() = this.externalCacheDir ?: this.cacheDir

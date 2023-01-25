@@ -24,7 +24,7 @@ import java.util.*
         vip_duration = -1
  */
 @Keep
-@kotlinx.serialization.Serializable
+@Serializable
 data class UserBean(
     val uid: Int = -1,
     val username: String = "",
@@ -36,8 +36,8 @@ data class UserBean(
     val vip_level: Int = 0,
     @Serializable(with = DateSerializerType1::class) val vip_start_time: Date? = null,
     val vip_duration: Long = -1,
-
-    val jwt_token: String = ""
+    val jwt_token: String = "",
+    val img_remain_points: Float = 0.0f
 ){
     fun isValid() = uid >= 0 && jwt_token != ""
     fun isValidVip() =

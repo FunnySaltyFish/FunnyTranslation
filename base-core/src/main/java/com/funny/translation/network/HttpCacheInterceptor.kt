@@ -1,6 +1,8 @@
 package com.funny.translation.network
 
 import android.util.Log
+import com.funny.translation.BaseApplication
+import com.funny.translation.helper.toastOnUi
 import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -19,6 +21,7 @@ class HttpCacheInterceptor : Interceptor {
         val connected = NetworkHelper.isConnected()
         Log.d(TAG, "intercept: connected:$connected")
         if (!connected) {
+            BaseApplication.ctx.toastOnUi("当前似乎没有联网哦~")
             request = request.newBuilder()
                 .cacheControl(CacheControl.FORCE_CACHE)
                 .build()

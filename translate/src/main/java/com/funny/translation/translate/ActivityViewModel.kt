@@ -12,10 +12,10 @@ import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
-import com.funny.translation.codeeditor.extensions.externalCache
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.externalCache
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.bean.NoticeInfo
@@ -32,17 +32,18 @@ import java.util.*
 
 class ActivityViewModel : ViewModel() {
 
-    var lastBackTime : Long = 0
+    var lastBackTime: Long = 0
     var hasCheckedUpdate = false
+
     // 由悬浮窗或其他应用传过来的临时翻译参数
     val tempTransConfig = TranslationConfig()
-    var noticeInfo : MutableState<NoticeInfo?> = mutableStateOf(null)
+    var noticeInfo: MutableState<NoticeInfo?> = mutableStateOf(null)
 
     var userInfo by AppConfig.userInfo
     val uid by derivedStateOf { userInfo.uid }
     val token by derivedStateOf { userInfo.jwt_token }
 
-    companion object{
+    companion object {
         const val TAG = "ActivityVM"
     }
 
@@ -58,33 +59,35 @@ class ActivityViewModel : ViewModel() {
         }
     }
 
-    suspend fun getNotice(){
-        kotlin.runCatching {
-            withContext(Dispatchers.IO){
+    suspend fun getNotice() {
+        withContext(Dispatchers.IO) {
+            kotlin.runCatching {
                 val jsonBody = OkHttpUtils.get("${ServiceCreator.BASE_URL}/api/notice")
-                if (jsonBody != ""){
+                if (jsonBody != "") {
                     noticeInfo.value = JsonX.fromJson(json = jsonBody, NoticeInfo::class)
                 }
+            }.onFailure {
+                noticeInfo.value = NoticeInfo("获取公告失败，如果网络连接没问题，则服务器可能崩了，请告知开发者修复……", Date(), null)
+                it.printStackTrace()
             }
-        }.onFailure {
-            noticeInfo.value = NoticeInfo("获取公告失败，如果网络连接没问题，则服务器可能崩了，请告知开发者修复……", Date(), null)
-            it.printStackTrace()
         }
+
     }
 
-    suspend fun checkUpdate(context : Context){
-        if(hasCheckedUpdate) return
+    suspend fun checkUpdate(context: Context) {
+        if (hasCheckedUpdate) return
         kotlin.runCatching {
             val manager = DownloadManager.getInstance(context)
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
                 val versionCode = ApplicationUtil.getAppVersionCode(FunnyApplication.ctx)
                 Log.d(TAG, "checkUpdate: VersionCode:$versionCode")
                 val channel = DataSaverUtils.readData(Consts.KEY_APP_CHANNEL, "stable")
                 val updateInfo = TransNetwork.appUpdateService.getUpdateInfo(versionCode, channel)
                 Log.i(TAG, "checkUpdate: $updateInfo")
-                if (updateInfo.should_update){
+                if (updateInfo.should_update) {
                     val configuration = UpdateConfiguration().apply {
-                        httpManager = UpdateDownloadManager(FunnyApplication.ctx.externalCache.absolutePath)
+                        httpManager =
+                            UpdateDownloadManager(FunnyApplication.ctx.externalCache.absolutePath)
                         isForcedUpgrade = updateInfo.force_update == true
                     }
 
@@ -99,7 +102,7 @@ class ActivityViewModel : ViewModel() {
                         .setApkDescription(updateInfo.update_log)
                         .setApkVersionName(updateInfo.version_name)
                         .setApkSize(StringUtil.convertIntToSize(updateInfo.apk_size!!))
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         manager.download()
                     }
                 }

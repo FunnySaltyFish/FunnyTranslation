@@ -100,7 +100,8 @@
     <string name="annual_report">年度翻译报告</string>
     <string name="confirm_delete_history_desc">您确认删除所有本地历史记录？该操作不可逆，请谨慎选择</string>
     <string name="clear_trans_history">清空历史记录</string>
-    <string name="need_camera_permission_tip">需要您授予拍照权限才能正常使用</string>
+    <string name="need_camera_permission_tip">图片翻译功能说明：\n图片翻译基于第三方引擎，因成本较为昂贵，图片翻译仅限于登录用户使用，且每人每月默认10点配额，1号重置。每次翻译消耗通常为1点，其余特殊点数会标出。\n\n需要您授予拍照权限才能正常使用</string>
     <string name="album">相册</string>
     <string name="modify_password">修改密码</string>
+    <string name="img_remaining_points">剩余图片翻译点数</string>
 </resources>

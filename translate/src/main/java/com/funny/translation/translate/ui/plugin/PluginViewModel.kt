@@ -7,13 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.translation.helper.coroutine.Coroutine.Companion.async
-import com.funny.translation.helper.lazyPromise
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.network.TransNetwork
-import com.funny.translation.translate.network.service.PluginService
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,10 +24,6 @@ class PluginViewModel : ViewModel() {
 
     private val pluginService = TransNetwork.pluginService
 
-    private val _onlinePlugins by lazyPromise(viewModelScope){
-        pluginService.getOnlinePlugins()
-    }
-
     val plugins : Flow<List<JsBean>>
         get() {
             return appDB.jsDao.getAllJs()
@@ -37,9 +31,7 @@ class PluginViewModel : ViewModel() {
 
     var needToDeletePlugin: JsBean? by mutableStateOf(null)
 
-    suspend fun getOnlinePlugins(): List<JsBean> {
-        return _onlinePlugins.await()
-    }
+    suspend fun getOnlinePlugins(): List<JsBean> = pluginService.getOnlinePlugins()
 
     fun updateLocalPluginSelect(jsBean: JsBean) {
         jsBean.enabled = 1 - jsBean.enabled
@@ -107,7 +99,14 @@ class PluginViewModel : ViewModel() {
                         successCall("更新成功！[请注意，新插件最佳版本与当前引擎版本有所差异，可能有兼容性问题]")
                     }else successCall("更新成功！")
                 }else{
-                    appDB.jsDao.insertJs(jsBean)
+                    try {
+                        appDB.jsDao.insertJs(jsBean)
+                    }catch (e: Exception){
+                        e.printStackTrace()
+                        failureCall("已有同名插件【${jsBean.fileName}】")
+                        return@launch
+                    }
+
                     SortResultUtils.addNew(jsBean.fileName)
                     if(JsConfig.JS_ENGINE_VERSION != jsBean.targetSupportVersion){
                         successCall("添加成功！[请注意，插件最佳版本与当前引擎版本有所差异，可能有兼容性问题]")

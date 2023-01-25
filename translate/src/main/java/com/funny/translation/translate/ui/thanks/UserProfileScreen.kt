@@ -164,6 +164,9 @@ fun UserProfileSettings(navHostController: NavHostController) {
         Tile(text = stringResource(R.string.modify_password), onClick = {
             navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route, false)
         })
+        Tile(text = stringResource(R.string.img_remaining_points)){
+            Text(text = AppConfig.userInfo.value.img_remain_points.toString())
+        }
         Divider(Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(64.dp))
@@ -205,7 +208,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
 @Composable
 private fun Tile(
     text: String,
-    onClick: () -> Unit,
+    onClick: () -> Unit = {},
     endIcon: @Composable () -> Unit = {
         Icon(imageVector = Icons.Default.ArrowRight, "")
     }
