@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -29,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import coil.compose.rememberAsyncImagePainter
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
@@ -38,6 +40,7 @@ import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
 import com.funny.translation.translate.ui.widget.LoadingState
 import com.funny.translation.translate.ui.widget.SimpleDialog
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
@@ -56,11 +59,15 @@ fun ImageTransScreen(
     }
     var photoName by rememberSaveable { mutableStateOf("") }
     val currentEnabledLanguages by enabledLanguages.collectAsState()
+    val systemUiController = rememberSystemUiController()
 
-//    LaunchedEffect(key1 = Unit) {
-//        vm.imageUri = DESTINATION_IMAGE_URI
-//        photoName = "test.jpg"
-//    }
+    // 进入页面时隐藏底部栏
+    DisposableEffect(key1 = systemUiController) {
+        systemUiController.isNavigationBarVisible = false
+        onDispose {
+            systemUiController.isNavigationBarVisible = !AppConfig.sHideBottomNavBar.value
+        }
+    }
 
     val clipperLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK) {
@@ -249,7 +256,9 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                             .offset(sizes[2], sizes[3])
 //                            .border(width = 2.dp, color = Color.White)
                     ){
-                        AutoResizedText(text = part.target, color = Color.White)
+                        SelectionContainer {
+                            AutoResizedText(text = part.target, color = Color.White)
+                        }
                     }
                 }
             }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.provider.Settings
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
@@ -32,7 +31,7 @@ object AppConfig {
     val sSpringFestivalTheme = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SPRING_THEME, false)
     val sEnterToTranslate = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_ENTER_TO_TRANSLATE, false)
     val sHideStatusBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_HIDE_STATUS_BAR, true)
-    val sHideBottomNav = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
+    val sHideBottomNavBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
     val sAutoFocus = mutableDataSaverStateOf(DataSaverUtils, "KEY_AUTO_FOCUS", true)
 
     fun updateJwtToken(newToken: String) {

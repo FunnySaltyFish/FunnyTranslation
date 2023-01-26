@@ -22,9 +22,9 @@ fun SystemBarSettings() {
         )
     }
 
-    LaunchedEffect(AppConfig.sHideBottomNav.value) {
+    LaunchedEffect(AppConfig.sHideBottomNavBar.value) {
         systemUiController.isNavigationBarVisible =
-            !AppConfig.sHideBottomNav.value
+            !AppConfig.sHideBottomNavBar.value
     }
 
     LaunchedEffect(AppConfig.sHideStatusBar.value) {

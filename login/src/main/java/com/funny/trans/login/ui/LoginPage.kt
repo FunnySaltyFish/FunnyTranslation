@@ -85,14 +85,14 @@ fun LoginPage(
         ) {
             Tab(pagerState.currentPage == 0, onClick = { changePage(0) }) {
                 Text(
-                    "登录",
+                    stringResource(R.string.login),
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.labelLarge
                 )
             }
             Tab(pagerState.currentPage == 1, onClick = { changePage(1) }) {
                 Text(
-                    "注册",
+                    stringResource(R.string.register),
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.labelLarge
                 )
@@ -211,7 +211,7 @@ fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginSuccess: 
             modifier = Modifier.fillMaxWidth(),
             enabled = enabledLogin
         ) {
-            Text("登录")
+            Text(stringResource(id = R.string.login))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -335,7 +335,7 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
             modifier = Modifier.fillMaxWidth(),
             enabled = enableRegister
         ) {
-            Text("注册")
+            Text(stringResource(id = R.string.register))
         }
     }
 }

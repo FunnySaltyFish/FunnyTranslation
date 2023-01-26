@@ -89,7 +89,7 @@ fun SettingsScreen() {
 
         }
         JetSettingCheckbox(
-            state = AppConfig.sHideBottomNav,
+            state = AppConfig.sHideBottomNavBar,
             text = stringResource(R.string.setting_hide_nav_bar),
             resourceId = R.drawable.ic_bottom_bar,
             iconTintColor = MaterialColors.Blue700

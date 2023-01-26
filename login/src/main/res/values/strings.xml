@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="finished">已完成</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
 </resources>

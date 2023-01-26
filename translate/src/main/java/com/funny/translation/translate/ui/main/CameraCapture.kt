@@ -164,7 +164,7 @@ fun CameraCapture(
                         Modifier
                             .fillMaxHeight()
                             .align(Alignment.CenterEnd),
-                        verticalArrangement = Arrangement.SpaceBetween,
+                        verticalArrangement = Arrangement.SpaceAround,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         controlLineContent()

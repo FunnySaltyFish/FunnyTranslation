@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,18 +22,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.AppConfig
-import com.funny.translation.translate.Language
-import com.funny.translation.translate.findLanguageById
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.mozilla.javascript.ast.Label
 import kotlin.math.tan
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -49,7 +44,7 @@ fun AnnualReportScreen() {
     DisposableEffect(key1 = systemUiController){
         systemUiController.isNavigationBarVisible = false
         onDispose {
-            systemUiController.isNavigationBarVisible = !AppConfig.sHideBottomNav.value
+            systemUiController.isNavigationBarVisible = !AppConfig.sHideBottomNavBar.value
         }
     }
 
