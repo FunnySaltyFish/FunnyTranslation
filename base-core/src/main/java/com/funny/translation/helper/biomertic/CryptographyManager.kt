@@ -26,6 +26,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import androidx.annotation.RequiresApi
 import com.funny.translation.helper.JsonX
+import kotlinx.serialization.SerialName
 import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -170,7 +171,8 @@ private class CryptographyManagerImpl : CryptographyManager {
 }
 
 @kotlinx.serialization.Serializable
-data class CiphertextWrapper(val ciphertext: ByteArray, val initializationVector: ByteArray) {
+data class CiphertextWrapper(
+    @SerialName("a") val ciphertext: ByteArray, @SerialName("b") val initializationVector: ByteArray) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

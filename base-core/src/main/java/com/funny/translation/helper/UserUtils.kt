@@ -236,7 +236,7 @@ object UserUtils {
     // 依据uid刷新JWT Token，并保存到本地
     // 错误会在内部捕获
     suspend fun refreshJwtToken() = withContext(Dispatchers.IO){
-        val uid = DataSaverUtils.readData(Consts.KEY_USER_UID, -1)
+        val uid = AppConfig.uid
         if (uid < 0) return@withContext
         try {
             val data = userService.refreshToken(uid)

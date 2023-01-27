@@ -1,6 +1,7 @@
 package com.funny.translation.translate
 
 import android.content.res.Resources
+import android.util.Log
 import android.view.Gravity
 import androidx.compose.ui.geometry.Offset
 import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
@@ -33,8 +34,27 @@ class FunnyApplication : BaseApplication() {
 
         // For ComposeDataSaver
         registerTypeConverters<UserBean>(
-            save = { JsonX.toJson(it) },
-            restore = { JsonX.fromJson(it, UserBean::class) }
+            save = {
+                JsonX.toJson(it)
+            },
+            restore = {
+                Log.d(TAG, "onCreate: restore is executed: $it")
+                // 修复旧版本 vip_start_time 为 Long 的问题
+                try {
+                    val matchResult = OLD_VIP_START_TIME.find(it)
+                    if (matchResult != null)
+                        JsonX.fromJson(it.replace(OLD_VIP_START_TIME, "$1:null").also { json ->
+                            Log.d(
+                                TAG,
+                                "onCreate: replaced: $json"
+                            ) }, UserBean::class)
+                    else
+                        JsonX.fromJson(it, UserBean::class)
+                } catch (e: Exception){
+                    e.printStackTrace()
+                    UserBean()
+                }
+            }
         )
 
         registerTypeConverters<EditorSchemes>(
@@ -71,3 +91,5 @@ class FunnyApplication : BaseApplication() {
 }
 
 val appCtx = FunnyApplication.ctx
+
+private val OLD_VIP_START_TIME = """("vip_start_time"):(-?\d+)""".toRegex()
