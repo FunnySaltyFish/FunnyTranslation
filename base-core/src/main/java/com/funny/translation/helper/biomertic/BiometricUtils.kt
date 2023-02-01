@@ -86,39 +86,45 @@ object BiometricUtils {
         }
 
         val secretKeyName = SECRET_KEY
-        val cipher = cryptographyManager.getInitializedCipherForEncryption(secretKeyName)
-        val biometricPrompt =
-            BiometricPromptUtils.createBiometricPrompt(activity, authSuccess = { authResult ->
-                authResult.cryptoObject?.cipher?.apply {
-                    val encryptedServerTokenWrapper = cryptographyManager.encryptData("$username@$did", this)
+        try {
+            val cipher = cryptographyManager.getInitializedCipherForEncryption(secretKeyName)
+            val biometricPrompt =
+                BiometricPromptUtils.createBiometricPrompt(activity, authSuccess = { authResult ->
+                    authResult.cryptoObject?.cipher?.apply {
+                        val encryptedServerTokenWrapper =
+                            cryptographyManager.encryptData("$username@$did", this)
 
-                    val ei = encryptedServerTokenWrapper.ciphertext.joinToString(",")
-                    val iv = encryptedServerTokenWrapper.initializationVector.joinToString(",")
+                        val ei = encryptedServerTokenWrapper.ciphertext.joinToString(",")
+                        val iv = encryptedServerTokenWrapper.initializationVector.joinToString(",")
 
-                    cryptographyManager.persistCiphertextWrapperToSharedPrefs(
-                        encryptedServerTokenWrapper,
-                        BaseApplication.ctx,
-                        SHARED_PREFS_FILENAME,
-                        Context.MODE_PRIVATE,
-                        username
-                    )
+                        cryptographyManager.persistCiphertextWrapperToSharedPrefs(
+                            encryptedServerTokenWrapper,
+                            BaseApplication.ctx,
+                            SHARED_PREFS_FILENAME,
+                            Context.MODE_PRIVATE,
+                            username
+                        )
 
-                    tempSetFingerPrintInfo.iv = iv
-                    tempSetFingerPrintInfo.encrypted_info = ei
-                    tempSetUserName = username
+                        tempSetFingerPrintInfo.iv = iv
+                        tempSetFingerPrintInfo.encrypted_info = ei
+                        tempSetUserName = username
 
-                    onSuccess(ei,iv)
-                }
-            }, authError = { errorCode: Int, errString: String ->
-                if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                    onUsePassword()
-                } else {
-                    onError(errorCode, errString)
-                }
-            }, onFail)
-        val promptInfo = BiometricPromptUtils.createPromptInfo()
-        runOnUI {
-            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+                        onSuccess(ei, iv)
+                    }
+                }, authError = { errorCode: Int, errString: String ->
+                    if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        onUsePassword()
+                    } else {
+                        onError(errorCode, errString)
+                    }
+                }, onFail)
+            val promptInfo = BiometricPromptUtils.createPromptInfo()
+            runOnUI {
+                biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            onFail()
         }
     }
 
@@ -183,42 +189,50 @@ object BiometricUtils {
             }
         } else {
             val secretKeyName = SECRET_KEY
+            try {
 
-            val cipher = cryptographyManager.getInitializedCipherForDecryption(
-                secretKeyName, ciphertextWrapper.initializationVector
-            )
-            val biometricPrompt =
-                BiometricPromptUtils.createBiometricPrompt(
-                    activity,
-                    authSuccess = { authResult ->
-                        ciphertextWrapper.let { textWrapper ->
-                            authResult.cryptoObject?.cipher?.let {
-                                val plaintext =
-                                    cryptographyManager.decryptData(textWrapper.ciphertext, it)
-                                Log.d(TAG, "validateFingerPrint: plainText: $plaintext")
-                                //                                    SampleAppUser.fakeToken = plaintext
-                                // Now that you have the token, you can query server for everything else
-                                // the only reason we call this fakeToken is because we didn't really get it from
-                                // the server. In your case, you will have gotten it from the server the first time
-                                // and therefore, it's a real token.
-                                onSuccess(textWrapper.ciphertext.joinToString(","), textWrapper.initializationVector.joinToString(","))
-                            }
-                        }
-                    },
-                    authError = { errorCode, errString ->
-                        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                            onUsePassword()
-                        } else {
-                            onError(errorCode, errString)
-                        }
-                    },
-                    onFail
+
+                val cipher = cryptographyManager.getInitializedCipherForDecryption(
+                    secretKeyName, ciphertextWrapper.initializationVector
                 )
-            val promptInfo = BiometricPromptUtils.createPromptInfo()
-            runOnUI {
-                biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+                val biometricPrompt =
+                    BiometricPromptUtils.createBiometricPrompt(
+                        activity,
+                        authSuccess = { authResult ->
+                            ciphertextWrapper.let { textWrapper ->
+                                authResult.cryptoObject?.cipher?.let {
+                                    val plaintext =
+                                        cryptographyManager.decryptData(textWrapper.ciphertext, it)
+                                    Log.d(TAG, "validateFingerPrint: plainText: $plaintext")
+                                    //                                    SampleAppUser.fakeToken = plaintext
+                                    // Now that you have the token, you can query server for everything else
+                                    // the only reason we call this fakeToken is because we didn't really get it from
+                                    // the server. In your case, you will have gotten it from the server the first time
+                                    // and therefore, it's a real token.
+                                    onSuccess(
+                                        textWrapper.ciphertext.joinToString(","),
+                                        textWrapper.initializationVector.joinToString(",")
+                                    )
+                                }
+                            }
+                        },
+                        authError = { errorCode, errString ->
+                            if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                                onUsePassword()
+                            } else {
+                                onError(errorCode, errString)
+                            }
+                        },
+                        onFail
+                    )
+                val promptInfo = BiometricPromptUtils.createPromptInfo()
+                runOnUI {
+                    biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+                }
+            }catch (e: Exception){
+                e.printStackTrace()
+                onFail()
             }
-
         }
     }
 

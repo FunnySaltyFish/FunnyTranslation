@@ -23,7 +23,9 @@ package com.funny.translation.helper.biomertic
 import android.content.Context
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.funny.translation.helper.JsonX
 import kotlinx.serialization.SerialName
@@ -39,9 +41,13 @@ import javax.crypto.spec.GCMParameterSpec
  */
 interface CryptographyManager {
 
-    fun getInitializedCipherForEncryption(keyName: String): Cipher
+    fun getInitializedCipherForEncryption(keyName: String, shouldRetry: Boolean = true): Cipher
 
-    fun getInitializedCipherForDecryption(keyName: String, initializationVector: ByteArray): Cipher
+    fun getInitializedCipherForDecryption(
+        keyName: String,
+        initializationVector: ByteArray,
+        shouldRetry: Boolean = true
+    ): Cipher
 
     /**
      * The Cipher created with [getInitializedCipherForEncryption] is used here
@@ -79,7 +85,15 @@ fun CryptographyManager(): CryptographyManager = CryptographyManagerImpl()
  */
 @RequiresApi(Build.VERSION_CODES.M)
 private class CryptographyManagerImpl : CryptographyManager {
+
+    private val keyStore by lazy {
+        KeyStore.getInstance(ANDROID_KEYSTORE).apply {
+            load(null) // Keystore must be loaded before it can be accessed
+        }
+    }
+
     companion object {
+        private const val TAG = "CryptographyManagerImpl"
         private const val KEY_SIZE = 256
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
         private const val ENCRYPTION_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
@@ -89,20 +103,37 @@ private class CryptographyManagerImpl : CryptographyManager {
 
 
 
-    override fun getInitializedCipherForEncryption(keyName: String): Cipher {
+    override fun getInitializedCipherForEncryption(keyName: String, shouldRetry: Boolean): Cipher {
         val cipher = getCipher()
         val secretKey = getOrCreateSecretKey(keyName)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        }catch (e: KeyPermanentlyInvalidatedException){
+            Log.d(TAG, "key 过期了，删除重建 ")
+            keyStore.deleteEntry(keyName)
+            if (shouldRetry) return getInitializedCipherForEncryption(keyName, false)
+            else throw Exception("getInitializedCipherForEncryption Key过期了，且无法重建")
+        }
+
         return cipher
     }
 
     override fun getInitializedCipherForDecryption(
         keyName: String,
-        initializationVector: ByteArray
+        initializationVector: ByteArray,
+        shouldRetry: Boolean
     ): Cipher {
         val cipher = getCipher()
         val secretKey = getOrCreateSecretKey(keyName)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, initializationVector))
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, initializationVector))
+        }catch (e: KeyPermanentlyInvalidatedException){
+            Log.d(TAG, "key 过期了，删除重建 ")
+            keyStore.deleteEntry(keyName)
+            if (shouldRetry) return getInitializedCipherForDecryption(keyName, initializationVector, false)
+            else throw Exception("getInitializedCipherForDecryption Key过期了，且无法重建")
+        }
+
         return cipher
     }
 
@@ -122,9 +153,6 @@ private class CryptographyManagerImpl : CryptographyManager {
     }
 
     private fun getOrCreateSecretKey(keyName: String): SecretKey {
-        // If Secretkey was previously created for that keyName, then grab and return it.
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
-        keyStore.load(null) // Keystore must be loaded before it can be accessed
         keyStore.getKey(keyName, null)?.let { return it as SecretKey }
 
         // if you reach here, then a new SecretKey must be generated for that keyName
