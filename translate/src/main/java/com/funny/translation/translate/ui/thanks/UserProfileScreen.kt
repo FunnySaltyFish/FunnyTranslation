@@ -76,7 +76,7 @@ fun NavGraphBuilder.addUserProfileRoutes(navHostController: NavHostController, c
         animateComposable(UserProfileScreenRoutes.Settings.route){
             UserProfileSettings(navHostController = navHostController)
         }
-        addLoginRoutes(navHostController, currentUserBean , onLoginSuccess, onResetPasswordSuccess)
+        addLoginRoutes(navHostController, onLoginSuccess, onResetPasswordSuccess)
     }
 }
 

@@ -286,7 +286,7 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
                             username = vm.username,
                             did = AppConfig.androidId,
                             onNotSupport = { msg: String -> context.toastOnUi(msg) },
-                            onFail = { context.toastOnUi("认证失败！") },
+                            onFail = { context.toastOnUi("设置指纹时失败，原因未知，请换用密码！") },
                             onSuccess = { encryptedInfo, iv ->
                                 context.toastOnUi("添加指纹成功！")
                                 vm.finishSetFingerPrint = true

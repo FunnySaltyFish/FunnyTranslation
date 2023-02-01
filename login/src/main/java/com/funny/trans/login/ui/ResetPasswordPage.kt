@@ -17,14 +17,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 
 @Composable
 fun ResetPasswordPage(
-    navController: NavController,
-    initialUserBean: UserBean? = null,
     onSuccess: () -> Unit,
 ) {
     Column(
@@ -36,7 +35,7 @@ fun ResetPasswordPage(
         val context = LocalContext.current
 
         SideEffect {
-            initialUserBean?.let {
+            AppConfig.userInfo.value.takeIf { it.isValid()} ?.let {
                 vm.email = it.email
                 vm.username = it.username
             }
