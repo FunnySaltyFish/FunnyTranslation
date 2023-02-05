@@ -8,7 +8,7 @@ import com.funny.translation.translate.TranslationResult
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 typealias TranslationEngineName = String
@@ -16,26 +16,20 @@ typealias TranslationEngineName = String
 object SortResultUtils {
     var mapping : HashMap<TranslationEngineName, Int> = hashMapOf()
 
-    var localEngines = listOf<TranslationEngineName>()
+    var localEngines = MutableStateFlow(listOf<TranslationEngineName>())
     private val defaultSort : (String)->Int = { mapping.get(it, Int.MAX_VALUE) }
     val defaultEngineSort : (TranslationEngine)->Int = { mapping.get(it.name, Int.MAX_VALUE) }
     val defaultResultSort : (TranslationResult)->Int = { mapping.get(it.engineName, Int.MAX_VALUE) }
 //    val engineComparator = Comparator<Int> { o1, o2 -> o1 - o2 }
 
     suspend fun init(){
+        localEngines.value = (DefaultData.bindEngines.map { it.name } + appDB.jsDao.getAllJs().first().map { it.fileName })
         when(val json = DataSaverUtils.readData(Consts.KEY_SORT_RESULT,"")){
-            "" -> initMapping(getLocalEngineNames())
+            "" -> initMapping(localEngines.value)
             else -> withContext(Dispatchers.IO){
                 readMapping(json)
             }
         }
-    }
-
-    suspend fun getLocalEngineNames() : List<TranslationEngineName> = withContext(Dispatchers.IO){
-        if (localEngines.isEmpty()) {
-            localEngines = (DefaultData.bindEngines.map { it.name } + appDB.jsDao.getAllJs().first().map { it.fileName }).sortedBy(defaultSort)
-        }
-        localEngines
     }
 
     private fun initMapping(engines : List<TranslationEngineName>){
@@ -48,12 +42,12 @@ object SortResultUtils {
         mapping = JsonX.fromJson(json)
     }
 
-    fun checkEquals(list : List<TranslationEngineName>) : Boolean = when{
-        localEngines.size != list.size -> false
+    fun checkEquals(list : List<TranslationEngineName>) : Boolean = when {
+        localEngines.value.size != list.size -> false
         else -> {
             var f = true
-            for(i in localEngines.indices){
-                if(localEngines[i] != list[i]){
+            for(i in localEngines.value.indices){
+                if(localEngines.value[i] != list[i]){
                     f = false
                     break
                 }
@@ -64,13 +58,19 @@ object SortResultUtils {
 
     fun resetMappingAndSave(list : List<TranslationEngineName>){
         initMapping(list)
-        localEngines = localEngines.sortedBy(defaultSort)
+        localEngines.value = localEngines.value.sortedBy(defaultSort)
         DataSaverUtils.saveData(Consts.KEY_SORT_RESULT, JsonX.toJson(mapping))
     }
 
     fun addNew(name : TranslationEngineName){
         mapping[name] = mapping.maxOf { it.value } + 1 // 默认排最后一个
-        localEngines = localEngines.toMutableList().apply { add(name) }
+        localEngines.value = localEngines.value + name
+        DataSaverUtils.saveData(Consts.KEY_SORT_RESULT, JsonX.toJson(mapping))
+    }
+
+    fun remove(name : TranslationEngineName){
+        mapping.remove(name)
+        localEngines.value = localEngines.value - name
         DataSaverUtils.saveData(Consts.KEY_SORT_RESULT, JsonX.toJson(mapping))
     }
 

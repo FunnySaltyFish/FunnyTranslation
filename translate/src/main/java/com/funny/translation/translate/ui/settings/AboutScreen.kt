@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +28,8 @@ import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.theme.isLight
 import com.funny.translation.translate.ui.widget.LoadingContent
+import com.funny.translation.translate.ui.widget.loadingList
+import com.funny.translation.translate.ui.widget.rememberRetryableLoadingState
 import com.funny.translation.ui.touchToScale
 
 @Composable
@@ -37,26 +40,27 @@ fun AboutScreen() {
 @Composable
 fun OpenSourceLib() {
     val vm : SettingsScreenViewModel = viewModel()
-    LoadingContent(modifier = Modifier.fillMaxSize(), loader = vm::loadOpenSourceLibInfo) { list ->
-        LazyColumn(
-            Modifier
-                .fillMaxWidth()
-                .padding(12.dp)) {
-            items(list){ info ->
-                val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.primaryContainer
-                OpenSourceLibItem(
-                    modifier = Modifier
-                        .touchToScale()
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(12.dp))
-                        .background(color)
-                        .padding(top = 12.dp, start = 12.dp, end = 12.dp),
-                    info = info
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+    val (state, retry) = rememberRetryableLoadingState(loader = vm::loadOpenSourceLibInfo)
+    LazyColumn(
+        Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        loadingList(state, retry, key = { it.name }){ info ->
+            val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.primaryContainer
+            OpenSourceLibItem(
+                modifier = Modifier
+                    .touchToScale()
+                    .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(color)
+                    .padding(top = 12.dp, start = 12.dp, end = 12.dp),
+                info = info
+            )
         }
     }
+
 }
 
 @Composable

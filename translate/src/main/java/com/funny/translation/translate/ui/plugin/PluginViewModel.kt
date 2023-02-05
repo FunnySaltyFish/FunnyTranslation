@@ -41,6 +41,7 @@ class PluginViewModel : ViewModel() {
     fun deletePlugin(jsBean: JsBean){
         viewModelScope.launch(Dispatchers.IO) {
             appDB.jsDao.deleteJsByName(jsBean.fileName)
+            SortResultUtils.remove(jsBean.fileName)
         }
     }
 

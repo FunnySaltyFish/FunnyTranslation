@@ -268,8 +268,12 @@ fun SortResult(
     modifier: Modifier = Modifier
 ) {
     val state = rememberReorderState()
-    val vm : SettingsScreenViewModel = viewModel()
-    val data = remember { vm.localEngineNamesState.toMutableStateList() }
+    val localEngines by SortResultUtils.localEngines.collectAsState()
+    val data by remember {
+        derivedStateOf {
+            localEngines.toMutableStateList()
+        }
+    }
     LazyColumn(
         state = state.listState,
         modifier = modifier
