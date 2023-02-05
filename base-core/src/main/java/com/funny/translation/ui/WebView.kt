@@ -260,6 +260,7 @@ open class AccompanistWebViewClient : WebViewClient() {
         return false
     }
 
+    @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         return super.shouldOverrideUrlLoading(view, url)
     }

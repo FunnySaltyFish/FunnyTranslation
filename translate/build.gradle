@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id "com.google.devtools.ksp" version "1.7.10-1.0.6"
+    id "com.google.devtools.ksp" version "1.8.0-1.0.9"
     id 'kotlinx-serialization'
 }
 
@@ -89,7 +89,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.composeVersion
+        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
     }
 }
 
