@@ -12,10 +12,7 @@ import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
-import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.helper.JsonX
-import com.funny.translation.helper.UserUtils
-import com.funny.translation.helper.externalCache
+import com.funny.translation.helper.*
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.bean.NoticeInfo
@@ -48,12 +45,14 @@ class ActivityViewModel : ViewModel() {
     }
 
     init {
-        if (userInfo.isValid() && userInfo.email == "") {
+        if (userInfo.isValid()) {
             viewModelScope.launch {
                 kotlin.runCatching {
                     UserUtils.getUserInfo(userInfo.uid)?.let {
                         userInfo = it
                     }
+                }.onFailure {
+                    appCtx.toastOnUi("刷新用户信息失败~")
                 }
             }
         }
