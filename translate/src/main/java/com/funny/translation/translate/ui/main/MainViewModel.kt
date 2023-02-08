@@ -248,6 +248,7 @@ class MainViewModel : ViewModel() {
             it.add(result)
             it.sortBy(SortResultUtils.defaultResultSort)
         }
+        if (showListType != ShowListType.Result) showListType = ShowListType.Result
     }
 
     private fun support(supportLanguages: List<Language>) =
