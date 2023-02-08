@@ -7,11 +7,10 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -19,16 +18,23 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
+import cn.qhplus.emo.photo.coil.CoilPhotoProvider
+import cn.qhplus.emo.photo.ui.GesturePhoto
 import coil.compose.rememberAsyncImagePainter
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.toastOnUi
@@ -38,6 +44,7 @@ import com.funny.translation.translate.activity.CustomPhotoPickerActivity
 import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
+import com.funny.translation.translate.ui.widget.CustomCoilProvider
 import com.funny.translation.translate.ui.widget.LoadingState
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -54,7 +61,7 @@ fun ImageTransScreen(
 ) {
     val vm: ImageTransViewModel = viewModel()
     val context = LocalContext.current
-    val avatarPickResult: MutableState<PhotoPickResult?> = remember {
+    val imagePickResult: MutableState<PhotoPickResult?> = remember {
         mutableStateOf(null)
     }
     var photoName by rememberSaveable { mutableStateOf("") }
@@ -66,6 +73,7 @@ fun ImageTransScreen(
         systemUiController.isNavigationBarVisible = false
         onDispose {
             systemUiController.isNavigationBarVisible = !AppConfig.sHideBottomNavBar.value
+            vm.imageUri = null
         }
     }
 
@@ -90,6 +98,7 @@ fun ImageTransScreen(
                     })
                     .getIntent(context)
             )
+            imagePickResult.value = null
         }
     }
 
@@ -97,7 +106,7 @@ fun ImageTransScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getPhotoPickResult()?.let { result ->
-                    avatarPickResult.value = result
+                    imagePickResult.value = result
                     val img = result.list[0]
                     photoName = img.name
                     doClip(img.uri)
@@ -125,7 +134,7 @@ fun ImageTransScreen(
                             CoilMediaPhotoProviderFactory::class.java,
                             CustomPhotoPickerActivity::class.java,
                             pickedItems = arrayListOf<Uri>().apply {
-                                avatarPickResult.value?.list?.mapTo(
+                                imagePickResult.value?.list?.mapTo(
                                     this
                                 ) { it.uri }
                             },
@@ -208,61 +217,108 @@ private fun ImageTranslationPart(
 private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
     val density = LocalDensity.current
     var showResult by remember { mutableStateOf(true) }
-    var scale by remember { mutableStateOf(1f) }
+    // 图片为了铺满屏幕进行的缩放
+    var imageInitialScale by remember { mutableStateOf(1f) }
+    var imageGestureScale by remember { mutableStateOf(1f) }
+    var imageOffsetRect by remember { mutableStateOf(Rect.Zero) }
     var scaleByWidth by remember { mutableStateOf(true) }
-    Box(modifier = modifier
-        .clickable { showResult = !showResult }
-        .onGloballyPositioned {
-            val scaleW = it.size.width.toFloat() / vm.imgWidth
-            val scaleH = it.size.height.toFloat() / vm.imgHeight
-            // 取较小的缩放比例进行缩放，保证图片显示完整
-            if (scaleW < scaleH) {
-                scaleByWidth = true
-                scale = scaleW
-            } else {
-                scaleByWidth = false
-                scale = scaleH
+    val context = LocalContext.current
+    var composableHeight by remember { mutableStateOf(0f) }
+    BoxWithConstraints(modifier = modifier
+        // .clickable { showResult = !showResult }
+    ){
+        LaunchedEffect(maxWidth, maxHeight){
+            // 竖屏以宽为比例缩放，横屏以高为比例
+            scaleByWidth = maxWidth < maxHeight
+            with(density) {
+                imageInitialScale = if (scaleByWidth) maxWidth.toPx() / vm.imgWidth else maxHeight.toPx() / vm.imgHeight
+                composableHeight = maxHeight.toPx()
             }
-            Log.d(
-                TAG,
-                "ResultPart: box size: ${it.size}, imgSize: (${vm.imgWidth}, ${vm.imgHeight}), scale: $scale"
-            )
-        }){
-        Image(
-            modifier = Modifier.apply { if (scaleByWidth) fillMaxWidth() else fillMaxHeight() },
-            painter = rememberAsyncImagePainter(vm.imageUri),
-            contentDescription = "Captured image",
-        )
-        if (vm.translateState.isLoading){
-            CircularProgressIndicator(
-                Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center))
-        } else if (vm.translateState.isSuccess && showResult){
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.LightGray.copy(0.9f))
-            ){
-                val data = (vm.translateState as LoadingState.Success).data
-                data.content.forEach { part ->
-                    val sizes = remember(part) {
-                        density.run {
-                            arrayOf(part.width.toDp(), part.height.toDp(), part.x.toDp(), part.y.toDp())
-                        }.map { it * scale }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(sizes[0], sizes[1])
-                            .offset(sizes[2], sizes[3])
-//                            .border(width = 2.dp, color = Color.White)
-                    ){
-                        SelectionContainer {
-                            AutoResizedText(text = part.target, color = Color.White)
-                        }
-                    }
-                }
+
+        }
+
+        val lazyListState = rememberLazyListState()
+        val photoProvider = remember(vm.imageUri) {
+            vm.imageUri?.let {
+                CustomCoilProvider(it, it, if (vm.imgWidth < vm.imgHeight) vm.imgWidth.toFloat() / vm.imgHeight else vm.imgHeight.toFloat() / vm.imgWidth, lazyListState)
             }
         }
+        photoProvider?.let {
+            GesturePhoto(
+                containerWidth = maxWidth,
+                containerHeight = maxHeight,
+                imageRatio = photoProvider.ratio,
+                isLongImage = photoProvider.isLongImage(),
+                onBeginPullExit = { false },
+                shouldTransitionExit = false,
+                onTapExit = { showResult = !showResult }
+            ) { _, gestureScale, rect, onImageRatioEnsured ->
+                imageGestureScale = gestureScale
+                imageOffsetRect = rect
+                Log.d(TAG, "ResultPart: gestureScale: $gestureScale, rect: $rect")
+                photoProvider.photo().Compose(
+                    contentScale = if (scaleByWidth) ContentScale.FillWidth else ContentScale.FillHeight,
+                    isContainerDimenExactly = true,
+                    onSuccess = {},
+                    onError = { context.toastOnUi("加载图片失败") }
+                )
+
+                if (vm.translateState.isLoading){
+                    CircularProgressIndicator(
+                        Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center))
+                } else if (vm.translateState.isSuccess){
+                    val alpha by animateFloatAsState(targetValue = if (showResult) 1f else 0f)
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(alpha)
+                        .background(Color.LightGray.copy(0.9f))
+                        .clipToBounds()
+                    ){
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height((vm.imgHeight * imageInitialScale / density.density).dp)
+                                .align(Alignment.Center)
+                                .border(2.dp, color = Color.White)
+                        ) {
+                            val data = (vm.translateState as LoadingState.Success).data
+                            data.content.forEach { part ->
+                                val w = (part.width * imageInitialScale / density.density).dp
+                                val h = (part.height * imageInitialScale / density.density).dp
+                                AutoResizedText(
+                                    modifier = Modifier
+                                        .size(w, h)
+                                        .offset {
+                                            IntOffset(
+                                                (part.x * imageInitialScale).toInt(),
+                                                (-(lazyListState.firstVisibleItemIndex*composableHeight+lazyListState.firstVisibleItemScrollOffset) + part.y * imageInitialScale).toInt()
+                                            )
+                                        },
+                                    text = part.target,
+                                    color = Color.White,
+                                )
+                            }
+                        }
+
+                    }
+                }
+//                Image(
+//                    modifier = Modifier.fillMaxSize()
+//                        .apply {
+//                            if (scaleByWidth) verticalScroll(rememberScrollState())
+//                            else horizontalScroll(rememberScrollState())
+//                        },
+//                    contentScale = if (scaleByWidth) ContentScale.FillWidth else ContentScale.FillHeight,
+//                    alignment = Alignment.TopCenter,
+//                    painter = rememberAsyncImagePainter(vm.imageUri),
+//                    contentDescription = "Captured image",
+//                )
+            }
+        }
+
+
     }
 }
 

@@ -135,7 +135,7 @@ dependencies {
 //    implementation "com.github.leavesCZY:Matisse:0.0.6"
 
     // 图片选择器
-    implementation "cn.qhplus.emo:photo-coil:0.3.1"
+    implementation "cn.qhplus.emo:photo-coil:0.4.1"
     // 图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
 

@@ -8,13 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.bottomnavigation.utils.BitmapUtils
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.helper.readByteArray
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.ImageTranslationResult
@@ -99,8 +97,8 @@ class ImageTransViewModel: ViewModel() {
     fun updateTranslateEngine(new: ImageTranslationEngine){
         if (translateEngine != new){
             DataSaverUtils.saveData(translateEngine.selectKey, false)
-            DataSaverUtils.saveData(translateEngine.selectKey, true)
             translateEngine = new
+            DataSaverUtils.saveData(new.selectKey, true)
         }
     }
 

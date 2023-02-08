@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -117,41 +118,17 @@ fun AutoIncreaseAnimatedNumber(
 }
 
 @Composable
-fun AutoFillWidthText(
-    text: String,
-    fontSize: TextUnit = 40.sp,
-    fontWeight: FontWeight = FontWeight.Normal,
-    color: Color,
-) {
-    var size = rememberSaveable(saver = TextUnitSaver) { fontSize }
-    var shouldDraw by remember{ mutableStateOf(false) }
-    Text(text = text, softWrap = false, fontSize = size, fontWeight = fontWeight, color = color, onTextLayout = { res ->
-        if (res.didOverflowWidth)
-            size *= 0.95
-        else {
-            shouldDraw = true
-            Log.d("AutoFillWidthText", "shouldDraw = true: ")
-        }
-    }, modifier = Modifier.drawWithContent {
-        if (shouldDraw) drawContent()
-    })
-}
-
-@Composable
 fun AutoResizedText(
     modifier: Modifier = Modifier,
     text: String,
-    style: TextStyle = MaterialTheme.typography.labelLarge,
-    color: Color = style.color
+    style: TextStyle = MaterialTheme.typography.headlineLarge,
+    color: Color = style.color,
+    scale: Float = 1.0f
 ) {
-    var resizedTextStyle by remember {
-        mutableStateOf(style)
-    }
-    var shouldDraw by remember {
-        mutableStateOf(false)
-    }
+    var resizedTextStyle by remember { mutableStateOf(style) }
+    var shouldDraw by remember { mutableStateOf(false) }
 
-    val defaultFontSize = MaterialTheme.typography.labelLarge.fontSize
+    val defaultFontSize = MaterialTheme.typography.headlineLarge.fontSize
 
     Text(
         text = text,
@@ -162,7 +139,7 @@ fun AutoResizedText(
             }
         },
         softWrap = true,
-        style = resizedTextStyle,
+        style = resizedTextStyle.copy(fontSize = resizedTextStyle.fontSize * scale),
         onTextLayout = { result ->
             if (result.didOverflowHeight) {
                 if (style.fontSize.isUnspecified) {

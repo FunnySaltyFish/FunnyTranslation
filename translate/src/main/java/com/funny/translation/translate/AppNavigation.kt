@@ -27,7 +27,6 @@ import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.TransTheme
-import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
@@ -187,16 +186,19 @@ fun AppNavigation(
                     }
                     navigation(startDestination = TranslateScreen.ThanksScreen.route, route = "nav_1_thanks") {
                         composable(TranslateScreen.ThanksScreen.route){ ThanksScreen(navController) }
-                        addUserProfileRoutes(navHostController = navController,
+                        addUserProfileRoutes(
+                            navHostController = navController,
                             currentUserBean = activityVM.userInfo,
                             onLoginSuccess = { userBean ->
-                            Log.d(TAG, "登录成功: 用户: $userBean")
-                            if (userBean.isValid()) AppConfig.userInfo.value = userBean
-                        }, onResetPasswordSuccess = {
-                            context.toastOnUi("修改密码成功，请重新登陆~")
-                            activityVM.userInfo = UserBean()
-                            navController.popBackStack(navController.graph.startDestinationId, false)
-                        })
+                                Log.d(TAG, "登录成功: 用户: $userBean")
+                                if (userBean.isValid()) AppConfig.userInfo.value = userBean
+                            },
+                            onResetPasswordSuccess = {
+                                context.toastOnUi("修改密码成功，请重新登陆~")
+                                activityVM.userInfo = UserBean()
+                                navController.popBackStack(navController.graph.startDestinationId, false)
+                            }
+                        )
                         composable(TranslateScreen.AnnualReportScreen.route) {
                             AnnualReportScreen()
                         }
