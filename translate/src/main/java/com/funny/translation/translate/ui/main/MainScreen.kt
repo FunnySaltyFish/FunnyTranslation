@@ -256,7 +256,9 @@ fun TextTransScreen() {
                                 vm = vm,
                                 showSnackbar = showSnackbar,
                                 modifier = Modifier.fillMaxWidth(),
-                                expandEngineSelect = { scope.launch { modalBottomSheetState.show() } },
+                                expandEngineSelect = {
+                                    scope.launch { modalBottomSheetState.show() }
+                                },
                                 updateShowListType = updateShowListType
                             )
                         }
@@ -512,7 +514,10 @@ private fun InputPart(
             )
             Row {
                 expandEngineSelect?.let {
-                    IconButton(onClick = it) {
+                    IconButton(onClick = {
+                        it()
+                        shouldRequestFocus = false
+                    }) {
                         Icon(
                             Icons.Default.ArrowDropDown,
                             contentDescription = "expand",

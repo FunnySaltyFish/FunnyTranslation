@@ -193,7 +193,9 @@ private class CryptographyManagerImpl : CryptographyManager {
         mode: Int,
         prefKey: String
     ): CiphertextWrapper? {
-        val json = context.getSharedPreferences(filename, mode).getString(prefKey, null) ?: return null
+        var json = context.getSharedPreferences(filename, mode).getString(prefKey, null) ?: return null
+        // 处理 kotlinx.serialization.Json 和 Gson 的差异
+        json = json.replace("ciphertext", "a").replace("initializationVector", "b")
         return JsonX.fromJson(json, CiphertextWrapper::class.java)
     }
 }
