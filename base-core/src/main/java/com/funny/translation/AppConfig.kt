@@ -33,6 +33,7 @@ object AppConfig {
     val sHideStatusBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_HIDE_STATUS_BAR, true)
     val sHideBottomNavBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
     val sAutoFocus = mutableDataSaverStateOf(DataSaverUtils, "KEY_AUTO_FOCUS", true)
+    val sShowImageTransBtn = mutableDataSaverStateOf(DataSaverUtils, "KEY_SHOW_IMAGE_TRANS_BTN", true)
 
     fun updateJwtToken(newToken: String) {
         userInfo.value = userInfo.value.copy(jwt_token = newToken)

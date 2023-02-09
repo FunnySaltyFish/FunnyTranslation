@@ -104,4 +104,5 @@
     <string name="album">相册</string>
     <string name="modify_password">修改密码</string>
     <string name="img_remaining_points">剩余图片翻译点数</string>
+    <string name="setting_show_image_trans_btn">显示图片翻译按钮</string>
 </resources>

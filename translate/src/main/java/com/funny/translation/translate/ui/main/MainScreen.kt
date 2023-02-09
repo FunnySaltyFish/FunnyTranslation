@@ -8,8 +8,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,7 +63,6 @@ import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
-import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
@@ -113,24 +110,26 @@ fun MainScreen() {
                 0 -> TextTransScreen()
                 1 -> ImageTransScreen(Modifier.fillMaxSize())
             }
-            IconButton(
-                onClick = { currentScreen = 1 - currentScreen },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset { IntOffset(btnOffset.x.roundToInt(), btnOffset.y.roundToInt()) }
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDrag = { change: PointerInputChange, dragAmount: Offset ->
-                                btnOffset += dragAmount
-                            }
-                        )
-                    }
-            ){
-                Icon(
-                    painterResource(id = if (currentScreen == 1) R.drawable.ic_text else R.drawable.ic_album),
-                    contentDescription = "切换图文翻译",
-                    tint = Color.Unspecified,
-                )
+            if (AppConfig.sShowImageTransBtn.value) {
+                IconButton(
+                    onClick = { currentScreen = 1 - currentScreen },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset { IntOffset(btnOffset.x.roundToInt(), btnOffset.y.roundToInt()) }
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDrag = { _: PointerInputChange, dragAmount: Offset ->
+                                    btnOffset += dragAmount
+                                }
+                            )
+                        }
+                ) {
+                    Icon(
+                        painterResource(id = if (currentScreen == 1) R.drawable.ic_text else R.drawable.ic_album),
+                        contentDescription = "切换图文翻译",
+                        tint = Color.Unspecified,
+                    )
+                }
             }
         }
     }

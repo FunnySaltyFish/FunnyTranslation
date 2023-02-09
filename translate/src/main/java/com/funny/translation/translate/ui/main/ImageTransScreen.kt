@@ -3,7 +3,6 @@ package com.funny.translation.translate.ui.main
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -33,9 +30,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
-import cn.qhplus.emo.photo.coil.CoilPhotoProvider
 import cn.qhplus.emo.photo.ui.GesturePhoto
-import coil.compose.rememberAsyncImagePainter
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
@@ -219,8 +214,6 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
     var showResult by remember { mutableStateOf(true) }
     // 图片为了铺满屏幕进行的缩放
     var imageInitialScale by remember { mutableStateOf(1f) }
-    var imageGestureScale by remember { mutableStateOf(1f) }
-    var imageOffsetRect by remember { mutableStateOf(Rect.Zero) }
     var scaleByWidth by remember { mutableStateOf(true) }
     val context = LocalContext.current
     var composableHeight by remember { mutableStateOf(0f) }
@@ -253,9 +246,9 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                 shouldTransitionExit = false,
                 onTapExit = { showResult = !showResult }
             ) { _, gestureScale, rect, onImageRatioEnsured ->
-                imageGestureScale = gestureScale
-                imageOffsetRect = rect
-                Log.d(TAG, "ResultPart: gestureScale: $gestureScale, rect: $rect")
+                // imageGestureScale = gestureScale
+                // imageOffsetRect = rect
+                // Log.d(TAG, "ResultPart: gestureScale: $gestureScale, rect: $rect")
                 photoProvider.photo().Compose(
                     contentScale = if (scaleByWidth) ContentScale.FillWidth else ContentScale.FillHeight,
                     isContainerDimenExactly = true,
@@ -285,8 +278,8 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                         ) {
                             val data = (vm.translateState as LoadingState.Success).data
                             data.content.forEach { part ->
-                                val w = (part.width * imageInitialScale / density.density).dp
-                                val h = (part.height * imageInitialScale / density.density).dp
+                                val w = remember { (part.width * imageInitialScale / density.density).dp }
+                                val h = remember { (part.height * imageInitialScale / density.density).dp }
                                 AutoResizedText(
                                     modifier = Modifier
                                         .size(w, h)

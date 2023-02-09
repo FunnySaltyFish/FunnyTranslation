@@ -55,6 +55,7 @@ import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.LoadingContent
 import com.funny.translation.ui.touchToScale
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 enum class SponsorSortType(val value: String){
@@ -93,6 +94,7 @@ fun ThanksScreen(navHostController: NavHostController) {
                     context.toastOnUi("更新用户信息失败！")
                 }
             }
+            delay(100) // 组件bug：时间过短，收不回去
             refreshing = false
         }
     })

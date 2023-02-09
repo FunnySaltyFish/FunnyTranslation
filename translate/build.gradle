@@ -43,8 +43,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdk Versions.targetSdkVersion
-        versionCode 49
-        versionName "2.5.0"
+        versionCode 50
+        versionName "2.5.1"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86_64'

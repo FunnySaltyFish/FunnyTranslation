@@ -193,6 +193,14 @@ fun SettingsScreen() {
 
         }
         JetSettingCheckbox(
+            state = AppConfig.sShowImageTransBtn,
+            text = stringResource(R.string.setting_show_image_trans_btn),
+            resourceId = R.drawable.ic_album,
+            iconTintColor = MaterialColors.PinkA700
+        ) {
+
+        }
+        JetSettingCheckbox(
             state = AppConfig.sTextMenuFloatingWindow,
             text = stringResource(R.string.setting_text_menu_floating_window),
             description = stringResource(id = R.string.setting_text_menu_floating_window_desc),
