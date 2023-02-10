@@ -1,5 +1,7 @@
 ## FunnyTranslation
 
+| [English Version](README_en.md) |
+
 ### 介绍
 
 本软件是一款翻译软件，旧版基于Java语言，在传统View体系下开发；自2.0.0起逐步改用Kotlin开发，自2.1.0起软件架构重写，大部分代码均用Kotlin编写，页面完全改用Jetpack Compose。软件由2.1.0起决定开源。
@@ -37,8 +39,6 @@
 
 
 
-
-
 ### 源代码简介
 
 作为开源项目来说，您可以从以下方面了解它
@@ -54,11 +54,8 @@
 - **jet_setting_core：设置页面的基本组件**
 - editor、language-base、language-universal：来源于开源项目[sora-editor](https://github.com/Rosemoe/sora-editor)，代码编辑器 View
 - buildSrc：依赖版本管理
-- app/library：旧版应用全部模块
 
 您可以参阅[此文档](./detail_introduction.md)以了解各模块详细代码组成
-
-
 
 
 #### 运行前准备
