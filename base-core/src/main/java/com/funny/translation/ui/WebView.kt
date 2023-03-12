@@ -15,40 +15,33 @@
  */
 
 package com.funny.translation.ui
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.viewinterop.AndroidView
+import com.funny.translation.helper.openUrl
+import com.funny.translation.helper.toastOnUi
+import com.funny.translation.ui.WebViewLoadingState.Finished
+import com.funny.translation.ui.WebViewLoadingState.Loading
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URL
+import java.util.*
+
 
 /**
  * A wrapper around the Android View WebView to provide a basic WebView composable.
@@ -69,6 +62,8 @@ import kotlinx.coroutines.withContext
  * @param factory An optional WebView factory for using a custom subclass of WebView
  * @sample com.google.accompanist.sample.webview.BasicWebViewSample
  */
+
+private const val TAG = "WebView"
 @Composable
 fun WebView(
     state: WebViewState,
@@ -175,9 +170,12 @@ open class AccompanistWebViewClient : WebViewClient() {
     open lateinit var navigator: WebViewNavigator
         internal set
 
+    private val urlHistoryStack get() = state.urlHistoryStack
+    private var mCurrentUrl = ""
+
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
-        state.loadingState = LoadingState.Loading(0.0f)
+        state.webViewLoadingState = Loading(0.0f)
         state.errorsForCurrentRequest.clear()
         state.pageTitle = null
         state.pageIcon = null
@@ -185,7 +183,7 @@ open class AccompanistWebViewClient : WebViewClient() {
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
-        state.loadingState = LoadingState.Finished
+        state.webViewLoadingState = Finished
         navigator.canGoBack = view?.canGoBack() ?: false
         navigator.canGoForward = view?.canGoForward() ?: false
     }
@@ -241,19 +239,25 @@ open class AccompanistWebViewClient : WebViewClient() {
         val url = request?.url?.toString() ?: return true
 
         if (
-            url.startsWith("wechat://") || url.startsWith("weixin://") || url.startsWith("alipays://") || (url.startsWith("alipay://")) || url.startsWith("afd://")
+            url.startsWith("wechat://") || url.startsWith("weixin://") || url.startsWith("alipays://") || url.startsWith("alipay://") || url.startsWith("afd://")
         ) {
-            val intent = Intent()
-            intent.action = Intent.ACTION_VIEW
-            intent.data = Uri.parse(url)
-            view?.context?.startActivity(intent)
-            view?.goBack()
+            view ?: return true
+            // 关闭所有 WebView 页面
+//            while (view.canGoBack()) {
+//                Log.d(TAG, "shouldOverrideUrlLoading: goBack")
+//                view.goBack()
+//            }
+//            view.loadUrl("https://api.funnysaltyfish.fun/trans/v1/pay/paying_page")
+            view.context?.openUrl(url)
+            (view.context as? Activity)?.finish()
             return true
-        }else if (url.startsWith("https://wx.tenpay.com")) {
+        } else if (url.startsWith("https://wx.tenpay.com")) {
             // H5微信支付要用，不然说"商家参数格式有误"
             val extraHeaders = HashMap<String, String>()
-            extraHeaders["Referer"] = "https://afdian.net/"
-            view?.loadUrl(url, extraHeaders)
+            val origin = view?.originalUrl ?: return true
+            val originUrl = URL(origin)
+            extraHeaders["Referer"] = "${originUrl.protocol}://${originUrl.host}"
+            view.loadUrl(url, extraHeaders)
             return true
         }
 
@@ -262,6 +266,7 @@ open class AccompanistWebViewClient : WebViewClient() {
 
     @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        Log.d(TAG, "shouldOverrideUrlLoading: url: $url")
         return super.shouldOverrideUrlLoading(view, url)
     }
 }
@@ -290,8 +295,8 @@ open class AccompanistWebChromeClient : WebChromeClient() {
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        if (state.loadingState is LoadingState.Finished) return
-        state.loadingState = LoadingState.Loading(newProgress / 100.0f)
+        if (state.webViewLoadingState is Finished) return
+        state.webViewLoadingState = Loading(newProgress / 100.0f)
     }
 }
 
@@ -320,22 +325,22 @@ fun WebContent.withUrl(url: String) = when (this) {
  * Sealed class for constraining possible loading states.
  * See [Loading] and [Finished].
  */
-sealed class LoadingState {
+sealed class WebViewLoadingState {
     /**
      * Describes a WebView that has not yet loaded for the first time.
      */
-    object Initializing : LoadingState()
+    object Initializing : WebViewLoadingState()
 
     /**
      * Describes a webview between `onPageStarted` and `onPageFinished` events, contains a
      * [progress] property which is updated by the webview.
      */
-    data class Loading(val progress: Float) : LoadingState()
+    data class Loading(val progress: Float) : WebViewLoadingState()
 
     /**
      * Describes a webview that has finished loading content.
      */
-    object Finished : LoadingState()
+    object Finished : WebViewLoadingState()
 }
 
 /**
@@ -350,17 +355,17 @@ class WebViewState(webContent: WebContent) {
     var content: WebContent by mutableStateOf(webContent)
 
     /**
-     * Whether the WebView is currently [LoadingState.Loading] data in its main frame (along with
-     * progress) or the data loading has [LoadingState.Finished]. See [LoadingState]
+     * Whether the WebView is currently [WebViewLoadingState.Loading] data in its main frame (along with
+     * progress) or the data loading has [WebViewLoadingState.Finished]. See [WebViewLoadingState]
      */
-    var loadingState: LoadingState by mutableStateOf(LoadingState.Initializing)
+    var webViewLoadingState: WebViewLoadingState by mutableStateOf(WebViewLoadingState.Initializing)
         internal set
 
     /**
      * Whether the webview is currently loading data in its main frame
      */
     val isLoading: Boolean
-        get() = loadingState !is LoadingState.Finished
+        get() = webViewLoadingState !is Finished
 
     /**
      * The title received from the loaded content of the current page
@@ -380,6 +385,8 @@ class WebViewState(webContent: WebContent) {
      * For more fine grained control use the OnError callback of the WebView.
      */
     val errorsForCurrentRequest: SnapshotStateList<WebViewError> = mutableStateListOf()
+
+    val urlHistoryStack = java.util.Stack<String>()
 }
 
 /**

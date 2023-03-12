@@ -4,8 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.webkit.*
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
@@ -18,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.BuildCompat
 import androidx.core.view.WindowCompat
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.R
@@ -28,10 +33,12 @@ private const val TAG = "WebViewActivity"
 class WebViewActivity : AppCompatActivity() {
 
     companion object {
-        fun start(context: Context, url: String){
+        private var backEvent: (() -> Unit)? = null
+        fun start(context: Context, url: String, backEvent: (() -> Unit)? = null) {
             val intent = Intent(context, WebViewActivity::class.java)
             intent.putExtra("load_url",url)
             context.startActivity(intent)
+            this.backEvent = backEvent
         }
     }
 
@@ -41,6 +48,14 @@ class WebViewActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         NotchScreenManager.getInstance().setDisplayInNotch(this)
 
+        // This callback will only be called when MyFragment is at least Started.
+        val callback = onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleBackPressed()
+                finish()
+            }
+        })
+
         val url = intent.getStringExtra("load_url") ?: ""
 
         setContent {
@@ -48,10 +63,23 @@ class WebViewActivity : AppCompatActivity() {
                 if (url.isNotEmpty()){
                     WebViewPage(url = url)
                 } else {
-                    Text("当前没有打开的页面~", Modifier.fillMaxSize().wrapContentSize(Center))
+                    Text("当前没有打开的页面~",
+                        Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Center))
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        handleBackPressed()
+        super.onBackPressed()
+    }
+
+    private fun handleBackPressed(){
+        Log.d(TAG, "handleBackPressed: ")
+        backEvent?.invoke()
     }
 }
 
@@ -65,9 +93,9 @@ fun WebViewPage(url: String) {
     ) {
         val context = LocalContext.current
         val webViewState = rememberWebViewState(url)
-        if (webViewState.loadingState is LoadingState.Loading) {
+        if (webViewState.webViewLoadingState is WebViewLoadingState.Loading) {
             LinearProgressIndicator(
-                progress = (webViewState.loadingState as LoadingState.Loading).progress,
+                progress = (webViewState.webViewLoadingState as WebViewLoadingState.Loading).progress,
                 Modifier.fillMaxWidth()
             )
         }
