@@ -18,19 +18,23 @@ open class BaseApplication : Application() {
         ctx = this
         MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks{
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-            override fun onActivityStarted(activity: Activity) {}
-            override fun onActivityPaused(activity: Activity) {}
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-            override fun onActivityDestroyed(activity: Activity) {}
-
-            override fun onActivityResumed(activity: Activity) {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 if ((activityStack.isNotEmpty() && activityStack.peek() != activity) || activityStack.isEmpty())
                     activityStack.push(activity)
             }
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {
+                if (activityStack.isNotEmpty()) activityStack.pop()
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+
+            }
 
             override fun onActivityStopped(activity: Activity) {
-                if (activityStack.isNotEmpty()) activityStack.pop()
+
             }
         })
     }

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,12 +32,9 @@ import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
-import com.funny.translation.translate.ui.settings.AboutScreen
-import com.funny.translation.translate.ui.settings.SelectLanguage
-import com.funny.translation.translate.ui.settings.SettingsScreen
-import com.funny.translation.translate.ui.settings.SortResult
-import com.funny.translation.translate.ui.thanks.AnnualReportScreen
+import com.funny.translation.translate.ui.settings.*
 import com.funny.translation.translate.ui.thanks.ThanksScreen
+import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
 import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.funny.translation.translate.ui.widget.MarkdownText
@@ -170,6 +169,11 @@ fun AppNavigation(
                             AboutScreen()
                         }
                         animateComposable(
+                            TranslateScreen.ThemeScreen.route,
+                        ) {
+                            ThemeScreen()
+                        }
+                        animateComposable(
                             TranslateScreen.SortResultScreen.route,
                         ) {
                             SortResult(Modifier.fillMaxSize())
@@ -188,19 +192,18 @@ fun AppNavigation(
                         composable(TranslateScreen.ThanksScreen.route){ ThanksScreen(navController) }
                         addUserProfileRoutes(
                             navHostController = navController,
-                            currentUserBean = activityVM.userInfo,
                             onLoginSuccess = { userBean ->
                                 Log.d(TAG, "登录成功: 用户: $userBean")
-                                if (userBean.isValid()) AppConfig.userInfo.value = userBean
+                                if (userBean.isValid()) AppConfig.login(userBean)
                             },
                             onResetPasswordSuccess = {
                                 context.toastOnUi("修改密码成功，请重新登陆~")
-                                activityVM.userInfo = UserBean()
+                                AppConfig.logout()
                                 navController.popBackStack(navController.graph.startDestinationId, false)
                             }
                         )
-                        composable(TranslateScreen.AnnualReportScreen.route) {
-                            AnnualReportScreen()
+                        animateComposable(TranslateScreen.TransProScreen.route) {
+                            TransProScreen()
                         }
                     }
                 }
@@ -290,7 +293,7 @@ fun NavGraphBuilder.animateComposable(
 @Stable
 @Composable
 private fun NavHostController.currentScreenAsState(): MutableState<TranslateScreen> {
-    val selectedItem = remember { mutableStateOf<TranslateScreen>(TranslateScreen.MainScreen) }
+    val selectedItem: MutableState<TranslateScreen> = rememberDataSaverState(Consts.KEY_APP_CURRENT_SCREEN, TranslateScreen.MainScreen)
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->

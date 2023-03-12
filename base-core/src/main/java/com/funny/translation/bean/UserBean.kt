@@ -2,6 +2,7 @@ package com.funny.translation.bean
 
 import androidx.annotation.Keep
 import com.funny.translation.helper.DateSerializerType1
+import com.funny.translation.helper.TimeUtils
 import kotlinx.serialization.Serializable
 import java.util.*
 
@@ -43,6 +44,12 @@ data class UserBean(
     fun isValidVip() =
         isValid() && (vip_level > 0) && vip_start_time?.time != null
                 && vip_start_time.time + vip_duration * 86400 * 1000 > System.currentTimeMillis()
+    fun vipEndTimeStr() = if (isValidVip()) {
+        val endTime = vip_start_time!!.time + vip_duration * 86400 * 1000
+        TimeUtils.formatTime(endTime)
+    } else {
+        "--"
+    }
 }
 
 

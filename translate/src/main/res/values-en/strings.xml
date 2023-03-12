@@ -67,7 +67,7 @@
     <string name="setting_hide_status_bar">Hide Status Bar</string>
     <string name="open_app">Open app to query</string>
     <string name="sort_result">Sort Result</string>
-    <string name="sponsor_tip">The order above is sorted only by the corresponding condition. \nIt is your support that makes this application better.  \nIt\'s totally up to you whether to sponsor or not,  please do it according to your ability.</string>
+    <string name="sponsor_tip">The honorary sponsors are all users who have sponsored FunnyTranslation for free before the launch of Pro. All users, regardless of the amount of sponsorship, can get a free 500-day VIP from the developer with the payment voucher. \n Thank you for your strong support at the beginning of the application, it will be remembered forever!</string>
     <string name="others">Other Settings</string>
     <string name="custom_nav">New Navigation Bar</string>
     <string name="tip">Tip</string>

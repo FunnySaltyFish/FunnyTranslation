@@ -1,6 +1,7 @@
 package com.funny.translation.translate.ui.thanks
 
 import androidx.lifecycle.ViewModel
+import com.funny.compose.loading.LoadingState
 import com.funny.data_saver.core.mutableDataSaverListStateOf
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.helper.DataSaverUtils
@@ -9,7 +10,6 @@ import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.TransHistoryDao
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.findLanguageById
-import com.funny.translation.translate.ui.widget.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.*

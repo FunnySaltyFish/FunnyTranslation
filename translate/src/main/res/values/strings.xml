@@ -67,7 +67,7 @@
     <string name="setting_hide_status_bar">隐藏状态栏</string>
     <string name="open_app">打开应用查询</string>
     <string name="sort_result">结果排序</string>
-    <string name="sponsor_tip">上述排名仅以对应排序条件为序，不分先后\n您的支持让应用变得更好\n赞助完全自愿，且短期内无较明显回报，请量力而为</string>
+    <string name="sponsor_tip">荣誉赞助者为译站Pro上线之前无偿赞助过译站的所有用户，所有人无论赞助金额大小均可凭付款凭证找开发者免费领取500天会员。\n感谢您在应用初期的大力支持，应用将永久铭记！</string>
     <string name="others">其他</string>
     <string name="custom_nav">新导航栏</string>
     <string name="tip">提示</string>
@@ -105,4 +105,16 @@
     <string name="modify_password">修改密码</string>
     <string name="img_remaining_points">剩余图片翻译点数</string>
     <string name="setting_show_image_trans_btn">显示图片翻译按钮</string>
+    <string name="trans_pro">译站 Pro</string>
+    <string name="vip_tip">会员服务包括月费和年费两种，分别为30天和365天。  购买会员服务后，您将享受以下权益：  无广告浏览体验 全功能使用权 优先客服支持 购买会员服务前，请确保您已经注册并登录了“译站”应用。  会员服务一经购买，将无法退款，请您在购买前认真考虑。  在购买会员服务时，您需要提供付款信息，并保证该付款信息的准确性和合法性。如果付款信息有误或非法，您将无法享受会员服务。  会员服务的自动续费功能默认开启，如果您不需要自动续费，请在会员服务到期前取消自动续费功能。如果自动续费功能未取消，将默认续费并扣除相应费用。  本公司有权根据需要对会员服务的价格、内容进行调整和修改，但会提前通知您并征得您的同意。  本公司保留根据实际情况随时暂停、终止会员服务的权利。</string>
+    <string name="alipay">支付宝</string>
+    <string name="wechat_pay">微信支付</string>
+    <string name="buy_number">购买数量</string>
+    <string name="buy">立即购买</string>
+    <string name="hornor_sponsor">荣誉赞助者</string>
+    <string name="vip_end_time">会员到期时间</string>
+    <string name="parallel_trans">并行翻译</string>
+    <string name="parallel_trans_desc">翻译时所有引擎同步翻译，大幅提高翻译速度</string>
+    <string name="theme">主题</string>
+
 </resources>

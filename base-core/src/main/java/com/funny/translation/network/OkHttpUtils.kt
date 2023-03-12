@@ -2,21 +2,25 @@ package com.funny.translation.network
 
 import android.content.Intent
 import android.util.Log
+import android.util.Log.VERBOSE
 import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
-import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.JwtTokenRequired
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.sign.SignUtils
+import com.ihsanbal.logging.Level
+import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Invocation
 import java.io.IOException
 import java.net.URL
-import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
 @Keep
@@ -67,6 +71,16 @@ object OkHttpUtils {
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
             }
 
+//            val invocation = request.tag(Invocation::class.java)
+//            if (invocation != null) {
+//                // 对 JwtTokenRequired 的注解加上请求头
+//                val shouldAddToken = invocation.method().getAnnotation(JwtTokenRequired::class.java) != null
+//                if (shouldAddToken) {
+//                    val jwt = AppConfig.jwtToken
+//                    if (jwt != "") builder.addHeader("Authorization", "Bearer $jwt")
+//                }
+//            }
+
             // 访问 trans/v1下的所有api均带上请求头-jwt
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH)){
                 val jwt = AppConfig.jwtToken
@@ -115,7 +129,7 @@ object OkHttpUtils {
                 }
                 val activity = BaseApplication.getCurrentActivity()
                 activity?.let {
-                    AppConfig.userInfo.value = UserBean()
+                    AppConfig.logout()
                     it.startActivity(intent)
                     it.toastOnUi("您的登录状态已过期，请重新登陆")
                 }
@@ -131,6 +145,11 @@ object OkHttpUtils {
             }
             response
         }
+
+        addInterceptor(LoggingInterceptor.Builder()
+            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
+            .log(VERBOSE)
+            .build())
 
     }.build()
 

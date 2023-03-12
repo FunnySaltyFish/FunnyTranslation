@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
                 TransTheme {
                     LoginNavigation(onLoginSuccess = {
                         Log.d(TAG, "登录成功: 用户: $it")
-                        if(it.isValid()) AppConfig.userInfo.value = it
+                        if(it.isValid()) AppConfig.login(it)
                         setResult(RESULT_OK, Intent())
                         finish()
                     })

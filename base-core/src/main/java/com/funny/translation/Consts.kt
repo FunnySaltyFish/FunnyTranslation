@@ -12,6 +12,7 @@ object Consts {
     const val KEY_ENTER_TO_TRANSLATE = "enter_to_trans"
     const val KEY_TRANS_PAGE_INPUT_BOTTOM = "trans_page_input_bottom"
     const val KEY_USER_INFO = "user_info"
+    const val KEY_APP_CURRENT_SCREEN = "key_app_nav_current_screen"
 
     const val EXTRA_USER_INFO = "extra_user_info"
 
@@ -51,5 +52,5 @@ object Consts {
     const val KEY_CUSTOM_NAVIGATION = "custom_nav"
     const val KEY_FIRST_OPEN_APP = "first_open_app_v2"
 
-    const val MAX_SELECT_ENGINES = 5
+    val MAX_SELECT_ENGINES get() = if (AppConfig.isVip()) 8 else 5
 }

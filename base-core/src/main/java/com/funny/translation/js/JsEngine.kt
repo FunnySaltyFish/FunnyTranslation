@@ -15,8 +15,10 @@ import org.mozilla.javascript.NativeArray
 import org.mozilla.javascript.NativeObject
 import org.mozilla.javascript.RhinoException
 import javax.script.ScriptException
+import kotlin.math.absoluteValue
 
 class JsEngine(val jsBean: JsBean) : JsInterface {
+    private val patternResult = Regex("(\\W)result\\.")
 
     lateinit var funnyJS : NativeObject
     @Throws(ScriptException::class)
@@ -27,7 +29,9 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                 put("LANGUAGE_${it.name}",it)
             }
         }
-        SCRIPT_ENGINE.eval(jsBean.code)
+        // 为了实现多引擎同步翻译，替换 result 为 result_${engineName.hashCode()}
+        val code = jsBean.code.replace(patternResult,"\$1result_${jsBean.fileName.hashCode().absoluteValue}.")
+        SCRIPT_ENGINE.eval(code)
         funnyJS = getProperty("FunnyJS") as NativeObject
     }
 
@@ -36,13 +40,13 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
         return try{
             INVOCABLE.invokeFunction(name,arguments)
         }catch (e : NoSuchMethodException){
-            Debug.log("函数[$name]不存在！")
+            log("函数[$name]不存在！")
             throw e
         }catch (e : ScriptException){
-            Debug.log(e.messageWithDetail)
+            log(e.messageWithDetail)
             throw e
         }catch (e : Exception){
-            Debug.log("执行函数[${name}]时产生错误！\n${e.message}")
+            log("执行函数[${name}]时产生错误！\n${e.message}")
             throw e
         }
     }
@@ -53,13 +57,13 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
 //        return try{
 //            INVOCABLE.invokeMethod(funnyJS,name,arguments)
 //        }catch (e : NoSuchMethodException){
-//            Debug.log("方法[FunnyJS.$name]不存在！")
+//            log("方法[FunnyJS.$name]不存在！")
 //            throw e
 //        }catch (e : ScriptException){
-//            Debug.log(e.messageWithDetail)
+//            log(e.messageWithDetail)
 //            throw e
 //        }catch (e : Exception){
-//            Debug.log("执行方法[FunnyJS.${name}]时产生错误！\n${e.message}")
+//            log("执行方法[FunnyJS.${name}]时产生错误！\n${e.message}")
 //            throw e
 //        }
 //    }
@@ -83,9 +87,9 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                 with(SCRIPT_ENGINE){
                     put("funny",this@JsEngine)
                 }
-                Debug.log("插件引擎v${JsConfig.JS_ENGINE_VERSION}启动完成")
-                Debug.log("开始加载插件……")
-                //Debug.log("源代码：\n${jsBean.code}")
+                log("插件引擎v${JsConfig.JS_ENGINE_VERSION}启动完成")
+                log("开始加载插件……")
+                //log("源代码：\n${jsBean.code}")
                 eval()
                 /**
                  * FunnyJS : IdScriptableObject
@@ -102,23 +106,22 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
                     debugMode = getFunnyOrDefault("debugMode", false)
                     this.isOffline = getFunnyOrDefault("isOffline", false)
                     supportLanguages = getFunnyListOrDefault("supportLanguages", allLanguages)
-
                 }
             }.onSuccess {
-                Debug.log("插件加载完毕！")
-                Debug.log(JsConfig.DEBUG_DIVIDER)
-                Debug.log(" 【${jsBean.fileName}】 版本号：${jsBean.version}  作者：${jsBean.author}")
-                Debug.log("  ---> ${jsBean.description}")
-                Debug.log("支持的语言：${jsBean.supportLanguages}")
-                Debug.log(JsConfig.DEBUG_DIVIDER)
+                log("插件加载完毕！")
+                log(JsConfig.DEBUG_DIVIDER)
+                log(" 【${jsBean.fileName}】 版本号：${jsBean.version}  作者：${jsBean.author}")
+                log("  ---> ${jsBean.description}")
+                log("支持的语言：${jsBean.supportLanguages}")
+                log(JsConfig.DEBUG_DIVIDER)
                 onSuccess()
             }.onFailure{  e ->
                 when(e){
-                    is ScriptException -> Debug.log("加载插件时出错！${e.messageWithDetail}")
-                    is RhinoException -> Debug.log("加载插件时出错！${e.messageWithDetail}")
-                    is TypeCastException -> Debug.log("加载插件时出错！${e.message}\n【建议检查配置文件名称及返回值是否正确】")
-                    is NullPointerException -> Debug.log("加载插件时出错！${e.message}\n【建议检查配置文件名称及返回值是否正确】")
-                    is Exception -> Debug.log("加载插件时出错！${e.message}")
+                    is ScriptException -> log("加载插件时出错！${e.messageWithDetail}")
+                    is RhinoException -> log("加载插件时出错！${e.messageWithDetail}")
+                    is TypeCastException -> log("加载插件时出错！${e.message}\n【建议检查配置文件名称及返回值是否正确】")
+                    is NullPointerException -> log("加载插件时出错！${e.message}\n【建议检查配置文件名称及返回值是否正确】")
+                    is Exception -> log("加载插件时出错！${e.message}")
                 }
                 onError(e)
             }
@@ -147,4 +150,6 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
             default
         }
     }
+    
+    private fun log(text: String) = Debug.log(text, "[DebugLog-${jsBean.fileName}]")
 }

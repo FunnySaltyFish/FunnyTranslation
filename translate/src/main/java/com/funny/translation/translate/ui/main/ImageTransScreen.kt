@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.ui.GesturePhoto
+import com.funny.compose.loading.LoadingState
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
@@ -40,7 +41,6 @@ import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
 import com.funny.translation.translate.ui.widget.CustomCoilProvider
-import com.funny.translation.translate.ui.widget.LoadingState
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yalantis.ucrop.UCrop
@@ -297,21 +297,8 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
 
                     }
                 }
-//                Image(
-//                    modifier = Modifier.fillMaxSize()
-//                        .apply {
-//                            if (scaleByWidth) verticalScroll(rememberScrollState())
-//                            else horizontalScroll(rememberScrollState())
-//                        },
-//                    contentScale = if (scaleByWidth) ContentScale.FillWidth else ContentScale.FillHeight,
-//                    alignment = Alignment.TopCenter,
-//                    painter = rememberAsyncImagePainter(vm.imageUri),
-//                    contentDescription = "Captured image",
-//                )
             }
         }
-
-
     }
 }
 

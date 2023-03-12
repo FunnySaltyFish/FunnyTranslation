@@ -1,16 +1,24 @@
 package com.funny.translation.theme
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.ui.SystemBarSettings
+import com.kyant.monet.dynamicColorScheme as monetDynamicColorScheme
+import com.kyant.monet.*
 
 
 private val LightColors = lightColorScheme(
@@ -83,30 +91,122 @@ private val SpringFestivalColorPalette = lightColorScheme(
     onPrimaryContainer = MaterialColors.RedA700
 )
 
+sealed class ThemeType(val id: Int) {
+    object StaticDefault: ThemeType(-1)
+    object DynamicNative : ThemeType(0)
+    class DynamicFromImage(val color: Color) : ThemeType(1)
+    class StaticFromColor(val color: Color): ThemeType(2)
+
+    val isDynamic get() = this is DynamicNative || this is DynamicFromImage
+
+    override fun toString(): String {
+        return when(this){
+            StaticDefault -> "StaticDefault"
+            DynamicNative -> "DynamicNative"
+            is DynamicFromImage -> "DynamicFromImage#${this.color}"
+            is StaticFromColor -> "StaticFromColor${this.color}"
+        }
+    }
+
+    companion object {
+        val Default = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            DynamicNative
+        } else {
+            StaticDefault
+        }
+
+        val Saver = { themeType: ThemeType ->
+            when(themeType){
+                StaticDefault -> "-1#0"
+                DynamicNative -> "0#0"
+                is DynamicFromImage -> "1#${themeType.color.toArgb()}"
+                is StaticFromColor -> "2#${themeType.color.toArgb()}"
+            }
+        }
+
+        val Restorer = { str: String ->
+            val (id, color) = str.split("#")
+            when(id){
+                "-1" -> StaticDefault
+                "0" -> DynamicNative
+                "1" -> DynamicFromImage(Color(color.toInt()))
+                "2" -> StaticFromColor(Color(color.toInt()))
+                else -> throw IllegalArgumentException("Unknown ThemeType: $str")
+            }
+        }
+    }
+}
+
+object ThemeConfig {
+    private const val TAG = "ThemeConfig"
+    var sThemeType: MutableState<ThemeType> = mutableDataSaverStateOf(DataSaverUtils, "theme_type", ThemeType.Default)
+
+    fun updateThemeType(new: ThemeType){
+        sThemeType.value = new
+        Log.d(TAG, "updateThemeType: $new")
+    }
+}
+
 @Composable
 fun TransTheme(
     dark: Boolean = isSystemInDarkTheme(),
-    dynamic: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
     setSystemBar: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme =
         if (AppConfig.sSpringFestivalTheme.value && DateUtils.isSpringFestival)
             SpringFestivalColorPalette
-        else if (dynamic) {
-            val context = LocalContext.current
-            if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        } else {
-            if (dark) DarkColors else LightColors
+        else when (ThemeConfig.sThemeType.value) {
+            ThemeType.StaticDefault -> if (dark) DarkColors else LightColors
+            else -> run {
+                val context = LocalContext.current
+                if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
         }
     if (setSystemBar) SystemBarSettings()
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content
-    )
+
+    when (ThemeConfig.sThemeType.value) {
+        ThemeType.StaticDefault, ThemeType.DynamicNative -> {
+            MaterialTheme(
+                colorScheme = colorScheme,
+                content = content
+            )
+        }
+        is ThemeType.DynamicFromImage -> {
+            MonetTheme(
+                color = (ThemeConfig.sThemeType.value as ThemeType.DynamicFromImage).color,
+                content = content
+            )
+        }
+        is ThemeType.StaticFromColor -> {
+            MonetTheme(
+                color = (ThemeConfig.sThemeType.value as ThemeType.StaticFromColor).color,
+                content = content
+            )
+        }
+    }
 }
 
 val ColorScheme.isLight: Boolean
     @Composable
     @ReadOnlyComposable
     get() = !isSystemInDarkTheme()
+
+@Composable
+fun MonetTheme(color: Color, content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalTonalPalettes provides TonalPalettes(
+            keyColor = color,
+            // There are several styles for TonalPalettes
+            // PaletteStyle.TonalSpot for default, .Spritz for muted style, .Vibrant for vibrant style,...
+            style = PaletteStyle.TonalSpot
+        )
+    ) {
+        CompositionLocalProvider(LocalContentColor provides 0.n1..100.n1) {
+            MaterialTheme(
+                colorScheme = monetDynamicColorScheme(isSystemInDarkTheme()),
+                content = content
+            )
+        }
+    }
+}

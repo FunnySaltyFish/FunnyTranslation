@@ -1,7 +1,7 @@
 package com.funny.translation.translate
 
 import android.content.res.Resources
-import android.util.Log
+import android.net.Uri
 import android.view.Gravity
 import androidx.compose.ui.geometry.Offset
 import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
@@ -10,11 +10,14 @@ import com.funny.translation.bean.UserBean
 import com.funny.translation.codeeditor.ui.editor.EditorSchemes
 import com.funny.translation.helper.JsonX
 import com.funny.translation.sign.SignUtils
+import com.funny.translation.theme.ThemeType
+import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.thanks.SponsorSortType
 import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
 import com.funny.translation.translate.utils.SortResultUtils
 import com.hjq.toast.ToastUtils
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
@@ -22,11 +25,14 @@ class FunnyApplication : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
         ctx = this
+
+        System.loadLibrary("monet")
+
         FunnyUncaughtExceptionHandler.getInstance().init(ctx)
         ToastUtils.init(this)
         ToastUtils.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 260)
 
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             initLanguageDisplay(resources)
             SignUtils.loadJs()
             SortResultUtils.init()
@@ -76,6 +82,14 @@ class FunnyApplication : BaseApplication() {
             save = { "${it.x},${it.y}" },
             restore = { val split = it.split(",").map { it.toFloat() }; Offset(split[0], split[1])  }
         )
+
+        registerTypeConverters<Uri?>(
+            save = { it.toString() },
+            restore = { if (it == "null") null else Uri.parse(it) }
+        )
+
+        registerTypeConverters<ThemeType>(save = ThemeType.Saver, restore = ThemeType.Restorer)
+        registerTypeConverters<TranslateScreen>(save = TranslateScreen.Saver, restore = TranslateScreen.Restorer)
     }
 
     companion object {

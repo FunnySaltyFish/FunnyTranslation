@@ -9,10 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -21,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.compose.loading.LoadingContent
+import com.funny.compose.loading.LoadingState
 import com.funny.translation.AppConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.animatedGradientBackground
@@ -30,7 +28,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.math.tan
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -40,7 +37,7 @@ private const val TAG = "AnnualReportScreen"
 fun AnnualReportScreen() {
     val vm : AnnualReportViewModel = viewModel()
     val systemUiController = rememberSystemUiController()
-//
+
     DisposableEffect(key1 = systemUiController){
         systemUiController.isNavigationBarVisible = false
         onDispose {
@@ -48,7 +45,6 @@ fun AnnualReportScreen() {
         }
     }
 
-//    AnnualReport(vm)
     LoadingContent(
         loader = vm::loadAnnualReport,
         initialValue = vm.loadingState,
@@ -430,63 +426,5 @@ private fun FadeInColumnScope.Spacer(
         .fadeIn(whetherFade)
         .height(height))
 }
-
-
-@Stable
-fun Modifier.gradientBackground(
-    topColor: Color,
-    bottomColor: Color
-) = composed {
-    val infiniteTransition = rememberInfiniteTransition()
-    val progress by infiniteTransition.animateFloat(
-        initialValue = 0.233f,
-        targetValue = 0.744f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-    Modifier.drawWithCache {
-        // Compute the start and end coordinates such that the gradients are angled 11.06
-        // degrees off the vertical axis
-        val offset = size.height * tan(
-            Math.toRadians(11.06 * 2 * progress).toFloat()
-        )
-
-        val start = Offset(size.width / 2 + offset / 2, 0f)
-        val end = Offset(size.width / 2 - offset / 2, size.height)
-
-        // Create the top gradient that fades out after the halfway point vertically
-        val topGradient = Brush.linearGradient(
-            0f to if (topColor == Color.Unspecified) {
-                Color.Transparent
-            } else {
-                topColor
-            },
-            progress to bottomColor,
-            start = start,
-            end = end,
-        )
-        // Create the bottom gradient that fades in before the halfway point vertically
-        val bottomGradient = Brush.linearGradient(
-            1 - progress to Color.Transparent,
-            1f to if (bottomColor == Color.Unspecified) {
-                Color.Transparent
-            } else {
-                topColor
-            },
-            start = start,
-            end = end,
-        )
-
-        onDrawBehind {
-            // There is overlap here, so order is important
-            drawRect(topGradient)
-            drawRect(bottomGradient)
-
-        }
-    }
-}
-
 
 

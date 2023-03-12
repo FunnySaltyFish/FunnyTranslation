@@ -114,7 +114,7 @@ fun LoginPage(
 }
 
 @Composable
-fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
+private fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
@@ -252,7 +252,7 @@ fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginSuccess: 
 }
 
 @Composable
-fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<Intent>, onRegisterSuccess: () -> Unit = {}) {
+private fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<Intent>, onRegisterSuccess: () -> Unit = {}) {
     val context = LocalContext.current
     var gameInputMode by remember {
         mutableStateOf(true)
@@ -311,6 +311,10 @@ fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<In
                 Text("添加指纹")
             }
         }
+        ExchangePasswordType(
+            passwordType = vm.passwordType,
+            updatePasswordType = { vm.passwordType = it }
+        )
         Spacer(modifier = Modifier.height(12.dp))
         val enableRegister by remember {
             derivedStateOf {
@@ -347,10 +351,10 @@ private fun ColumnScope.ExchangePasswordType(
 ){
     if (passwordType == "2" && !AppConfig.lowerThanM){
         Spacer(modifier = Modifier.height(4.dp))
-        Text(modifier = Modifier.clickable { updatePasswordType("1") }, text = "切换指纹登录", style = MaterialTheme.typography.labelSmall)
+        Text(modifier = Modifier.clickable { updatePasswordType("1") }, text = "切换为指纹", style = MaterialTheme.typography.labelSmall)
     } else if (passwordType == "1") {
         Spacer(modifier = Modifier.height(4.dp))
-        Text(modifier = Modifier.clickable { updatePasswordType("2") }, text = "切换密码登录", style = MaterialTheme.typography.labelSmall)
+        Text(modifier = Modifier.clickable { updatePasswordType("2") }, text = "切换为密码", style = MaterialTheme.typography.labelSmall)
     }
 }
 

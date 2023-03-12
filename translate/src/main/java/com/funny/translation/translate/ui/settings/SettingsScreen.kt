@@ -18,6 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -245,6 +247,23 @@ fun SettingsScreen() {
             openConfirmDeleteDialogState.value = true
         }
 
+        ItemHeading(text = stringResource(id = R.string.trans_pro))
+        // 并行翻译
+        ProJetSettingCheckbox(
+            state = AppConfig.sParallelTrans,
+            text = stringResource(id = R.string.parallel_trans),
+            description = stringResource(id = R.string.parallel_trans_desc),
+            resourceId = R.drawable.ic_parallel,
+            iconTintColor = MaterialColors.DeepOrange100
+        )
+        JetSettingTile(
+            text = stringResource(id = R.string.theme),
+            resourceId = R.drawable.ic_theme,
+            iconTintColor = MaterialTheme.colorScheme.primary
+        ) {
+            navController.navigate(TranslateScreen.ThemeScreen.route)
+        }
+
         ItemHeading(text = stringResource(id = R.string.about))
         JetSettingTile(
             text = stringResource(R.string.source_code),
@@ -270,6 +289,38 @@ fun SettingsScreen() {
         }
     }
 }
+
+internal val DefaultVipInterceptor = {
+    if (!AppConfig.isVip()) {
+        appCtx.toastOnUi("此设置为会员专享功能，请先开通后再使用~")
+        false
+    } else {
+        true
+    }
+}
+
+@Composable
+private fun ProJetSettingCheckbox(
+    state: MutableState<Boolean>,
+    text: String,
+    description: String? = null,
+    resourceId: Int? = null,
+    imageVector: ImageVector? = null,
+    iconTintColor: Color = MaterialTheme.colorScheme.primary,
+    onCheckedChange: (Boolean) -> Unit = {}
+) {
+    JetSettingCheckbox(
+        state = state,
+        text = text,
+        description = description,
+        resourceId = resourceId,
+        imageVector = imageVector,
+        iconTintColor = iconTintColor,
+        onCheck = onCheckedChange,
+        interceptor = DefaultVipInterceptor
+    )
+}
+
 
 @Composable
 fun SortResult(

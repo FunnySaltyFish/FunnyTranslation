@@ -18,6 +18,12 @@
     "author": "FunnySaltyFish"
   },
   {
+    "name": "ComposeLoading",
+    "url": "https://github.com/FunnySaltyFish/ComposeLoading",
+    "description": "An easy-to-use way to wrap loading process in Jetpack Compose | 在 Jetpack Compose 中轻松地包装加载过程",
+    "author": "FunnySaltyFish"
+  },
+  {
     "name": "AndroidX",
     "url": "https://developer.android.google.cn/jetpack/androidx/",
     "description": "Android 官方支持库",

@@ -1,5 +1,16 @@
 package com.funny.translation.theme
 import androidx.compose.ui.graphics.Color
+import com.funny.cmaterialcolors.MaterialColors
+import kotlinx.collections.immutable.toImmutableList
+
+val ThemeStaticColors by lazy {
+    val colorClass = MaterialColors.Companion::class
+    val colorList = colorClass.members
+    colorList.sortedBy { it.name }.filter {
+        // 提取数字，找到大于500的
+        ("\\d+".toRegex().find(it.name)?.value?.toIntOrNull() ?: 0) > 500
+    }.map { it.call(MaterialColors) as Color }.toImmutableList()
+}
 
 val md_theme_light_primary = Color(0xFF0061A4)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)

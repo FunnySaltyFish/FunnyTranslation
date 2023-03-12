@@ -3,9 +3,6 @@ package com.funny.translation.translate.ui.plugin
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -20,12 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.R
 import com.funny.translation.translate.extentions.trimLineStart
-import com.funny.translation.translate.ui.widget.LoadingContent
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.funny.translation.ui.touchToScale
 
@@ -36,14 +31,14 @@ enum class OnlinePluginState {
     Installed, OutDated, NotInstalled
 }
 
-interface ClickOnlinePluginAction {
+internal interface ClickOnlinePluginAction {
     fun install(jsBean: JsBean)
     fun delete(jsBean: JsBean)
     fun update(jsBean: JsBean)
 }
 
 @Composable
-fun OnlinePluginItem(
+internal fun OnlinePluginItem(
     plugin: JsBean,
     onlinePluginState: OnlinePluginState,
     clickOnlinePluginAction: ClickOnlinePluginAction

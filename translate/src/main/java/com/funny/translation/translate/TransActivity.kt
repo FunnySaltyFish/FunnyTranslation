@@ -28,6 +28,9 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.externalCache
 import com.funny.translation.network.NetworkReceiver
+import com.funny.translation.theme.TransTheme
+import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
@@ -74,8 +77,6 @@ class TransActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         NotchScreenManager.getInstance().setDisplayInNotch(this)
 
-        Log.d(TAG, "onCreate:")
-
         setContent {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
@@ -91,7 +92,6 @@ class TransActivity : AppCompatActivity() {
         if (!initialized) {
             // 做一些耗时的后台任务
             lifecycleScope.launch(Dispatchers.IO) {
-                UserUtils.refreshJwtToken()
                 // MobileAds.initialize(context) {}
                 activityViewModel.getNotice()
                 activityViewModel.checkUpdate(context)
@@ -106,8 +106,6 @@ class TransActivity : AppCompatActivity() {
             }
             initialized = true
         }
-
-
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -124,6 +122,7 @@ class TransActivity : AppCompatActivity() {
     override fun onDestroy() {
         EasyFloatUtils.dismissAll()
         unregisterReceiver(netWorkReceiver)
+        DataSaverUtils.saveData(Consts.KEY_APP_CURRENT_SCREEN, TranslateScreen.MainScreen)
         super.onDestroy()
     }
 

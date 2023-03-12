@@ -59,17 +59,17 @@ fun Context.showMessageDialog(
     builder.show()
 }
 
-fun Context.readAssets(fileName : String) : String{
-    var ins : InputStream? = null
+fun Context.readAssets(fileName: String): String {
+    var ins: InputStream? = null
     return try {
         ins = assets.open(fileName)
         String(ins.readBytes())
-    }catch (e:Exception){
+    } catch (e: Exception) {
         ""
-    }finally {
+    } finally {
         try {
             ins?.close()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -82,14 +82,10 @@ fun Context.openUrl(url: String) {
 fun Context.openUrl(uri: Uri) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = uri
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    if (intent.resolveActivity(packageManager) != null) {
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            toastOnUi(e.localizedMessage ?: "open url error")
-        }
-    } else {
+
+    try {
+        startActivity(intent)
+    } catch (e: Exception) {
         try {
             startActivity(Intent.createChooser(intent, "请选择浏览器"))
         } catch (e: Exception) {
@@ -97,6 +93,7 @@ fun Context.openUrl(uri: Uri) {
         }
     }
 }
+
 
 fun Context.toastOnUi(message: Int) {
     runOnUI {
@@ -106,9 +103,9 @@ fun Context.toastOnUi(message: Int) {
 
 fun Context.toastOnUi(message: CharSequence?, length: Int = Toast.LENGTH_SHORT) {
     runOnUI {
-        if (length == Toast.LENGTH_SHORT){
+        if (length == Toast.LENGTH_SHORT) {
             ToastUtils.showShort(message)
-        }else{
+        } else {
             ToastUtils.showLong(message)
         }
     }

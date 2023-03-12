@@ -23,4 +23,8 @@ object TransNetwork {
     val imageTranslateService by lazy {
         ServiceCreator.create(ImageTranslateService::class.java)
     }
+
+    val vipService by lazy {
+        ServiceCreator.create(VipService::class.java)
+    }
 }

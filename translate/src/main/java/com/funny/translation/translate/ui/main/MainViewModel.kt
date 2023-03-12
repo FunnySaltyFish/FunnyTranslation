@@ -13,6 +13,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
@@ -26,6 +27,8 @@ import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class MainViewModel : ViewModel() {
     var translateText by mutableStateOf("")
@@ -95,13 +98,7 @@ class MainViewModel : ViewModel() {
         appDB.transHistoryDao.queryAllPaging()
     }.flow.cachedIn(viewModelScope)
 
-//    val
-
-//    private val localEnginesFlow : Flow<List<TranslationEngine>>
-//        get() = bindEnginesFlow.combine(jsEnginesFlow){ bindEngines, jsEngines ->
-//            (bindEngines + jsEngines)
-//        }
-//            .flowOn(Dispatchers.IO).conflate()
+    private val mutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
 
     init {
         viewModelScope.launch {
@@ -162,37 +159,15 @@ class MainViewModel : ViewModel() {
             while (!jsEngineInitialized) {
                 delay(100)
             }
-            createFlow().buffer().collect { task ->
-                try {
-                    with(TranslateConfig){
-                        this.sourceLanguage = task.sourceLanguage
-                        this.targetLanguage = task.targetLanguage
-                        this.sourceString   = task.sourceString
-                    }
 
-                    task.result.targetLanguage = targetLanguage
-                    withContext(Dispatchers.IO) {
-                        task.translate()
-                    }
-
-                    updateTranslateResult(task.result)
-                    Log.d(TAG, "translate : $progress ${task.result}")
-
-                } catch (e: TranslationException) {
-                    e.printStackTrace()
-                    with(task.result) {
-                        setBasicResult(
-                            "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
-                        )
-                        updateTranslateResult(this)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    with(task.result) {
-                        setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
-                        updateTranslateResult(this)
-                    }
-                }
+            TranslateConfig.sourceLanguage = sourceLanguage
+            TranslateConfig.targetLanguage = targetLanguage
+            TranslateConfig.sourceString =   actualTransText
+            if (AppConfig.sParallelTrans.value) {
+                translateInParallel()
+                Log.d(TAG, "translate: translateInParallel finished")
+            } else {
+                translateInSequence()
             }
         }
     }
@@ -211,29 +186,115 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private fun createFlow() =
+    private suspend fun translateInSequence(){
+        createFlow().buffer().collect { task ->
+            try {
+                task.result.targetLanguage = targetLanguage
+                withContext(Dispatchers.IO) {
+                    task.translate()
+                }
+
+                updateTranslateResult(task.result)
+                Log.d(TAG, "translate : $progress ${task.result}")
+            } catch (e: TranslationException) {
+                e.printStackTrace()
+                with(task.result) {
+                    setBasicResult(
+                        "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
+                    )
+                    updateTranslateResult(this)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                with(task.result) {
+                    setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
+                    updateTranslateResult(this)
+                }
+            }
+        }
+    }
+
+    private suspend fun translateInParallel() {
+        var tasks: ArrayList<Deferred<*>> = arrayListOf()
+        createFlow(true).buffer().collect { task ->
+            tasks.add(viewModelScope.async {
+                try {
+                    mutex.withLock {
+                        task.result.targetLanguage = targetLanguage
+                    }
+                    withContext(Dispatchers.IO) {
+                        task.translate()
+                    }
+                    updateTranslateResultWithMutex(task.result)
+                    Log.d(TAG, "translate : $progress ${task.result}")
+                } catch (e: TranslationException) {
+                    e.printStackTrace()
+                    mutex.withLock {
+                        with(task.result) {
+                            setBasicResult(
+                                "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
+                            )
+                            updateTranslateResult(this)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    mutex.withLock {
+                        with(task.result) {
+                            setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
+                            updateTranslateResult(this)
+                        }
+                    }
+                }
+            })
+        }
+        // 等待所有任务完成再返回，使对翻译状态的判断正常
+        tasks.awaitAll()
+    }
+
+    private fun createFlow(withMutex: Boolean = false) =
         flow {
             selectedEngines.forEach {
                 if (support(it.supportLanguages)) {
-                    val task = if (it is TextTranslationEngines) {
-                        it.createTask(
-                            actualTransText,
-                            sourceLanguage,
-                            targetLanguage
-                        )
+                    val lambda = {
+                        val task = if (it is TextTranslationEngines) {
+                            it.createTask(
+                                actualTransText,
+                                sourceLanguage,
+                                targetLanguage
+                            )
+                        } else {
+                            val jsTask = it as JsTranslateTaskText
+                            jsTask.result.engineName = jsTask.name
+                            jsTask.sourceString = actualTransText
+                            jsTask.sourceLanguage = sourceLanguage
+                            jsTask.targetLanguage = targetLanguage
+                            jsTask
+                        }
+                        if (withMutex) task.mutex = mutex
+                        task
+                    }
+                    if (withMutex) {
+                        mutex.withLock {
+                            emit(lambda())
+                        }
                     } else {
-                        val jsTask = it as JsTranslateTaskText
-                        jsTask.sourceString = actualTransText
-                        jsTask.sourceLanguage = sourceLanguage
-                        jsTask.targetLanguage = targetLanguage
-                        jsTask
+                        emit(lambda())
                     }
-                    emit(task)
                 } else {
-                    val result = TranslationResult(it.name).apply {
-                        setBasicResult("当前引擎暂不支持该语种！")
+                    val lambda = {
+                        val result = TranslationResult(it.name).apply {
+                            setBasicResult("当前引擎暂不支持该语种！")
+                        }
+                        updateTranslateResult(result)
                     }
-                    updateTranslateResult(result)
+                    if (withMutex) {
+                        mutex.withLock {
+                            lambda()
+                        }
+                    } else {
+                        lambda()
+                    }
                 }
             }
         }
@@ -249,6 +310,12 @@ class MainViewModel : ViewModel() {
             it.sortBy(SortResultUtils.defaultResultSort)
         }
         if (showListType != ShowListType.Result) showListType = ShowListType.Result
+    }
+
+    private suspend fun updateTranslateResultWithMutex(result: TranslationResult) {
+        mutex.withLock {
+            updateTranslateResult(result)
+        }
     }
 
     private fun support(supportLanguages: List<Language>) =

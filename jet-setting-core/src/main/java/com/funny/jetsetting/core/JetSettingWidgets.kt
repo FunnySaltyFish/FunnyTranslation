@@ -1,16 +1,15 @@
 package com.funny.jetsetting.core
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -18,12 +17,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.ui.FunnyIcon
 import com.funny.jetsetting.core.ui.IconWidget
+import com.funny.jetsetting.core.ui.throttleClick
 
 private val DefaultJetSettingModifier = Modifier
     .fillMaxWidth()
@@ -40,6 +39,7 @@ fun JetSettingCheckbox(
     iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
     text: String,
     description: String? = null,
+    interceptor: () -> Boolean = { true },
     onCheck: (Boolean) -> Unit
 ) {
     ConstraintLayout(modifier) {
@@ -54,6 +54,7 @@ fun JetSettingCheckbox(
         }
 
         Checkbox(checked = state.value, onCheckedChange = {
+            if (!interceptor()) return@Checkbox
             state.value = it
             onCheck(it)
         }, modifier = Modifier.constrainAs(checkbox){
@@ -82,18 +83,19 @@ fun JetSettingCheckbox(
 
 @Composable
 fun JetSettingCheckbox(
+    modifier: Modifier = DefaultJetSettingModifier,
     key: String,
     default: Boolean = false,
-    modifier: Modifier = DefaultJetSettingModifier,
     imageVector: ImageVector? = null,
     resourceId: Int? = null,
     iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
     text: String,
     description: String? = null,
+    interceptor: () -> Boolean = { true },
     onCheck: (Boolean) -> Unit
 ) {
     val state = rememberDataSaverState(key = key, default = default)
-    JetSettingCheckbox(state = state, modifier = modifier, imageVector = imageVector, resourceId = resourceId, iconTintColor = iconTintColor, text = text, description = description, onCheck = onCheck)
+    JetSettingCheckbox(state = state, modifier = modifier, imageVector = imageVector, resourceId = resourceId, iconTintColor = iconTintColor, text = text, description = description, onCheck = onCheck, interceptor = interceptor)
 }
 
 @Composable
@@ -103,12 +105,15 @@ fun JetSettingTile(
     resourceId: Int? = null,
     iconTintColor: Color = MaterialTheme.colorScheme.onBackground,
     text: String,
+    interceptor: () -> Boolean = { true },
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
-            .clickable {
-                 onClick()
+            .throttleClick(interactionSource = remember {
+                MutableInteractionSource()
+            }, indication = LocalIndication.current) {
+                if (interceptor()) onClick()
             }
             .then(modifier),
         horizontalArrangement = Arrangement.Start,

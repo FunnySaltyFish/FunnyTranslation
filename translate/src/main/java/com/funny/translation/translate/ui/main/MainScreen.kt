@@ -473,7 +473,6 @@ private fun InputPart(
         }
         if (!vm.isTranslating()) {
             vm.translate()
-            updateShowListType(ShowListType.Result)
             shouldRequestFocus = false
         } else {
             vm.cancel()
@@ -539,9 +538,10 @@ private fun InputPart(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
+                val isTranslating by rememberUpdatedState(newValue = vm.isTranslating())
                 TranslateButton(
                     animateProgress.value.roundToInt(),
-                    vm.isTranslating(),
+                    isTranslating,
                     onClick = ::startTranslate
                 )
             }

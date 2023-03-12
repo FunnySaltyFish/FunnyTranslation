@@ -43,8 +43,8 @@ android {
         applicationId "com.funny.translation"
         minSdkVersion Versions.minSdkVersion
         targetSdk Versions.targetSdkVersion
-        versionCode 50
-        versionName "2.5.1"
+        versionCode 51
+        versionName "2.6.0"
         resConfigs('zh-rCN','en')
         multiDexEnabled true
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86_64'
@@ -100,8 +100,6 @@ configurations.all {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlinVersion}"
-
     def room_version = Versions.roomVersion
     implementation "androidx.room:room-runtime:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
@@ -110,6 +108,7 @@ dependencies {
 
 //    implementation 'com.github.FunnySaltyFish:FunnyBottomNavigation:v1.1.1'
     implementation "com.airbnb.android:lottie-compose:4.2.0"
+    implementation "com.github.skydoves:cloudy:0.1.2"
 //    implementation 'com.github.jeziellago:compose-markdown:0.2.6'
 
     // 分页加载

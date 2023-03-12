@@ -1,5 +1,6 @@
 package com.funny.translation.translate
 
+import android.util.Log
 import androidx.annotation.Keep
 
 /**
@@ -12,7 +13,7 @@ import androidx.annotation.Keep
  * @constructor
  */
 @Keep
-data class TranslationResult(
+class TranslationResult(
     var engineName: String = "",
     var basicResult: Translation = Translation(""),
     var sourceString: String = "",
@@ -23,9 +24,22 @@ data class TranslationResult(
      * 设置 basicResult 的 trans 为 text
      * @param text String
      */
+    init {
+        Log.d(TAG, "init is called! ${hashCode()}")
+    }
+
     fun setBasicResult(text: String) {
+        Log.d(TAG, "setBasicResult is called! ${hashCode()}")
         basicResult.trans = text
         //该方法调用次数正常
+    }
+
+    override fun toString(): String {
+        return "TranslationResult(engineName='$engineName', basicResult=$basicResult, sourceString='$sourceString', detailText=$detailText, targetLanguage=$targetLanguage)"
+    }
+
+    companion object {
+        private const val TAG = "TranslationResult"
     }
 }
 

@@ -36,7 +36,7 @@ fun InputText(
         EditText(it).apply {
             doOnTextChanged { text, start, before, count -> updateText(text.toString()) }
             maxLines = 6
-            hint = "译你所译……"
+            hint = "译你所忆……"
             background = null
             textSize = 16f
             setTextColor(textColor)

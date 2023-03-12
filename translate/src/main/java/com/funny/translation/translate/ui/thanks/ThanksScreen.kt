@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.ExtraBold
 import androidx.compose.ui.text.font.FontWeight.Companion.W800
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
+import com.funny.compose.loading.DefaultFailure
+import com.funny.compose.loading.DefaultLoading
+import com.funny.compose.loading.LoadingContent
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.trans.login.LoginActivity
 import com.funny.translation.AppConfig
@@ -50,10 +54,7 @@ import com.funny.translation.translate.activity.AnnualReportActivity
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.screen.TranslateScreen
-import com.funny.translation.translate.ui.widget.DefaultFailure
-import com.funny.translation.translate.ui.widget.DefaultLoading
 import com.funny.translation.translate.ui.widget.HeadingText
-import com.funny.translation.translate.ui.widget.LoadingContent
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -113,38 +114,10 @@ fun ThanksScreen(navHostController: NavHostController) {
                 UserInfoPanel(navHostController)
             }
             item {
+                TransProEntrance(navHostController = navHostController)
+            }
+            item {
                 AnnualReportEntrance()
-            }
-            item {
-                HeadingText(text = stringResource(id = R.string.join_sponsor))
-            }
-            item {
-                Row(
-                    modifier = Modifier
-                        .touchToScale()
-                        .height(80.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SponsorIcon(
-                        load_url = "https://afdian.net/@funnysaltyfish?tab=home",
-                        resourceId = R.drawable.ic_aifadian,
-                        contentDes = "爱发电"
-                    )
-                    SponsorIcon(
-                        load_url = "https://api.funnysaltyfish.fun/alipay.jpg",
-                        resourceId = R.drawable.ic_alipay,
-                        contentDes = "支付宝"
-                    )
-                    SponsorIcon(
-                        load_url = "https://api.funnysaltyfish.fun/wechat.png",
-                        resourceId = R.drawable.ic_wechat,
-                        contentDes = "微信"
-                    )
-                }
             }
             stickyHeader {
                 Row(
@@ -154,7 +127,7 @@ fun ThanksScreen(navHostController: NavHostController) {
                         .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    HeadingText(text = stringResource(id = R.string.thanks))
+                    HeadingText(text = stringResource(id = R.string.hornor_sponsor))
                     SortSponsor(
                         sortType = sponsorSortType,
                         updateSortType = { sponsorSortType = it },
@@ -291,7 +264,7 @@ fun SortSponsor(
 }
 
 @Composable
-fun AnnualReportEntrance() {
+private fun AnnualReportEntrance() {
     val context = LocalContext.current
     Box(modifier = Modifier
         .touchToScale {
@@ -303,6 +276,19 @@ fun AnnualReportEntrance() {
         .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
     ){
         Text(text = stringResource(id = R.string.annual_report), modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
+    }
+}
+
+@Composable
+private fun TransProEntrance(navHostController: NavHostController) {
+    Box(modifier = Modifier
+        .touchToScale {
+            navHostController.navigateSingleTop(TranslateScreen.TransProScreen.route, false)
+        }
+        .fillMaxWidth()
+        .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+    ){
+        Text(text = stringResource(id = R.string.trans_pro), modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = Bold, fontSize = 24.sp)
     }
 }
 
@@ -323,8 +309,8 @@ fun UserInfoPanel(navHostController: NavHostController) {
     }
 
     LoadingContent(
-        key = activityVM.uid,
-        updateKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
+        retryKey = activityVM.uid,
+        updateRetryKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
         modifier = Modifier
             .touchToScale {
                 if (activityVM.uid <= 0) { // 未登录
@@ -353,7 +339,9 @@ fun UserInfoPanel(navHostController: NavHostController) {
                     if (userBean.isValidVip()){
                         Icon(
 
-                            modifier = Modifier.size(32.dp).offset(70.dp, 70.dp),
+                            modifier = Modifier
+                                .size(32.dp)
+                                .offset(70.dp, 70.dp),
                             painter = painterResource(id = R.drawable.ic_vip),
                             contentDescription = "VIP",
                             tint = Color.Unspecified
@@ -381,7 +369,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
 }
 
 @Composable
-fun SponsorIcon(
+private fun SponsorIcon(
     load_url: String,
     resourceId: Int,
     contentDes: String
@@ -402,7 +390,7 @@ fun SponsorIcon(
 }
 
 @Composable
-fun SponsorItem(
+private fun SponsorItem(
     sponsor: Sponsor,
 ) {
     Row(

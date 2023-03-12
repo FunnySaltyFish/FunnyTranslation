@@ -42,7 +42,7 @@ android {
 
 dependencies {
 
-    def dataSaverVersion = "v1.1.4"
+    def dataSaverVersion = "v1.1.5"
     api "com.github.FunnySaltyFish.ComposeDataSaver:data-saver:$dataSaverVersion"
     api "com.github.FunnySaltyFish.ComposeDataSaver:data-saver-mmkv:$dataSaverVersion"
     api 'com.tencent:mmkv:1.2.14'

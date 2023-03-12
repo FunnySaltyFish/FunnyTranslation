@@ -45,11 +45,15 @@ class ActivityViewModel : ViewModel() {
     }
 
     init {
+        refreshUserInfo()
+    }
+
+    fun refreshUserInfo() {
         if (userInfo.isValid()) {
             viewModelScope.launch {
                 kotlin.runCatching {
                     UserUtils.getUserInfo(userInfo.uid)?.let {
-                        userInfo = it
+                        AppConfig.login(it)
                     }
                 }.onFailure {
                     appCtx.toastOnUi("刷新用户信息失败~")

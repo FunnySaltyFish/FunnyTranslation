@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.compose.loading.LoadingState
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
@@ -21,7 +22,6 @@ import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.engine.ImageTranslationEngines
 import com.funny.translation.translate.selectKey
-import com.funny.translation.translate.ui.widget.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
