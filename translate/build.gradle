@@ -150,7 +150,9 @@ dependencies {
     implementation project(path: ":codeeditor")
     implementation project(path: ":login")
     implementation project(path: ':jet-setting-core')
-    implementation project(path: ":bottom-navigation")
+    // v2.6.0起不用了，但是它的效果还挺有趣的
+    // 可以见 https://github.com/FunnySaltyFish/FunnyBottomNavigation
+    // implementation project(path: ":bottom-navigation")
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

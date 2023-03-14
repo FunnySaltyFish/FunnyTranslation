@@ -1,7 +1,5 @@
 package com.funny.translation.translate.ui.widget
 
-import android.util.Log
-import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -9,28 +7,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.funny.bottomnavigation.FunnyBottomNavigation
 import com.funny.translation.AppConfig
-import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.screen.TranslateScreen
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 private const val TAG = "CustomNavigation"
 
@@ -114,9 +106,7 @@ fun CustomNavigation(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(contentPadding)
-                    .height(BottomNavigationHeight),
+                    .fillMaxWidth().padding(contentPadding).height(BottomNavigationHeight),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
@@ -128,58 +118,32 @@ fun CustomNavigation(
             }
         }
     } else {
-        val height = with(LocalDensity.current) { BottomNavigationHeight.toPx().toInt() }
-        val width = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx().toInt() }
-        val highlightColor = MaterialTheme.colorScheme.primary.toArgb()
-        var firstInit by remember {
-            mutableStateOf(true)
-        }
-        val scope = rememberCoroutineScope()
-
-        Surface(
-            color = backgroundColor,
-            contentColor = contentColor,
-            modifier = modifier,
-            tonalElevation = elevation
-        ) {
-            AndroidView(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(contentPadding)
-                    .height(BottomNavigationHeight),
-
-                factory = {
-                    FunnyBottomNavigation(it, null).apply {
-                        imageWidth = height * 2 / 5
-                        imageHeight = height * 2 / 5
-                        this.highlightColor = highlightColor
-                        navigationBgColor = backgroundColor.toArgb()
-                        normalColor = contentColor.toArgb()
-                        clickMargin = width / 8 - imageWidth / 2 // 拓宽点击边界
-                        animationDuration = 500
-                        initIconButtons(screens.map { screen -> screen.icon?.resourceId ?: R.drawable.ic_thanks }.toIntArray())
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            height
-                        )
-                        setOnItemClickListener { position ->
-                            onItemClick(screens[position])
-                        }
-                        scope.launch {
-                            while (!hasInitialized()){
-                                delay(100)
-                            }
-                            firstInit = false
-                        }
-                    }
-                },
-                update = {
-                    if (!firstInit){ // 避免未初始化时即跳转
-                        Log.d(TAG, "CustomNavigation: 手动跳转到 ${currentScreen.route}")
-                        it.moveTo(screens.indexOf(currentScreen), hasAnimation = true, performClick = false)
-                    }
+        BottomNavigation(modifier.padding(contentPadding), backgroundColor, contentColor, elevation) {
+            screens.forEach { screen ->
+                val tint = if (currentScreen == screen) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onPrimaryContainer
                 }
-            )
+                BottomNavigationItem(
+                    icon = {
+                        val icon = screen.icon?.get()
+                        if (icon is ImageVector) {
+                            Icon(imageVector = icon, contentDescription = "", tint = tint)
+                        } else if (icon is Int) {
+                            Icon(
+                                painter = painterResource(id = icon),
+                                contentDescription = "",
+                                modifier = Modifier.size(20.dp),
+                                tint = tint
+                            )
+                        }
+                    },
+                    label = { Text(text = stringResource(id = screen.titleId), color = tint) },
+                    selected = currentScreen == screen,
+                    onClick = { onItemClick(screen) }
+                )
+            }
         }
     }
 }

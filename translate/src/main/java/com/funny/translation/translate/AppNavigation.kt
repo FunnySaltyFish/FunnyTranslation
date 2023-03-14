@@ -117,6 +117,7 @@ fun AppNavigation(
                 bottomBar = {
                     val currentScreen = navController.currentScreenAsState()
                     CustomNavigation(
+                        modifier = Modifier.fillMaxWidth(),
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         contentPadding = WindowInsets.navigationBars.asPaddingValues(),
                         screens = arrayOf(
