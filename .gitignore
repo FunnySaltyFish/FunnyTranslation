@@ -6,6 +6,7 @@
 .DS_Store
 build/
 */build/*
+encrypt_funny_js.*
 
 /captures
 .externalNativeBuild
@@ -27,3 +28,4 @@ baidu_languages.txt
 schemas/
 
 base-core/src/main/assets/funny_sign_v1_release.js
+base-core/src/main/assets/funny_sign_v1_release_template.js

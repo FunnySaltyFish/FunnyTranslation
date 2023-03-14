@@ -90,6 +90,10 @@ dependencies {
 
     api 'com.github.getActivity:ToastUtils:11.2'
 
+    // api 'com.github.Kyant0.Monet:Monet:0.1.0-alpha03-multiplatform-fixed'
+    implementation "androidx.palette:palette-ktx:1.0.0"
+
+
 
     // Markwon
     final def markwon_version = '4.6.2'
@@ -132,9 +136,26 @@ dependencies {
     api "com.google.accompanist:accompanist-permissions:$accompanist_version"
     api project(path: ':jet-setting-core')
 
-    api(fileTree("libs"));
+//    api(fileTree("libs"));
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+task encryptFunnyJs(type: Exec) {
+    def assetsDir = android.sourceSets.main.assets.srcDirs[0]
+    // 如果 funny_sign_v1_release 存在，则用它
+    def release = new File(assetsDir, "funny_sign_v1_release_template.js")
+    if (release.exists()) {
+        def filePath = release.absolutePath
+        def versionCode = Versions.versionCode
+        commandLine "node", rootProject.file("encrypt_funny_js.js"), filePath, versionCode
+    }
+
+    standardOutput = new ByteArrayOutputStream()
+    doLast {
+        println('doLast encryptFunnyJs')
+        println standardOutput.toString()
+    }
 }
