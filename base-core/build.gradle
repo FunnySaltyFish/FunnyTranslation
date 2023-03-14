@@ -136,7 +136,7 @@ dependencies {
     api "com.google.accompanist:accompanist-permissions:$accompanist_version"
     api project(path: ':jet-setting-core')
 
-//    api(fileTree("libs"));
+    implementation(fileTree("libs"));
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

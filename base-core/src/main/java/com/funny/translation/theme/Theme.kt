@@ -4,10 +4,7 @@ import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -17,8 +14,10 @@ import com.funny.translation.AppConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.ui.SystemBarSettings
-import com.kyant.monet.dynamicColorScheme as monetDynamicColorScheme
-import com.kyant.monet.*
+import com.kyant.monet.LocalTonalPalettes
+import com.kyant.monet.PaletteStyle
+import com.kyant.monet.TonalPalettes
+import com.kyant.monet.dynamicColorScheme
 
 
 private val LightColors = lightColorScheme(
@@ -142,6 +141,7 @@ object ThemeConfig {
     var sThemeType: MutableState<ThemeType> = mutableDataSaverStateOf(DataSaverUtils, "theme_type", ThemeType.Default)
 
     fun updateThemeType(new: ThemeType){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && new == ThemeType.DynamicNative) return
         sThemeType.value = new
         Log.d(TAG, "updateThemeType: $new")
     }
@@ -158,17 +158,20 @@ fun TransTheme(
             SpringFestivalColorPalette
         else when (ThemeConfig.sThemeType.value) {
             ThemeType.StaticDefault -> if (dark) DarkColors else LightColors
-            else -> run {
+            ThemeType.DynamicNative -> run {
+                // 小于 Android 12 直接跳过
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return@run null
                 val context = LocalContext.current
                 if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             }
+            else -> null
         }
     if (setSystemBar) SystemBarSettings()
 
     when (ThemeConfig.sThemeType.value) {
         ThemeType.StaticDefault, ThemeType.DynamicNative -> {
             MaterialTheme(
-                colorScheme = colorScheme,
+                colorScheme = colorScheme ?: if (dark) DarkColors else LightColors,
                 content = content
             )
         }
@@ -202,11 +205,9 @@ fun MonetTheme(color: Color, content: @Composable () -> Unit) {
             style = PaletteStyle.TonalSpot
         )
     ) {
-        CompositionLocalProvider(LocalContentColor provides 0.n1..100.n1) {
-            MaterialTheme(
-                colorScheme = monetDynamicColorScheme(isSystemInDarkTheme()),
-                content = content
-            )
-        }
+        MaterialTheme(
+            colorScheme = dynamicColorScheme(isDark = isSystemInDarkTheme()),
+            content = content
+        )
     }
 }

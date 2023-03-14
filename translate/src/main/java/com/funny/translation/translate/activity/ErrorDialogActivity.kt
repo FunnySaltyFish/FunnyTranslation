@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.helper.toastOnUi
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
 import java.io.DataOutputStream
+import java.io.File
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -42,12 +44,28 @@ class ErrorDialogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crashMessage = intent.getStringExtra("CRASH_MESSAGE")
-        
-        setContent { 
-            TransTheme {
-                ErrorDialog()
+        lifecycleScope.launchWhenCreated {
+            if (crashMessage != null) {
+                saveCrashMessage(crashMessage!!)
             }
         }
+        
+        setContent { 
+            // TransTheme {
+                ErrorDialog()
+            // }
+        }
+    }
+
+    private fun saveCrashMessage(msg: String){
+        val file = this.getExternalFilesDir("crash_logs")
+        if (!file?.exists()!!) {
+            file.mkdirs()
+        }
+        // 文件名： CrashLog_时间.txt
+        val fileName = "CrashLog_" + System.currentTimeMillis() + ".txt"
+        val outputFile = File(file, fileName)
+        outputFile.writeText(msg)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

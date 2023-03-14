@@ -36,9 +36,12 @@ import cn.qhplus.emo.photo.activity.PhotoPickerActivity
 import cn.qhplus.emo.photo.activity.getPhotoPickResult
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import coil.compose.AsyncImage
+import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.translation.helper.BitmapUtil
+import com.funny.translation.helper.getKeyColors
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeStaticColors
 import com.funny.translation.theme.ThemeType
@@ -47,7 +50,6 @@ import com.funny.translation.translate.activity.CustomPhotoPickerActivity
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.RadioTile
 import com.funny.translation.ui.touchToScale
-import com.kyant.monet.getKeyColors
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -66,7 +68,7 @@ fun ThemeScreen() {
         )
         Spacer(modifier = Modifier.height(40.dp))
         HeadingText(text = stringResource(id = R.string.theme))
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Box(
             modifier = Modifier
                 .touchToScale()
@@ -75,14 +77,18 @@ fun ThemeScreen() {
                 .padding(8.dp),
             contentAlignment = Alignment.Center
         ){
-            LabelText(text = "主题预览", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            LabelText(text = "这里是主题预览", color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Spacer(modifier = Modifier.height(12.dp))
         RadioTile(text = "默认", selected = themeType == ThemeType.StaticDefault) {
             ThemeConfig.updateThemeType(ThemeType.StaticDefault)
         }
         RadioTile(text = "动态取色", selected = themeType.isDynamic) {
-            ThemeConfig.updateThemeType(ThemeType.DynamicNative)
+            // Android 12以上才选
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S)
+                ThemeConfig.updateThemeType(ThemeType.DynamicNative)
+            else
+                ThemeConfig.updateThemeType(ThemeType.DynamicFromImage(MaterialColors.Blue700))
         }
         RadioTile(text = "自定义", selected = themeType is ThemeType.StaticFromColor) {
             ThemeConfig.updateThemeType(ThemeType.StaticFromColor(ThemeStaticColors.get(selectedColorIndex)))
@@ -141,7 +147,9 @@ private fun SelectDynamicTheme(modifier: Modifier) {
             }
 
         RadioTile(text = "原生壁纸取色（Android 12+）", selected = themeType == ThemeType.DynamicNative) {
-            themeType = ThemeType.DynamicNative
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S)
+                themeType = ThemeType.DynamicNative
+            else context.toastOnUi("此功能需要Android 12及以上版本！")
         }
         Spacer(modifier = Modifier.height(8.dp))
         JetSettingTile(
@@ -227,7 +235,11 @@ private fun changeThemeFromImageUri(context: Context, uri: Uri) {
     inputStream?.use {
         val bytes = BitmapUtil.getBitmapFormUri(context, 400, 600, 1024*1024, uri)
         bytes ?: return
-        val color = BitmapFactory.decodeByteArray(bytes, 0, bytes.size).asImageBitmap().getKeyColors(1)
-        ThemeConfig.updateThemeType(ThemeType.DynamicFromImage(color[0]))
+        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        val color = bitmap.getKeyColors(1)[0]
+        ThemeConfig.updateThemeType(ThemeType.DynamicFromImage(color))
+//        bitmap.getKeyColors(1, MaterialColors.Blue700) { color ->
+//            ThemeConfig.updateThemeType(ThemeType.DynamicFromImage(color))
+//        }
     }
 }

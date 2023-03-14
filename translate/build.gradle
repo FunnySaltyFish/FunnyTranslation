@@ -160,6 +160,7 @@ dependencies {
 }
 
 afterEvaluate {
-    // release 时执行加密代码
+    // debug 和 release 时执行加密代码
+    tasks.assembleDebug.dependsOn(":base-core:encryptFunnyJs")
     tasks.assembleRelease.dependsOn(":base-core:encryptFunnyJs")
 }

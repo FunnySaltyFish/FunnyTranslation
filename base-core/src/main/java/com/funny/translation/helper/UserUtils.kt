@@ -71,8 +71,17 @@ interface UserService {
         @Field("password_type") passwordType: String,
         @Field("email") email: String,
         @Field("phone") phone: String,
-        @Field("verify_code") verifyCode: String
+        @Field("verify_code") verifyCode: String,
+        @Field("did") did: String = AppConfig.androidId
     ): CommonData<UserBean>
+
+    @POST("user/logout")
+    @FormUrlEncoded
+    // uid: Int, did: String
+    suspend fun logout(
+        @Field("uid") uid: Int,
+        @Field("did") did: String = AppConfig.androidId
+    ): CommonData<Unit>
 
     @POST("user/get_user_info")
     @FormUrlEncoded

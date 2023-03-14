@@ -100,5 +100,11 @@
     "url": "https://github.com/gefilte/compose-photo-integration",
     "description": "Building a Simple Photo App with Jetpack Compose, CameraX, and Kotlin coroutines",
     "author": "David Pisoni"
+  },
+  {
+    "name": "Monet",
+    "url": "https://github.com/Kyant0/Monet",
+    "description": "A Jetpack Compose library that creates your own Material3 palettes",
+    "author": "Kyant0"
   }
 ]

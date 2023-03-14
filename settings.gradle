@@ -19,6 +19,7 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/jcenter/'}
         maven { url "https://jitpack.io" }
         maven { url "https://maven.google.com/" }
+        maven { url "https://maven.pkg.jetbrains.space/public/p/compose/dev/" }
         mavenCentral()
     }
 }

@@ -7,8 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
@@ -106,7 +104,9 @@ fun CustomNavigation(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth().padding(contentPadding).height(BottomNavigationHeight),
+                    .fillMaxWidth()
+                    .padding(contentPadding)
+                    .height(BottomNavigationHeight),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
@@ -118,28 +118,28 @@ fun CustomNavigation(
             }
         }
     } else {
-        BottomNavigation(modifier.padding(contentPadding), backgroundColor, contentColor, elevation) {
+        NavigationBar(modifier, backgroundColor, contentColor, elevation) {
             screens.forEach { screen ->
-                val tint = if (currentScreen == screen) {
+                val color = if (currentScreen == screen) {
                     MaterialTheme.colorScheme.primary
                 } else {
                     MaterialTheme.colorScheme.onPrimaryContainer
                 }
-                BottomNavigationItem(
+                NavigationBarItem(
                     icon = {
                         val icon = screen.icon?.get()
                         if (icon is ImageVector) {
-                            Icon(imageVector = icon, contentDescription = "", tint = tint)
+                            Icon(imageVector = icon, contentDescription = "", tint = color)
                         } else if (icon is Int) {
                             Icon(
                                 painter = painterResource(id = icon),
                                 contentDescription = "",
                                 modifier = Modifier.size(20.dp),
-                                tint = tint
+                                tint = color
                             )
                         }
                     },
-                    label = { Text(text = stringResource(id = screen.titleId), color = tint) },
+                    label = { Text(text = stringResource(id = screen.titleId), color = color) },
                     selected = currentScreen == screen,
                     onClick = { onItemClick(screen) }
                 )

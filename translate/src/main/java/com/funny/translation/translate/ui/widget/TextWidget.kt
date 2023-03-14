@@ -123,7 +123,7 @@ fun AutoResizedText(
     text: String,
     style: TextStyle = MaterialTheme.typography.headlineLarge,
     color: Color = style.color,
-    scale: Float = 1.0f
+    byHeight: Boolean = true
 ) {
     var resizedTextStyle by remember { mutableStateOf(style) }
     var shouldDraw by remember { mutableStateOf(false) }
@@ -139,9 +139,9 @@ fun AutoResizedText(
             }
         },
         softWrap = true,
-        style = resizedTextStyle.copy(fontSize = resizedTextStyle.fontSize * scale),
+        style = resizedTextStyle.copy(fontSize = resizedTextStyle.fontSize),
         onTextLayout = { result ->
-            if (result.didOverflowHeight) {
+            if (if (byHeight) result.didOverflowHeight else result.didOverflowWidth) {
                 if (style.fontSize.isUnspecified) {
                     resizedTextStyle = resizedTextStyle.copy(
                         fontSize = defaultFontSize
