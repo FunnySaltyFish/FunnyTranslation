@@ -11,8 +11,11 @@ import androidx.compose.ui.platform.LocalContext
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
+import com.funny.translation.BaseApplication
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
+import com.funny.translation.helper.DeviceUtils
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.ui.SystemBarSettings
 import com.kyant.monet.LocalTonalPalettes
 import com.kyant.monet.PaletteStyle
@@ -141,7 +144,20 @@ object ThemeConfig {
     var sThemeType: MutableState<ThemeType> = mutableDataSaverStateOf(DataSaverUtils, "theme_type", ThemeType.Default)
 
     fun updateThemeType(new: ThemeType){
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && new == ThemeType.DynamicNative) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && new == ThemeType.DynamicNative) {
+            BaseApplication.ctx.toastOnUi("Android 12 以上才支持动态主题哦")
+            return
+        }
+
+        // 如果是 FromXXX，必须 64 位才行
+        if (
+            (new is ThemeType.DynamicFromImage || new is ThemeType.StaticFromColor)
+            && !DeviceUtils.is64Bit()
+        ) {
+            BaseApplication.ctx.toastOnUi("抱歉，由于库底层限制，仅 64 位机型才支持自定义取色")
+            return
+        }
+
         sThemeType.value = new
         Log.d(TAG, "updateThemeType: $new")
     }

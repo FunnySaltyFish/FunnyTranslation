@@ -1,17 +1,32 @@
 package com.funny.jetsetting.core.ui
 
 import android.os.SystemClock
+import android.util.Log
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.semantics.Role
+
+fun Modifier.throttleClick(
+    timeout: Int = 1000,
+    onClick: () -> Unit
+) = composed {
+    val interactionSource = remember { MutableInteractionSource() }
+    val indication = LocalIndication.current
+    Modifier.throttleClick(
+        interactionSource = interactionSource,
+        indication = indication,
+        timeout = timeout,
+        onClick = onClick
+    )
+}
 
 // from emo
 // 防抖点击
@@ -35,7 +50,7 @@ fun Modifier.throttleClick(
         properties["interactionSource"] = interactionSource
     }
 ) {
-    val throttleHandler = remember(timeout) { ThrottleHandler(timeout) }
+    val throttleHandler = rememberSaveable(timeout, saver = ThrottleHandler.Saver) { ThrottleHandler(timeout) }
     Modifier.clickable(
         interactionSource = interactionSource,
         indication = indication,
@@ -46,7 +61,7 @@ fun Modifier.throttleClick(
     )
 }
 
-internal class ThrottleHandler(private val timeout: Int = 200) {
+internal class ThrottleHandler(private val timeout: Int = 500) {
 
     private var last: Long = 0
 
@@ -54,7 +69,14 @@ internal class ThrottleHandler(private val timeout: Int = 200) {
         val now = SystemClock.uptimeMillis()
         if (now - last > timeout) {
             event.invoke()
-            last = now
         }
+        last = now
+    }
+
+    companion object {
+        val Saver = Saver<ThrottleHandler, Long>(
+            save = { it.last },
+            restore = { ThrottleHandler().apply { last = it } }
+        )
     }
 }

@@ -8,6 +8,7 @@ import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
 import com.funny.translation.bean.UserBean
 import com.funny.translation.codeeditor.ui.editor.EditorSchemes
+import com.funny.translation.helper.DeviceUtils
 import com.funny.translation.helper.JsonX
 import com.funny.translation.sign.SignUtils
 import com.funny.translation.theme.ThemeType
@@ -26,7 +27,10 @@ class FunnyApplication : BaseApplication() {
         super.onCreate()
         ctx = this
 
-        System.loadLibrary("monet")
+        if (DeviceUtils.is64Bit()) {
+            // 仅在 64 位时加载
+            System.loadLibrary("monet")
+        }
 
         FunnyUncaughtExceptionHandler.getInstance().init(ctx)
         ToastUtils.init(this)

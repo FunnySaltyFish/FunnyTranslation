@@ -39,6 +39,7 @@ import coil.compose.AsyncImage
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.JetSettingTile
+import com.funny.jetsetting.core.ui.throttleClick
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.getKeyColors
 import com.funny.translation.helper.toastOnUi
@@ -155,7 +156,7 @@ private fun SelectDynamicTheme(modifier: Modifier) {
         JetSettingTile(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
+                .throttleClick {
                     if (DefaultVipInterceptor()) {
                         pickLauncher.launch(
                             PhotoPickerActivity.intentOf(
