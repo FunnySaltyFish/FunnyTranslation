@@ -81,12 +81,15 @@ class JsTranslateTaskText(
             Debug.log("插件执行完毕！")
         } catch (exception: ScriptException) {
             Debug.log(exception.messageWithDetail)
+            doWithMutex { result.setBasicResult("翻译错误：${exception.messageWithDetail}") }
             return
         } catch (exception: TranslationException) {
             Debug.log("翻译过程中发生错误！原因如下：\n${exception.message}")
+            doWithMutex { result.setBasicResult("翻译错误：${exception.message}") }
             return
         } catch (e: Exception) {
             Debug.log("出错:${e.message}")
+            doWithMutex { result.setBasicResult("翻译错误：${e.message}") }
             return
         }
     }

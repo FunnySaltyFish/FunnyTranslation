@@ -31,8 +31,7 @@ sealed class TextTranslationEngines : TextTranslationEngine() {
     object BaiduNormal : TextTranslationEngines() {
         override val name: String = stringResource(R.string.engine_baidu)
 
-        override val languageMapping: HashMap<Language, String>
-            get() = hashMapOf(
+        override val languageMapping: HashMap<Language, String> = hashMapOf(
                 Language.AUTO to "auto",
                 Language.CHINESE to "zh",
                 Language.ENGLISH to "en",
