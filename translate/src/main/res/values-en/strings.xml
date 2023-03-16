@@ -105,4 +105,15 @@
     <string name="modify_password">Modify Password</string>
     <string name="img_remaining_points">Remaining Image Points</string>
     <string name="setting_show_image_trans_btn">Show Image Translation Button</string>
+    <string name="trans_pro">Trans Station Pro</string>
+    <string name="alipay">Alipay</string>
+    <string name="wechat_pay">WeChat Pay</string>
+    <string name="buy_number">Purchase Quantity</string>
+    <string name="buy">Buy Now</string>
+    <string name="hornor_sponsor">Honorary Sponsor</string>
+    <string name="vip_end_time">VIP Expiration Time</string>
+    <string name="parallel_trans">Parallel Translation</string>
+    <string name="parallel_trans_desc">All engines translate synchronously during translation, greatly improving translation speed.</string>
+    <string name="theme">Theme</string>
+    <string name="speak_source_string">Read Original Text</string>
 </resources>
