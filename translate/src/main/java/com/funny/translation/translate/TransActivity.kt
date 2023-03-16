@@ -122,7 +122,7 @@ class TransActivity : AppCompatActivity() {
     override fun onDestroy() {
         EasyFloatUtils.dismissAll()
         unregisterReceiver(netWorkReceiver)
-        DataSaverUtils.saveData(Consts.KEY_APP_CURRENT_SCREEN, TranslateScreen.MainScreen)
+        DataSaverUtils.remove(Consts.KEY_APP_CURRENT_SCREEN)
         super.onDestroy()
     }
 

@@ -18,11 +18,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,12 +46,12 @@ import com.funny.translation.helper.writeText
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.allLanguages
+import com.funny.translation.translate.ui.widget.SubcomposeBottomFirstLayout
 import io.github.rosemoe.editor.interfaces.EditorEventListener
 import io.github.rosemoe.editor.text.Content
 import io.github.rosemoe.editor.widget.CodeEditor
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ComposeCodeEditor(
     navController: NavController,
@@ -124,7 +121,7 @@ fun ComposeCodeEditor(
     val sourceLanguage = activityViewModel.sourceLanguage
     val targetLanguage = activityViewModel.targetLanguage
 
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     fun finish() {
         (context as ComponentActivity).finish()
@@ -138,12 +135,12 @@ fun ComposeCodeEditor(
         }
     }
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
             SelectionContainer(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
+                .width(300.dp)
+                .fillMaxHeight(1f)
                 .background(
                     MaterialTheme.colorScheme.primaryContainer,
                     RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
@@ -151,165 +148,169 @@ fun ComposeCodeEditor(
                 CodeRunnerText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(start = 16.dp, top = 16.dp, end = 4.dp)
                         .verticalScroll(rememberScrollState()),
                     viewModel = codeRunnerVM,
                     activityCodeViewModel = activityViewModel
                 )
             }
         },
-        sheetPeekHeight = 16.dp,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-        topBar = {
-            CodeEditorTopBar(
-                debugAction = {
-                    activityViewModel.shouldExecuteCode.value = true
-                    if (scaffoldState.bottomSheetState.isCollapsed)
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                        }
-                },
-                saveAction = {
-                    //permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    //如果当前打开的是默认文件
-                    if (activityViewModel.openFileUri.encodedPath.isNullOrBlank()) {
-                        fileCreatorLauncher.launch("new_plugin_${System.currentTimeMillis()}.js")
-                    } else { //已经打开了文件
-                        if (!viewModel.hasSaved) {
-                            saveFile(uri = activityViewModel.openFileUri)
-                        }
-                    }
-                },
-                undoAction = {
-                    viewModel.shouldUndo.value = true
-                },
-                redoAction = {
-                    viewModel.shouldRedo.value = true
-                },
-                schemeAction = viewModel::updateEditorColorScheme,
-                openFileAction = {
-                    if (!viewModel.hasSaved) {
-                        confirmOpenFile.value = true
-                    } else {
-                        filePickerLauncher.launch(arrayOf("application/javascript"))
-                    }
-                },
-                setArgumentsAction = {
-                    settingArgumentsDialog.value = true
-                },
-                openPluginDocumentAction = {
-                    context.openUrl("https://www.yuque.com/funnysaltyfish/vzmuud")
-                },
-                exportAction = {
-                    val jsBean = JsBean()
-                    jsBean.code = activityViewModel.codeState.value.toString()
-                    val jsEngine = JsEngine(jsBean)
-                    scope.launch {
-                        jsEngine.loadBasicConfigurations(
-                            onSuccess = {
-                                activityViewModel.exportText = JsonX.toJsonPretty(jsBean)
-                                exportLauncher.launch("${jsBean.fileName}.json")
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        BaseApplication.resources.getString(
-                                            R.string.export_plugin_success
-                                        )
-                                    )
-                                }
-                            },
-                            onError = {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        BaseApplication.resources.getString(
-                                            R.string.export_plugin_error
-                                        )
-                                    )
-                                }
-                            }
-                        )
-
-                    }
-                }
-            )
-        },
         modifier = Modifier.fillMaxSize(),
+        gesturesEnabled = drawerState.isOpen
     ) {
-        Editor(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            viewModel = viewModel,
-            activityViewModel = activityViewModel
-        )
+        Scaffold(
+            Modifier.fillMaxSize(),
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
+            topBar = {
+                CodeEditorTopBar(
+                    debugAction = {
+                        activityViewModel.shouldExecuteCode.value = true
+                        if (drawerState.isClosed)
+                            scope.launch {
+                                drawerState.open()
+                            }
+                    },
+                    saveAction = {
+                        //permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        //如果当前打开的是默认文件
+                        if (activityViewModel.openFileUri.encodedPath.isNullOrBlank()) {
+                            fileCreatorLauncher.launch("new_plugin_${System.currentTimeMillis()}.js")
+                        } else { //已经打开了文件
+                            if (!viewModel.hasSaved) {
+                                saveFile(uri = activityViewModel.openFileUri)
+                            }
+                        }
+                    },
+                    undoAction = {
+                        viewModel.shouldUndo.value = true
+                    },
+                    redoAction = {
+                        viewModel.shouldRedo.value = true
+                    },
+                    schemeAction = viewModel::updateEditorColorScheme,
+                    openFileAction = {
+                        if (!viewModel.hasSaved) {
+                            confirmOpenFile.value = true
+                        } else {
+                            filePickerLauncher.launch(arrayOf("application/javascript"))
+                        }
+                    },
+                    setArgumentsAction = {
+                        settingArgumentsDialog.value = true
+                    },
+                    openPluginDocumentAction = {
+                        context.openUrl("https://www.yuque.com/funnysaltyfish/vzmuud")
+                    },
+                    exportAction = {
+                        val jsBean = JsBean()
+                        jsBean.code = activityViewModel.codeState.value.toString()
+                        val jsEngine = JsEngine(jsBean)
+                        scope.launch {
+                            jsEngine.loadBasicConfigurations(
+                                onSuccess = {
+                                    activityViewModel.exportText = JsonX.toJsonPretty(jsBean)
+                                    exportLauncher.launch("${jsBean.fileName}.json")
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            BaseApplication.resources.getString(
+                                                R.string.export_plugin_success
+                                            )
+                                        )
+                                    }
+                                },
+                                onError = {
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            BaseApplication.resources.getString(
+                                                R.string.export_plugin_error
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
-        SimpleDialog(
-            openDialog = confirmOpenFile,
-            title = stringResource(R.string.message_hint),
-            message = stringResource(R.string.message_open_while_not_saved),
-            confirmButtonAction = {
-                filePickerLauncher.launch(
-                    arrayOf(
-                        "application/javascript",
-                    )
+                        }
+                    }
                 )
             }
-        )
+        ) {
+            Editor(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
+                viewModel = viewModel,
+                activityViewModel = activityViewModel
+            )
 
-        SimpleDialog(
-            openDialog = confirmLeave,
-            title = "提示",
-            message = stringResource(R.string.message_leave_not_saved),
-            confirmButtonAction = {
-                finish()
-            })
-
-        if (settingArgumentsDialog.value) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = {
-                    Text(text = stringResource(id = R.string.change_debug_args))
-                },
-                text = {
-                    Column {
-                        TextField(
-                            value = sourceString.value,
-                            onValueChange = { value ->
-                                activityViewModel.sourceString.value = value
-                                //JsConfig.SCRIPT_ENGINE.put("sourceString",value)
-                            },
-                            label = { Text(stringResource(R.string.trans_text)) },
-                            placeholder = { Text(sourceString.value) }
+            SimpleDialog(
+                openDialog = confirmOpenFile,
+                title = stringResource(R.string.message_hint),
+                message = stringResource(R.string.message_open_while_not_saved),
+                confirmButtonAction = {
+                    filePickerLauncher.launch(
+                        arrayOf(
+                            "application/javascript",
                         )
-                        Spacer(Modifier.height(8.dp))
-                        ComposeSpinner(
-                            data = activityViewModel.allLanguageNames,
-                            initialData = sourceLanguage.value.name,
-                            selectAction = { index ->
-                                activityViewModel.sourceLanguage.value = allLanguages[index]
-                                //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
-                            },
-                            label = stringResource(R.string.source_language)
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        ComposeSpinner(
-                            data = activityViewModel.allLanguageNames,
-                            initialData = targetLanguage.value.name,
-                            selectAction = { index ->
-                                activityViewModel.targetLanguage.value = allLanguages[index]
-                                //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
-                            },
-                            label = stringResource(R.string.target_language)
-                        )
-                    }
-                },
-                confirmButton = {
-                    Button(onClick = { settingArgumentsDialog.value = false }) {
-                        Text(text = stringResource(R.string.close))
-                    }
+                    )
                 }
             )
+
+            SimpleDialog(
+                openDialog = confirmLeave,
+                title = "提示",
+                message = stringResource(R.string.message_leave_not_saved),
+                confirmButtonAction = {
+                    finish()
+                })
+
+            if (settingArgumentsDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = {
+                        Text(text = stringResource(id = R.string.change_debug_args))
+                    },
+                    text = {
+                        Column {
+                            TextField(
+                                value = sourceString.value,
+                                onValueChange = { value ->
+                                    activityViewModel.sourceString.value = value
+                                    //JsConfig.SCRIPT_ENGINE.put("sourceString",value)
+                                },
+                                label = { Text(stringResource(R.string.trans_text)) },
+                                placeholder = { Text(sourceString.value) }
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            ComposeSpinner(
+                                data = activityViewModel.allLanguageNames,
+                                initialData = sourceLanguage.value.name,
+                                selectAction = { index ->
+                                    activityViewModel.sourceLanguage.value = allLanguages[index]
+                                    //JsConfig.SCRIPT_ENGINE.put("sourceLanguage",index)
+                                },
+                                label = stringResource(R.string.source_language)
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            ComposeSpinner(
+                                data = activityViewModel.allLanguageNames,
+                                initialData = targetLanguage.value.name,
+                                selectAction = { index ->
+                                    activityViewModel.targetLanguage.value = allLanguages[index]
+                                    //JsConfig.SCRIPT_ENGINE.put("targetLanguage",index)
+                                },
+                                label = stringResource(R.string.target_language)
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        Button(onClick = { settingArgumentsDialog.value = false }) {
+                            Text(text = stringResource(R.string.close))
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -444,10 +445,23 @@ fun Editor(
         viewModel.hasSaved = false
     }
 
-    Column(modifier) {
+    SubcomposeBottomFirstLayout(modifier, bottom = {
+        val symbols = viewModel.symbolsData
+        symbolChannel?.let { channel ->
+            LazyRow(
+                modifier = Modifier
+                    .padding(top = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                itemsIndexed(symbols) { _, item ->
+                    //Log.d(TAG, "ComposeSymbolInsert: channel:${channel}")
+                    ComposeSymbolInsertItem(symbolChannel = channel, symbol = item)
+                }
+            }
+        }
+    }) {
         DisposableEffect(key1 = editor) {
             onDispose {
-//                Log.d(TAG, "Editor: onDispose")
                 editor.hideAutoCompleteWindow()
                 editor.hideSoftInput()
             }
@@ -501,8 +515,7 @@ fun Editor(
                 }
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(if (symbolChannel == null) 100f else 95f),
+                .fillMaxSize(),
             update = {
                 it.colorScheme = scheme.value.scheme
                 if (textChange.value) {
@@ -519,17 +532,5 @@ fun Editor(
                 }
             }
         )
-        val symbols = viewModel.symbolsData
-        symbolChannel?.let { channel ->
-            LazyRow(
-                modifier = Modifier.weight(5f).padding(top = 2.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                itemsIndexed(symbols) { _, item ->
-                    //Log.d(TAG, "ComposeSymbolInsert: channel:${channel}")
-                    ComposeSymbolInsertItem(symbolChannel = channel, symbol = item)
-                }
-            }
-        }
     }
 }
