@@ -32,7 +32,7 @@ import kotlinx.coroutines.sync.withLock
 
 class MainViewModel : ViewModel() {
     var translateText by mutableStateOf("")
-    private val actualTransText: String
+    val actualTransText: String
         get() = translateText.trim().replace("#","").replace("&", "")
 
     var sourceLanguage by mutableDataSaverStateOf(

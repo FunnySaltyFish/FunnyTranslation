@@ -266,7 +266,7 @@ fun TextTransScreen() {
                     Column(
                         Modifier
                             .fillMaxSize()
-                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
+                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 0.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(8.dp))
@@ -369,7 +369,9 @@ private fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             resultList = vm.resultList,
-            showSnackbar = showSnackbar
+            showSnackbar = showSnackbar,
+            sourceLanguage = vm.sourceLanguage,
+            sourceText = vm.actualTransText
         )
     }
 }
@@ -688,6 +690,8 @@ private fun LanguageSelect(
 @Composable
 private fun TranslationList(
     modifier: Modifier,
+    sourceLanguage: Language,
+    sourceText: String,
     resultList: List<TranslationResult>,
     showSnackbar: (String) -> Unit,
 ) {
@@ -696,6 +700,28 @@ private fun TranslationList(
         modifier = modifier,
         verticalArrangement = spacedBy(4.dp),
     ) {
+        item {
+            Row(
+                Modifier
+                    .touchToScale()
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(16.dp)
+                    ).padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = stringResource(R.string.speak_source_string), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Spacer(modifier = Modifier.width(8.dp))
+                // 朗读原文
+                SpeakButton(
+                    text = sourceText,
+                    language = sourceLanguage,
+                    showSnackbar = showSnackbar
+                )
+            }
+        }
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
 //            Log.d(TAG, "TranslationList: $result")
             TranslationItem(
@@ -822,47 +848,11 @@ private fun TranslationItem(
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                val speakerState = rememberFrameAnimIconState(
-                    listOf(R.drawable.ic_speaker_2, R.drawable.ic_speaker_1),
+                SpeakButton(
+                    text = result.basicResult.trans.trim(),
+                    language = result.targetLanguage!!,
+                    showSnackbar = showSnackbar
                 )
-                val text = result.basicResult.trans.trim()
-                LaunchedEffect(AudioPlayer.currentPlayingText) {
-                    // 修正：当列表划出屏幕后state与实际播放不匹配的情况
-                    if (AudioPlayer.currentPlayingText != text && speakerState.isPlaying) {
-                        speakerState.reset()
-                    }
-                }
-                IconButton(
-                    onClick = {
-                        if (text == AudioPlayer.currentPlayingText) {
-                            speakerState.reset()
-                            AudioPlayer.pause()
-                        } else {
-                            speakerState.play()
-                            AudioPlayer.play(
-                                text,
-                                result.targetLanguage!!,
-                                onError = {
-                                    showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
-                                },
-                                onComplete = {
-                                    speakerState.reset()
-                                }
-                            )
-                        }
-                    }, modifier = Modifier
-//                        .then(Modifier.size(36.dp))
-                        .clip(CircleShape)
-                        .size(48.dp)
-                        .background(MaterialTheme.colorScheme.secondary)
-                ) {
-                    FrameAnimationIcon(
-                        state = speakerState,
-                        contentDescription = stringResource(id = R.string.speak),
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
                 if (!result.detailText.isNullOrEmpty()) {
                     Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
                         ExpandMoreButton(expand = expandDetail) {
@@ -882,4 +872,52 @@ private fun TranslationItem(
             }
         }
     }
+}
+
+@Composable
+private fun SpeakButton(
+    text: String,
+    language: Language,
+    showSnackbar: (String) -> Unit
+) {
+    val speakerState = rememberFrameAnimIconState(
+        listOf(R.drawable.ic_speaker_2, R.drawable.ic_speaker_1),
+    )
+    LaunchedEffect(AudioPlayer.currentPlayingText) {
+        // 修正：当列表划出屏幕后state与实际播放不匹配的情况
+        if (AudioPlayer.currentPlayingText != text && speakerState.isPlaying) {
+            speakerState.reset()
+        }
+    }
+    IconButton(
+        onClick = {
+            if (text == AudioPlayer.currentPlayingText) {
+                speakerState.reset()
+                AudioPlayer.pause()
+            } else {
+                speakerState.play()
+                AudioPlayer.play(
+                    text,
+                    language,
+                    onError = {
+                        showSnackbar(FunnyApplication.resources.getString(R.string.snack_speak_error))
+                    },
+                    onComplete = {
+                        speakerState.reset()
+                    }
+                )
+            }
+        }, modifier = Modifier
+            .clip(CircleShape)
+            .size(48.dp)
+            .background(MaterialTheme.colorScheme.secondary)
+    ) {
+        FrameAnimationIcon(
+            state = speakerState,
+            contentDescription = stringResource(id = R.string.speak),
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+
 }

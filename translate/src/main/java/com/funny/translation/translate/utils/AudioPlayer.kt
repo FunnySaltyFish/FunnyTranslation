@@ -6,8 +6,10 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.engine.TextTranslationEngines
 import java.io.IOException
 
@@ -32,6 +34,10 @@ object AudioPlayer {
         onInterrupt: ()->Unit = {},
         onError : (Exception)->Unit,
     ){
+        if (language == Language.AUTO) {
+            appCtx.toastOnUi("当前设置的语言为自动选择，请手动指定语言")
+            return
+        }
         val url = getUrl(word, language)
         Log.d(TAG, "play: url:$url")
         try {
@@ -66,14 +72,16 @@ object AudioPlayer {
         }
     }
 
-    private val languageMapping: Map<Language, String>
-        get() = TextTranslationEngines.BaiduNormal.languageMapping.apply {
-            this[Language.CHINESE_YUE] = "cte"
+    private val languageMapping: Map<Language, String> by lazy {
+            hashMapOf<Language, String>().apply {
+                putAll(TextTranslationEngines.BaiduNormal.languageMapping)
+                this[Language.CHINESE_YUE] = "cte"
+            }
         }
 
     private fun getUrl(word: String, language: Language) = String.format(
         "https://fanyi.baidu.com/gettts?lan=%s&text=%s&spd=3&source=wise",
-        languageMapping[language]?:"auto",
-        Uri.encode(word)
+        languageMapping[language] ?: "auto",
+        java.net.URLEncoder.encode(word, "UTF-8")
     )
 }
