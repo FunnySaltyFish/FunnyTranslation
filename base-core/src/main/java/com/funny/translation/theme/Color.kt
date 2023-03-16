@@ -1,15 +1,12 @@
 package com.funny.translation.theme
 import androidx.compose.ui.graphics.Color
 import com.funny.cmaterialcolors.MaterialColors
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 val ThemeStaticColors by lazy {
-    val colorClass = MaterialColors.Companion::class
-    val colorList = colorClass.members
-    colorList.sortedBy { it.name }.filter {
-        // 提取数字，找到大于500的
-        ("\\d+".toRegex().find(it.name)?.value?.toIntOrNull() ?: 0) > 500
-    }.map { it.call(MaterialColors) as Color }.toImmutableList()
+    persistentListOf(
+        MaterialColors.Red500, MaterialColors.Red700, MaterialColors.Red900, MaterialColors.Pink500, MaterialColors.Pink700, MaterialColors.Pink900, MaterialColors.Purple500, MaterialColors.Purple700, MaterialColors.Purple900, MaterialColors.DeepPurple500, MaterialColors.DeepPurple700, MaterialColors.DeepPurple900, MaterialColors.Indigo500, MaterialColors.Indigo700, MaterialColors.Indigo900, MaterialColors.Blue500, MaterialColors.Blue700, MaterialColors.Blue900, MaterialColors.LightBlue500, MaterialColors.LightBlue700, MaterialColors.LightBlue900, MaterialColors.Cyan500, MaterialColors.Cyan700, MaterialColors.Cyan900, MaterialColors.Teal500, MaterialColors.Teal700, MaterialColors.Teal900, MaterialColors.Green500, MaterialColors.Green700, MaterialColors.Green900, MaterialColors.LightGreen500, MaterialColors.LightGreen700, MaterialColors.LightGreen900, MaterialColors.Lime500, MaterialColors.Lime700, MaterialColors.Lime900, MaterialColors.Yellow500, MaterialColors.Yellow700, MaterialColors.Yellow900, MaterialColors.Amber500, MaterialColors.Amber700, MaterialColors.Amber900, MaterialColors.Orange500, MaterialColors.Orange700, MaterialColors.Orange900, MaterialColors.DeepOrange500, MaterialColors.DeepOrange700, MaterialColors.DeepOrange900, MaterialColors.Brown500, MaterialColors.Brown700, MaterialColors.Brown900, MaterialColors.Grey500, MaterialColors.Grey700, MaterialColors.Grey900, MaterialColors.BlueGrey500, MaterialColors.BlueGrey700, MaterialColors.BlueGrey900
+    )
 }
 
 val md_theme_light_primary = Color(0xFF0061A4)
