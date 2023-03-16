@@ -40,6 +40,8 @@
 #Debug保留
 -keep class com.funny.translation.debug.** {*;}
 
+-keepclassmembers class com.funny.cmaterialcolors.** {*;}
+
 # Keep Activity (for check update)
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Service
