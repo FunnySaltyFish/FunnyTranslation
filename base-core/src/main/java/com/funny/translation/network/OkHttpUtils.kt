@@ -7,18 +7,16 @@ import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.TranslateConfig
-import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.helper.JwtTokenRequired
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.sign.SignUtils
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.Invocation
 import java.io.IOException
 import java.net.URL
 import java.util.concurrent.TimeUnit
@@ -160,39 +158,44 @@ object OkHttpUtils {
     @JvmOverloads
     fun get(
         url: String,
-        headersMap: HashMap<String, String>? = null
+        headersMap: HashMap<String, String>? = null,
+        params: HashMap<String, String>? = null,
+        timeout: IntArray? = null // [connectTimeout, readTimeout, writeTimeout]
     ): String {
-        val requestBuilder = Request.Builder().url(url).get()
-        headersMap?.let {
-            requestBuilder.addHeaders(it)
-        }
-        val response = okHttpClient.newCall(requestBuilder.build()).execute()
+        val response = getResponse(url, headersMap, params, timeout)
         return response.body?.string() ?: ""
     }
 
     @JvmOverloads
     fun getRaw(
         url: String,
-        headersMap: HashMap<String, String>? = null
+        headersMap: HashMap<String, String>? = null,
+        params: HashMap<String, String>? = null,
+        timeout: IntArray? = null // [connectTimeout, readTimeout, writeTimeout]
     ): ByteArray {
-        val requestBuilder = Request.Builder().url(url).get()
-        headersMap?.let {
-            requestBuilder.addHeaders(it)
-        }
-        val response = okHttpClient.newCall(requestBuilder.build()).execute()
+        val response = getResponse(url, headersMap, params, timeout)
         return response.body?.bytes() ?: ByteArray(0)
     }
 
     @JvmOverloads
     fun getResponse(
         url: String,
-        headersMap: HashMap<String, String>? = null
+        headersMap: HashMap<String, String>? = null,
+        params: HashMap<String, String>? = null,
+        timeout: IntArray? = null // [connectTimeout, readTimeout, writeTimeout]
     ): Response {
-        val requestBuilder = Request.Builder().url(url).get()
+        val urlBuilder = url.toHttpUrl().newBuilder()
+        params?.let {
+            for ((key, value) in it) {
+                urlBuilder.addQueryParameter(key, value)
+            }
+        }
+        val requestBuilder = Request.Builder().url(urlBuilder.build()).get()
         headersMap?.let {
             requestBuilder.addHeaders(it)
         }
-        return okHttpClient.newCall(requestBuilder.build()).execute()
+        val client = getClient(timeout)
+        return client.newCall(requestBuilder.build()).execute()
     }
 
     @Throws(IOException::class)
@@ -200,7 +203,8 @@ object OkHttpUtils {
     fun postJSON(
         url: String,
         json: String,
-        headers: HashMap<String, String>? = null
+        headers: HashMap<String, String>? = null,
+        timeout: IntArray? = null
     ): String {
         val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
         val body: RequestBody = json.toRequestBody(JSON)
@@ -210,7 +214,7 @@ object OkHttpUtils {
         headers?.let {
             requestBuilder.addHeaders(headers)
         }
-        val response: Response = okHttpClient.newCall(requestBuilder.build()).execute()
+        val response: Response = getClient(timeout).newCall(requestBuilder.build()).execute()
         return response.body?.string() ?: ""
     }
 
@@ -218,7 +222,8 @@ object OkHttpUtils {
     fun postForm(
         url: String,
         form: HashMap<String, String>,
-        headers: HashMap<String, String>? = null
+        headers: HashMap<String, String>? = null,
+        timeout: IntArray? = null
     ): String {
         val builder = FormBody.Builder()
         for ((key, value) in form) {
@@ -231,14 +236,16 @@ object OkHttpUtils {
         headers?.let {
             requestBuilder.addHeaders(headers)
         }
-        val response: Response = okHttpClient.newCall(requestBuilder.build()).execute()
+        val response: Response = getClient(timeout).newCall(requestBuilder.build()).execute()
         return response.body?.string() ?: ""
     }
 
+    @JvmOverloads
     fun postMultiForm(
         url: String,
         body: RequestBody,
         headers: HashMap<String, String>? = null,
+        timeout: IntArray? = null
     ): String {
         val requestBuilder = Request.Builder()
             .url(url)
@@ -246,8 +253,24 @@ object OkHttpUtils {
         headers?.let {
             requestBuilder.addHeaders(headers)
         }
-        val response: Response = okHttpClient.newCall(requestBuilder.build()).execute()
+        val response: Response = getClient(timeout).newCall(requestBuilder.build()).execute()
         return response.body?.string() ?: ""
+    }
+
+    @JvmOverloads
+    fun getClient(timeout: IntArray? = null): OkHttpClient {
+        var client = okHttpClient
+        timeout?.let {
+            if (it.size == 3) {
+                Log.d(TAG, "getClient: reset timeout: ${it.joinToString()}")
+                client = okHttpClient.newBuilder()
+                    .connectTimeout(it[0].toLong(), TimeUnit.SECONDS)
+                    .readTimeout(it[1].toLong(), TimeUnit.SECONDS)
+                    .writeTimeout(it[2].toLong(), TimeUnit.SECONDS)
+                    .build()
+            }
+        }
+        return client
     }
 
     private fun Request.Builder.addHeaders(headers: Map<String, String>) {

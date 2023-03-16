@@ -1,5 +1,6 @@
 package com.funny.translation.js
 
+import androidx.annotation.Keep
 import com.funny.translation.debug.Debug
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
@@ -7,6 +8,7 @@ import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.core.JsInterface
 import com.funny.translation.js.extentions.messageWithDetail
+import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.allLanguages
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,9 @@ import org.mozilla.javascript.RhinoException
 import javax.script.ScriptException
 import kotlin.math.absoluteValue
 
+@Keep
 class JsEngine(val jsBean: JsBean) : JsInterface {
+
     private val patternResult = Regex("(\\W)result\\.")
 
     lateinit var funnyJS : NativeObject
@@ -25,6 +29,7 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
     fun eval(){
         with(SCRIPT_ENGINE) {
             put("funny", this@JsEngine)
+            put("http", OkHttpUtils)
             Language.values().forEach {
                 put("LANGUAGE_${it.name}",it)
             }

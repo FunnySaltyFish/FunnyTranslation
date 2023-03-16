@@ -37,7 +37,7 @@ interface JsInterface {
         headersMap : HashMap<String,String>? = null
     ) = OkHttpUtils.postForm(url, data, headersMap)
 
-    fun getOkHttpClient() = OkHttpUtils.okHttpClient
+    fun getOkHttpClient(timeout: IntArray? = null) = OkHttpUtils.getClient(timeout)
 
     fun log(obj : Any){
         val logStr = when(obj){
