@@ -5,7 +5,15 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
@@ -14,8 +22,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -34,7 +45,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
-import cn.qhplus.emo.photo.activity.*
+import cn.qhplus.emo.photo.activity.PhotoClipperActivity
+import cn.qhplus.emo.photo.activity.PhotoPickResult
+import cn.qhplus.emo.photo.activity.PhotoPickerActivity
+import cn.qhplus.emo.photo.activity.getPhotoClipperResult
+import cn.qhplus.emo.photo.activity.getPhotoPickResult
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.coil.CoilPhotoProvider
 import coil.compose.AsyncImage
@@ -47,6 +62,7 @@ import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
+import com.funny.translation.translate.activity.CustomPhotoClipperActivity
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
 import com.funny.translation.translate.animateComposable
 import com.funny.translation.translate.navigateSingleTop
@@ -80,16 +96,13 @@ fun UserProfileSettings(navHostController: NavHostController) {
         mutableStateOf(null)
     }
     val scope = rememberCoroutineScope()
-    var photoName by rememberSaveable {
-        mutableStateOf("")
-    }
 
     val clipperLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == RESULT_OK) {
             it.data?.getPhotoClipperResult()?.let { img ->
-                if (photoName == "") return@rememberLauncherForActivityResult
+                avatarPickResult.value ?: return@rememberLauncherForActivityResult
                 scope.launch {
-                    val avatarUrl = UserUtils.uploadUserAvatar(context, img.uri, photoName, img.width, img.height, activityVM.uid)
+                    val avatarUrl = UserUtils.uploadUserAvatar(context, img.uri, "avatar.jpg", img.width, img.height, activityVM.uid)
                     if (avatarUrl != ""){
                         activityVM.userInfo = activityVM.userInfo.copy(avatar_url = avatarUrl)
                         context.toastOnUi("头像上传成功！")
@@ -108,11 +121,11 @@ fun UserProfileSettings(navHostController: NavHostController) {
                 it.data?.getPhotoPickResult()?.let { result ->
                     avatarPickResult.value = result
                     val img = result.list[0]
-                    photoName = img.name
                     clipperLauncher.launch(
                         PhotoClipperActivity.intentOf(
                             context,
-                            CoilPhotoProvider(img.uri, ratio = img.ratio())
+                            CoilPhotoProvider(img.uri, ratio = img.ratio()),
+                            cls = PhotoClipperActivity::class.java,
                         )
                     )
                 }
@@ -123,7 +136,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
         Modifier
             .fillMaxSize()
             .padding(top = 24.dp, start = 12.dp, end = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = CenterHorizontally
     ) {
         val userInfo = AppConfig.userInfo.value
         Tile(
@@ -192,7 +205,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
         ) { index ->
             // 根据tag取出annotation并打印
             text.getStringAnnotations(tag = "url", start = index, end = index).firstOrNull()
-                ?.let { _ ->
+                ?.let {
                     QQUtils.joinQQGroup(context, "mlEwPbkeUQMuwoyp44lROPeD938exo56")
                 }
         }

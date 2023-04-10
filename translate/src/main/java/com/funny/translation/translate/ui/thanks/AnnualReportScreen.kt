@@ -2,9 +2,11 @@ package com.funny.translation.translate.ui.thanks
 
 import android.util.Log
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,8 +24,6 @@ import com.funny.compose.loading.LoadingState
 import com.funny.translation.AppConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.animatedGradientBackground
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -61,10 +61,10 @@ fun AnnualReportScreen() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnnualReport(vm : AnnualReportViewModel) {
-    VerticalPager(count = 6, modifier = Modifier
+    VerticalPager(pageCount = 6, modifier = Modifier
         .fillMaxSize()
         .animatedGradientBackground(
             MaterialColors.DeepPurple800, Color.Black
@@ -110,7 +110,7 @@ fun AnnualReport(vm : AnnualReportViewModel) {
          *        @译站 2022年度报告
          *
          */
-        when(currentPage){
+        when(page){
             0 -> AnnualReportPart1(loadingDuration = vm.loadingDuration, loadLatest = vm.shouldLoadLatest)
             1 -> AnnualReportPart2(totalTranslateTimes = vm.totalTranslateTimes, totalTranslateWords = vm.totalTranslateWords)
             2 -> AnnualReportPart3(earliestTime = vm.earliestTime, latestTime = vm.latestTime)

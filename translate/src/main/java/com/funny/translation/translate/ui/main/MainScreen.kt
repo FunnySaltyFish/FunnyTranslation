@@ -11,8 +11,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -74,7 +72,6 @@ import com.funny.translation.translate.ui.bean.RoundCornerConfig
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.ui.touchToScale
-import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -588,6 +585,7 @@ fun LanguageSelectRow(
 }
 
 
+@OptIn(ExperimentalLayoutApi::class)
 @ExperimentalAnimationApi
 @Composable
 private fun EngineSelect(
@@ -608,8 +606,7 @@ private fun EngineSelect(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            mainAxisSpacing = 8.dp,
-            crossAxisSpacing = 0.dp
+            horizontalArrangement = spacedBy(8.dp),
         ) {
             bindEngines.forEach { task ->
                 var taskSelected by rememberDataSaverState(
@@ -637,8 +634,7 @@ private fun EngineSelect(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                mainAxisSpacing = 8.dp,
-                crossAxisSpacing = 0.dp
+                horizontalArrangement = spacedBy(8.dp)
             ) {
                 jsEngines.forEach { task ->
                     var taskSelected by rememberDataSaverState(

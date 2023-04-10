@@ -113,7 +113,7 @@ dependencies {
     api 'androidx.annotation:annotation:1.5.0'
 
     // Import the Compose BOM
-    api platform('androidx.compose:compose-bom:2023.01.00')
+    api platform('androidx.compose:compose-bom:2023.03.00')
     api "androidx.compose.ui:ui"
     api "androidx.compose.material:material"
     api "androidx.compose.ui:ui-tooling"
@@ -126,12 +126,9 @@ dependencies {
     api "androidx.compose.material3:material3"
     api "androidx.compose.material3:material3-window-size-class"
 
-    def accompanist_version = "0.28.0"
-    api "com.google.accompanist:accompanist-insets:$accompanist_version"
+    def accompanist_version = "0.30.0"
     api "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
-    api "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     api "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
-    api "com.google.accompanist:accompanist-pager:$accompanist_version"
     api "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
     api "com.google.accompanist:accompanist-permissions:$accompanist_version"
     api project(path: ':jet-setting-core')

@@ -11,18 +11,19 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -39,15 +40,12 @@ import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 internal const val WIDTH_FRACTION = 0.8f
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginPage(
     navController: NavController,
@@ -100,10 +98,9 @@ fun LoginPage(
         }
         Spacer(modifier = Modifier.height(24.dp))
         HorizontalPager(
-            count = 2,
+            pageCount = 2,
             modifier = Modifier.fillMaxHeight(),
             state = pagerState,
-            verticalAlignment = Alignment.Top
         ) { page ->
             when (page) {
                 0 -> LoginForm(navController, vm, onLoginSuccess = onLoginSuccess)
