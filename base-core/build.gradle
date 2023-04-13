@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id "com.google.devtools.ksp" version "1.8.0-1.0.9"
+    id "com.google.devtools.ksp" version "1.8.10-1.0.9"
     id 'kotlinx-serialization'
 }
 
@@ -113,7 +113,7 @@ dependencies {
     api 'androidx.annotation:annotation:1.5.0'
 
     // Import the Compose BOM
-    api platform('androidx.compose:compose-bom:2023.03.00')
+    api platform("androidx.compose:compose-bom:${Versions.composeBomVersion}")
     api "androidx.compose.ui:ui"
     api "androidx.compose.material:material"
     api "androidx.compose.ui:ui-tooling"
@@ -141,15 +141,25 @@ dependencies {
 }
 
 task encryptFunnyJs(type: Exec) {
-    def assetsDir = android.sourceSets.main.assets.srcDirs[0]
     // 如果 funny_sign_v1_release 存在，则用它
-    def release = new File(assetsDir, "funny_sign_v1_release_template.js")
+    def release = new File(rootDir, "funny_sign_v1_release_template.js")
+    println("release.exists() = " + release.exists())
     if (release.exists()) {
         def filePath = release.absolutePath
+        def assetsDir = android.sourceSets.main.assets.srcDirs[0]
+        def targetFilePath = new File(assetsDir, "funny_sign_v1_release.js").absolutePath
         def versionCode = Versions.versionCode
-        commandLine "node", rootProject.file("encrypt_funny_js.js"), filePath, versionCode
+        commandLine "node", rootProject.file("encrypt_funny_js.js"), filePath, targetFilePath, versionCode
+    } else {
+        // just print FunnyTranslation OpenSource
+        // windows: cmd /c echo FunnyTranslation OpenSource
+        // linux: sh -c echo FunnyTranslation OpenSource
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            commandLine "cmd", "/c", "echo", "FunnyTranslation-OpenSource"
+        } else {
+            commandLine "sh", "-c", "echo", "FunnyTranslation-OpenSource"
+        }
     }
-
     standardOutput = new ByteArrayOutputStream()
     doLast {
         println('doLast encryptFunnyJs')

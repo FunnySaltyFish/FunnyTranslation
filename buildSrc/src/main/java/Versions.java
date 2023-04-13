@@ -36,7 +36,8 @@ public final class Versions {
     public static final String activityComposeVersion = "1.7.0-alpha02";
     public static final String lifeCycleViewModelComposeVersion = "2.5.1";
 
-    public static final String kotlinVersion = "1.8.0";
-    public static final String composeCompilerVersion = "1.4.0";
+    public static final String kotlinVersion = "1.8.10";
+    public static final String composeCompilerVersion = "1.4.4";
+    public static final String composeBomVersion = "2023.03.00";
 
 }

@@ -24,8 +24,7 @@ google_support.txt
 youdao_languages.txt
 baidu_languages.txt
 */...bfg-report/*
-高考英语3500词汇表-带音标.doc
 schemas/
 
 base-core/src/main/assets/funny_sign_v1_release.js
-base-core/src/main/assets/funny_sign_v1_release_template.js
+funny_sign_v1_release_template.js

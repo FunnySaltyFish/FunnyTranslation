@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id "com.google.devtools.ksp" version "1.8.0-1.0.9"
+    id "com.google.devtools.ksp" version "1.8.10-1.0.9"
     id 'kotlinx-serialization'
 }
 
@@ -136,7 +136,7 @@ dependencies {
 //    implementation "com.github.leavesCZY:Matisse:0.0.6"
 
     // 图片选择器
-    implementation "cn.qhplus.emo:photo-coil:0.4.1"
+    implementation "cn.qhplus.emo:photo-coil:0.6.0"
     // 图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
 

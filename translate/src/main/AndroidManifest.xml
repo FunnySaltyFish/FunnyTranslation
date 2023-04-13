@@ -4,6 +4,9 @@
     package="com.funny.translation.translate">
 
     <uses-sdk tools:overrideLibrary="cn.qhplus.emo.ui.core, cn.qhplus.emo.photo, cn.qhplus.emo.fs, cn.qhplus.emo.photo.coil" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
