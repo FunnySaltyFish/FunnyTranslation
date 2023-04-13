@@ -19,7 +19,7 @@
 - 支持单独设置应用语言
 
 您可以在以下途径获取最新版本：
-- [酷安](https://www.coolapk.com/apk/com.funny.translation)
+- [官网](https://www.funnysaltyfish.fun/trans/?source=github)
 - [此仓库](/translate/release/translate-release.apk)
 
 考虑到本应用的Star逐渐增多，且在某些地方一定程度上作为学习的项目，我最近也在加强它“一个可参考的开源项目”的属性。  
