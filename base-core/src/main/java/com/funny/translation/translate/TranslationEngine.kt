@@ -18,30 +18,3 @@ interface TranslationEngine {
 
     val taskClass : KClass<out CoreTranslationTask>
 }
-
-// 引擎本地持久化时的Key
-val TranslationEngine.selectKey
-    get() = this.name + "_SELECTED"
-
-
-//sealed class TranslationEngine(
-//        val name: String = "",
-//        val id: Int = 0,
-//        val supportLanguages: Array<Language> = getAllLanguages()
-//) {
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (javaClass != other?.javaClass) return false
-//
-//        other as TranslationEngine
-//
-//        if (id != other.id) return false
-//
-//        return true
-//    }
-//
-//    override fun hashCode(): Int {
-//        return id
-//    }
-//}
-//

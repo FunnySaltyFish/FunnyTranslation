@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.main
 
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -18,12 +17,14 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.ImageTranslationResult
 import com.funny.translation.translate.Language
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.engine.ImageTranslationEngines
-import com.funny.translation.translate.selectKey
+import com.funny.translation.translate.engine.selectKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ImageTransViewModel: ViewModel() {
@@ -32,17 +33,8 @@ class ImageTransViewModel: ViewModel() {
     private var translateJob: Job? = null
     var translateState: LoadingState<ImageTranslationResult> by mutableStateOf(LoadingState.Loading)
 
-    var sourceLanguage by mutableDataSaverStateOf(
-        DataSaverUtils,
-        "key_img_source_lang",
-        Language.ENGLISH
-    )
-
-    var targetLanguage by mutableDataSaverStateOf(
-        DataSaverUtils,
-        "key_img_target_lang",
-        Language.CHINESE
-    )
+    var sourceLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_img_source_lang", Language.ENGLISH)
+    var targetLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_img_target_lang", Language.CHINESE)
 
     var imgWidth = 0
     var imgHeight = 0
@@ -60,12 +52,11 @@ class ImageTransViewModel: ViewModel() {
         translateJob?.cancel()
         Log.d(TAG, "translate: start")
         translateJob = viewModelScope.launch(Dispatchers.IO) {
+            translateState = LoadingState.Loading
+            // 延迟一下再开始翻译，防止语言选的不对临时变更
+            delay(1000)
             kotlin.runCatching {
-                translateState = LoadingState.Loading
-                val img =  FunnyApplication.ctx.contentResolver.openInputStream(imageUri!!).use {
-                    BitmapFactory.decodeStream(it)
-                }
-                val bytes = BitmapUtil.compressImage(img,1024 * 1024)
+                val bytes = BitmapUtil.getBitmapFormUri(appCtx, 4096, 4096, 2 * 1024 * 1024, imageUri!!)
                 Log.d(TAG, "translate: imageSize: ${bytes.size}")
                 with(TranslateConfig){
                     this.sourceLanguage = this@ImageTransViewModel.sourceLanguage
@@ -74,7 +65,6 @@ class ImageTransViewModel: ViewModel() {
                 }
                 translateEngine.createTask(bytes, sourceLanguage, targetLanguage).apply {
                     this.translate()
-
                 }.result
             }.onSuccess {
                 val user = AppConfig.userInfo.value

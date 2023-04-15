@@ -24,6 +24,7 @@ import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TextTranslationEngines
+import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -76,7 +77,7 @@ class MainViewModel : ViewModel() {
                     addSelectedEngines(this)
                     initialSelected++
                 }
-                Log.d(ActivityViewModel.TAG, "${this.jsEngine.jsBean.fileName} selected:$selected ")
+                Log.d(TAG, "${this.jsEngine.jsBean.fileName} selected:$selected ")
             }
         }.sortedBy(SortResultUtils.defaultEngineSort).also { jsEngineInitialized = true }
     }
@@ -101,19 +102,19 @@ class MainViewModel : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.IO) {
             // 随应用升级，有一些插件可能后续转化为内置引擎，旧的插件需要删除
-            appDB.jsDao.getAllJs().collect {
-                it.forEach { jsBean ->
-                    if(DefaultData.isPluginBound(jsBean)) {
-                        appDB.jsDao.deleteJs(jsBean)
-                    }
+            appDB.jsDao.getAllJs().forEach { jsBean ->
+                if(DefaultData.isPluginBound(jsBean)) {
+                    appDB.jsDao.deleteJs(jsBean)
                 }
             }
 
             // 延时，等待插件加载完
             while (!jsEngineInitialized) {
+                Log.d(TAG, "init: wait jsEngineInitialized")
                 delay(100)
             }
 
+            Log.d(TAG, "initial selected: $initialSelected")
             if(initialSelected == 0) {
                 // 默认选两个
                 TextTranslationEngines.BaiduNormal.selected = true

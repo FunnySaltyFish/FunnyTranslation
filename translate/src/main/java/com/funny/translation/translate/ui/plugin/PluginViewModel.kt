@@ -27,7 +27,7 @@ class PluginViewModel : ViewModel() {
 
     val plugins : Flow<List<JsBean>>
         get() {
-            return appDB.jsDao.getAllJs()
+            return appDB.jsDao.getAllJsFlow()
         }
 
     var needToDeletePlugin: JsBean? by mutableStateOf(null)

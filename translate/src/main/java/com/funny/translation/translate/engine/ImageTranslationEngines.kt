@@ -1,9 +1,12 @@
 package com.funny.translation.translate.engine
 
-import com.funny.translation.translate.*
+import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.ImageTranslationTask
+import com.funny.translation.translate.Language
+import com.funny.translation.translate.R
+import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.task.ImageTranslationBaidu
 import com.funny.translation.translate.task.ImageTranslationTencent
-import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 

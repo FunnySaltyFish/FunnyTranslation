@@ -23,7 +23,7 @@ object SortResultUtils {
 //    val engineComparator = Comparator<Int> { o1, o2 -> o1 - o2 }
 
     suspend fun init(){
-        localEngines.value = (DefaultData.bindEngines.map { it.name } + appDB.jsDao.getAllJs().first().map { it.fileName })
+        localEngines.value = (DefaultData.bindEngines.map { it.name } + appDB.jsDao.getAllJsFlow().first().map { it.fileName })
         when(val json = DataSaverUtils.readData(Consts.KEY_SORT_RESULT,"")){
             "" -> initMapping(localEngines.value)
             else -> withContext(Dispatchers.IO){

@@ -7,7 +7,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface JsDao {
     @Query("select * from table_js")
-    fun getAllJs() : Flow<List<JsBean>>
+    fun getAllJsFlow() : Flow<List<JsBean>>
+
+    @Query("select * from table_js")
+    fun getAllJs() : List<JsBean>
 
     @Query("select * from table_js where enabled > 0")
     fun getEnabledJs() : Flow<List<JsBean>>
