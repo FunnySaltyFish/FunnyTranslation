@@ -239,15 +239,9 @@ open class AccompanistWebViewClient : WebViewClient() {
         val url = request?.url?.toString() ?: return true
 
         if (
-            url.startsWith("wechat://") || url.startsWith("weixin://") || url.startsWith("alipays://") || url.startsWith("alipay://") || url.startsWith("afd://")
+            !url.startsWith("http")
         ) {
             view ?: return true
-            // 关闭所有 WebView 页面
-//            while (view.canGoBack()) {
-//                Log.d(TAG, "shouldOverrideUrlLoading: goBack")
-//                view.goBack()
-//            }
-//            view.loadUrl("https://api.funnysaltyfish.fun/trans/v1/pay/paying_page")
             view.context?.openUrl(url)
             (view.context as? Activity)?.finish()
             return true

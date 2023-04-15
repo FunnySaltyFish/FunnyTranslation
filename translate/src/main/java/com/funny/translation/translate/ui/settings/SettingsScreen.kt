@@ -266,6 +266,13 @@ fun SettingsScreen() {
 
         ItemHeading(text = stringResource(id = R.string.about))
         JetSettingTile(
+            text = stringResource(R.string.join_qq_group),
+            resourceId = R.drawable.ic_qq,
+            iconTintColor = MaterialColors.Blue600
+        ) {
+            WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
+        }
+        JetSettingTile(
             text = stringResource(R.string.source_code),
             resourceId = R.drawable.ic_github,
             iconTintColor = MaterialColors.Purple700

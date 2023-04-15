@@ -116,4 +116,5 @@
     <string name="parallel_trans_desc">翻译时所有引擎同步翻译，大幅提高翻译速度</string>
     <string name="theme">主题</string>
     <string name="speak_source_string">朗读原文</string>
+    <string name="join_qq_group">加入Q群</string>
 </resources>
