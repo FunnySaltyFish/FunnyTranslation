@@ -23,6 +23,7 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
+import com.funny.translation.translate.engine.TextTranslationEngine
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.utils.SortResultUtils
@@ -90,7 +91,7 @@ class MainViewModel : ViewModel() {
         }
         it
     }.sortedBy(SortResultUtils.defaultEngineSort).let {
-        flowOf(it)
+        MutableStateFlow(it)
     }
 
     val transHistories = Pager(PagingConfig(pageSize = 10)) {
@@ -117,13 +118,7 @@ class MainViewModel : ViewModel() {
             Log.d(TAG, "initial selected: $initialSelected")
             if(initialSelected == 0) {
                 // 默认选两个
-                TextTranslationEngines.BaiduNormal.selected = true
-                TextTranslationEngines.Tencent.selected = true
-
-                DataSaverUtils.saveData(TextTranslationEngines.BaiduNormal.selectKey, true)
-                DataSaverUtils.saveData(TextTranslationEngines.Tencent.selectKey, true)
-
-                addSelectedEngines(TextTranslationEngines.BaiduNormal, TextTranslationEngines.Tencent)
+                addDefaultEngines(TextTranslationEngines.BaiduNormal, TextTranslationEngines.Tencent)
             }
         }
     }
@@ -137,6 +132,25 @@ class MainViewModel : ViewModel() {
         get() = selectedEngines.size
 
     private var translateJob: Job? = null
+
+    /**
+     * 当什么都不选时，添加默认的引擎
+     * @param engines Array<out TextTranslationEngines>
+     */
+    private fun addDefaultEngines(vararg engines: TextTranslationEngines) {
+        selectedEngines.addAll(engines)
+        engines.forEach {
+            it.selected = true
+            DataSaverUtils.saveData(it.selectKey, true)
+        }
+        viewModelScope.launch {
+            val oldBindEngines = bindEnginesFlow.value
+            val newBindEngines = oldBindEngines.map {
+                engines.find { engine -> engine.name == it.name } ?: it
+            }
+            bindEnginesFlow.emit(newBindEngines)
+        }
+    }
 
     fun addSelectedEngines(vararg engines: TranslationEngine) {
         Log.d(TAG, "addSelectedEngines: ${engines.joinToString{it.name}}")
