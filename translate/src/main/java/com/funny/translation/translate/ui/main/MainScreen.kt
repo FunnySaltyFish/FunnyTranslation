@@ -16,13 +16,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -224,89 +221,59 @@ fun TextTransScreen() {
                 }
             }
         } else {
-            val modalBottomSheetState =
-                rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-            ModalBottomSheetLayout(
-                sheetShape = RoundedCornerShape(
-                    topStart = 12.dp,
-                    topEnd = 12.dp
-                ), sheetState = modalBottomSheetState, sheetContent = {
+            var showEngineSelect by remember { mutableStateOf(false) }
+            if (showEngineSelect) {
+                AlertDialog(onDismissRequest = { showEngineSelect = false }, text =  {
                     EngineSelect(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(12.dp),
+                        modifier = Modifier,
                         bindEngines,
                         jsEngines,
                         updateSelectedEngine
                     )
-                }) {
-                if (AppConfig.sTransPageInputBottom.value) { // 如果输入框在下面
-                    SubcomposeBottomFirstLayout(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
-                            .imePadding(),
-                        other = {
-                            ResultPart(vm = vm, showSnackbar = showSnackbar)
-                        },
-                        bottom = {
-                            InputPart(
-                                vm = vm,
-                                showSnackbar = showSnackbar,
-                                modifier = Modifier.fillMaxWidth(),
-                                expandEngineSelect = {
-                                    scope.launch { modalBottomSheetState.show() }
-                                },
-                                updateShowListType = updateShowListType
-                            )
-                        }
-                    )
-                } else { // 输入框在上面
-                    Column(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 0.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                }, confirmButton = {
+                    TextButton(onClick = { showEngineSelect = false }) {
+                        Text(text = stringResource(id = R.string.confirm))
+                    }
+                })
+            }
+            if (AppConfig.sTransPageInputBottom.value) { // 如果输入框在下面
+                SubcomposeBottomFirstLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
+                        .imePadding(),
+                    other = {
+                        ResultPart(vm = vm, showSnackbar = showSnackbar)
+                    },
+                    bottom = {
                         InputPart(
-                            modifier = Modifier.fillMaxWidth(),
                             vm = vm,
                             showSnackbar = showSnackbar,
-                            expandEngineSelect = { scope.launch { modalBottomSheetState.show() } },
+                            modifier = Modifier.fillMaxWidth(),
+                            expandEngineSelect = { showEngineSelect = true },
                             updateShowListType = updateShowListType
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ResultPart(vm = vm, showSnackbar = showSnackbar)
                     }
+                )
+            } else { // 输入框在上面
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    InputPart(
+                        modifier = Modifier.fillMaxWidth(),
+                        vm = vm,
+                        showSnackbar = showSnackbar,
+                        expandEngineSelect = { showEngineSelect = true },
+                        updateShowListType = updateShowListType
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    ResultPart(vm = vm, showSnackbar = showSnackbar)
                 }
             }
-        }
-
-        var singleLine by remember {
-            mutableStateOf(true)
-        }
-        val notice by activityVM.noticeInfo
-        notice?.let {
-            NoticeBar(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentHeight(Alignment.Bottom)
-                    .clickable {
-                        if (it.url.isNullOrEmpty()) singleLine = !singleLine
-                        else WebViewActivity.start(context, it.url)
-                    }
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        RoundedCornerShape(8.dp)
-                    )
-                    .padding(8.dp)
-                    .animateContentSize(),
-                text = it.message,
-                singleLine = singleLine,
-                showClose = true,
-            )
         }
     }
 
@@ -434,7 +401,7 @@ private fun TransHistoryList(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun InputPart(
     modifier: Modifier,
@@ -467,9 +434,10 @@ private fun InputPart(
         }
         val selectedSize = selectedEngines.size
         if (selectedSize > Consts.MAX_SELECT_ENGINES) {
+            val resId = if (AppConfig.isVip()) R.string.message_out_of_max_engine_limit
+                else R.string.message_out_of_max_engine_limit_novip
             showSnackbar(
-                FunnyApplication.resources.getString(R.string.message_out_of_max_engine_limit)
-                    .format(Consts.MAX_SELECT_ENGINES, selectedSize)
+                appCtx.getString(resId).format(Consts.MAX_SELECT_ENGINES, selectedSize)
             )
             return
         }
@@ -546,6 +514,33 @@ private fun InputPart(
                     onClick = ::startTranslate
                 )
             }
+        }
+        var singleLine by remember {
+            mutableStateOf(true)
+        }
+        val activityVM = LocalActivityVM.current
+        val notice by activityVM.noticeInfo
+        notice?.let {
+            NoticeBar(
+                modifier = Modifier
+                    .clickable {
+                        if (it.url.isNullOrEmpty()) singleLine = !singleLine
+                        else WebViewActivity.start(context, it.url)
+                    }
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)
+                    .animateContentSize()
+                    .apply {
+                        if (singleLine) this.basicMarquee()
+                    }
+                ,
+                text = it.message,
+                singleLine = singleLine,
+                showClose = true,
+            )
         }
     }
 }

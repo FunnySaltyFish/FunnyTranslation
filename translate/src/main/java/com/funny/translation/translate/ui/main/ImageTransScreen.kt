@@ -244,7 +244,7 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                 isLongImage = photoProvider.isLongImage(),
                 onBeginPullExit = { false },
                 shouldTransitionExit = false,
-                onTapExit = { showResult = !showResult }
+                onTapExit = { if (vm.translateState.isSuccess) showResult = !showResult }
             ) { _, gestureScale, rect, onImageRatioEnsured ->
                 // imageGestureScale = gestureScale
                 // imageOffsetRect = rect

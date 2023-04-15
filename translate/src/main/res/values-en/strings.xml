@@ -116,4 +116,6 @@
     <string name="parallel_trans_desc">All engines translate synchronously during translation, greatly improving translation speed.</string>
     <string name="theme">Theme</string>
     <string name="speak_source_string">Read Original Text</string>
+    <string name="join_qq_group">Join QQ Group</string>
+    <string name="message_out_of_max_engine_limit_novip">You can only choose up to %d engines, upgrade to VIP to enjoy more</string>
 </resources>

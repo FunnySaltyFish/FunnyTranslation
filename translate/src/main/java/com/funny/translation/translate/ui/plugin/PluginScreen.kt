@@ -128,7 +128,7 @@ fun PluginScreen() {
                     .background(MaterialTheme.colorScheme.background))
             }
             loadingList(onlinePluginLoadingState, retryLoadOnlinePlugin, key = { it.fileName }) { jsBean ->
-                var onlinePluginState by remember {
+                var onlinePluginState by rememberSaveable {
                     vm.checkPluginState(jsBean)
                 }
                 OnlinePluginItem(
