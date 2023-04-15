@@ -1,6 +1,6 @@
 package com.funny.translation.translate.task
 
-import android.util.Log
+
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator.BASE_URL
 import com.funny.translation.translate.TranslationEngine
@@ -8,10 +8,10 @@ import com.funny.translation.translate.TranslationException
 import com.funny.translation.translate.engine.TextTranslationEngines
 import org.json.JSONObject
 
-class TextTranslationBaiduNormal :
-    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.BaiduNormal {
+class TextTranslationTencent :
+    BasicTextTranslationTask(), TranslationEngine by TextTranslationEngines.Tencent {
     companion object{
-        var TAG = "BaiduTranslation"
+        var TAG = "TencentTranslation"
     }
 
     @Throws(TranslationException::class)
@@ -25,7 +25,7 @@ class TextTranslationBaiduNormal :
             "source" to from,
             "target" to to,
             "text" to sourceString,
-            "engine" to "baidu"
+            "engine" to "tencent"
         )
         return OkHttpUtils.get(url, headersMap, params)
     }

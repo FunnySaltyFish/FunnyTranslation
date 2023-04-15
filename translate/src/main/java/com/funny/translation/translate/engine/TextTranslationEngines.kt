@@ -45,7 +45,8 @@ sealed class TextTranslationEngines : TextTranslationEngine() {
                 Language.PORTUGUESE to "pt",
                 Language.VIETNAMESE to "vie",
                 Language.ITALIAN to "it",
-                Language.CHINESE_YUE to "yue"
+                Language.CHINESE_YUE to "yue",
+                Language.SPANISH to "spa"
             )
 
         override val taskClass: KClass<out CoreTextTranslationTask> = TextTranslationBaiduNormal::class
@@ -118,11 +119,58 @@ sealed class TextTranslationEngines : TextTranslationEngine() {
                 Language.THAI to "th",
                 Language.PORTUGUESE to "pt",
                 Language.VIETNAMESE to "vi",
-                Language.ITALIAN to "it"
+                Language.ITALIAN to "it",
+                Language.SPANISH to "es"
             )
 
         override val taskClass: KClass<out CoreTextTranslationTask>
             get() = TextTranslationYouDaoNormal::class
+    }
+
+    object Tencent : TextTranslationEngines(){
+        override val name: String
+            get() = FunnyApplication.resources.getString(R.string.engine_tencent)
+
+        /**
+         *  auto：自动识别（识别为一种语言）
+            zh：简体中文
+            zh-TW：繁体中文
+            en：英语
+            ja：日语
+            ko：韩语
+            fr：法语
+            es：西班牙语
+            it：意大利语
+            de：德语
+            tr：土耳其语
+            ru：俄语
+            pt：葡萄牙语
+            vi：越南语
+            id：印尼语
+            th：泰语
+            ms：马来西亚语
+            ar：阿拉伯语
+            hi：印地语
+         */
+        override val languageMapping: Map<Language, String>
+            get() = mapOf(
+                Language.AUTO to "auto",
+                Language.CHINESE to "zh",
+                Language.ENGLISH to "en",
+                Language.JAPANESE to "ja",
+                Language.KOREAN to "ko",
+                Language.FRENCH to "fr",
+                Language.RUSSIAN to "ru",
+                Language.GERMANY to "de",
+                Language.THAI to "th",
+                Language.PORTUGUESE to "pt",
+                Language.VIETNAMESE to "vi",
+                Language.ITALIAN to "it",
+                Language.SPANISH to "es",
+            )
+
+        override val taskClass: KClass<out CoreTextTranslationTask>
+            get() = TextTranslationTencent::class
     }
 
     object BiggerText : TextTranslationEngines(){

@@ -92,8 +92,6 @@ class MainViewModel : ViewModel() {
         flowOf(it)
     }
 
-//    val transHistoryPagingSource = TransHistoryPagingSource(appDB.transHistoryDao)
-
     val transHistories = Pager(PagingConfig(pageSize = 10)) {
         appDB.transHistoryDao.queryAllPaging()
     }.flow.cachedIn(viewModelScope)
@@ -101,20 +99,30 @@ class MainViewModel : ViewModel() {
     private val mutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            // 随应用升级，有一些插件可能后续转化为内置引擎，旧的插件需要删除
+            appDB.jsDao.getAllJs().collect {
+                it.forEach { jsBean ->
+                    if(DefaultData.isPluginBound(jsBean)) {
+                        appDB.jsDao.deleteJs(jsBean)
+                    }
+                }
+            }
+
             // 延时，等待插件加载完
             while (!jsEngineInitialized) {
                 delay(100)
             }
+
             if(initialSelected == 0) {
                 // 默认选两个
                 TextTranslationEngines.BaiduNormal.selected = true
-                TextTranslationEngines.Youdao.selected = true
+                TextTranslationEngines.Tencent.selected = true
 
                 DataSaverUtils.saveData(TextTranslationEngines.BaiduNormal.selectKey, true)
-                DataSaverUtils.saveData(TextTranslationEngines.Youdao.selectKey, true)
+                DataSaverUtils.saveData(TextTranslationEngines.Tencent.selectKey, true)
 
-                addSelectedEngines(TextTranslationEngines.BaiduNormal, TextTranslationEngines.Youdao)
+                addSelectedEngines(TextTranslationEngines.BaiduNormal, TextTranslationEngines.Tencent)
             }
         }
     }
@@ -215,7 +223,7 @@ class MainViewModel : ViewModel() {
     }
 
     private suspend fun translateInParallel() {
-        var tasks: ArrayList<Deferred<*>> = arrayListOf()
+        val tasks: ArrayList<Deferred<*>> = arrayListOf()
         createFlow(true).buffer().collect { task ->
             tasks.add(viewModelScope.async {
                 try {

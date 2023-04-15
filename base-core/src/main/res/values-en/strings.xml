@@ -14,4 +14,7 @@
     <string name="language_italian">Italian</string>
     <string name="language_vietnamese">Vietnamese</string>
     <string name="language_chinese_yue">Cantonese</string>
+    <string name="request_permission">Request Permissions</string>
+    <string name="confirm">Confirm</string>
+    <string name="language_spanish">Spanish</string>
 </resources>

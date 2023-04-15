@@ -15,31 +15,12 @@ import kotlin.properties.Delegates
 
 object DefaultData {
     private val TAG = "DefaultData"
-    suspend fun getDefaultJsList(scope: CoroutineScope): List<JsBean> {
-        var arr by Delegates.notNull<List<JsBean>>()
-        Log.d(TAG, "getDefaultJsList: 开始执行")
-        scope.launch {
-            withContext(Dispatchers.IO) {
-                val fileNames = arrayOf("谷歌翻译实现.js")
-                arr = fileNames.map {
-                    val code = FunnyApplication.ctx.readAssets(it)
-                    val jsBean = JsBean(code = code)
-                    val jsEngine = JsEngine(jsBean)
-                    jsEngine.loadBasicConfigurations({
-                        Log.d(TAG, "getDefaultJsList: 加载js引擎完毕")
-                    }, { e ->
-                        Log.d(TAG, "loadDefaultData Failed!: ${e.message}")
-                    })
-                    jsEngine.jsBean
-                }
-            }
-        }.join()
-        Log.d(TAG, "getDefaultJsList: 准备返回js引擎列表")
-        return arr
-    }
+
+    fun isPluginBound(jsBean: JsBean) = bindEngines.any { it.name == jsBean.fileName }
 
     val bindEngines = listOf(
         TextTranslationEngines.BaiduNormal,
+        TextTranslationEngines.Tencent,
         TextTranslationEngines.Youdao,
         TextTranslationEngines.Jinshan,
 

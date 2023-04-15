@@ -15,14 +15,18 @@ class TextTranslationYouDaoNormal :
 
     @Throws(TranslationException::class)
     override fun getBasicText(url: String): String {
-        val from = languageMapping[sourceLanguage]
-        val to = languageMapping[targetLanguage]
+        val from = languageMapping[sourceLanguage] ?: "auto"
+        val to = languageMapping[targetLanguage] ?: "zh"
         val headersMap = hashMapOf(
             "Referer" to "FunnyTranslation"
         )
-        val apiUrl = "$url?text=$sourceString&engine=youdao&source=$from&target=$to"
-        //        Log.i(TAG, "youdao api获取到的基本result是$transResult");
-        return OkHttpUtils.get(apiUrl, headersMap)
+        val params = hashMapOf(
+            "source" to from,
+            "target" to to,
+            "text" to sourceString,
+            "engine" to "youdao"
+        )
+        return OkHttpUtils.get(url, headersMap, params)
     }
 
     @Throws(TranslationException::class)

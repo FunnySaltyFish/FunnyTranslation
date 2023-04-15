@@ -10,6 +10,7 @@ import com.funny.translation.helper.coroutine.Coroutine.Companion.async
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
+import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.utils.SortResultUtils
@@ -93,6 +94,10 @@ class PluginViewModel : ViewModel() {
 
     fun installOrUpdatePlugin(jsBean: JsBean, successCall: (String) -> Unit, failureCall: (String) -> Unit){
         viewModelScope.launch(Dispatchers.IO) {
+            if (DefaultData.isPluginBound(jsBean)) {
+                failureCall("App已内置有同名插件【${jsBean.fileName}】")
+                return@launch
+            }
             if(jsBean.minSupportVersion <= JsConfig.JS_ENGINE_VERSION){
                 if(appDB.jsDao.queryJsByName(jsBean.fileName)!=null){ //更新
                     updatePlugin(jsBean)
@@ -114,7 +119,7 @@ class PluginViewModel : ViewModel() {
                     }else successCall("添加成功！")
                 }
             }else{
-                failureCall("插件版本与引擎核心不兼容，请联系插件开发者解决！")
+                failureCall("此插件需要最新版App才能使用，请更新应用！")
             }
         }
     }

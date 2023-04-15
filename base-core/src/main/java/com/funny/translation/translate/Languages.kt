@@ -23,7 +23,9 @@ enum class Language(val id : Int,var displayText : String = "") {
     PORTUGUESE(10),
     VIETNAMESE(11),
     ITALIAN(12),
-    CHINESE_YUE(13) // 粤语
+    CHINESE_YUE(13), // 粤语
+    // 西班牙语
+    SPANISH(14),
     ;
 
     val selectedKey get() = this.name + "_selected"
@@ -55,6 +57,7 @@ fun initLanguageDisplay(resources : Resources){
     Language.VIETNAMESE.displayText = resources.getString(R.string.language_vietnamese)
     Language.ITALIAN.displayText = resources.getString(R.string.language_italian)
     Language.CHINESE_YUE.displayText = resources.getString(R.string.language_chinese_yue)
+    Language.SPANISH.displayText = resources.getString(R.string.language_spanish)
 }
 
 
