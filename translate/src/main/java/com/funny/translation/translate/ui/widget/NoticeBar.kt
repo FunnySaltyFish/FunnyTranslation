@@ -2,7 +2,9 @@ package com.funny.translation.translate.ui.widget
 
 import android.util.Log
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +27,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-// 来自 https://github.com/yangqi1024/jetpack-compose-ui/
+// 改自 https://github.com/yangqi1024/jetpack-compose-ui/
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoticeBar(
     modifier: Modifier,
@@ -39,25 +43,9 @@ fun NoticeBar(
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     overflow: TextOverflow = TextOverflow.Ellipsis
 ) {
-
-    var show by remember {
+    var show by rememberSaveable {
         mutableStateOf(true)
     }
-    val rememberInfiniteTransition = rememberInfiniteTransition()
-    var animProgress by remember {
-        mutableStateOf(0f)
-    }
-    if(scrollable){
-        animProgress = rememberInfiniteTransition.animateFloat(
-            initialValue = 0f, targetValue = -1000f, animationSpec = infiniteRepeatable(
-                tween(
-                    5000,
-                    easing = LinearEasing
-                )
-            )
-        ).value
-    }
-//    Log.d("NoticeBar","animProgress:${animProgress}")
 
 
     if (show) {
@@ -80,8 +68,8 @@ fun NoticeBar(
                 overflow = overflow,
                 maxLines = if (singleLine) 1 else Int.MAX_VALUE,
                 modifier = Modifier
-                    .graphicsLayer{
-                        translationX = animProgress
+                    .apply {
+                        if (scrollable) this.basicMarquee()
                     }
                     .weight(1f)
                     .padding(horizontal = 5.dp),

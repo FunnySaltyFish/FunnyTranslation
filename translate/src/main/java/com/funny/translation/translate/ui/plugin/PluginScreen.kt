@@ -169,7 +169,8 @@ fun PluginScreen() {
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(0.45f),
-                    verticalArrangement = spacedBy(8.dp)
+                    verticalArrangement = spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 8.dp)
                 ){
                     localPluginPartWrapper()
                 }
@@ -178,7 +179,8 @@ fun PluginScreen() {
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(0.45f),
-                    verticalArrangement = spacedBy(8.dp)
+                    verticalArrangement = spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 8.dp)
                 ){
                     onlinePluginListWrapper()
                 }
@@ -194,6 +196,7 @@ fun PluginScreen() {
                     .fillMaxSize()
                     .padding(start = 24.dp, end = 24.dp, top = 16.dp),
                 verticalArrangement = spacedBy(8.dp),
+                contentPadding = PaddingValues(bottom = 8.dp),
                 state = lazyListState
             ) {
                 localPluginPartWrapper()
