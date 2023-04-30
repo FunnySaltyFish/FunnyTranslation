@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tomlonghurst.roundimageview.RoundImageView
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:id="@+id/float_ball_image"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     >
 
+    <!-- "+" 图标 -->
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@mipmap/ic_launcher_ada"
-        android:alpha="0.7"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/float_ball" />
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/ic_angle_left_top"
+        android:contentDescription="Left-top"
+        android:id="@+id/float_ball_plus"
+        />
 
-</com.tomlonghurst.roundimageview.RoundImageView>
+    <com.tomlonghurst.roundimageview.RoundImageView
+        android:id="@+id/float_ball_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+
+        >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:contentDescription="@string/float_ball"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher_ada" />
+
+    </com.tomlonghurst.roundimageview.RoundImageView>
+</FrameLayout>

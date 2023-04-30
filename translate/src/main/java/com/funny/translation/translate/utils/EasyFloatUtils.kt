@@ -24,10 +24,7 @@ import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
 import com.lzf.easyfloat.interfaces.OnPermissionResult
-import com.lzf.easyfloat.interfaces.OnTouchRangeListener
 import com.lzf.easyfloat.permission.PermissionUtils
-import com.lzf.easyfloat.utils.DragUtils
-import com.lzf.easyfloat.widget.BaseSwitchView
 import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,12 +32,14 @@ import kotlin.math.min
 
 
 object EasyFloatUtils {
-    const val TAG_FLOAT_BALL = "ball"
+    private const val TAG_FLOAT_BALL = "ball"
     private const val TAG_TRANS_WINDOW = "window"
+
     private const val TAG = "EasyFloat"
     private var vibrating = false
     var initTransWindow = false
     var initFloatBall = false
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private var translateConfigFlow =
         MutableStateFlow(TranslationConfig("", Language.AUTO, Language.CHINESE))
@@ -60,7 +59,7 @@ object EasyFloatUtils {
 
         val edittext = view.findViewById<EditText>(R.id.float_window_input)
 
-        GlobalScope.launch {
+        coroutineScope.launch {
             inputTextFlow.collect {
                 withContext(Dispatchers.Main){
                     edittext.setText(it)
@@ -121,7 +120,7 @@ object EasyFloatUtils {
                 }
             }
 
-        GlobalScope.launch {
+        coroutineScope.launch {
             enabledLanguages.collect {
                 withContext(Dispatchers.Main){
                     spinnerSource.adapter = ArrayAdapter<String>(FunnyApplication.ctx, R.layout.view_spinner_text_item).apply {
@@ -173,7 +172,7 @@ object EasyFloatUtils {
             }
         }
 
-        translateJob = GlobalScope.launch(Dispatchers.IO) {
+        translateJob = coroutineScope.launch(Dispatchers.IO) {
             translateConfigFlow.collect {
                 kotlin.runCatching {
                     if (it.sourceString!=null && it.sourceString!="") {
@@ -289,6 +288,7 @@ object EasyFloatUtils {
         if(initFloatBall){
             EasyFloat.show(TAG_FLOAT_BALL)
         }else {
+            var plusView: View? = null
             EasyFloat.with(FunnyApplication.ctx)
                 .setTag(TAG_FLOAT_BALL)
                 .setLayout(R.layout.layout_float_ball) { view ->
@@ -297,37 +297,49 @@ object EasyFloatUtils {
                             showTransWindow()
                         }
                     }
+                    plusView = view.findViewById<ImageView>(R.id.float_ball_plus).apply {
+                        alpha = 0.5f
+                    }
                 }
                 .setShowPattern(ShowPattern.ALL_TIME)
                 .setSidePattern(SidePattern.RESULT_HORIZONTAL)
                 .setImmersionStatusBar(true)
                 .setGravity(Gravity.END or Gravity.BOTTOM, -20, -200)
                 .registerCallback {
-                    drag { _, motionEvent ->
-                        DragUtils.registerDragClose(motionEvent, object : OnTouchRangeListener {
-                            override fun touchInRange(inRange: Boolean, view: BaseSwitchView) {
-                                setVibrator(inRange)
-                                view.findViewById<TextView>(com.lzf.easyfloat.R.id.tv_delete).text =
-                                    if (inRange) "松手删除" else "删除浮窗"
-
-                                view.findViewById<ImageView>(com.lzf.easyfloat.R.id.iv_delete)
-                                    .setImageResource(
-                                        if (inRange) com.lzf.easyfloat.R.drawable.icon_delete_selected
-                                        else com.lzf.easyfloat.R.drawable.icon_delete_normal
-                                    )
-                            }
-
-                            override fun touchUpInRange() {
-                                EasyFloat.dismiss(TAG_FLOAT_BALL)
-                                initFloatBall = false
-                            }
-                        }, showPattern = ShowPattern.ALL_TIME)
+                    drag { view, motionEvent ->
+                        FloatScreenCaptureUtils.registerDrag(
+                            plusView = plusView, motionEvent = motionEvent
+                        )
+                        // 截屏的时候就不判定删除了
+                        if (FloatScreenCaptureUtils.whetherInScreenCaptureMode) return@drag
+//                        DragUtils.registerDragClose(motionEvent, object : OnTouchRangeListener {
+//                            override fun touchInRange(inRange: Boolean, view: BaseSwitchView) {
+//                                setVibrator(inRange)
+//                                view.findViewById<TextView>(com.lzf.easyfloat.R.id.tv_delete).text =
+//                                    if (inRange) "松手删除" else "删除浮窗"
+//
+//                                view.findViewById<ImageView>(com.lzf.easyfloat.R.id.iv_delete)
+//                                    .setImageResource(
+//                                        if (inRange) com.lzf.easyfloat.R.drawable.icon_delete_selected
+//                                        else com.lzf.easyfloat.R.drawable.icon_delete_normal
+//                                    )
+//                            }
+//
+//                            override fun touchUpInRange() {
+//                                EasyFloat.dismiss(TAG_FLOAT_BALL)
+//                                initFloatBall = false
+//                            }
+//                        }, showPattern = ShowPattern.ALL_TIME)
+                    }
+                    dragEnd {
+                        FloatScreenCaptureUtils.registerDragEnd(plusView)
                     }
                 }
                 .show()
             initFloatBall = true
         }
     }
+
 
     fun showFloatBall(activity : Activity){
         if(!PermissionUtils.checkPermission(FunnyApplication.ctx)) {
@@ -355,6 +367,7 @@ object EasyFloatUtils {
     fun dismissAll(){
         EasyFloat.dismiss(TAG_TRANS_WINDOW)
         EasyFloat.dismiss(TAG_FLOAT_BALL)
+        FloatScreenCaptureUtils.dismiss()
         translateJob?.cancel()
     }
 
