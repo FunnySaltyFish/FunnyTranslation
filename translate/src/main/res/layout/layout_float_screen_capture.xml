@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@android:color/darker_gray"
     xmlns:tools="http://schemas.android.com/tools"
     >
 
@@ -26,20 +25,23 @@
         >
 
         <!-- 取消按钮 -->
-        <Button
+        <ImageButton
             android:id="@+id/cancel_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="取消" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_x"
+            android:layout_marginEnd="3dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:contentDescription="OK" />
 
         <!-- 确定按钮 -->
-        <Button
+        <ImageButton
             android:id="@+id/confirm_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="确定" />
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_ok"
+            style="?android:attr/buttonBarButtonStyle" />
+
     </LinearLayout>
 
 </FrameLayout>

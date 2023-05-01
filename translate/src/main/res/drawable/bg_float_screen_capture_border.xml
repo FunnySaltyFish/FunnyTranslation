@@ -6,7 +6,7 @@
 
     <!-- 边框及其样式 -->
     <stroke
-        android:width="4dp"
+        android:width="2dp"
         android:color="#00A8E8"
         android:dashWidth="10dp"
         android:dashGap="10dp" />
