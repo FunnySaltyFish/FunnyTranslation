@@ -6,14 +6,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.handler.runOnUI
@@ -174,11 +166,4 @@ object FloatScreenCaptureUtils {
     internal fun dismiss(){
         EasyFloat.dismiss(TAG_SCREEN_CAPTURE_WINDOW)
     }
-}
-
-@Composable
-fun ScreenCaptureWindow(
-
-) {
-
 }
