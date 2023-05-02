@@ -24,6 +24,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -35,12 +37,15 @@ import com.funny.compose.loading.LoadingState
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.Language
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
 import com.funny.translation.translate.ui.widget.CustomCoilProvider
+import com.funny.translation.translate.ui.widget.ExchangeButton
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yalantis.ucrop.UCrop
@@ -153,6 +158,41 @@ fun ImageTransScreen(
 
     }
 
+}
+
+@Composable
+private fun LanguageSelectRow(
+    modifier: Modifier,
+    exchangeButtonTint: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    sourceLanguage: Language,
+    updateSourceLanguage: (Language) -> Unit,
+    targetLanguage: Language,
+    updateTargetLanguage: (Language) -> Unit,
+    enabledLanguages: List<Language>,
+) {
+    Row(modifier.horizontalScroll(rememberScrollState())) {
+        LanguageSelect(
+            Modifier.semantics {
+                contentDescription = appCtx.getString(R.string.des_current_source_lang)
+            },
+            language = sourceLanguage,
+            languages = enabledLanguages,
+            updateLanguage = updateSourceLanguage
+        )
+        ExchangeButton(tint = exchangeButtonTint) {
+            val temp = sourceLanguage
+            updateSourceLanguage(targetLanguage)
+            updateTargetLanguage(temp)
+        }
+        LanguageSelect(
+            Modifier.semantics {
+                contentDescription = appCtx.getString(R.string.des_current_target_lang)
+            },
+            language = targetLanguage,
+            languages = enabledLanguages,
+            updateLanguage = updateTargetLanguage
+        )
+    }
 }
 
 @Composable

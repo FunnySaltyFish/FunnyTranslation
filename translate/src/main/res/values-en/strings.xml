@@ -35,7 +35,7 @@
     <string name="create_plugin">New Plugin</string>
     <string name="bind_engine">Build-in engines</string>
     <string name="plugin_engine">Plugin Engine</string>
-    <string name="set_engine">Set Engine</string>
+    <string name="engine_select">Set Engine</string>
     <string name="nav_thanks">Thanks</string>
     <string name="thanks">Thanks</string>
     <string name="join_sponsor">Sponsor us</string>

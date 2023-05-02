@@ -29,6 +29,7 @@ import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.TransTheme
+import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
@@ -36,7 +37,6 @@ import com.funny.translation.translate.ui.settings.*
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
-import com.funny.translation.translate.ui.widget.CustomNavigation
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -45,7 +45,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"
-val LocalNavController = staticCompositionLocalOf<NavController> {
+val LocalNavController = staticCompositionLocalOf<NavHostController> {
     error("NavController has not been initialized! ")
 }
 val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> {
@@ -114,29 +114,6 @@ fun AppNavigation(
     ) {
         TransTheme {
             Scaffold(
-                bottomBar = {
-                    val currentScreen = navController.currentScreenAsState()
-                    CustomNavigation(
-                        modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
-                        screens = arrayOf(
-                            TranslateScreen.MainScreen,
-                            TranslateScreen.PluginScreen,
-                            TranslateScreen.SettingScreen,
-                            TranslateScreen.ThanksScreen
-                        ),
-                        currentScreen = currentScreen.value
-                    ) { screen ->
-                        if (screen == currentScreen) return@CustomNavigation
-
-                        val currentRoute = navBackStackEntry?.destination?.route
-                        Log.d(TAG, "AppNavigation: $currentRoute")
-
-                        //currentScreen = screen
-                        navController.navigateSingleTop(route = screen.route)
-                    }
-                },
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
                 }
@@ -157,36 +134,13 @@ fun AppNavigation(
                     )) {
                         MainScreen()
                     }
-                    navigation(
-                        startDestination = TranslateScreen.SettingScreen.route,
-                        route = "nav_1_setting",
-                    ) {
-                        composable(TranslateScreen.SettingScreen.route) {
-                            SettingsScreen()
-                        }
-                        animateComposable(
-                            TranslateScreen.AboutScreen.route,
-                        ) {
-                            AboutScreen()
-                        }
-                        animateComposable(
-                            TranslateScreen.ThemeScreen.route,
-                        ) {
-                            ThemeScreen()
-                        }
-                        animateComposable(
-                            TranslateScreen.SortResultScreen.route,
-                        ) {
-                            SortResult(Modifier.fillMaxSize())
-                        }
-                        animateComposable(
-                            TranslateScreen.SelectLanguageScreen.route
-                        ) {
-                            SelectLanguage(modifier = Modifier.fillMaxSize())
-                        }
+                    animateComposable(TranslateScreen.ImageTranslateScreen.route) {
+                        ImageTransScreen(Modifier.fillMaxSize())
                     }
 
-                    composable(TranslateScreen.PluginScreen.route) {
+                    addSettingsNavigation()
+
+                    animateComposable(TranslateScreen.PluginScreen.route) {
                         PluginScreen()
                     }
                     navigation(startDestination = TranslateScreen.ThanksScreen.route, route = "nav_1_thanks") {
@@ -235,6 +189,38 @@ fun AppNavigation(
         }
     }
 
+}
+
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.addSettingsNavigation() {
+    navigation(
+        startDestination = TranslateScreen.SettingScreen.route,
+        route = "nav_1_setting",
+    ) {
+        composable(TranslateScreen.SettingScreen.route) {
+            SettingsScreen()
+        }
+        animateComposable(
+            TranslateScreen.AboutScreen.route,
+        ) {
+            AboutScreen()
+        }
+        animateComposable(
+            TranslateScreen.ThemeScreen.route,
+        ) {
+            ThemeScreen()
+        }
+        animateComposable(
+            TranslateScreen.SortResultScreen.route,
+        ) {
+            SortResult(Modifier.fillMaxSize())
+        }
+        animateComposable(
+            TranslateScreen.SelectLanguageScreen.route
+        ) {
+            SelectLanguage(modifier = Modifier.fillMaxSize())
+        }
+    }
 }
 
 fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = true){
@@ -291,6 +277,8 @@ fun NavGraphBuilder.animateComposable(
     }
 }
 
+// 下面这个方法是配合底部导航栏使用的，但是新版去除了底部导航栏
+// 请将代码切到v2.6.1以查看它的效果
 @Stable
 @Composable
 private fun NavHostController.currentScreenAsState(): MutableState<TranslateScreen> {
