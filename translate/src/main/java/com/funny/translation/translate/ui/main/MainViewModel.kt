@@ -14,7 +14,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
-import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
@@ -23,7 +22,6 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
-import com.funny.translation.translate.engine.TextTranslationEngine
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.utils.SortResultUtils
@@ -33,45 +31,28 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class MainViewModel : ViewModel() {
-    var translateText by mutableStateOf("")
-    fun updateTranslateText(text: String) { translateText = text }
+    // 全局UI状态
+    var currentState: MainScreenState by mutableStateOf(MainScreenState.Normal)
+    var showListType: ShowListType by mutableStateOf(ShowListType.History)
 
+    var translateText by mutableStateOf("")
     val actualTransText: String
         get() = translateText.trim().replace("#","").replace("&", "")
 
-    var sourceLanguage by mutableDataSaverStateOf(
-        DataSaverUtils,
-        "key_source_lang",
-        findLanguageById(
-            DataSaverUtils.readData(
-                Consts.KEY_SOURCE_LANGUAGE,
-                Language.ENGLISH.id
-            )
-        )
-    )
-
-    var targetLanguage by mutableDataSaverStateOf(
-        DataSaverUtils,
-        "key_target_lang",
-        findLanguageById(
-            DataSaverUtils.readData(
-                Consts.KEY_TARGET_LANGUAGE,
-                Language.CHINESE.id
-            )
-        )
-    )
-
-    fun updateSourceLanguage(language: Language){ sourceLanguage = language }
-    fun updateTargetLanguage(language: Language){ targetLanguage = language }
-
-
+    var sourceLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_source_lang", Language.ENGLISH)
+    var targetLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_target_lang", Language.CHINESE)
+    val resultList = mutableStateListOf<TranslationResult>()
+    var progress by mutableStateOf(100f)
     var selectedEngines: HashSet<TranslationEngine> = hashSetOf()
-    private var initialSelected = 0
 
+    // 一些私有变量
+    private var translateJob: Job? = null
     private var jsEngineInitialized = false
+    private var initialSelected = 0
+    private val mutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
+    private val totalProgress: Int get() = selectedEngines.size
 
-    var showListType: ShowListType by mutableStateOf(ShowListType.History)
-
+    // 下面是一些需要计算的变量，比如流和列表
     val jsEnginesFlow : Flow<List<JsTranslateTaskText>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
         list.map {
             JsTranslateTaskText(jsEngine = JsEngine(jsBean = it)).apply {
@@ -100,8 +81,6 @@ class MainViewModel : ViewModel() {
         appDB.transHistoryDao.queryAllPaging()
     }.flow.cachedIn(viewModelScope)
 
-    private val mutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
             // 随应用升级，有一些插件可能后续转化为内置引擎，旧的插件需要删除
@@ -125,15 +104,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // 下面是各种配套的 update 方法
+    fun updateTranslateText(text: String) { translateText = text }
+    fun updateSourceLanguage(language: Language) { sourceLanguage = language }
+    fun updateTargetLanguage(language: Language) { targetLanguage = language }
+    fun updateMainScreenState(state: MainScreenState) { currentState = state }
 
-    val resultList = mutableStateListOf<TranslationResult>()
-
-    var progress by mutableStateOf(100f)
-
-    private val totalProgress: Int
-        get() = selectedEngines.size
-
-    private var translateJob: Job? = null
+    // 下面是各种函数
 
     /**
      * 当什么都不选时，添加默认的引擎
@@ -171,7 +148,6 @@ class MainViewModel : ViewModel() {
     fun isTranslating(): Boolean = translateJob?.isActive ?: false
 
     fun translate() {
-
         if (translateJob?.isActive == true) return
         if (actualTransText.isEmpty()) return
 
