@@ -7,7 +7,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
@@ -39,11 +37,8 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -62,11 +57,9 @@ import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.ui.bean.RoundCornerConfig
-import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.ui.touchToScale
@@ -74,6 +67,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 private const val TAG = "MainScreen"
+internal typealias SimpleAction = () -> Unit
 
 // 用于选择引擎时的回调
 private interface UpdateSelectedEngine {
@@ -112,6 +106,19 @@ fun TextTransScreen() {
     val vm: MainViewModel = viewModel()
     val context = LocalContext.current
 
+    // 内置引擎
+    val bindEngines by vm.bindEnginesFlow.collectAsState(emptyList())
+    // 插件
+    val jsEngines by vm.jsEnginesFlow.collectAsState(emptyList())
+    val scope = rememberCoroutineScope()
+    // 使用 staticCompositionLocal 传递主页面 scaffold 的 snackbarHostState
+    // 方便各个页面展示 snackBar
+    // CompositionLocal 相关知识可参阅 https://developer.android.google.cn/jetpack/compose/compositionlocal?hl=zh-cn
+    val snackbarHostState = LocalSnackbarState.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val activityVM: ActivityViewModel = LocalActivityVM.current
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
+
     // Compose函数会被反复重新调用（重组），所以变量要remember
     val updateSelectedEngine = remember {
         object : UpdateSelectedEngine {
@@ -125,16 +132,6 @@ fun TextTransScreen() {
         }
     }
 
-    // 内置引擎
-    val bindEngines by vm.bindEnginesFlow.collectAsState(emptyList())
-    // 插件
-    val jsEngines by vm.jsEnginesFlow.collectAsState(emptyList())
-    val scope = rememberCoroutineScope()
-    // 使用 staticCompositionLocal 传递主页面 scaffold 的 snackbarHostState
-    // 方便各个页面展示 snackBar
-    // CompositionLocal 相关知识可参阅 https://developer.android.google.cn/jetpack/compose/compositionlocal?hl=zh-cn
-    val snackbarHostState = LocalSnackbarState.current
-
     val showSnackbar: (String) -> Unit = remember {
         {
             scope.launch {
@@ -143,84 +140,48 @@ fun TextTransScreen() {
         }
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val activityVM: ActivityViewModel = LocalActivityVM.current
-    val softwareKeyboardController = LocalSoftwareKeyboardController.current
-
     val updateShowListType: (type: ShowListType) -> Unit = remember {
         {
             vm.showListType = it
         }
     }
 
+    var showEngineSelect by remember { mutableStateOf(false) }
+    if (showEngineSelect) {
+        AlertDialog(onDismissRequest = { showEngineSelect = false }, text = {
+            EngineSelect(
+                modifier = Modifier,
+                bindEngines,
+                jsEngines,
+                updateSelectedEngine
+            )
+        }, confirmButton = {
+            TextButton(onClick = { showEngineSelect = false }) {
+                Text(text = stringResource(id = R.string.confirm))
+            }
+        })
+    }
+
+    val showEngineSelectAction = remember {
+        {
+            showEngineSelect = true
+        }
+    }
+
     // 使用 BoxWithConstraints 用于适配横竖屏
     BoxWithConstraints(Modifier.fillMaxSize()) {
         if (maxWidth > 720.dp) { // 横屏
-            val scrollState = rememberScrollState()
             Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                EngineSelect(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(0.3f)
-                        .padding(start = 16.dp, top = 6.dp)
-                        .verticalScroll(scrollState),
-                    bindEngines, jsEngines,
-                    updateSelectedEngine
-                )
                 Box(
                     modifier = Modifier
                         .fillMaxHeight(0.95f)
                         .width(0.16f.dp)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                 )
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(0.dp), horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    InputPart(
-                        modifier = Modifier.fillMaxWidth(),
-                        vm = vm,
-                        showSnackbar = showSnackbar,
-                        expandEngineSelect = null,
-                        updateShowListType = updateShowListType
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ResultPart(vm = vm, showSnackbar = showSnackbar)
-                }
+                MainPart(showEngineSelectAction = showEngineSelectAction, showSnackbar = showSnackbar)
             }
         } else {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                UpperPartBackground {
-                    MainTopBar(showDrawerAction = { })
-                    Notice(Modifier.fillMaxWidth(0.9f))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    HintText(onClick = {})
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                LanguageSelectRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
-                    sourceLanguage = vm.sourceLanguage,
-                    updateSourceLanguage = vm::updateSourceLanguage,
-                    targetLanguage = vm.targetLanguage,
-                    updateTargetLanguage = vm::updateTargetLanguage,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                FunctionsRow(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 40.dp)
-                )
-            }
-
+            MainPart(showEngineSelectAction = showEngineSelectAction, showSnackbar = showSnackbar)
         }
     }
 
@@ -259,61 +220,28 @@ fun TextTransScreen() {
 }
 
 @Composable
-private fun HintText(
-    onClick: () -> Unit
+private fun MainPart(
+    modifier: Modifier = Modifier,
+    showEngineSelectAction: SimpleAction,
+    showSnackbar: (String) -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    var shouldRequestFocus by remember { mutableStateOf(AppConfig.sAutoFocus.value) }
-    DisposableEffect(Unit) {
-        onDispose { shouldRequestFocus = false }
-    }
-
-    Text(
-        text = stringResource(id = R.string.trans_text_input_hint),
-        style = MaterialTheme.typography.displaySmall,
-        color = Color.LightGray,
-        textAlign = TextAlign.Start,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
+    val vm: MainViewModel = viewModel()
+    SimpleNavigation(currentScreen = vm.currentState, modifier = modifier) { state ->
+        when (state) {
+            MainScreenState.Normal -> MainPartNormal(
+                vm = vm,
+                showEngineSelectAction = showEngineSelectAction
             )
-    )
-
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun Notice(modifier: Modifier) {
-    var singleLine by remember { mutableStateOf(true) }
-    val activityVM = LocalActivityVM.current
-    val notice by activityVM.noticeInfo
-    val context = LocalContext.current
-    notice?.let {
-        NoticeBar(
-            modifier = modifier
-                .clickable {
-                    if (it.url.isNullOrEmpty()) singleLine = !singleLine
-                    else WebViewActivity.start(context, it.url)
-                }
-                .background(
-                    MaterialTheme.colorScheme.primaryContainer,
-                    RoundedCornerShape(8.dp)
-                )
-                .padding(8.dp)
-                .animateContentSize()
-                .apply {
-                    if (singleLine) this.basicMarquee()
-                },
-            text = it.message,
-            singleLine = singleLine,
-            showClose = true,
-        )
+            MainScreenState.Inputting -> MainPartInputting(
+                vm = vm,
+                showEngineSelectAction = showEngineSelectAction,
+                showSnackbar = showSnackbar
+            )
+            else -> {}
+        }
     }
 }
+
 
 @Composable
 fun ColumnScope.UpperPartBackground(
@@ -330,97 +258,76 @@ fun ColumnScope.UpperPartBackground(
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@ExperimentalAnimationApi
 @Composable
-fun ColumnScope.FunctionsRow(
-    modifier: Modifier = Modifier,
+private fun EngineSelect(
+    modifier: Modifier,
+    bindEngines: List<TranslationEngine> = arrayListOf(),
+    jsEngines: List<TranslationEngine> = arrayListOf(),
+    updateSelectEngine: UpdateSelectedEngine
 ) {
-    val vm: MainViewModel = viewModel()
-    val navHostController = LocalNavController.current
-    // 内置引擎
-    val bindEngines by vm.bindEnginesFlow.collectAsState(emptyList())
-    // 插件
-    val jsEngines by vm.jsEnginesFlow.collectAsState(emptyList())
-    // Compose函数会被反复重新调用（重组），所以变量要remember
-    val updateSelectedEngine = remember {
-        object : UpdateSelectedEngine {
-            override fun add(engine: TranslationEngine) {
-                vm.addSelectedEngines(engine)
-            }
-
-            override fun remove(engine: TranslationEngine) {
-                vm.removeSelectedEngine(engine)
-            }
-        }
-    }
-
-    var showEngineSelect by remember { mutableStateOf(false) }
-    if (showEngineSelect) {
-        AlertDialog(onDismissRequest = { showEngineSelect = false }, text = {
-            EngineSelect(
-                modifier = Modifier,
-                bindEngines,
-                jsEngines,
-                updateSelectedEngine
-            )
-        }, confirmButton = {
-            TextButton(onClick = { showEngineSelect = false }) {
-                Text(text = stringResource(id = R.string.confirm))
-            }
-        })
-    }
-    // 从左至右，图片翻译、选择引擎、收藏夹
-    Row(modifier, horizontalArrangement = Arrangement.SpaceAround) {
-        FunctionIconItem(
-            iconId = R.drawable.ic_album,
-            text = stringResource(id = R.string.image_translate)
-        ) {
-            navHostController.navigateSingleTop(TranslateScreen.ImageTranslateScreen.route)
-        }
-        FunctionIconItem(
-            iconId = R.drawable.ic_translate,
-            text = stringResource(id = R.string.engine_select)
-        ) {
-            showEngineSelect = true
-        }
-        FunctionIconItem(
-            iconId = R.drawable.ic_star_filled,
-            text = stringResource(id = R.string.favorites)
-        ) {
-//            navHostController.navigateSingleTop(TranslateScreen.FavoritesScreen.route)
-        }
-    }
-}
-
-@Composable
-private fun FunctionIconItem(
-    iconId: Int,
-    text: String,
-    onClick: () -> Unit
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        IconButton(
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape), onClick = onClick, colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = iconId),
-                contentDescription = text,
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.Start,
+    ) {
         Text(
-            text = text,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            text = stringResource(id = R.string.bind_engine),
+            fontWeight = FontWeight.W600
         )
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            bindEngines.forEach { task ->
+                var taskSelected by rememberDataSaverState(
+                    key = task.selectKey,
+                    default = task.selected
+                )
+                FilterChip(selected = taskSelected, onClick = {
+                    if (!taskSelected) { // 选中了
+                        updateSelectEngine.add(task)
+                    } else updateSelectEngine.remove(task)
+                    taskSelected = !taskSelected
+                }, label = {
+                    Text(text = task.name)
+                })
+            }
+        }
+
+        if (jsEngines.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(id = R.string.plugin_engine),
+                fontWeight = FontWeight.W600
+            )
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                jsEngines.forEach { task ->
+                    var taskSelected by rememberDataSaverState(
+                        key = task.selectKey,
+                        default = task.selected
+                    )
+                    FilterChip(selected = taskSelected, onClick = {
+                        if (!taskSelected) { // 选中了
+                            updateSelectEngine.add(task)
+                        } else updateSelectEngine.remove(task)
+                        taskSelected = !taskSelected
+                    }, label = {
+                        Text(text = task.name)
+                    })
+                }
+            }
+        }
     }
 }
+
 
 @Composable
 private fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
@@ -456,34 +363,12 @@ private fun ResultPart(vm: MainViewModel, showSnackbar: (String) -> Unit) {
 
 @Composable
 fun MainTopBar(
-    showDrawerAction: (() -> Unit)?,
+    state: MainScreenState,
+    showDrawerAction: (() -> Unit)? = null,
 ) {
-    val navController = LocalNavController.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp), verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (showDrawerAction != null) {
-            IconButton(onClick = showDrawerAction) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(id = R.string.menu)
-                )
-            }
-        }
-        IconButton(
-            onClick = {
-                navController.navigateSingleTop(TranslateScreen.PluginScreen.route)
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(Alignment.End)
-        ) {
-            Icon(
-                painterResource(id = R.drawable.ic_plugin),
-                contentDescription = stringResource(id = R.string.manage_plugins)
-            )
-        }
+    when(state){
+        MainScreenState.Normal -> MainTopBarNormal(showDrawerAction = showDrawerAction)
+        else -> {}
     }
 }
 
@@ -545,232 +430,6 @@ private fun TransHistoryList(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
-@Composable
-private fun InputPart(
-    modifier: Modifier,
-    vm: MainViewModel,
-    showSnackbar: (String) -> Unit,
-    expandEngineSelect: (() -> Unit)?,
-    updateShowListType: (ShowListType) -> Unit,
-) {
-    val transText = vm.translateText
-    val sourceLanguage = vm.sourceLanguage
-    val targetLanguage = vm.targetLanguage
-    val context = LocalContext.current
-    val currentEnabledLanguages by enabledLanguages.collectAsState()
-
-    val animateProgress = remember { Animatable(100f) }
-    LaunchedEffect(vm.progress) {
-        animateProgress.animateTo(vm.progress)
-    }
-
-    var shouldRequestFocus by remember { mutableStateOf(AppConfig.sAutoFocus.value) }
-    DisposableEffect(Unit) {
-        onDispose { shouldRequestFocus = false }
-    }
-
-    fun startTranslate() {
-        val selectedEngines = vm.selectedEngines
-        if (selectedEngines.isEmpty()) {
-            showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
-            return
-        }
-        val selectedSize = selectedEngines.size
-        if (selectedSize > Consts.MAX_SELECT_ENGINES) {
-            val resId = if (AppConfig.isVip()) R.string.message_out_of_max_engine_limit
-            else R.string.message_out_of_max_engine_limit_novip
-            showSnackbar(
-                appCtx.getString(resId).format(Consts.MAX_SELECT_ENGINES, selectedSize)
-            )
-            return
-        }
-        if (!vm.isTranslating()) {
-            vm.translate()
-            shouldRequestFocus = false
-        } else {
-            vm.cancel()
-            context.toastOnUi(FunnyApplication.resources.getString(R.string.message_stop_translate))
-        }
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
-            .padding(8.dp)
-    ) {
-        InputText(
-            text = transText,
-            updateText = {
-                vm.translateText = it
-                if (it == "") updateShowListType(ShowListType.History)
-            },
-            shouldRequest = shouldRequestFocus,
-            updateFocusRequest = {
-                if (it != shouldRequestFocus) shouldRequestFocus = it
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            translateAction = ::startTranslate
-        ) // 输入框
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            LanguageSelectRow(
-                modifier = Modifier,
-                sourceLanguage = sourceLanguage,
-                updateSourceLanguage = vm::updateSourceLanguage,
-                targetLanguage = targetLanguage,
-                updateTargetLanguage = vm::updateTargetLanguage,
-            )
-            Row {
-                expandEngineSelect?.let {
-                    IconButton(onClick = {
-                        it()
-                        shouldRequestFocus = false
-                    }) {
-                        Icon(
-                            Icons.Default.ArrowDropDown,
-                            contentDescription = "expand",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                }
-
-                IconButton(
-                    onClick = {
-                        updateShowListType(ShowListType.History)
-                        vm.translateText = ""
-                        shouldRequestFocus = true
-                        Log.d(TAG, "InputText: 手动展示软键盘")
-                    }
-                ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "clear",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-                val isTranslating by rememberUpdatedState(newValue = vm.isTranslating())
-                TranslateButton(
-                    animateProgress.value.roundToInt(),
-                    isTranslating,
-                    onClick = ::startTranslate
-                )
-            }
-        }
-
-    }
-}
-
-
-@OptIn(ExperimentalLayoutApi::class)
-@ExperimentalAnimationApi
-@Composable
-private fun EngineSelect(
-    modifier: Modifier,
-    bindEngines: List<TranslationEngine> = arrayListOf(),
-    jsEngines: List<TranslationEngine> = arrayListOf(),
-    updateSelectEngine: UpdateSelectedEngine
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start,
-    ) {
-        Text(
-            text = stringResource(id = R.string.bind_engine),
-            fontWeight = W600
-        )
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = spacedBy(8.dp),
-        ) {
-            bindEngines.forEach { task ->
-                var taskSelected by rememberDataSaverState(
-                    key = task.selectKey,
-                    default = task.selected
-                )
-                FilterChip(selected = taskSelected, onClick = {
-                    if (!taskSelected) { // 选中了
-                        updateSelectEngine.add(task)
-                    } else updateSelectEngine.remove(task)
-                    taskSelected = !taskSelected
-                }, label = {
-                    Text(text = task.name)
-                })
-            }
-        }
-
-        if (jsEngines.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(id = R.string.plugin_engine),
-                fontWeight = W600
-            )
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = spacedBy(8.dp)
-            ) {
-                jsEngines.forEach { task ->
-                    var taskSelected by rememberDataSaverState(
-                        key = task.selectKey,
-                        default = task.selected
-                    )
-                    FilterChip(selected = taskSelected, onClick = {
-                        if (!taskSelected) { // 选中了
-                            updateSelectEngine.add(task)
-                        } else updateSelectEngine.remove(task)
-                        taskSelected = !taskSelected
-                    }, label = {
-                        Text(text = task.name)
-                    })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun LanguageSelectRow(
-    modifier: Modifier,
-    exchangeButtonTint: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    sourceLanguage: Language,
-    updateSourceLanguage: (Language) -> Unit,
-    targetLanguage: Language,
-    updateTargetLanguage: (Language) -> Unit,
-) {
-    val enabledLanguages by enabledLanguages.collectAsState()
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        LanguageSelect(
-            Modifier.semantics {
-                contentDescription = appCtx.getString(R.string.des_current_source_lang)
-            },
-            language = sourceLanguage,
-            languages = enabledLanguages,
-            updateLanguage = updateSourceLanguage
-        )
-        ExchangeButton(tint = exchangeButtonTint) {
-            val temp = sourceLanguage
-            updateSourceLanguage(targetLanguage)
-            updateTargetLanguage(temp)
-        }
-        LanguageSelect(
-            Modifier.semantics {
-                contentDescription = appCtx.getString(R.string.des_current_target_lang)
-            },
-            language = targetLanguage,
-            languages = enabledLanguages,
-            updateLanguage = updateTargetLanguage
-        )
-    }
-}
 
 
 @Composable
@@ -862,45 +521,6 @@ private fun TranslationList(
     }
 }
 
-@Composable
-private fun TranslateButton(
-    progress: Int = 100,
-    isTranslating: Boolean = false,
-    onClick: () -> Unit
-) {
-    val borderColor = MaterialTheme.colorScheme.secondary
-    val density = LocalDensity.current
-    val size48dp = remember { with(density) { 48.dp.toPx() } }
-    val size12dp = remember { with(density) { 12.dp.toPx() } }
-
-    IconButton(
-        modifier =
-        Modifier.drawBehind {
-            if (progress < 100) drawArc(
-                borderColor,
-                startAngle = -90f,
-                360f * progress / 100,
-                false,
-                style = Stroke(width = 4f),
-                topLeft = Offset(size12dp / 2, size12dp / 2),
-                size = size.copy(size48dp - size12dp, size48dp - size12dp)
-            )
-        }, onClick = onClick
-    ) {
-        if (!isTranslating) Icon(
-            Icons.Default.Done,
-            contentDescription = "开始翻译",
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-        else Icon(
-            painter = painterResource(id = R.drawable.ic_pause),
-            contentDescription = "停止翻译",
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
-
-}
 
 
 @Composable

@@ -46,7 +46,7 @@ import com.funny.translation.helper.writeText
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.allLanguages
-import com.funny.translation.translate.ui.widget.SubcomposeBottomFirstLayout
+import com.funny.translation.ui.SubcomposeBottomFirstLayout
 import io.github.rosemoe.editor.interfaces.EditorEventListener
 import io.github.rosemoe.editor.text.Content
 import io.github.rosemoe.editor.widget.CodeEditor

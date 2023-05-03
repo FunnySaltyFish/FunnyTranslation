@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="clear_content">清空输入内容</string>
+    <string name="clear_content">清空</string>
     <string name="app_name">译站</string>
     <string name="exchange">语言互换</string>
     <string name="copy_content">复制结果</string>
@@ -122,4 +122,5 @@
     <string name="image_translate">图片翻译</string>
     <string name="favorites">收藏夹\n</string>
     <string name="trans_text_input_hint">译你所忆……</string>
+    <string name="back">返回</string>
 </resources>

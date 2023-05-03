@@ -2,18 +2,24 @@ package com.funny.translation.translate.ui.widget
 
 import android.content.Context
 import android.util.Log
+import android.view.Gravity
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.doOnTextChanged
 import com.funny.translation.AppConfig
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.R
+import kotlin.math.roundToInt
 
 private const val TAG = "InputWidget"
 
@@ -21,7 +27,7 @@ private const val TAG = "InputWidget"
 @Composable
 fun InputText(
     modifier: Modifier,
-    text: String,
+    textProvider: () -> String,
     updateText: (String) -> Unit,
     shouldRequest: Boolean,
     updateFocusRequest: (Boolean) -> Unit,
@@ -31,20 +37,28 @@ fun InputText(
     // 因为 Compose 的 BasicTextField 下某些输入法的部分功能不能用，所以临时改回 EditText
     val textColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb()
     val inputMethodManager = FunnyApplication.ctx.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
+    val density = LocalDensity.current.density
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
+    DisposableEffect(key1 = Unit){
+        onDispose {
+            softwareKeyboardController?.hide()
+        }
+    }
     AndroidView(factory = {
         EditText(it).apply {
             doOnTextChanged { text, start, before, count -> updateText(text.toString()) }
-            maxLines = 6
-            hint = "译你所忆……"
+//            maxLines = 6
+            hint = context.getString(R.string.trans_text_input_hint)
             background = null
-            textSize = 16f
+            textSize = 20f
+            gravity = Gravity.TOP
+            setPaddingRelative((20 * density).roundToInt(), (4 * density).roundToInt(), (20 * density).roundToInt(), (4 * density).roundToInt())
             setTextColor(textColor)
 
             if (enterToTranslate){
                 imeOptions = EditorInfo.IME_ACTION_DONE
                 inputType = EditorInfo.TYPE_CLASS_TEXT
-                setImeActionLabel("翻译", EditorInfo.IME_ACTION_DONE)
+                setImeActionLabel(context.getString(R.string.translate), EditorInfo.IME_ACTION_DONE)
                 setOnEditorActionListener { v, actionId, event ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         translateAction?.invoke()
@@ -55,9 +69,11 @@ fun InputText(
                 }
             }
 
-            setOnFocusChangeListener { v, hasFocus -> updateFocusRequest(hasFocus) }
+             setOnFocusChangeListener { v, hasFocus -> updateFocusRequest(hasFocus) }
         }
     }, update = {
+        val text = textProvider()
+        Log.d(TAG, "InputText: update: shouldRequest = $shouldRequest, isFocused = ${it.isFocused}")
         if (it.text.toString() != text) it.setText(text).also { Log.d(TAG, "InputText: 手动设置文本") }
         if (shouldRequest && !it.isFocused){
             it.requestFocus().also { Log.d(TAG, "InputText: requestFocus") }
