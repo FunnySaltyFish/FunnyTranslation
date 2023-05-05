@@ -2,7 +2,6 @@
 
 package com.funny.translation.translate.ui.main
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -16,9 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
@@ -26,13 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -51,10 +44,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.rememberDataSaverState
-import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.ClipBoardUtil
-import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransHistoryBean
@@ -237,7 +228,7 @@ private fun MainPart(
                 showEngineSelectAction = showEngineSelectAction,
                 showSnackbar = showSnackbar
             )
-            else -> {}
+            MainScreenState.Translating -> MainPartTranslating(vm = vm)
         }
     }
 }
@@ -509,7 +500,7 @@ private fun TranslationList(
         }
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { index, result ->
 //            Log.d(TAG, "TranslationList: $result")
-            TranslationItem(
+            ResultItem(
                 modifier = Modifier.fillMaxWidth(),
                 result = result, roundCornerConfig = when (index) {
                     0 -> if (size == 1) RoundCornerConfig.All else RoundCornerConfig.Top
@@ -524,7 +515,7 @@ private fun TranslationList(
 
 
 @Composable
-private fun TranslationItem(
+private fun ResultItem(
     modifier: Modifier,
     result: TranslationResult,
     roundCornerConfig: RoundCornerConfig,

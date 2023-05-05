@@ -123,4 +123,7 @@
     <string name="favorites">收藏夹\n</string>
     <string name="trans_text_input_hint">译你所忆……</string>
     <string name="back">返回</string>
+    <string name="source_text">源文本</string>
+    <string name="favorite">收藏</string>
+    <string name="quit_translating_alert">当前翻译正在进行中，您确定要退出吗？</string>
 </resources>

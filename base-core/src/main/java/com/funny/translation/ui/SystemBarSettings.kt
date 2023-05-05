@@ -27,7 +27,7 @@ fun SystemBarSettings() {
             !AppConfig.sHideBottomNavBar.value
     }
 
-    LaunchedEffect(AppConfig.sHideStatusBar.value) {
-        systemUiController.isStatusBarVisible = !AppConfig.sHideStatusBar.value
-    }
+//    LaunchedEffect(AppConfig.sHideStatusBar.value) {
+//        systemUiController.isStatusBarVisible = !AppConfig.sHideStatusBar.value
+//    }
 }

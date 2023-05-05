@@ -73,8 +73,11 @@ fun InputText(
         }
     }, update = {
         val text = textProvider()
-        Log.d(TAG, "InputText: update: shouldRequest = $shouldRequest, isFocused = ${it.isFocused}")
-        if (it.text.toString() != text) it.setText(text).also { Log.d(TAG, "InputText: 手动设置文本") }
+        if (it.text.toString() != text) {
+            it.setText(text)
+            // 光标至于末尾
+            it.setSelection(text.length)
+        }
         if (shouldRequest && !it.isFocused){
             it.requestFocus().also { Log.d(TAG, "InputText: requestFocus") }
             inputMethodManager.showSoftInput(it, 0)

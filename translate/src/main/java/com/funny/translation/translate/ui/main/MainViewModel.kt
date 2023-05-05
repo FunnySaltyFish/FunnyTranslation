@@ -131,6 +131,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // 收藏与取消收藏，参数 favorite 为 false 时收藏，为 true 时取消收藏
+    fun doFavorite(favorite: Boolean, result: TranslationResult){
+
+    }
+
     fun addSelectedEngines(vararg engines: TranslationEngine) {
         Log.d(TAG, "addSelectedEngines: ${engines.joinToString{it.name}}")
         selectedEngines.addAll(engines)

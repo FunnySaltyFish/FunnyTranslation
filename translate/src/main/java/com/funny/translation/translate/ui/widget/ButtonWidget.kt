@@ -99,6 +99,7 @@ fun ExchangeButton(
 fun ExpandMoreButton(
     modifier: Modifier = Modifier,
     expand: Boolean,
+    tint: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     onClick: (Boolean) -> Unit
 ) {
     val rotationValue by animateFloatAsState(
@@ -113,7 +114,8 @@ fun ExpandMoreButton(
             stringResource(id = R.string.expand),
             modifier = Modifier.graphicsLayer {
                 rotationX = rotationValue
-            }
+            },
+            tint = tint
         )
     }
 }

@@ -2,7 +2,6 @@ package com.funny.translation.translate.ui.main
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -37,7 +36,7 @@ fun MainPartInputting(
 ) {
     val context = LocalContext.current
     fun startTranslate() {
-        return
+        vm.updateMainScreenState(MainScreenState.Translating)
         val selectedEngines = vm.selectedEngines
         if (selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))
@@ -150,14 +149,15 @@ private fun MainTopBarInputting(
             IconButton(onClick = showEngineSelectAction) {
                 Icon(
                     painterResource(id = R.drawable.ic_translate),
-                    contentDescription = stringResource(id = R.string.engine_select)
+                    contentDescription = stringResource(id = R.string.engine_select),
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun InputPart(
     modifier: Modifier,

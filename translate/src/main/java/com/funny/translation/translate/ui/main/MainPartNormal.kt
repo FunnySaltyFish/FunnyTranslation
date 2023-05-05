@@ -22,8 +22,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.funny.translation.AppConfig
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
@@ -85,12 +87,13 @@ private fun HintText(
 
     Text(
         text = stringResource(id = R.string.trans_text_input_hint),
-        style = MaterialTheme.typography.displaySmall,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.W600,
         color = Color.LightGray,
         textAlign = TextAlign.Start,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 28.dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
