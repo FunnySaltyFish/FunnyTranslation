@@ -347,7 +347,6 @@ private fun ResultItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
-                selectable = false
             )
         }
     }

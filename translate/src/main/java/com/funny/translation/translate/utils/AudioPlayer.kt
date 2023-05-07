@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.funny.translation.helper.DeviceUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.FunnyApplication
@@ -37,6 +38,9 @@ object AudioPlayer {
         if (language == Language.AUTO) {
             appCtx.toastOnUi("当前设置的语言为自动选择，请手动指定语言")
             return
+        }
+        if (DeviceUtils.isMute()) {
+            appCtx.toastOnUi("当前设备似乎在静音，请调整音量")
         }
         val url = getUrl(word, language)
         Log.d(TAG, "play: url:$url")

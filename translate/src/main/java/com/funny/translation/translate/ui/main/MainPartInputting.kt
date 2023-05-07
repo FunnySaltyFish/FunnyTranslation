@@ -36,7 +36,6 @@ fun MainPartInputting(
 ) {
     val context = LocalContext.current
     fun startTranslate() {
-        vm.updateMainScreenState(MainScreenState.Translating)
         val selectedEngines = vm.selectedEngines
         if (selectedEngines.isEmpty()) {
             showSnackbar(FunnyApplication.resources.getString(R.string.snack_no_engine_selected))

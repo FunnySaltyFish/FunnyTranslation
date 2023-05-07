@@ -13,14 +13,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.funny.cmaterialcolors.MaterialColors
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.R
-import com.funny.translation.translate.extentions.trimLineStart
+import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.translate.ui.main.SimpleAction
 import com.funny.translation.translate.ui.widget.MarkdownText
 import com.funny.translation.ui.touchToScale
 
@@ -46,57 +48,76 @@ internal fun OnlinePluginItem(
     var expand by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
+    val flatButton = @Composable { title: String, color: Color, onClick: SimpleAction ->
+        Button(
+            shape = CircleShape,
+            colors = buttonColors(
+                contentColor = Color.White,
+                containerColor = color
+            ),
+            contentPadding = PaddingValues(horizontal = 40.dp, vertical = 0.dp),
+            onClick = onClick
+        ) {
+            Text(title)
+        }
+    }
     Column(modifier = Modifier
         .touchToScale { expand = !expand }
         .fillMaxWidth()
-        .clip(RoundedCornerShape(16.dp))
+        .clip(RoundedCornerShape(28.dp))
         .background(MaterialTheme.colorScheme.primaryContainer)
+        .padding(horizontal = 20.dp, vertical = 8.dp)
         .animateContentSize()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(plugin.fileName, fontSize = 18.sp, fontWeight = FontWeight.W600)
-            when(onlinePluginState){
-                OnlinePluginState.Installed -> Button(shape = CircleShape, colors = buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                ) ,onClick = { clickOnlinePluginAction.delete(plugin) }) {
-                    Text(stringResource(R.string.uninstall_plugin))
+            Text(plugin.fileName, fontSize = 22.sp, fontWeight = FontWeight.W600)
+            when (onlinePluginState) {
+                OnlinePluginState.Installed -> flatButton(
+                    stringResource(id = R.string.uninstall_plugin),
+                    Color(244, 67, 54)
+                ) {
+                    clickOnlinePluginAction.delete(plugin)
                 }
-                OnlinePluginState.OutDated -> Button(shape = CircleShape, colors = buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                    containerColor = MaterialColors.Green200
-                ) ,onClick = { clickOnlinePluginAction.update(plugin) }) {
-                    Text(text = stringResource(R.string.update_plugin))
+                OnlinePluginState.OutDated -> flatButton(
+                    stringResource(id = R.string.update_plugin),
+                    Color(76, 175, 80)
+                ) {
+                    clickOnlinePluginAction.update(plugin)
                 }
-                OnlinePluginState.NotInstalled -> Button(shape = CircleShape, colors = buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                    containerColor = MaterialTheme.colorScheme.background
-                ), onClick = { clickOnlinePluginAction.install(plugin) }) {
-                    Text(text = stringResource(id = R.string.install_plugin))
+                OnlinePluginState.NotInstalled -> flatButton(
+                    stringResource(id = R.string.install_plugin),
+                    MaterialTheme.colorScheme.primary
+                ) {
+                    clickOnlinePluginAction.install(plugin)
                 }
             }
         }
-        if (expand) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-            ) {
-                MarkdownText(markdown = plugin.markdown, Modifier.padding(horizontal = 8.dp))
-                Spacer(modifier = Modifier.height(8.dp))
+        MarkdownText(
+            markdown = plugin.markdown,
+            fontSize = 13.sp,
+            color = Color.DarkGray,
+            maxLines = if (expand) Int.MAX_VALUE else 1,
+            onLinkClicked = {
+                WebViewActivity.start(context, it)
             }
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        if (expand) {
+            Text(
+                modifier = Modifier.padding(bottom = 4.dp),
+                text = stringResource(R.string.plugin_info_template, plugin.author, plugin.version),
+                fontWeight = FontWeight.W600
+            )
         }
     }
 }
 
-private val JsBean.markdown
-    get() = """
-        By **${this.author}**    **v${this.version}**  
-        ${this.description.replace("[Markdown]", "")}  
-    """.trimLineStart
+internal val JsBean.markdown
+    get() = this.description.replace("[Markdown]", "")

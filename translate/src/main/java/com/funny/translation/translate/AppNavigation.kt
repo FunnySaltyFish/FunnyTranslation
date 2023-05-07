@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +23,6 @@ import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
-import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.TransTheme
@@ -144,7 +141,9 @@ fun AppNavigation(
                         PluginScreen()
                     }
                     navigation(startDestination = TranslateScreen.ThanksScreen.route, route = "nav_1_thanks") {
-                        composable(TranslateScreen.ThanksScreen.route){ ThanksScreen(navController) }
+                        animateComposable(TranslateScreen.ThanksScreen.route){
+                            ThanksScreen(navController)
+                        }
                         addUserProfileRoutes(
                             navHostController = navController,
                             onLoginSuccess = { userBean ->
@@ -197,7 +196,7 @@ private fun NavGraphBuilder.addSettingsNavigation() {
         startDestination = TranslateScreen.SettingScreen.route,
         route = "nav_1_setting",
     ) {
-        composable(TranslateScreen.SettingScreen.route) {
+        animateComposable(TranslateScreen.SettingScreen.route) {
             SettingsScreen()
         }
         animateComposable(

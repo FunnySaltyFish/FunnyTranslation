@@ -126,4 +126,6 @@
     <string name="source_text">源文本</string>
     <string name="favorite">收藏</string>
     <string name="quit_translating_alert">当前翻译正在进行中，您确定要退出吗？</string>
+    <string name="local_plugins">已安装插件</string>
+    <string name="plugin_info_template">作者：%s 版本：v%d</string>
 </resources>

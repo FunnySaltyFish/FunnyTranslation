@@ -160,6 +160,7 @@ class MainViewModel : ViewModel() {
         progress = 0f
         addTransHistory(actualTransText, sourceLanguage, targetLanguage)
         showListType = ShowListType.Result
+        updateMainScreenState(MainScreenState.Translating)
         translateJob = viewModelScope.launch {
             // 延时，等待插件加载完
             while (!jsEngineInitialized) {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -31,47 +32,105 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.thanks.UserInfoPanel
 import com.funny.translation.translate.ui.widget.ExchangeButton
 import com.funny.translation.translate.ui.widget.NoticeBar
+import kotlinx.coroutines.launch
 
 // 主页面，在未输入状态下展示的页面，默认
 
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainPartNormal(
     vm: MainViewModel,
     showEngineSelectAction: () -> Unit,
 ) {
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer),
-        horizontalAlignment = Alignment.CenterHorizontally
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    ModalNavigationDrawer(
+        drawerContent = {
+            Drawer(
+                Modifier
+                    .fillMaxHeight()
+                    .width(300.dp)
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(12.dp)
+            )
+        },
+        drawerState = drawerState
     ) {
-        UpperPartBackground {
-            MainTopBarNormal(showDrawerAction = { })
-            Notice(Modifier.fillMaxWidth(0.9f))
-            Spacer(modifier = Modifier.height(8.dp))
-            HintText(onClick = { vm.updateMainScreenState(MainScreenState.Inputting) })
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        LanguageSelectRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            sourceLanguage = vm.sourceLanguage,
-            updateSourceLanguage = vm::updateSourceLanguage,
-            targetLanguage = vm.targetLanguage,
-            updateTargetLanguage = vm::updateTargetLanguage,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        FunctionsRow(
+        Column(
             Modifier
-                .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 40.dp),
-            showEngineSelectAction
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            UpperPartBackground {
+                MainTopBarNormal(showDrawerAction = { scope.launch { drawerState.open() } })
+                Notice(Modifier.fillMaxWidth(0.9f))
+                Spacer(modifier = Modifier.height(8.dp))
+                HintText(onClick = { vm.updateMainScreenState(MainScreenState.Inputting) })
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            LanguageSelectRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                sourceLanguage = vm.sourceLanguage,
+                updateSourceLanguage = vm::updateSourceLanguage,
+                targetLanguage = vm.targetLanguage,
+                updateTargetLanguage = vm::updateTargetLanguage,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FunctionsRow(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 40.dp),
+                showEngineSelectAction
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Drawer(
+    modifier: Modifier = Modifier
+) {
+    val navController = LocalNavController.current
+    val drawerItemIcon = @Composable { resId: Int, contentDescription: String ->
+        Icon(
+            painter = painterResource(id = resId),
+            contentDescription = contentDescription,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.primary
         )
+    }
+    Column(modifier) {
+        UserInfoPanel(navHostController = navController)
+        Spacer(modifier = Modifier.height(8.dp))
+        NavigationDrawerItem(
+            icon = {
+                drawerItemIcon(R.drawable.ic_settings, stringResource(id = R.string.nav_settings))
+            },
+            label = { Text(text = stringResource(id = R.string.nav_settings)) },
+            selected = false,
+            onClick = {
+                navController.navigateSingleTop(TranslateScreen.SettingScreen.route)
+            })
+        // thanks
+        NavigationDrawerItem(
+            icon = {
+                drawerItemIcon(R.drawable.ic_thanks, stringResource(id = R.string.nav_thanks))
+            },
+            label = { Text(text = stringResource(id = R.string.nav_thanks)) },
+            selected = false,
+            onClick = {
+                navController.navigateSingleTop(TranslateScreen.ThanksScreen.route)
+            })
+        Spacer(modifier = Modifier.height(8.dp))
+        Divider()
     }
 }
 
