@@ -47,6 +47,7 @@ dependencies {
     api "com.github.FunnySaltyFish.ComposeDataSaver:data-saver-mmkv:$dataSaverVersion"
     api 'com.tencent:mmkv:1.2.14'
 
+//    implementation 'com.github.re-ovo:compose-setting:1.017'
 
     implementation platform("androidx.compose:compose-bom:${Versions.composeBomVersion}")
     implementation "androidx.compose.ui:ui"

@@ -18,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,10 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.funny.cmaterialcolors.MaterialColors
 import com.funny.jetsetting.core.JetSettingCheckbox
 import com.funny.jetsetting.core.JetSettingTile
+import com.funny.jetsetting.core.ui.SettingItemCategory
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.translate.activity.WebViewActivity
@@ -78,221 +76,174 @@ fun SettingsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(8.dp)
             .verticalScroll(scrollState)
     ) {
-
-        ItemHeading(text = stringResource(id = R.string.setting_ui))
-        JetSettingCheckbox(
-            state = AppConfig.sHideStatusBar,
-            text = stringResource(R.string.setting_hide_status_bar),
-            resourceId = R.drawable.ic_status_bar,
-            iconTintColor = MaterialColors.BlueGrey700
+        SettingItemCategory(
+            title = {
+                ItemHeading(text = stringResource(id = R.string.setting_translate))
+            }
         ) {
-
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sHideBottomNavBar,
-            text = stringResource(R.string.setting_hide_nav_bar),
-            resourceId = R.drawable.ic_bottom_bar,
-            iconTintColor = MaterialColors.Blue700
-        ) {
-
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sUseNewNavigation,
-            text = stringResource(id = R.string.custom_nav),
-            resourceId = R.drawable.ic_custom_nav,
-            iconTintColor = MaterialColors.DeepOrangeA200
-        ) {
-            Toast.makeText(
-                context, "已${
-                    if (it) {
-                        "启动"
-                    } else {
-                        "关闭"
-                    }
-                }新导航栏", Toast.LENGTH_SHORT
-            ).show()
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sTransPageInputBottom,
-            text = stringResource(R.string.setting_trans_page_input_bottom),
-            resourceId = R.drawable.ic_input_bottom,
-            iconTintColor = MaterialColors.Brown800
-        ) {
-
-        }
-        if (DateUtils.isSpringFestival) {
             JetSettingCheckbox(
-                state = AppConfig.sSpringFestivalTheme,
-                text = stringResource(R.string.setting_spring_theme),
-                resourceId = R.drawable.ic_theme,
-                iconTintColor = MaterialColors.Red700,
+                state = AppConfig.sEnterToTranslate,
+                resourceId = R.drawable.ic_enter,
+                text = stringResource(R.string.setting_enter_to_translate)
             ) {
-                Toast.makeText(
-                    context, "已${
-                        if (it) {
-                            "设置"
-                        } else {
-                            "取消"
-                        }
-                    }春节限定主题", Toast.LENGTH_SHORT
-                ).show()
+                if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
             }
-        }
-        JetSettingCheckbox(
-            key = Consts.KEY_SHOW_FLOAT_WINDOW,
-            text = stringResource(R.string.setting_show_float_window),
-            resourceId = R.drawable.ic_float_window,
-            iconTintColor = MaterialColors.Orange700
-        ) {
-            try {
-                if (it) EasyFloatUtils.showFloatBall(context as Activity)
-                else EasyFloatUtils.hideAllFloatWindow()
-            } catch (e: Exception) {
-                context.toastOnUi("显示悬浮窗失败，请检查是否正确授予权限！")
-                DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
+            JetSettingCheckbox(
+                state = AppConfig.sShowTransHistory,
+                resourceId = R.drawable.ic_history,
+                text = stringResource(R.string.setting_show_history)
+            ) {
+
             }
-        }
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(Alignment.End)
-                .padding(24.dp, 8.dp)
-                .clickable {
-                    showFloatWindowTipDialog.value = true
+            JetSettingCheckbox(
+                state = AppConfig.sTextMenuFloatingWindow,
+                resourceId = R.drawable.ic_float_window,
+                text = stringResource(R.string.setting_text_menu_floating_window),
+                description = stringResource(id = R.string.setting_text_menu_floating_window_desc)
+            ) {
+
+            }
+            JetSettingTile(
+                resourceId = R.drawable.ic_sort,
+                text = stringResource(R.string.sort_result),
+            ) {
+                navController.navigate(TranslateScreen.SortResultScreen.route)
+            }
+            JetSettingTile(
+                resourceId = R.drawable.ic_select,
+                text = stringResource(R.string.select_language),
+            ) {
+                navController.navigate(TranslateScreen.SelectLanguageScreen.route)
+            }
+            val openConfirmDeleteDialogState = remember { mutableStateOf(false) }
+            SimpleDialog(
+                openDialogState = openConfirmDeleteDialogState,
+                title = stringResource(R.string.message_confirm),
+                message = stringResource(R.string.confirm_delete_history_desc),
+                dismissButtonAction = {
+                    scope.launch(Dispatchers.IO) {
+                        appDB.transHistoryDao.clearAll()
+                    }
+                    context.toastOnUi("已清空历史记录")
                 },
-            text = stringResource(R.string.about_float_window),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W500,
-            textAlign = TextAlign.End,
-            color = MaterialTheme.colorScheme.primary
-        )
+                dismissButtonText = "残忍删除",
+                confirmButtonText = "我再想想"
+            )
+            JetSettingTile(
+                imageVector = Icons.Default.Delete,
+                text = stringResource(R.string.clear_trans_history),
+            ) {
+                openConfirmDeleteDialogState.value = true
+            }
+        }
 
-        ItemHeading(text = stringResource(id = R.string.others))
-        JetSettingCheckbox(
-            state = AppConfig.sEnterToTranslate,
-            text = stringResource(R.string.setting_enter_to_translate),
-            resourceId = R.drawable.ic_enter,
-            iconTintColor = MaterialColors.Teal700
-        ) {
-            if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sAutoFocus,
-            text = stringResource(R.string.setting_auto_focus),
-            resourceId = R.drawable.ic_keyboard,
-            iconTintColor = MaterialColors.Red400
-        ) {
-
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sShowTransHistory,
-            text = stringResource(R.string.setting_show_history),
-            resourceId = R.drawable.ic_history,
-            iconTintColor = MaterialColors.Lime700
-        ) {
-
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sShowImageTransBtn,
-            text = stringResource(R.string.setting_show_image_trans_btn),
-            resourceId = R.drawable.ic_album,
-            iconTintColor = MaterialColors.PinkA700
-        ) {
-
-        }
-        JetSettingCheckbox(
-            state = AppConfig.sTextMenuFloatingWindow,
-            text = stringResource(R.string.setting_text_menu_floating_window),
-            description = stringResource(id = R.string.setting_text_menu_floating_window_desc),
-            resourceId = R.drawable.ic_float_window,
-            iconTintColor = MaterialColors.DeepPurpleA200
-        ) {
-
-        }
-        JetSettingTile(
-            text = stringResource(R.string.sort_result),
-            resourceId = R.drawable.ic_sort,
-            iconTintColor = MaterialColors.DeepOrangeA700,
-        ) {
-            navController.navigate(TranslateScreen.SortResultScreen.route)
-        }
-        JetSettingTile(
-            text = stringResource(R.string.select_language),
-            resourceId = R.drawable.ic_select,
-            iconTintColor = MaterialColors.LightBlueA700,
-        ) {
-            navController.navigate(TranslateScreen.SelectLanguageScreen.route)
-        }
-        val openConfirmDeleteDialogState = remember { mutableStateOf(false) }
-        SimpleDialog(
-            openDialogState = openConfirmDeleteDialogState,
-            title = stringResource(R.string.message_confirm),
-            message = stringResource(R.string.confirm_delete_history_desc),
-            dismissButtonAction = {
-                scope.launch(Dispatchers.IO){
-                    appDB.transHistoryDao.clearAll()
+        SettingItemCategory(title = {
+            ItemHeading(text = stringResource(id = R.string.setting_ui))
+        }) {
+            if (DateUtils.isSpringFestival) {
+                JetSettingCheckbox(
+                    state = AppConfig.sSpringFestivalTheme,
+                    resourceId = R.drawable.ic_theme,
+                    text = stringResource(R.string.setting_spring_theme),
+                ) {
+                    Toast.makeText(
+                        context, "已${
+                            if (it) {
+                                "设置"
+                            } else {
+                                "取消"
+                            }
+                        }春节限定主题", Toast.LENGTH_SHORT
+                    ).show()
                 }
-                context.toastOnUi("已清空历史记录")
-            },
-            dismissButtonText = "残忍删除",
-            confirmButtonText = "我再想想"
-        )
-        JetSettingTile(
-            text = stringResource(R.string.clear_trans_history),
-            imageVector =  Icons.Default.Delete,
-            iconTintColor = MaterialColors.RedA700,
-        ) {
-            openConfirmDeleteDialogState.value = true
+            }
+            JetSettingCheckbox(
+                key = Consts.KEY_SHOW_FLOAT_WINDOW,
+                text = stringResource(R.string.setting_show_float_window),
+                resourceId = R.drawable.ic_float_window,
+            ) {
+                try {
+                    if (it) EasyFloatUtils.showFloatBall(context as Activity)
+                    else EasyFloatUtils.hideAllFloatWindow()
+                } catch (e: Exception) {
+                    context.toastOnUi("显示悬浮窗失败，请检查是否正确授予权限！")
+                    DataSaverUtils.saveData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
+                }
+            }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.End)
+                    .padding(24.dp, 8.dp)
+                    .clickable {
+                        showFloatWindowTipDialog.value = true
+                    },
+                text = stringResource(R.string.about_float_window),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.W500,
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
-        ItemHeading(text = stringResource(id = R.string.trans_pro))
-        // 并行翻译
-        ProJetSettingCheckbox(
-            state = AppConfig.sParallelTrans,
-            text = stringResource(id = R.string.parallel_trans),
-            description = stringResource(id = R.string.parallel_trans_desc),
-            resourceId = R.drawable.ic_parallel,
-            iconTintColor = MaterialColors.DeepOrange100
-        )
-        JetSettingTile(
-            text = stringResource(id = R.string.theme),
-            resourceId = R.drawable.ic_theme,
-            iconTintColor = MaterialTheme.colorScheme.primary
+        SettingItemCategory(
+            title = {
+                ItemHeading(text = stringResource(id = R.string.trans_pro))
+            }
         ) {
-            navController.navigate(TranslateScreen.ThemeScreen.route)
+
+            // 并行翻译
+            ProJetSettingCheckbox(
+                state = AppConfig.sParallelTrans,
+                text = stringResource(id = R.string.parallel_trans),
+                description = stringResource(id = R.string.parallel_trans_desc),
+                resourceId = R.drawable.ic_parallel
+            )
+            JetSettingTile(
+                resourceId = R.drawable.ic_theme,
+                text = stringResource(id = R.string.theme)
+            ) {
+                navController.navigate(TranslateScreen.ThemeScreen.route)
+            }
         }
 
-        ItemHeading(text = stringResource(id = R.string.about))
-        JetSettingTile(
-            text = stringResource(R.string.join_qq_group),
-            resourceId = R.drawable.ic_qq,
-            iconTintColor = MaterialColors.Blue600
+        SettingItemCategory(
+            title = {
+                ItemHeading(text = stringResource(id = R.string.about))
+            }
         ) {
-            WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
-        }
-        JetSettingTile(
-            text = stringResource(R.string.source_code),
-            resourceId = R.drawable.ic_github,
-            iconTintColor = MaterialColors.Purple700
-        ) {
-            context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star),)
-            WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
-        }
-        JetSettingTile(
-            text = stringResource(id = R.string.open_source_library),
-            resourceId = R.drawable.ic_open_source_library,
-            iconTintColor = MaterialColors.DeepOrange700
-        ) {
-            navController.navigate(TranslateScreen.AboutScreen.route)
-        }
-        JetSettingTile(
-            text = stringResource(R.string.privacy),
-            resourceId = R.drawable.ic_privacy,
-            iconTintColor = MaterialColors.Amber700
-        ) {
-            WebViewActivity.start(context, "https://api.funnysaltyfish.fun/trans/v1/api/privacy")
+            JetSettingTile(
+                resourceId = R.drawable.ic_qq,
+                text = stringResource(R.string.join_qq_group)
+            ) {
+                WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
+            }
+            JetSettingTile(
+                resourceId = R.drawable.ic_github,
+                text = stringResource(R.string.source_code)
+            ) {
+                context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star),)
+                WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
+            }
+            JetSettingTile(
+                resourceId = R.drawable.ic_open_source_library,
+                text = stringResource(id = R.string.open_source_library)
+            ) {
+                navController.navigate(TranslateScreen.AboutScreen.route)
+            }
+            JetSettingTile(
+                resourceId = R.drawable.ic_privacy,
+                text = stringResource(R.string.privacy)
+            ) {
+                WebViewActivity.start(
+                    context,
+                    "https://api.funnysaltyfish.fun/trans/v1/api/privacy"
+                )
+            }
         }
     }
 }
@@ -313,18 +264,16 @@ private fun ProJetSettingCheckbox(
     description: String? = null,
     resourceId: Int? = null,
     imageVector: ImageVector? = null,
-    iconTintColor: Color = MaterialTheme.colorScheme.primary,
     onCheckedChange: (Boolean) -> Unit = {}
 ) {
     JetSettingCheckbox(
         state = state,
+        imageVector = imageVector,
+        resourceId = resourceId,
         text = text,
         description = description,
-        resourceId = resourceId,
-        imageVector = imageVector,
-        iconTintColor = iconTintColor,
-        onCheck = onCheckedChange,
-        interceptor = DefaultVipInterceptor
+        interceptor = DefaultVipInterceptor,
+        onCheck = onCheckedChange
     )
 }
 
@@ -452,7 +401,6 @@ fun SelectLanguage(modifier: Modifier) {
 @Composable
 private fun ItemHeading(text: String) {
     HeadingText(
-        modifier = Modifier.padding(24.dp, 12.dp),
         text = text
     )
 }

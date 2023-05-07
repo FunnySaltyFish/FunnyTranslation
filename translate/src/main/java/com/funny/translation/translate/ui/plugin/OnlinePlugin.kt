@@ -102,7 +102,7 @@ internal fun OnlinePluginItem(
         MarkdownText(
             markdown = plugin.markdown,
             fontSize = 13.sp,
-            color = Color.DarkGray,
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(0.9f),
             maxLines = if (expand) Int.MAX_VALUE else 1,
             onLinkClicked = {
                 WebViewActivity.start(context, it)

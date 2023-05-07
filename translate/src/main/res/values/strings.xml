@@ -128,4 +128,5 @@
     <string name="quit_translating_alert">当前翻译正在进行中，您确定要退出吗？</string>
     <string name="local_plugins">已安装插件</string>
     <string name="plugin_info_template">作者：%s 版本：v%d</string>
+    <string name="setting_translate">翻译设置</string>
 </resources>

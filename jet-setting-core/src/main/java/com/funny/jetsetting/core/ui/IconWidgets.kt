@@ -32,17 +32,10 @@ fun IconWidget(
     tintColor : Color = MaterialTheme.colorScheme.secondary
 ) {
     val icon = funnyIcon.get()
-    Box(
-        modifier = modifier
-            .size(56.dp)
-            .clip(CircleShape)
-            .background(tintColor.copy(alpha = 0.3f))
-            .padding(16.dp)
-    ) {
-        if (icon is ImageVector){
-            Icon(imageVector = icon, contentDescription = "", tint = tintColor, modifier = Modifier.fillMaxSize())
-        }else if(icon is Int){
-            Icon(painter = painterResource(id = icon), contentDescription = "", tint = tintColor, modifier = Modifier.fillMaxSize())
-        }
+    if (icon is ImageVector){
+        Icon(imageVector = icon, contentDescription = "", tint = tintColor, modifier = Modifier.size(24.dp))
+    }else if(icon is Int){
+        Icon(painter = painterResource(id = icon), contentDescription = "", tint = tintColor, modifier = Modifier.size(24.dp))
     }
+
 }
