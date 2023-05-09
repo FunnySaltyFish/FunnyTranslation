@@ -59,7 +59,7 @@ class WebViewActivity : AppCompatActivity() {
         val url = intent.getStringExtra("load_url") ?: ""
 
         setContent {
-            TransTheme(setSystemBar = false) {
+            TransTheme() {
                 if (url.isNotEmpty()){
                     WebViewPage(url = url)
                 } else {

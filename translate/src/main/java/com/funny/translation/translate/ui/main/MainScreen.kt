@@ -424,7 +424,7 @@ private fun TransHistoryList(
 
 
 @Composable
-internal fun LanguageSelect(
+private fun LanguageSelect(
     modifier: Modifier = Modifier,
     language: Language,
     languages: List<Language>,

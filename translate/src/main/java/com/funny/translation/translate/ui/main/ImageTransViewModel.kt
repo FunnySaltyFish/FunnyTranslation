@@ -79,6 +79,11 @@ class ImageTransViewModel: ViewModel() {
         }
     }
 
+    fun cancel() {
+        translateJob?.cancel()
+        translateState = LoadingState.Loading
+    }
+
     fun isTranslating() = translateJob?.isActive == true
     fun updateImageUri(uri: Uri?){ imageUri = uri }
     fun updateSourceLanguage(language: Language){ sourceLanguage = language }

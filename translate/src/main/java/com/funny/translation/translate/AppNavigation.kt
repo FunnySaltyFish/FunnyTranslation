@@ -74,8 +74,6 @@ fun AppNavigation(
         }
     }
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
     val activityVM: ActivityViewModel = viewModel()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -134,32 +132,31 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.ImageTranslateScreen.route) {
                         ImageTransScreen(Modifier.fillMaxSize())
                     }
-
-                    addSettingsNavigation()
-
+                    animateComposable(TranslateScreen.AboutScreen.route) {
+                        AboutScreen()
+                    }
                     animateComposable(TranslateScreen.PluginScreen.route) {
                         PluginScreen()
                     }
-                    navigation(startDestination = TranslateScreen.ThanksScreen.route, route = "nav_1_thanks") {
-                        animateComposable(TranslateScreen.ThanksScreen.route){
-                            ThanksScreen(navController)
-                        }
-                        addUserProfileRoutes(
-                            navHostController = navController,
-                            onLoginSuccess = { userBean ->
-                                Log.d(TAG, "登录成功: 用户: $userBean")
-                                if (userBean.isValid()) AppConfig.login(userBean)
-                            },
-                            onResetPasswordSuccess = {
-                                context.toastOnUi("修改密码成功，请重新登陆~")
-                                AppConfig.logout()
-                                navController.popBackStack(navController.graph.startDestinationId, false)
-                            }
-                        )
-                        animateComposable(TranslateScreen.TransProScreen.route) {
-                            TransProScreen()
-                        }
+                    animateComposable(TranslateScreen.TransProScreen.route) {
+                        TransProScreen()
                     }
+                    animateComposable(TranslateScreen.ThanksScreen.route){
+                        ThanksScreen(navController)
+                    }
+                    addSettingsNavigation()
+                    addUserProfileRoutes(
+                        navHostController = navController,
+                        onLoginSuccess = { userBean ->
+                            Log.d(TAG, "登录成功: 用户: $userBean")
+                            if (userBean.isValid()) AppConfig.login(userBean)
+                        },
+                        onResetPasswordSuccess = {
+                            context.toastOnUi("修改密码成功，请重新登陆~")
+                            AppConfig.logout()
+                            navController.popBackStack(navController.graph.startDestinationId, false)
+                        }
+                    )
                 }
             }
 
@@ -200,9 +197,9 @@ private fun NavGraphBuilder.addSettingsNavigation() {
             SettingsScreen()
         }
         animateComposable(
-            TranslateScreen.AboutScreen.route,
+            TranslateScreen.OpenSourceLibScreen.route,
         ) {
-            AboutScreen()
+            OpenSourceLibScreen()
         }
         animateComposable(
             TranslateScreen.ThemeScreen.route,

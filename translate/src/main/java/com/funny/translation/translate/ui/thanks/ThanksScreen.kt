@@ -1,35 +1,26 @@
 package com.funny.translation.translate.ui.thanks
 
-import android.content.Intent
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
-import androidx.compose.ui.text.font.FontWeight.Companion.ExtraBold
 import androidx.compose.ui.text.font.FontWeight.Companion.W800
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,35 +30,36 @@ import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import coil.compose.AsyncImage
 import com.funny.compose.loading.DefaultFailure
 import com.funny.compose.loading.DefaultLoading
-import com.funny.compose.loading.LoadingContent
 import com.funny.data_saver.core.rememberDataSaverState
-import com.funny.trans.login.LoginActivity
-import com.funny.translation.AppConfig
-import com.funny.translation.helper.UserUtils
-import com.funny.translation.helper.toastOnUi
-import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.AnnualReportActivity
-import com.funny.translation.translate.activity.WebViewActivity
-import com.funny.translation.translate.navigateSingleTop
-import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.ui.touchToScale
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.collections.immutable.toImmutableList
 
 enum class SponsorSortType(val value: String){
     Date("date"), Money("money")
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+data class SpecialThanksBean(
+    val name: String,
+    val desc: String,
+)
+
+private val specialThanksList = arrayListOf(
+    SpecialThanksBean("松川吖", "页面设计 & Bug 提交 & 优化建议"),
+    SpecialThanksBean("随风而行lulu", "多次 Bug 提交 & 优化建议"),
+    SpecialThanksBean("Vul_Ghost", "多次 Bug 提交 & 优化建议"),
+    SpecialThanksBean("所有帮助过的小伙伴们", "感谢你们的支持"),
+).toImmutableList()
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun ThanksScreen(navHostController: NavHostController) {
     val vm: ThanksViewModel = viewModel()
-    val context = LocalContext.current
     val sponsors = vm.sponsors.collectAsLazyPagingItems()
     var sponsorSortType : SponsorSortType by rememberDataSaverState("KEY_SPONSOR_SORT_TYPE", SponsorSortType.Money)
     var sponsorSortOrder by rememberDataSaverState(key = "KEY_SPONSOR_SORT_ORDER", default = -1) // 1 升序; -1 降序
@@ -77,47 +69,34 @@ fun ThanksScreen(navHostController: NavHostController) {
         sponsors.refresh()
     }
 
-    // 刷新用户信息
-    var refreshing by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    val state = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
-        scope.launch {
-            refreshing = true
-            val user = AppConfig.userInfo.value
-            if (user.isValid()){
-                try {
-                    UserUtils.getUserInfo(user.uid)?.let {
-                        AppConfig.userInfo.value = it
-                        context.toastOnUi("更新用户信息成功~")
-                    }
-                }catch (e: Exception){
-                    e.printStackTrace()
-                    context.toastOnUi("更新用户信息失败！")
+    Column(modifier = Modifier
+        .fillMaxSize()
+    ) {
+        TopAppBar(
+            title = {
+                Text(stringResource(id = R.string.thanks))
+            },
+            navigationIcon = {
+                IconButton(onClick = { navHostController.navigateUp() }) {
+                    Icon(
+                        Icons.Default.ArrowBack,
+                        contentDescription = stringResource(id = R.string.back)
+                    )
                 }
             }
-            delay(100) // 组件bug：时间过短，收不回去
-            refreshing = false
-        }
-    })
-
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(horizontal = 24.dp, vertical = 12.dp)
-        .pullRefresh(state)) {
+        )
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            item {
-                UserInfoPanel(navHostController)
+            stickyHeader {
+                HeadingText(text = stringResource(id = R.string.special_thanks), modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background))
             }
-            item {
-                TransProEntrance(navHostController = navHostController)
-            }
-            item {
-                AnnualReportEntrance()
+            items(specialThanksList){ bean ->
+                SpecialThanksItem(bean = bean)
             }
             stickyHeader {
                 Row(
@@ -144,10 +123,10 @@ fun ThanksScreen(navHostController: NavHostController) {
             val loadStates = sponsors.loadState
             when {
                 loadStates.refresh is LoadState.Loading -> {
-                    item { DefaultLoading() }
+                    item { Box { DefaultLoading() } }
                 }
                 loadStates.append is LoadState.Loading -> {
-                    item { DefaultLoading() }
+                    item { Box { DefaultLoading() } }
                 }
                 loadStates.refresh is LoadState.Error -> {
                     val e = sponsors.loadState.refresh as LoadState.Error
@@ -188,12 +167,12 @@ fun ThanksScreen(navHostController: NavHostController) {
                 )
             }
         }
-        PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
+
     }
 }
 
 @Composable
-fun SortSponsor(
+private fun SortSponsor(
     sortType: SponsorSortType,
     updateSortType: (SponsorSortType) -> Unit,
     sortOrder: Int,
@@ -263,129 +242,32 @@ fun SortSponsor(
     }
 }
 
-@Composable
-private fun AnnualReportEntrance() {
-    val context = LocalContext.current
-    Box(modifier = Modifier
-        .touchToScale {
-            Intent(context, AnnualReportActivity::class.java).let {
-                context.startActivity(it)
-            }
-        }
-        .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
-    ){
-        Text(text = stringResource(id = R.string.annual_report), modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
-    }
-}
 
 @Composable
-private fun TransProEntrance(navHostController: NavHostController) {
-    Box(modifier = Modifier
-        .touchToScale {
-            navHostController.navigateSingleTop(TranslateScreen.TransProScreen.route, false)
-        }
-        .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
-    ){
-        Text(text = stringResource(id = R.string.trans_pro), modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = Bold, fontSize = 24.sp)
-    }
-}
-
-@Composable
-fun UserInfoPanel(navHostController: NavHostController) {
-    val TAG = "UserInfoPanel"
-    val activityVM = LocalActivityVM.current
-    val context = LocalContext.current
-
-    LaunchedEffect(key1 = activityVM.uid){
-        Log.d(TAG, "UserInfoPanel: uid is: ${activityVM.uid}, token is: ${activityVM.token}")
-    }
-
-    val startLoginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-    ) {
-        Log.d(TAG, "UserInfoPanel: resultData: ${it.data}")
-    }
-
-    LoadingContent(
-        retryKey = activityVM.uid,
-        updateRetryKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
+private fun SpecialThanksItem(
+    bean: SpecialThanksBean,
+) {
+    Row(
         modifier = Modifier
-            .touchToScale {
-                if (activityVM.uid <= 0) { // 未登录
-                    startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
-                } else {
-                    navHostController.navigateSingleTop(
-                        TranslateScreen.UserProfileScreen.route,
-                        false
-                    )
-                }
-            }
+            .touchToScale()
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
-            .padding(vertical = 12.dp),
-        loader = { activityVM.userInfo }
-    ) { userBean ->
-        if (userBean.isValid()) {
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box {
-                    AsyncImage(
-                        model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape),
-                        placeholder = painterResource(R.drawable.ic_loading)
-                    )
-                    if (userBean.isValidVip()){
-                        Icon(
-
-                            modifier = Modifier
-                                .size(32.dp)
-                                .offset(70.dp, 70.dp),
-                            painter = painterResource(id = R.drawable.ic_vip),
-                            contentDescription = "VIP",
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${userBean.username} | uid: ${userBean.uid}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.W400,
-                    color = LocalContentColor.current.copy(0.8f)
-                )
-            }
-        } else {
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(bean.name, fontSize = 18.sp, fontWeight = FontWeight.W600)
             Text(
-                text = stringResource(R.string.login_or_register),
-                fontSize = 24.sp,
-                fontWeight = ExtraBold,
-                modifier = Modifier.align(Alignment.Center)
+                bean.desc,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W500,
+                modifier = Modifier.padding(bottom = 8.dp, top = 2.dp, end = 4.dp)
             )
         }
-    }
-
-}
-
-@Composable
-private fun SponsorIcon(
-    load_url: String,
-    resourceId: Int,
-    contentDes: String
-) {
-    val context = LocalContext.current
-    IconButton(onClick = {
-        val intent = Intent(context, WebViewActivity::class.java)
-        intent.putExtra("load_url", load_url)
-        context.startActivity(intent)
-    }, modifier = Modifier.size(64.dp)) {
-        Icon(
-            modifier = Modifier.size(48.dp),
-            painter = painterResource(id = resourceId),
-            contentDescription = contentDes,
-            tint = Color.Unspecified
-        )
     }
 }
 

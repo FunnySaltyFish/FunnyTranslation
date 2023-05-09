@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.W300
 import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
@@ -24,18 +25,60 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
+import com.funny.jetsetting.core.JetSettingTile
+import com.funny.jetsetting.core.ui.SettingItemCategory
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.isLight
+import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.LocalNavController
+import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
+import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.ui.touchToScale
 
 @Composable
 fun AboutScreen() {
-    OpenSourceLib()
+    val context = LocalContext.current
+    val navController = LocalNavController.current
+    SettingItemCategory(
+        title = {
+            ItemHeading(text = stringResource(id = R.string.about))
+        }
+    ) {
+        JetSettingTile(
+            resourceId = R.drawable.ic_qq,
+            text = stringResource(R.string.join_qq_group)
+        ) {
+            WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
+        }
+        JetSettingTile(
+            resourceId = R.drawable.ic_github,
+            text = stringResource(R.string.source_code)
+        ) {
+            context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star))
+            WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
+        }
+        JetSettingTile(
+            resourceId = R.drawable.ic_open_source_library,
+            text = stringResource(id = R.string.open_source_library)
+        ) {
+            navController.navigate(TranslateScreen.OpenSourceLibScreen.route)
+        }
+        JetSettingTile(
+            resourceId = R.drawable.ic_privacy,
+            text = stringResource(R.string.privacy)
+        ) {
+            WebViewActivity.start(
+                context,
+                "https://api.funnysaltyfish.fun/trans/v1/api/privacy"
+            )
+        }
+    }
 }
 
 @Composable
-fun OpenSourceLib() {
+fun OpenSourceLibScreen() {
     val vm : SettingsScreenViewModel = viewModel()
     val (state, retry) = rememberRetryableLoadingState(loader = vm::loadOpenSourceLibInfo)
     LazyColumn(

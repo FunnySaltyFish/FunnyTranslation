@@ -26,28 +26,25 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.ui.GesturePhoto
 import com.funny.compose.loading.LoadingState
-import com.funny.translation.AppConfig
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.Language
+import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
-import com.funny.translation.translate.appCtx
-import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
 import com.funny.translation.translate.ui.widget.CustomCoilProvider
 import com.funny.translation.translate.ui.widget.ExchangeButton
 import com.funny.translation.translate.ui.widget.SimpleDialog
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
@@ -66,14 +63,11 @@ fun ImageTransScreen(
     }
     var photoName by rememberSaveable { mutableStateOf("") }
     val currentEnabledLanguages by enabledLanguages.collectAsState()
-    val systemUiController = rememberSystemUiController()
 
-    // 进入页面时隐藏底部栏
-    DisposableEffect(key1 = systemUiController) {
-        systemUiController.isNavigationBarVisible = false
+    DisposableEffect(key1 = Unit){
         onDispose {
-            systemUiController.isNavigationBarVisible = !AppConfig.sHideBottomNavBar.value
             vm.imageUri = null
+            vm.cancel()
         }
     }
 
@@ -169,6 +163,7 @@ private fun LanguageSelectRow(
     targetLanguage: Language,
     updateTargetLanguage: (Language) -> Unit,
     enabledLanguages: List<Language>,
+    textColor: Color = Color.White
 ) {
     Row(modifier.horizontalScroll(rememberScrollState())) {
         LanguageSelect(
@@ -177,7 +172,8 @@ private fun LanguageSelectRow(
             },
             language = sourceLanguage,
             languages = enabledLanguages,
-            updateLanguage = updateSourceLanguage
+            updateLanguage = updateSourceLanguage,
+            textColor = textColor
         )
         ExchangeButton(tint = exchangeButtonTint) {
             val temp = sourceLanguage
@@ -190,8 +186,42 @@ private fun LanguageSelectRow(
             },
             language = targetLanguage,
             languages = enabledLanguages,
-            updateLanguage = updateTargetLanguage
+            updateLanguage = updateTargetLanguage,
+            textColor = textColor
         )
+    }
+}
+
+@Composable
+private fun LanguageSelect(
+    modifier: Modifier = Modifier,
+    language: Language,
+    languages: List<Language>,
+    updateLanguage: (Language) -> Unit,
+    textColor: Color = Color.White
+) {
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+    TextButton(
+        modifier = modifier, onClick = {
+            expanded = true
+        }
+    ) {
+        Text(text = language.displayText, fontSize = 18.sp, fontWeight = FontWeight.W600, color = textColor)
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            languages.forEach {
+                DropdownMenuItem(onClick = {
+                    updateLanguage(it)
+                    expanded = false
+                }, text = {
+                    Text(it.displayText)
+                })
+            }
+        }
     }
 }
 
@@ -240,7 +270,8 @@ private fun ImageTranslationPart(
                 updateSourceLanguage = vm::updateSourceLanguage,
                 targetLanguage = vm.targetLanguage,
                 updateTargetLanguage = vm::updateTargetLanguage,
-                enabledLanguages = currentEnabledLanguages
+                enabledLanguages = currentEnabledLanguages,
+                textColor = MaterialTheme.colorScheme.onBackground
             )
             EngineSelect(engine = vm.translateEngine, updateEngine = vm::updateTranslateEngine, allEngines = vm.allEngines)
         }
@@ -326,7 +357,7 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                                         .offset {
                                             IntOffset(
                                                 (part.x * imageInitialScale).toInt(),
-                                                (-(lazyListState.firstVisibleItemIndex*composableHeight+lazyListState.firstVisibleItemScrollOffset) + part.y * imageInitialScale).toInt()
+                                                (-(lazyListState.firstVisibleItemIndex * composableHeight + lazyListState.firstVisibleItemScrollOffset) + part.y * imageInitialScale).toInt()
                                             )
                                         },
                                     text = part.target,
@@ -346,7 +377,7 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
 private fun EngineSelect(
     engine: ImageTranslationEngine,
     updateEngine: (ImageTranslationEngine) -> Unit,
-    allEngines: List<ImageTranslationEngine>
+    allEngines: List<ImageTranslationEngine>,
 ){
     var expand by remember {
         mutableStateOf(false)

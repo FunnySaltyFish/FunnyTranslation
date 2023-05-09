@@ -166,7 +166,7 @@ object ThemeConfig {
 @Composable
 fun TransTheme(
     dark: Boolean = isSystemInDarkTheme(),
-    setSystemBar: Boolean = true,
+    hideStatusBar: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme =
@@ -182,7 +182,7 @@ fun TransTheme(
             }
             else -> null
         }
-    if (setSystemBar) SystemBarSettings()
+    SystemBarSettings(hideStatusBar)
 
     when (ThemeConfig.sThemeType.value) {
         ThemeType.StaticDefault, ThemeType.DynamicNative -> {

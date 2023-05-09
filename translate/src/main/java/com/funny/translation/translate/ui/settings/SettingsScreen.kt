@@ -22,25 +22,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.funny.jetsetting.core.JetSettingCheckbox
+import com.funny.jetsetting.core.JetSettingSwitch
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.jetsetting.core.ui.SettingItemCategory
 import com.funny.translation.AppConfig
-import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.Consts
-import com.funny.translation.translate.ui.screen.TranslateScreen
-import com.funny.translation.translate.ui.widget.HeadingText
-import com.funny.translation.translate.ui.widget.SimpleDialog
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
+import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.database.appDB
+import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.Dispatchers
@@ -85,21 +86,21 @@ fun SettingsScreen() {
                 ItemHeading(text = stringResource(id = R.string.setting_translate))
             }
         ) {
-            JetSettingCheckbox(
+            JetSettingSwitch(
                 state = AppConfig.sEnterToTranslate,
                 resourceId = R.drawable.ic_enter,
                 text = stringResource(R.string.setting_enter_to_translate)
             ) {
                 if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
             }
-            JetSettingCheckbox(
+            JetSettingSwitch(
                 state = AppConfig.sShowTransHistory,
                 resourceId = R.drawable.ic_history,
                 text = stringResource(R.string.setting_show_history)
             ) {
 
             }
-            JetSettingCheckbox(
+            JetSettingSwitch(
                 state = AppConfig.sTextMenuFloatingWindow,
                 resourceId = R.drawable.ic_float_window,
                 text = stringResource(R.string.setting_text_menu_floating_window),
@@ -145,7 +146,7 @@ fun SettingsScreen() {
             ItemHeading(text = stringResource(id = R.string.setting_ui))
         }) {
             if (DateUtils.isSpringFestival) {
-                JetSettingCheckbox(
+                JetSettingSwitch(
                     state = AppConfig.sSpringFestivalTheme,
                     resourceId = R.drawable.ic_theme,
                     text = stringResource(R.string.setting_spring_theme),
@@ -161,7 +162,7 @@ fun SettingsScreen() {
                     ).show()
                 }
             }
-            JetSettingCheckbox(
+            JetSettingSwitch(
                 key = Consts.KEY_SHOW_FLOAT_WINDOW,
                 text = stringResource(R.string.setting_show_float_window),
                 resourceId = R.drawable.ic_float_window,
@@ -210,41 +211,6 @@ fun SettingsScreen() {
                 navController.navigate(TranslateScreen.ThemeScreen.route)
             }
         }
-
-        SettingItemCategory(
-            title = {
-                ItemHeading(text = stringResource(id = R.string.about))
-            }
-        ) {
-            JetSettingTile(
-                resourceId = R.drawable.ic_qq,
-                text = stringResource(R.string.join_qq_group)
-            ) {
-                WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
-            }
-            JetSettingTile(
-                resourceId = R.drawable.ic_github,
-                text = stringResource(R.string.source_code)
-            ) {
-                context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star),)
-                WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
-            }
-            JetSettingTile(
-                resourceId = R.drawable.ic_open_source_library,
-                text = stringResource(id = R.string.open_source_library)
-            ) {
-                navController.navigate(TranslateScreen.AboutScreen.route)
-            }
-            JetSettingTile(
-                resourceId = R.drawable.ic_privacy,
-                text = stringResource(R.string.privacy)
-            ) {
-                WebViewActivity.start(
-                    context,
-                    "https://api.funnysaltyfish.fun/trans/v1/api/privacy"
-                )
-            }
-        }
     }
 }
 
@@ -266,7 +232,7 @@ private fun ProJetSettingCheckbox(
     imageVector: ImageVector? = null,
     onCheckedChange: (Boolean) -> Unit = {}
 ) {
-    JetSettingCheckbox(
+    JetSettingSwitch(
         state = state,
         imageVector = imageVector,
         resourceId = resourceId,
@@ -399,8 +365,11 @@ fun SelectLanguage(modifier: Modifier) {
 }
 
 @Composable
-private fun ItemHeading(text: String) {
-    HeadingText(
-        text = text
+internal fun ItemHeading(text: String) {
+    Text(
+        modifier = Modifier.semantics { heading() },
+        text = text,
+        fontSize = 28.sp,
+        fontWeight = FontWeight.Bold
     )
 }

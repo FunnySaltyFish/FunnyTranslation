@@ -1,5 +1,9 @@
 package com.funny.translation.translate.ui.main
 
+import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -9,7 +13,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -27,14 +30,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import com.funny.compose.loading.LoadingContent
+import com.funny.trans.login.LoginActivity
 import com.funny.translation.AppConfig
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.ui.screen.TranslateScreen
-import com.funny.translation.translate.ui.thanks.UserInfoPanel
 import com.funny.translation.translate.ui.widget.ExchangeButton
 import com.funny.translation.translate.ui.widget.NoticeBar
+import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
 
 // 主页面，在未输入状态下展示的页面，默认
@@ -110,6 +117,17 @@ private fun Drawer(
     Column(modifier) {
         UserInfoPanel(navHostController = navController)
         Spacer(modifier = Modifier.height(8.dp))
+        // trans_pro
+        NavigationDrawerItem(
+            icon = {
+                drawerItemIcon(R.drawable.ic_vip, stringResource(id = R.string.trans_pro))
+            },
+            label = { Text(text = stringResource(id = R.string.trans_pro)) },
+            selected = false,
+            onClick = {
+                navController.navigateSingleTop(TranslateScreen.TransProScreen.route)
+            }
+        )
         NavigationDrawerItem(
             icon = {
                 drawerItemIcon(R.drawable.ic_settings, stringResource(id = R.string.nav_settings))
@@ -118,7 +136,19 @@ private fun Drawer(
             selected = false,
             onClick = {
                 navController.navigateSingleTop(TranslateScreen.SettingScreen.route)
-            })
+            }
+        )
+        // about
+        NavigationDrawerItem(
+            icon = {
+                drawerItemIcon(R.drawable.ic_about, stringResource(id = R.string.about))
+            },
+            label = { Text(text = stringResource(id = R.string.about)) },
+            selected = false,
+            onClick = {
+                navController.navigateSingleTop(TranslateScreen.AboutScreen.route)
+            }
+        )
         // thanks
         NavigationDrawerItem(
             icon = {
@@ -128,9 +158,9 @@ private fun Drawer(
             selected = false,
             onClick = {
                 navController.navigateSingleTop(TranslateScreen.ThanksScreen.route)
-            })
-        Spacer(modifier = Modifier.height(8.dp))
-        Divider()
+            }
+        )
+
     }
 }
 
@@ -323,4 +353,113 @@ fun MainTopBarNormal(
     }
 }
 
+@Composable
+private fun LanguageSelect(
+    modifier: Modifier = Modifier,
+    language: Language,
+    languages: List<Language>,
+    updateLanguage: (Language) -> Unit,
+) {
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+    Button(
+        modifier = modifier, onClick = {
+            expanded = true
+        }, shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ), contentPadding = PaddingValues(horizontal = 40.dp, vertical = 16.dp)
+    ) {
+        Text(text = language.displayText, fontSize = 18.sp, fontWeight = FontWeight.W600)
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            languages.forEach {
+                DropdownMenuItem(onClick = {
+                    updateLanguage(it)
+                    expanded = false
+                }, text = {
+                    Text(it.displayText)
+                })
+            }
+        }
+    }
+}
 
+@Composable
+fun UserInfoPanel(navHostController: NavHostController) {
+    val TAG = "UserInfoPanel"
+    val activityVM = LocalActivityVM.current
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = activityVM.uid){
+        Log.d(TAG, "UserInfoPanel: uid is: ${activityVM.uid}, token is: ${activityVM.token}")
+    }
+
+    val startLoginLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        Log.d(TAG, "UserInfoPanel: resultData: ${it.data}")
+    }
+
+    LoadingContent(
+        retryKey = activityVM.uid,
+        updateRetryKey = { startLoginLauncher.launch(Intent(context, LoginActivity::class.java)) },
+        modifier = Modifier
+            .touchToScale {
+                if (activityVM.uid <= 0) { // 未登录
+                    startLoginLauncher.launch(Intent(context, LoginActivity::class.java))
+                } else {
+                    navHostController.navigateSingleTop(
+                        TranslateScreen.UserProfileScreen.route,
+                        false
+                    )
+                }
+            }
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+            .padding(vertical = 12.dp),
+        loader = { activityVM.userInfo }
+    ) { userBean ->
+        if (userBean.isValid()) {
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Box {
+                    AsyncImage(
+                        model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape),
+                        placeholder = painterResource(R.drawable.ic_loading)
+                    )
+                    if (userBean.isValidVip()){
+                        Icon(
+
+                            modifier = Modifier
+                                .size(32.dp)
+                                .offset(70.dp, 70.dp),
+                            painter = painterResource(id = R.drawable.ic_vip),
+                            contentDescription = "VIP",
+                            tint = Color.Unspecified
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${userBean.username} | uid: ${userBean.uid}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W400,
+                    color = LocalContentColor.current.copy(0.8f)
+                )
+            }
+        } else {
+            Text(
+                text = stringResource(R.string.login_or_register),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+
+}

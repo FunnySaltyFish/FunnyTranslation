@@ -2,15 +2,15 @@ package com.funny.translation.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import com.funny.translation.AppConfig
 import com.funny.translation.theme.isLight
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
-fun SystemBarSettings() {
+fun SystemBarSettings(
+    hideStatusBar: Boolean = false,
+) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colorScheme.isLight
     val navigationBarColor = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
@@ -20,14 +20,8 @@ fun SystemBarSettings() {
             if (!useDarkIcons) Color.Transparent else navigationBarColor,
             darkIcons = useDarkIcons
         )
+        if (hideStatusBar) {
+            systemUiController.isStatusBarVisible = false
+        }
     }
-
-    LaunchedEffect(AppConfig.sHideBottomNavBar.value) {
-        systemUiController.isNavigationBarVisible =
-            !AppConfig.sHideBottomNavBar.value
-    }
-
-//    LaunchedEffect(AppConfig.sHideStatusBar.value) {
-//        systemUiController.isStatusBarVisible = !AppConfig.sHideStatusBar.value
-//    }
 }

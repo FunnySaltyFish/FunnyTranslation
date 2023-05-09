@@ -36,6 +36,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.utils.executor
 import com.funny.translation.ui.Permission
 import com.funny.translation.ui.touchToScale
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import java.io.File
@@ -50,6 +51,15 @@ fun CameraCapture(
     startChooseImage: () -> Unit,
 ) {
     val context = LocalContext.current
+    val systemUiController = rememberSystemUiController()
+
+    // 进入页面时隐藏底部栏
+    DisposableEffect(key1 = systemUiController) {
+        systemUiController.isSystemBarsVisible = false
+        onDispose {
+            systemUiController.isSystemBarsVisible = true
+        }
+    }
 
     Permission(
         permission = Manifest.permission.CAMERA,

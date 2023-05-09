@@ -26,7 +26,7 @@ private val DefaultJetSettingModifier = Modifier
 private val EmptyAction = {}
 
 @Composable
-fun JetSettingCheckbox(
+fun JetSettingSwitch(
     modifier: Modifier = Modifier,
     state: MutableState<Boolean>,
     imageVector: ImageVector? = null,
@@ -65,7 +65,7 @@ fun JetSettingCheckbox(
 }
 
 @Composable
-fun JetSettingCheckbox(
+fun JetSettingSwitch(
     modifier: Modifier = Modifier,
     key: String,
     default: Boolean = false,
@@ -77,7 +77,7 @@ fun JetSettingCheckbox(
     onCheck: (Boolean) -> Unit
 ) {
     val state = rememberDataSaverState(key = key, default = default)
-    JetSettingCheckbox(
+    JetSettingSwitch(
         modifier = modifier,
         state = state,
         imageVector = imageVector,
@@ -99,6 +99,7 @@ fun JetSettingTile(
     onClick: () -> Unit
 ) {
     SettingBaseItem(
+        modifier = Modifier.padding(vertical = 4.dp),
         title = {
             Text(text = text)
         },

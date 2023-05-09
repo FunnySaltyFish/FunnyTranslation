@@ -72,7 +72,7 @@ fun AnnualReport(vm : AnnualReportViewModel) {
         /**
          *
          * 总共六页
-         * 第一页：你的2022年度报告生成完成，耗时 {vm.loadingTime}
+         * 第一页：你的2023年度报告生成完成，耗时 {vm.loadingTime}
          *        点击查看
          * 第二页：2022年你一共翻译了 ${vm.totalTranslateTimes} 个字
          * 第三页：有些时刻，你可能已经遗忘，但我们还记得
