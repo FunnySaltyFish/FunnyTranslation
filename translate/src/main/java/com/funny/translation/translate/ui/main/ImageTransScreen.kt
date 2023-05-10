@@ -212,6 +212,7 @@ private fun LanguageSelect(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             languages.forEach {
                 DropdownMenuItem(onClick = {

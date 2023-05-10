@@ -25,6 +25,7 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.InputText
+import com.funny.translation.translate.ui.widget.UpperPartBackground
 import com.funny.translation.ui.SubcomposeBottomFirstLayout
 import kotlinx.coroutines.delay
 
