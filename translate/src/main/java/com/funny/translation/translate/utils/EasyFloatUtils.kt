@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -15,6 +14,7 @@ import android.widget.*
 import com.funny.translation.AppConfig
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
@@ -24,7 +24,10 @@ import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
 import com.lzf.easyfloat.interfaces.OnPermissionResult
+import com.lzf.easyfloat.interfaces.OnTouchRangeListener
 import com.lzf.easyfloat.permission.PermissionUtils
+import com.lzf.easyfloat.utils.DragUtils
+import com.lzf.easyfloat.widget.BaseSwitchView
 import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,11 +50,9 @@ object EasyFloatUtils {
 
     private var inputTextFlow = MutableStateFlow("")
 
-    fun initScreenSize(activity: Activity) {
-        val displayMetrics = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getRealMetrics(displayMetrics)
-        AppConfig.SCREEN_WIDTH = displayMetrics.widthPixels
-        AppConfig.SCREEN_HEIGHT = displayMetrics.heightPixels
+    fun initScreenSize() {
+        AppConfig.SCREEN_WIDTH = ScreenUtils.getScreenWidth()
+        AppConfig.SCREEN_HEIGHT = ScreenUtils.getScreenHeight()
     }
     
     private fun initTransWindow(view: View){
@@ -265,8 +266,8 @@ object EasyFloatUtils {
         }
     }
 
-    fun resetFloatBallPlace(activity: Activity){
-        initScreenSize(activity)
+    fun resetFloatBallPlace(){
+        initScreenSize()
         EasyFloat.updateFloat(TAG_FLOAT_BALL, AppConfig.SCREEN_WIDTH - 200, AppConfig.SCREEN_HEIGHT * 2 / 3)
     }
 
@@ -312,24 +313,24 @@ object EasyFloatUtils {
                         )
                         // 截屏的时候就不判定删除了
                         if (FloatScreenCaptureUtils.whetherInScreenCaptureMode) return@drag
-//                        DragUtils.registerDragClose(motionEvent, object : OnTouchRangeListener {
-//                            override fun touchInRange(inRange: Boolean, view: BaseSwitchView) {
-//                                setVibrator(inRange)
-//                                view.findViewById<TextView>(com.lzf.easyfloat.R.id.tv_delete).text =
-//                                    if (inRange) "松手删除" else "删除浮窗"
-//
-//                                view.findViewById<ImageView>(com.lzf.easyfloat.R.id.iv_delete)
-//                                    .setImageResource(
-//                                        if (inRange) com.lzf.easyfloat.R.drawable.icon_delete_selected
-//                                        else com.lzf.easyfloat.R.drawable.icon_delete_normal
-//                                    )
-//                            }
-//
-//                            override fun touchUpInRange() {
-//                                EasyFloat.dismiss(TAG_FLOAT_BALL)
-//                                initFloatBall = false
-//                            }
-//                        }, showPattern = ShowPattern.ALL_TIME)
+                        DragUtils.registerDragClose(motionEvent, object : OnTouchRangeListener {
+                            override fun touchInRange(inRange: Boolean, view: BaseSwitchView) {
+                                setVibrator(inRange)
+                                view.findViewById<TextView>(com.lzf.easyfloat.R.id.tv_delete).text =
+                                    if (inRange) "松手删除" else "删除浮窗"
+
+                                view.findViewById<ImageView>(com.lzf.easyfloat.R.id.iv_delete)
+                                    .setImageResource(
+                                        if (inRange) com.lzf.easyfloat.R.drawable.icon_delete_selected
+                                        else com.lzf.easyfloat.R.drawable.icon_delete_normal
+                                    )
+                            }
+
+                            override fun touchUpInRange() {
+                                EasyFloat.dismiss(TAG_FLOAT_BALL)
+                                initFloatBall = false
+                            }
+                        }, showPattern = ShowPattern.ALL_TIME)
                     }
                     dragEnd {
                         FloatScreenCaptureUtils.registerDragEnd(plusView)

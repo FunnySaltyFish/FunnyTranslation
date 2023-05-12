@@ -144,6 +144,9 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.ThanksScreen.route){
                         ThanksScreen(navController)
                     }
+                    animateComposable(TranslateScreen.FloatWindowScreen.route) {
+                        FloatWindowScreen()
+                    }
                     addSettingsNavigation()
                     addUserProfileRoutes(
                         navHostController = navController,

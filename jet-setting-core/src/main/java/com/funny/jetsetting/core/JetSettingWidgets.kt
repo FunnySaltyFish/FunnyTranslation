@@ -34,7 +34,7 @@ fun JetSettingSwitch(
     text: String,
     description: String? = null,
     interceptor: () -> Boolean = { true },
-    onCheck: (Boolean) -> Unit
+    onCheck: (Boolean) -> Unit = {}
 ) {
     SettingBaseItem(
         modifier = modifier,

@@ -53,7 +53,7 @@ class ShareActivity: AppCompatActivity() {
 
     private fun openFloatWindowAndTransActivity(text: String, openTransWindow: Boolean){
         if (openTransWindow) {
-            EasyFloatUtils.initScreenSize(this)
+            EasyFloatUtils.initScreenSize()
             EasyFloatUtils.showFloatBall(this)
             EasyFloatUtils.showTransWindow()
             if (text != "") EasyFloatUtils.startTranslate(text, Language.AUTO, Language.CHINESE)

@@ -1,6 +1,5 @@
 package com.funny.translation.translate.utils
 
-import android.content.Context
 import android.content.Context.MEDIA_PROJECTION_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,12 +11,17 @@ import android.media.Image
 import android.media.ImageReader
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
+import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.ScreenUtils
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.appCtx
+import com.funny.translation.translate.bean.FileSize
 import java.nio.ByteBuffer
 
 
-object ScreenCaptureUtils {
+object ScreenCaptureUtilsBackup {
+    internal val TEMP_CAPTURED_IMAGE_PATH = appCtx.externalCacheDir?.absolutePath + "/temp_captured_image.jpg"
+
     private val mediaProjectionManager: MediaProjectionManager by lazy {
         appCtx.getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
     }
@@ -29,7 +33,7 @@ object ScreenCaptureUtils {
         ImageReader.newInstance(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight(), ImageFormat.JPEG, 1)
     }
 
-    fun startCaptureScreen(context: Context, resCode: Int, data: Intent, rect: Rect) {
+    fun startCaptureScreen(resCode: Int, data: Intent, rect: Rect) {
         mediaProjection = mediaProjectionManager.getMediaProjection(resCode, data)
         virtualDisplay = mediaProjection?.createVirtualDisplay(
             "ScreenCapture",
@@ -59,6 +63,9 @@ object ScreenCaptureUtils {
                 )
                 bitmap.copyPixelsFromBuffer(buffer)
                 //保存图片到本地
+                val bytes = BitmapUtil.compressImage(bitmap, FileSize.fromMegabytes(1).size)
+                BitmapUtil.saveBitmap(bytes, TEMP_CAPTURED_IMAGE_PATH)
+                appCtx.toastOnUi("截图保存成功")
             }
 
         }, null)

@@ -21,6 +21,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.azhon.appupdate.utils.ApkUtil
+import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
@@ -94,8 +95,8 @@ class TransActivity : AppCompatActivity() {
             }
 
             // 显示悬浮窗
-            EasyFloatUtils.initScreenSize(this)
-            val showFloatWindow = DataSaverUtils.readData(Consts.KEY_SHOW_FLOAT_WINDOW, false)
+            EasyFloatUtils.initScreenSize()
+            val showFloatWindow = AppConfig.sShowFloatWindow.value
             if (showFloatWindow) {
                 EasyFloatUtils.showFloatBall(this)
             }
@@ -106,7 +107,7 @@ class TransActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Log.d(TAG, "onConfigurationChanged: ")
-        EasyFloatUtils.resetFloatBallPlace(this)
+        EasyFloatUtils.resetFloatBallPlace()
     }
 
     override fun onNewIntent(intent: Intent?) {

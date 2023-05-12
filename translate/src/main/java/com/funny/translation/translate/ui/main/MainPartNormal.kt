@@ -31,7 +31,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.funny.compose.loading.LoadingContent
 import com.funny.trans.login.LoginActivity
-import com.funny.translation.AppConfig
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
@@ -93,11 +92,6 @@ private fun HintText(
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    var shouldRequestFocus by remember { mutableStateOf(AppConfig.sAutoFocus.value) }
-    DisposableEffect(Unit) {
-        onDispose { shouldRequestFocus = false }
-    }
-
     Text(
         text = stringResource(id = R.string.trans_text_input_hint),
         fontSize = 28.sp,
@@ -113,7 +107,6 @@ private fun HintText(
                 onClick = onClick
             )
     )
-
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -298,8 +291,7 @@ private fun LanguageSelect(
         Text(text = language.displayText, fontSize = 18.sp, fontWeight = FontWeight.W600)
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.verticalScroll(rememberScrollState())
+            onDismissRequest = { expanded = false }
         ) {
             languages.forEach {
                 DropdownMenuItem(onClick = {

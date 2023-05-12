@@ -1,5 +1,6 @@
 package com.funny.translation.translate.utils
 
+import android.graphics.Rect
 import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
@@ -11,7 +12,9 @@ import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
+import com.funny.translation.translate.activity.StartCaptureScreenActivity
 import com.funny.translation.translate.appCtx
+import com.funny.translation.translate.service.CaptureScreenService
 import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern
@@ -33,7 +36,7 @@ object FloatScreenCaptureUtils {
     private var initScreenCaptureWindow = false
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    var startRecordScreenJob: Job? = null
+    private var startRecordScreenJob: Job? = null
 
     // 截屏的区域
     private var startRecordOffset = (0f to 0f)
@@ -72,8 +75,17 @@ object FloatScreenCaptureUtils {
                     delay(2000)
                     startRecordScreenJob = null
                     VibratorUtils.vibrate(100)
+                    // 关闭拖动关闭的那个区域
+                    withContext(Dispatchers.Main) {
+                        EasyFloat.dismiss("CLOSE_TAG")
+                    }
 
                     withContext(Dispatchers.Main) {
+                        if (!CaptureScreenService.hasMediaProjection) {
+                            // 如果没有权限，则跳转到申请权限的界面
+                            StartCaptureScreenActivity.start(appCtx, null)
+                            return@withContext
+                        }
                         // 开始截屏
                         whetherInScreenCaptureMode = true
                         // 这一段代码实际上是延迟两秒后执行的，所以要重新算一下 viewLeftTop
@@ -109,12 +121,11 @@ object FloatScreenCaptureUtils {
             EasyFloat.getFloatView(TAG_SCREEN_CAPTURE_WINDOW)
                 ?.findViewById<LinearLayout>(R.id.float_screen_capture_button_line)
                 ?.visibility = View.VISIBLE
-            // 保存截屏 TODO
         }
     }
 
 
-    internal fun showScreenCaptureWindow() {
+    private fun showScreenCaptureWindow() {
         if (!initScreenCaptureWindow) {
             EasyFloat.with(FunnyApplication.ctx)
                 .setTag(TAG_SCREEN_CAPTURE_WINDOW)
@@ -124,6 +135,7 @@ object FloatScreenCaptureUtils {
                     }
                     view.findViewById<ImageButton>(R.id.confirm_button).setOnClickListener {
                         EasyFloat.hide(TAG_SCREEN_CAPTURE_WINDOW)
+                        startCaptureScreen()
                     }
                 }
                 .setDragEnable(true)
@@ -144,6 +156,13 @@ object FloatScreenCaptureUtils {
             }
         }
         Log.d(TAG, "showScreenCaptureWindow")
+    }
+
+    private fun startCaptureScreen(){
+        val view = EasyFloat.getFloatView(TAG_SCREEN_CAPTURE_WINDOW)
+        val rect = Rect(0, 0, ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight())
+        view?.getGlobalVisibleRect(rect)
+        StartCaptureScreenActivity.start(appCtx, rect)
     }
 
     private fun updateScreenCaptureWindowPlace(left: Float, top: Float) {

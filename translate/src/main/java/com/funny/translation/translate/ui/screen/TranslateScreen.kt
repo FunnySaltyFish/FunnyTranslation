@@ -16,6 +16,7 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
     object UserProfileScreen :    TranslateScreen(R.string.user_profile, "nav_trans_user_profile")
     object TransProScreen:    TranslateScreen(R.string.trans_pro, "nav_trans_pro")
     object ThemeScreen : TranslateScreen(R.string.theme, "nav_trans_theme")
+    object FloatWindowScreen: TranslateScreen(R.string.float_window, "nav_trans_float_window_screen")
 
     companion object {
         val Saver = { screen: TranslateScreen ->
@@ -32,4 +33,6 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
             }
         }
     }
+
+
 }

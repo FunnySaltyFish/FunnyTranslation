@@ -101,13 +101,18 @@
         </service>
 
         <service
-            android:name=".service.CaptureService"
+            android:name=".service.CaptureScreenService"
             android:foregroundServiceType="mediaProjection" />
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".activity.StartCaptureScreenActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
     </application>
 
 </manifest>

@@ -34,6 +34,7 @@ object AppConfig {
     val sEnterToTranslate = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_ENTER_TO_TRANSLATE, false)
     val sHideBottomNavBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
     val sAutoFocus = mutableDataSaverStateOf(DataSaverUtils, "KEY_AUTO_FOCUS", true)
+    val sShowFloatWindow = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SHOW_FLOAT_WINDOW, false)
 
     // 以下为Pro专享
     val sParallelTrans = mutableDataSaverStateOf(DataSaverUtils, "KEY_PARALLEL_TRANS", false)

@@ -79,7 +79,7 @@
     <string name="action_see_notice_detail">查看公告详情</string>
     <string name="des_current_source_lang">当前选中的源语言</string>
     <string name="des_current_target_lang">当前选中的目标语言</string>
-    <string name="float_window_tip">悬浮窗说明</string>
+    <string name="float_window_tip">悬浮窗使用需要权限，请正确授予相应权限\n悬浮球可拖动，移动至指定位置即可删除。翻译悬浮窗右下角可直接打开应用\n如果你是 Android9 及以下系统，可长按 译 按钮翻译剪切板内容</string>
     <string name="empty_plugin_tip">空空如也~\n去添加一个插件试试吧</string>
     <string name="user_profile">用户信息</string>
     <string name="setting_enter_to_translate">回车键翻译</string>
@@ -130,4 +130,11 @@
     <string name="plugin_info_template">作者：%s 版本：v%d</string>
     <string name="setting_translate">翻译设置</string>
     <string name="special_thanks">特别感谢</string>
+    <string name="float_window">悬浮窗</string>
+    <string name="open_float_window">开启悬浮窗</string>
+    <string name="setting_time_limited">限时设置</string>
+    <string name="failed_to_take_screenshot">截图失败</string>
+    <string name="failed_to_save_screenshot">保存截图失败</string>
+    <string name="failed_to_view_image">查看图片失败</string>
+    <string name="stop">停止捕捉屏幕</string>
 </resources>

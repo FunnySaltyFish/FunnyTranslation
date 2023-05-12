@@ -70,6 +70,7 @@ fun MainScreen() {
     TextTransScreen()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -314,8 +315,9 @@ private fun EngineSelect(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun Drawer(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
     val drawerItemIcon = @Composable { resId: Int, contentDescription: String ->
         Icon(
@@ -325,9 +327,24 @@ private fun Drawer(
             tint = MaterialTheme.colorScheme.primary
         )
     }
+    val drawerItem = @Composable { iconId: Int, targetScreen: TranslateScreen ->
+        NavigationDrawerItem(
+            icon = {
+                drawerItemIcon(
+                    iconId,
+                    stringResource(id = targetScreen.titleId)
+                )
+            },
+            label = { Text(text = stringResource(id = targetScreen.titleId)) },
+            selected = false,
+            onClick = {
+                navController.navigateSingleTop(targetScreen.route)
+            }
+        )
+    }
+
     // 刷新用户信息
     var refreshing by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val state = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
@@ -356,52 +373,11 @@ private fun Drawer(
         ) {
             UserInfoPanel(navHostController = navController)
             Spacer(modifier = Modifier.height(8.dp))
-            // trans_pro
-            NavigationDrawerItem(
-                icon = {
-                    drawerItemIcon(R.drawable.ic_vip, stringResource(id = R.string.trans_pro))
-                },
-                label = { Text(text = stringResource(id = R.string.trans_pro)) },
-                selected = false,
-                onClick = {
-                    navController.navigateSingleTop(TranslateScreen.TransProScreen.route)
-                }
-            )
-            NavigationDrawerItem(
-                icon = {
-                    drawerItemIcon(
-                        R.drawable.ic_settings,
-                        stringResource(id = R.string.nav_settings)
-                    )
-                },
-                label = { Text(text = stringResource(id = R.string.nav_settings)) },
-                selected = false,
-                onClick = {
-                    navController.navigateSingleTop(TranslateScreen.SettingScreen.route)
-                }
-            )
-            // about
-            NavigationDrawerItem(
-                icon = {
-                    drawerItemIcon(R.drawable.ic_about, stringResource(id = R.string.about))
-                },
-                label = { Text(text = stringResource(id = R.string.about)) },
-                selected = false,
-                onClick = {
-                    navController.navigateSingleTop(TranslateScreen.AboutScreen.route)
-                }
-            )
-            // thanks
-            NavigationDrawerItem(
-                icon = {
-                    drawerItemIcon(R.drawable.ic_thanks, stringResource(id = R.string.nav_thanks))
-                },
-                label = { Text(text = stringResource(id = R.string.nav_thanks)) },
-                selected = false,
-                onClick = {
-                    navController.navigateSingleTop(TranslateScreen.ThanksScreen.route)
-                }
-            )
+            drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen)
+            drawerItem(R.drawable.ic_settings, TranslateScreen.SettingScreen)
+            drawerItem(R.drawable.ic_float_window_bold, TranslateScreen.FloatWindowScreen)
+            drawerItem(R.drawable.ic_about, TranslateScreen.AboutScreen)
+            drawerItem(R.drawable.ic_thanks, TranslateScreen.ThanksScreen)
         }
         PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }

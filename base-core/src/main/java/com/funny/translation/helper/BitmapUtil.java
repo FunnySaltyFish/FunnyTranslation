@@ -11,8 +11,12 @@ import android.graphics.Matrix;
 import android.graphics.Path;
 import android.net.Uri;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -162,4 +166,19 @@ public class BitmapUtil
 		return compressImage(bitmap, maxSize); //再进行质量压缩
 	}
 
+	public static void saveBitmap(@NotNull byte[] bytes, @NotNull String imagePath) {
+		File file = new File(imagePath);
+		if (file.exists()) {
+			file.delete();
+		}
+		try {
+			file.createNewFile();
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(bytes);
+			fos.flush();
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

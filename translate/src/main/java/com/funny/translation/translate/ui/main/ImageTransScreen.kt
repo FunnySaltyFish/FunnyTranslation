@@ -211,8 +211,7 @@ private fun LanguageSelect(
         Text(text = language.displayText, fontSize = 18.sp, fontWeight = FontWeight.W600, color = textColor)
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.verticalScroll(rememberScrollState())
+            onDismissRequest = { expanded = false }
         ) {
             languages.forEach {
                 DropdownMenuItem(onClick = {
