@@ -35,7 +35,7 @@ import kotlin.math.min
 
 
 object EasyFloatUtils {
-    private const val TAG_FLOAT_BALL = "ball"
+    internal const val TAG_FLOAT_BALL = "ball"
     private const val TAG_TRANS_WINDOW = "window"
 
     private const val TAG = "EasyFloat"

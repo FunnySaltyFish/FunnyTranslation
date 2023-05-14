@@ -1,5 +1,6 @@
 package com.funny.translation.translate.utils
 
+import android.graphics.Point
 import android.graphics.Rect
 import android.util.Log
 import android.view.Gravity
@@ -7,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import androidx.core.graphics.plus
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.handler.runOnUI
@@ -50,7 +52,7 @@ object FloatScreenCaptureUtils {
     private fun getScreenCaptureLeftTop(motionEvent: MotionEvent): Pair<Float, Float> {
         val viewLeft = motionEvent.rawX - motionEvent.x
         val viewTop = motionEvent.rawY - motionEvent.y
-        val statusBarHeight = EasyFloat.getFloatView(TAG_SCREEN_CAPTURE_WINDOW)?.let {
+        val statusBarHeight = EasyFloat.getFloatView(EasyFloatUtils.TAG_FLOAT_BALL)?.let {
             if (ScreenUtils.isStatusBarVisible(it)) ScreenUtil.getStatusBarHeight(appCtx) else 0
         } ?: 0
         return viewLeft to viewTop - statusBarHeight
@@ -75,12 +77,9 @@ object FloatScreenCaptureUtils {
                     delay(2000)
                     startRecordScreenJob = null
                     VibratorUtils.vibrate(100)
-                    // 关闭拖动关闭的那个区域
                     withContext(Dispatchers.Main) {
+                        // 关闭拖动关闭的那个区域
                         EasyFloat.dismiss("CLOSE_TAG")
-                    }
-
-                    withContext(Dispatchers.Main) {
                         if (!CaptureScreenService.hasMediaProjection) {
                             // 如果没有权限，则跳转到申请权限的界面
                             StartCaptureScreenActivity.start(appCtx, null)
@@ -161,7 +160,11 @@ object FloatScreenCaptureUtils {
     private fun startCaptureScreen(){
         val view = EasyFloat.getFloatView(TAG_SCREEN_CAPTURE_WINDOW)
         val rect = Rect(0, 0, ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight())
+        val location = intArrayOf(0, 0)
+        view?.getLocationOnScreen(location)
         view?.getGlobalVisibleRect(rect)
+        rect.offset(location[0], location[1])
+        Log.d(TAG, "startCaptureScreen: location = ${location.toList()}, rect = $rect")
         StartCaptureScreenActivity.start(appCtx, rect)
     }
 

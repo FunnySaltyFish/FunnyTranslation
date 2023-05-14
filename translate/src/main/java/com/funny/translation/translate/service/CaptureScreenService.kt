@@ -1,11 +1,7 @@
 package com.funny.translation.translate.service
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -17,20 +13,16 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.drawable.Icon
 import android.hardware.display.DisplayManager
+import android.hardware.display.VirtualDisplay
 import android.media.Image
 import android.media.ImageReader
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
-import android.os.Binder
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio
 import android.provider.MediaStore.Images.Media
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -38,6 +30,8 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import com.funny.translation.helper.BitmapUtil
+import com.funny.translation.helper.ScreenUtils
+import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.BuildConfig
 import com.funny.translation.translate.R
@@ -66,6 +60,12 @@ class CaptureScreenService : Service() {
 
     private var overlayView: View? = null
     private var mRect: Rect? = null
+
+    private val windowManager by lazy { getSystemService(WINDOW_SERVICE) as WindowManager }
+
+    private val screenWidth by lazy { ScreenUtils.getScreenWidth() }
+    private val screenHeight by lazy { ScreenUtils.getScreenHeight() }
+    private val densityDpi get() = ScreenUtils.getScreenDensityDpi()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground()
@@ -99,13 +99,18 @@ class CaptureScreenService : Service() {
     private fun startForeground() {
         val serviceIntent = Intent(this, CaptureScreenService::class.java)
         serviceIntent.action = "stop"
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
         val stopIntent =
-            PendingIntent.getService(this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            PendingIntent.getService(this, 0, serviceIntent, flag)
 
         val activityIntent = Intent(this, StartCaptureScreenActivity::class.java)
             .putExtra("fromService", true)
         val contentIntent =
-            PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            PendingIntent.getActivity(this, 0, activityIntent, flag)
 
         val appName = getString(R.string.app_name)
         val notification =
@@ -188,7 +193,8 @@ class CaptureScreenService : Service() {
     @SuppressLint("WrongConstant")
     private fun setUpVirtualDisplay() {
         overlayView?.isVisible = false
-        Handler(Looper.getMainLooper()).post {
+        var virtualDisplay: VirtualDisplay?
+        runOnUI {
             try {
                 val width = screenWidth
                 val height = screenHeight
@@ -199,7 +205,7 @@ class CaptureScreenService : Service() {
                         PixelFormat.RGBA_8888,
                         1
                     )
-                mMediaProjection!!.createVirtualDisplay(
+                virtualDisplay = mMediaProjection!!.createVirtualDisplay(
                     "CaptureScreen",
                     width,
                     height,
@@ -210,7 +216,7 @@ class CaptureScreenService : Service() {
                     null
                 )
                 mImageReader.setOnImageAvailableListener({ reader ->
-                    onImageAvailable(reader)
+                    onImageAvailable(virtualDisplay, reader)
                 }, null)
             } catch (throwable: Throwable) {
                 overlayView?.isVisible = true
@@ -219,24 +225,38 @@ class CaptureScreenService : Service() {
         }
     }
 
-    private fun onImageAvailable(reader: ImageReader) {
+    private fun onImageAvailable(virtualDisplay: VirtualDisplay?, reader: ImageReader) {
         try {
             val image = reader.acquireLatestImage()
             image?.use {
-                image.cropRect = mRect
                 val width = image.width
                 val height = image.height
                 val planes: Array<Image.Plane> = image.planes
+                if (planes.isEmpty()) {
+                    appCtx.toastOnUi("截图失败")
+                    return
+                }
                 val buffer: ByteBuffer = planes[0].buffer
                 val pixelStride: Int = planes[0].pixelStride
                 val rowStride: Int = planes[0].rowStride
                 val rowPadding = rowStride - pixelStride * width
-                val bitmap = Bitmap.createBitmap(
+                var bitmap = Bitmap.createBitmap(
                     width + rowPadding / pixelStride,
                     height,
-                    Bitmap.Config.ARGB_8888
+                    Config.ARGB_8888
                 )
                 bitmap.copyPixelsFromBuffer(buffer)
+                Log.d(TAG, "onImageAvailable: $mRect")
+                if (mRect != null) {
+                    // 做裁剪
+                    val rect = Rect(
+                        mRect!!.left,
+                        mRect!!.top,
+                        mRect!!.right,
+                        mRect!!.bottom
+                    )
+                    bitmap = Bitmap.createBitmap(bitmap, rect.left, rect.top, rect.width(), rect.height())
+                }
                 //保存图片到本地
                 val bytes = BitmapUtil.compressImage(bitmap, FileSize.fromMegabytes(1).size)
                 BitmapUtil.saveBitmap(bytes, TEMP_CAPTURED_IMAGE_PATH)
@@ -246,7 +266,10 @@ class CaptureScreenService : Service() {
             showError(R.string.failed_to_save_screenshot, throwable)
         } finally {
             overlayView?.isVisible = true
-            execSafely { reader.close() }
+            execSafely {
+                reader.close()
+                virtualDisplay?.release()
+            }
         }
     }
 
@@ -358,20 +381,5 @@ class CaptureScreenService : Service() {
 
     private fun getTmpDir() = externalCacheDir ?: cacheDir
 
-    private val windowManager by lazy { getSystemService(WINDOW_SERVICE) as WindowManager }
 
-    private val screenWidth by lazy { displayMetrics.widthPixels }
-
-    private val screenHeight by lazy { displayMetrics.heightPixels }
-
-    private val displayMetrics by lazy {
-        DisplayMetrics().apply {
-            screenDisplay.getRealMetrics(this)
-        }
-    }
-
-    @Suppress("deprecation")
-    private val screenDisplay by lazy { windowManager.defaultDisplay }
-
-    private val densityDpi get() = displayMetrics.densityDpi
 }
