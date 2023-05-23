@@ -1,5 +1,6 @@
 package com.funny.translation.translate.activity
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -8,9 +9,12 @@ import android.graphics.Rect
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.funny.translation.BaseApplication
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.service.CaptureScreenService
 
 class StartCaptureScreenActivity : AppCompatActivity() {
@@ -20,14 +24,19 @@ class StartCaptureScreenActivity : AppCompatActivity() {
         private const val EXTRA_KEY_RECT = "rect"
         internal const val ACTION_INIT = "init"
         internal const val ACTION_CAPTURE = "capture"
-        internal const val ACTION_STOP = "stop"
 
-        fun start(context: Context, rect: Rect?) {
-            context.startActivity(
+        fun start(rect: Rect?) {
+            val context = BaseApplication.getCurrentActivity()
+            val intent =
                 Intent(context, StartCaptureScreenActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .putExtra(EXTRA_KEY_RECT, rect)
-            )
+            if (context is Activity){
+                Log.d(TAG, "start: context is Activity")
+                context.startActivityForResult(intent, 1)
+            } else {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                appCtx.startActivity(intent)
+            }
         }
     }
 
@@ -74,7 +83,7 @@ class StartCaptureScreenActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val intent = Intent(this, CaptureScreenService::class.java)
-        bindService(intent, mConnection, BIND_AUTO_CREATE)
+         bindService(intent, mConnection, BIND_AUTO_CREATE)
     }
 
     override fun onStop() {
@@ -98,7 +107,6 @@ class StartCaptureScreenActivity : AppCompatActivity() {
 
     // 如果 mService 已经初始化，且 mService 已经有了 MediaProjection，那么直接 finish
     private fun requestCaptureScreenOrFinish() {
-
         if (CaptureScreenService.hasMediaProjection) {
             finish()
         } else {
@@ -126,4 +134,6 @@ class StartCaptureScreenActivity : AppCompatActivity() {
             mBound = false
         }
     }
+
+
 }

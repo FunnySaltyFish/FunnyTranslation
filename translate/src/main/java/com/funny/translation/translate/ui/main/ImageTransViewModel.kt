@@ -57,6 +57,7 @@ class ImageTransViewModel: ViewModel() {
             delay(1000)
             kotlin.runCatching {
                 val bytes = BitmapUtil.getBitmapFormUri(appCtx, 4096, 4096, 2 * 1024 * 1024, imageUri!!)
+                bytes ?: return@launch
                 Log.d(TAG, "translate: imageSize: ${bytes.size}")
                 with(TranslateConfig){
                     this.sourceLanguage = this@ImageTransViewModel.sourceLanguage

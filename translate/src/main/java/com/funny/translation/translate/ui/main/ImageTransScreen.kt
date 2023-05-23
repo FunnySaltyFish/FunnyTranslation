@@ -36,6 +36,7 @@ import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.ui.GesturePhoto
 import com.funny.compose.loading.LoadingState
+import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
@@ -54,7 +55,9 @@ private const val TAG = "ImageTransScreen"
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun ImageTransScreen(
-    modifier: Modifier,
+    imageUri: Uri? = null,
+    sourceId : Int? = null,
+    targetId : Int? = null,
 ) {
     val vm: ImageTransViewModel = viewModel()
     val context = LocalContext.current
@@ -69,6 +72,18 @@ fun ImageTransScreen(
             vm.imageUri = null
             vm.cancel()
         }
+    }
+
+    // 如果进入页面时参数携带了图片uri，则直接使用该uri进行翻译
+    LaunchedEffect(key1 = imageUri){
+        if (imageUri == null) return@LaunchedEffect
+        vm.imageUri = imageUri
+        val imageSize = BitmapUtil.getImageSizeFromUri(appCtx, imageUri)
+        if (imageSize == (-1 to -1)) return@LaunchedEffect
+        vm.updateImgSize(imageSize.first, imageSize.second)
+        vm.sourceLanguage = sourceId?.let { findLanguageById(it) } ?: Language.AUTO
+        vm.targetLanguage = targetId?.let { findLanguageById(it) } ?: Language.CHINESE
+        vm.translate()
     }
 
     val clipperLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -113,7 +128,7 @@ fun ImageTransScreen(
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             CameraCapture(
-                modifier = modifier,
+                modifier = Modifier.fillMaxSize(),
                 onSavedImageFile = { uri ->
                     photoName = "photo_${System.currentTimeMillis()}.jpg"
                     doClip(uri)

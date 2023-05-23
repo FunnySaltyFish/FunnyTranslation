@@ -2,8 +2,10 @@ package com.funny.translation
 
 object Consts {
 
+
     const val INTENT_ACTION_CLICK_FLOAT_WINDOW_TILE = "action_click_float_window_tile"
     const val INTENT_EXTRA_OPEN_FLOAT_WINDOW  = "extra_open_float_window"
+    const val EXTRA_OPEN_IN_APP = "extra_open_in_app"
 
     const val KEY_CRASH_MSG = "crash_message"
     const val KEY_SHOW_HISTORY = "show_history"

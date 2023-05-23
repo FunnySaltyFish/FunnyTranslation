@@ -15,11 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavHostController
 import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
@@ -50,8 +52,8 @@ class TransActivity : AppCompatActivity() {
     private lateinit var activityViewModel: ActivityViewModel
     private lateinit var context: Context
     private lateinit var netWorkReceiver: NetworkReceiver
-
-    private var shouldJumpToMainScreen = mutableStateOf(false)
+    // 保存 NavController，不太优雅，但是为了跳转方便，先这样吧
+    internal var navController: NavHostController? = null
 
     companion object {
         const val TAG = "TransActivity"
@@ -76,12 +78,9 @@ class TransActivity : AppCompatActivity() {
         setContent {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
-                AppNavigation(
-                    shouldJumpToMainScreen,
-                    exitAppAction = {
-                        this.finish()
-                    }
-                )
+                AppNavigation {
+                    this.finish()
+                }
             }
         }
 
@@ -116,6 +115,7 @@ class TransActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy: ")
         EasyFloatUtils.dismissAll()
         unregisterReceiver(netWorkReceiver)
         DataSaverUtils.remove(Consts.KEY_APP_CURRENT_SCREEN)
@@ -146,46 +146,57 @@ class TransActivity : AppCompatActivity() {
     private fun getIntentData(intent: Intent?) {
         val action: String? = intent?.action
         // 这里处理以 url 形式传递的文本
-        if (Intent.ACTION_VIEW == action) {
-            val data: Uri? = intent.data
-            // Log.d(TAG, "getIntentData: data:$data")
-            if (data != null && data.scheme == "funny" && data.host == "translation") {
-                with(activityViewModel.tempTransConfig) {
-                    sourceString = data.getQueryParameter("text")
-                    val s = data.getQueryParameter("sourceId")
-                    if (s != null) sourceLanguage = findLanguageById(s.toInt())
-                    val t = data.getQueryParameter("targetId")
-                    if (t != null) targetLanguage = findLanguageById(t.toInt())
-                }
-                Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
-                shouldJumpToMainScreen.value = true
-            }
-        }
-        // 这里处理的是外部分享过来的文本
-        else if (Intent.ACTION_SEND == action && "text/plain" == intent.type) {
+//        if (Intent.ACTION_VIEW == action) {
+//            val data: Uri? = intent.data
+//            // Log.d(TAG, "getIntentData: data:$data")
+//            if (data != null && data.scheme == "funny" && data.host == "translation") {
+//                with(activityViewModel.tempTransConfig) {
+//                    sourceString = data.getQueryParameter("text")
+//                    val s = data.getQueryParameter("sourceId")
+//                    if (s != null) sourceLanguage = findLanguageById(s.toInt())
+//                    val t = data.getQueryParameter("targetId")
+//                    if (t != null) targetLanguage = findLanguageById(t.toInt())
+//                }
+//                Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
+//                // shouldJumpToMainScreen.value = true
+//            }
+//        }
+//        // 这里处理的是外部分享过来的文本
+//        else
+        if (Intent.ACTION_SEND == action && "text/plain" == intent.type) {
             val text = intent.getStringExtra(Intent.EXTRA_TEXT)?.trim() ?: ""
             if (text != "") {
-                with(activityViewModel.tempTransConfig) {
-                    sourceString = text
-                    sourceLanguage = Language.AUTO
-                    targetLanguage = Language.CHINESE
-                }
                 Log.d(TAG, "获取到其他应用传来的文本: $text")
-                shouldJumpToMainScreen.value = true
+                navigateToTextTrans(text, Language.AUTO, Language.CHINESE)
             }
         }
         // 这里是处理输入法选中后的菜单
         else if (Intent.ACTION_PROCESS_TEXT == action && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val text = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.trim() ?: ""
             if (text != "") {
-                with(activityViewModel.tempTransConfig) {
-                    sourceString = text
-                    sourceLanguage = Language.AUTO
-                    targetLanguage = Language.CHINESE
-                }
                 Log.d(TAG, "获取到输入法菜单传来的文本: $text")
-                shouldJumpToMainScreen.value = true
+                navigateToTextTrans(text, Language.AUTO, Language.CHINESE)
+                // shouldJumpToMainScreen.value = true
             }
         }
+        // 图片
+        // "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
+         else if (intent?.data?.scheme == "funny" && intent.data?.host == "translation") {
+            val data = intent.data
+            if (data != null) {
+                // 图片翻译，手动跳转
+                if (data.path == "/image_translate") {
+                    navController?.navigate(data)
+                }
+            }
+        }
+    }
+
+    private fun navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
+        navController?.navigate(
+            NavDeepLinkRequest.Builder
+                .fromUri(Uri.parse("funny://translation/translate?text=$sourceText&sourceId=${sourceLanguage.id}&targetId=${targetLanguage.id}"))
+                .build()
+        )
     }
 }

@@ -33,9 +33,9 @@
         <activity
             android:name=".TransActivity"
             android:exported="true"
-            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +50,9 @@
 
                 <data
                     android:host="translation"
-                    android:scheme="funny" />
+                    android:scheme="funny"
+                    android:pathPattern="/translate"
+                    />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -59,6 +61,16 @@
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <!-- funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}" -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="funny"
+                    android:host="translation"
+                    android:pathPattern="/image_translate"
+                    />
+            </intent-filter>
+
         </activity>
         <activity
             android:name=".activity.WebViewActivity"
@@ -73,14 +85,18 @@
         <activity
             android:name=".activity.ShareActivity"
             android:exported="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/AppTheme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <!-- 高版本 Android 要读取别人分享过来的图片怎么那么麻烦，不做了不做了 -->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.SEND" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <data android:mimeType="image/*" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".activity.AnnualReportActivity"

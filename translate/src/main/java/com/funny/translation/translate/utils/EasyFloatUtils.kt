@@ -12,6 +12,7 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.*
 import com.funny.translation.AppConfig
+import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.ScreenUtils
@@ -240,6 +241,7 @@ object EasyFloatUtils {
                     action = Intent.ACTION_VIEW
                     data = Uri.parse("funny://translation/translate?text=${edittext.text}&sourceId=${spinnerSource.selectedItemPosition}&targetId=${spinnerTarget.selectedItemPosition}")
                     flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK
+                    putExtra(Consts.EXTRA_OPEN_IN_APP, true)
                 }.let {
                     context.startActivity(it)
                 }

@@ -144,10 +144,10 @@ object OkHttpUtils {
             response
         }
 
-        addInterceptor(LoggingInterceptor.Builder()
-            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
-            .log(VERBOSE)
-            .build())
+//        addInterceptor(LoggingInterceptor.Builder()
+//            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
+//            .log(VERBOSE)
+//            .build())
 
     }.build()
 

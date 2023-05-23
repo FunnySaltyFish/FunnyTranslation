@@ -82,7 +82,7 @@ object FloatScreenCaptureUtils {
                         EasyFloat.dismiss("CLOSE_TAG")
                         if (!CaptureScreenService.hasMediaProjection) {
                             // 如果没有权限，则跳转到申请权限的界面
-                            StartCaptureScreenActivity.start(appCtx, null)
+                            StartCaptureScreenActivity.start(null)
                             return@withContext
                         }
                         // 开始截屏
@@ -165,7 +165,7 @@ object FloatScreenCaptureUtils {
         view?.getGlobalVisibleRect(rect)
         rect.offset(location[0], location[1])
         Log.d(TAG, "startCaptureScreen: location = ${location.toList()}, rect = $rect")
-        StartCaptureScreenActivity.start(appCtx, rect)
+        StartCaptureScreenActivity.start(rect)
     }
 
     private fun updateScreenCaptureWindowPlace(left: Float, top: Float) {

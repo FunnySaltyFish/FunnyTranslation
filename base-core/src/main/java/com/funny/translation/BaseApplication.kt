@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import com.tencent.mmkv.MMKV
 import java.lang.ref.WeakReference
 import java.util.*
@@ -19,14 +20,15 @@ open class BaseApplication : Application() {
         MMKV.initialize(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks{
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                if ((activityStack.isNotEmpty() && activityStack.peek() != activity) || activityStack.isEmpty())
-                    activityStack.push(activity)
+                activityStack.push(activity)
+                Log.d(TAG, "【${activity::class.java.simpleName}】 Created! currentStackSize:${activityStack.size}")
             }
             override fun onActivityStarted(activity: Activity) {}
             override fun onActivityPaused(activity: Activity) {}
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
             override fun onActivityDestroyed(activity: Activity) {
                 if (activityStack.isNotEmpty()) activityStack.pop()
+                Log.d(TAG, "【${activity::class.java.simpleName}】 Destroyed! currentStackSize:${activityStack.size}")
             }
 
             override fun onActivityResumed(activity: Activity) {
@@ -51,6 +53,7 @@ open class BaseApplication : Application() {
         fun getCurrentActivity() = if (activityStack.isNotEmpty()) activityStack.peek() else null
 
         private val activityStack = Stack<Activity>()
+        private const val TAG = "BaseApplication"
     }
 
 

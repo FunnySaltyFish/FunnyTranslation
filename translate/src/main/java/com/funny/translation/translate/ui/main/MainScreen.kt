@@ -66,16 +66,23 @@ enum class MainScreenState {
     ExperimentalAnimationApi::class
 )
 @Composable
-fun MainScreen() {
-    TextTransScreen()
+fun MainScreen(
+    sourceText: String?,
+    sourceId: Int?,
+    targetId: Int?
+) {
+    TextTransScreen(sourceText, sourceId?.let { findLanguageById(it) }, targetId?.let { findLanguageById(it) })
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
-fun TextTransScreen() {
+fun TextTransScreen(
+    sourceText: String?,
+    sourceLanguage: Language?,
+    targetLanguage: Language?
+) {
     val vm: MainViewModel = viewModel()
 
     // 内置引擎
@@ -90,6 +97,21 @@ fun TextTransScreen() {
     val lifecycleOwner = LocalLifecycleOwner.current
     val activityVM: ActivityViewModel = LocalActivityVM.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(key1 = sourceText) {
+        if (sourceText.isNullOrBlank() || sourceLanguage == null || targetLanguage == null)
+            return@LaunchedEffect
+        vm.translateText = sourceText
+        vm.sourceLanguage = sourceLanguage
+        vm.targetLanguage = targetLanguage
+        vm.translate()
+    }
+
+    DisposableEffect(key1 = softwareKeyboardController){
+        onDispose {
+            softwareKeyboardController?.hide()
+        }
+    }
 
     // Compose函数会被反复重新调用（重组），所以变量要remember
     val updateSelectedEngine = remember {
@@ -178,39 +200,6 @@ fun TextTransScreen() {
                     }
                 )
             }
-        }
-    }
-
-
-    // DisposableEffect 是副作用的一种，相较于其他几个 SideEffect，特点在于可取消
-    // 有关更多副作用，可参阅 https://developer.android.google.cn/jetpack/compose/side-effects?hl=zh-cn
-    // 此处用于观察生命周期
-    DisposableEffect(key1 = lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                val text = activityVM.tempTransConfig.sourceString?.trim() ?: ""
-                if (text != "") {
-                    vm.translateText = text
-                    if (activityVM.tempTransConfig.sourceLanguage != null) {
-                        vm.sourceLanguage = activityVM.tempTransConfig.sourceLanguage!!
-                    }
-                    if (activityVM.tempTransConfig.targetLanguage != null) {
-                        vm.targetLanguage = activityVM.tempTransConfig.targetLanguage!!
-                    }
-                    vm.translate()
-                    activityVM.tempTransConfig.clear()
-                }
-            } else if (event == Lifecycle.Event.ON_STOP) {
-                softwareKeyboardController?.hide()
-            }
-        }
-
-        // Add the observer to the lifecycle
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        // When the effect leaves the Composition, remove the observer
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }
@@ -312,7 +301,7 @@ private fun EngineSelect(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun Drawer(
     modifier: Modifier = Modifier,

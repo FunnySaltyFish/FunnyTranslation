@@ -5,6 +5,7 @@ package com.funny.translation.translate
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -15,10 +16,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
@@ -57,25 +58,17 @@ val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
 @ExperimentalAnimationApi
 @Composable
 fun AppNavigation(
-    shouldJumpToMainContent: MutableState<Boolean>,
     exitAppAction: () -> Unit
 ) {
     val navController = rememberAnimatedNavController()
+    val context = LocalContext.current
 
-    LaunchedEffect(shouldJumpToMainContent.value){
-        if (shouldJumpToMainContent.value){
-            if (navController.currentBackStackEntry != null){
-                navController.navigate(TranslateScreen.MainScreen.route){
-                    launchSingleTop = true
-                    popUpTo(TranslateScreen.MainScreen.route)
-                }
-            }
-            shouldJumpToMainContent.value = false
-        }
+    LaunchedEffect(key1 = navController){
+        (context as TransActivity).navController = navController
     }
 
     val activityVM: ActivityViewModel = viewModel()
-    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember {
         SnackbarHostState()
@@ -112,25 +105,55 @@ fun AppNavigation(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
                 }
-            ) {
+            ) { padding ->
                 AnimatedNavHost(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
                     modifier = Modifier
                         .statusBarsPadding()
-                        // avoid content being sheltered
-                        .padding(bottom = it.calculateBottomPadding())
+                        .padding(bottom = padding.calculateBottomPadding())
                 ) {
-                    composable(TranslateScreen.MainScreen.route, deepLinks = listOf(
-                        navDeepLink {
-                            uriPattern =
-                                "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}"
-                        }
-                    )) {
-                        MainScreen()
+                    composable(
+                        TranslateScreen.MainScreen.route,
+                        deepLinks = listOf(
+                            navDeepLink {
+                                uriPattern =
+                                    "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}"
+                            }
+                        ),
+                        arguments = listOf(
+                            navArgument("text") {  },
+                            navArgument("sourceId") { type = NavType.IntType; defaultValue = Language.AUTO.id },
+                            navArgument("targetId") { type = NavType.IntType; defaultValue = Language.CHINESE.id  }
+                        )
+                    ) {
+                        MainScreen(
+                            sourceText = it.arguments?.getString("text"),
+                            sourceId = it.arguments?.getInt("sourceId"),
+                            targetId = it.arguments?.getInt("targetId")
+                        )
                     }
-                    animateComposable(TranslateScreen.ImageTranslateScreen.route) {
-                        ImageTransScreen(Modifier.fillMaxSize())
+                    animateComposable(
+                        TranslateScreen.ImageTranslateScreen.route,
+                        deepLinks = listOf(
+                            navDeepLink {
+                                uriPattern =
+                                    "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
+                            }
+                        ),
+                        arguments = listOf(
+                            navArgument("imageUri") {  },
+                            navArgument("sourceId") { type = NavType.IntType; defaultValue = Language.AUTO.id },
+                            navArgument("targetId") { type = NavType.IntType; defaultValue = Language.CHINESE.id  }
+                        )
+                    ) {
+                        // 使用 Intent 跳转目前会导致 Activity 重建
+                        // 不合理，相当不合理
+                        ImageTransScreen(
+                            imageUri = it.arguments?.getString("imageUri")?.toUri(),
+                            sourceId = it.arguments?.getInt("sourceId"),
+                            targetId = it.arguments?.getInt("targetId")
+                        )
                     }
                     animateComposable(TranslateScreen.AboutScreen.route) {
                         AboutScreen()
@@ -243,10 +266,14 @@ fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = tr
 fun NavGraphBuilder.animateComposable(
     route: String,
     animDuration: Int = 700,
-    content: @Composable () -> Unit,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
 ) {
     composable(
         route,
+        arguments = arguments,
+        deepLinks = deepLinks,
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentScope.SlideDirection.Left,
@@ -272,7 +299,7 @@ fun NavGraphBuilder.animateComposable(
             )
         }
     ) {
-        content()
+        content(it)
     }
 }
 

@@ -47,6 +47,16 @@ class ShareActivity: AppCompatActivity() {
             val openTransWindow = intent.getBooleanExtra(Consts.INTENT_EXTRA_OPEN_FLOAT_WINDOW, false)
             if (openTransWindow) openFloatWindowAndTransActivity("", true)
         }
+        // 接收到外部分享的图片
+        else if (Intent.ACTION_SEND == intent.action && intent.type?.startsWith("image/") == true) {
+            val uri = intent.getParcelableExtra<android.net.Uri>(Intent.EXTRA_STREAM)
+            Log.d(TransActivity.TAG, "获取到分享的图片: $uri")
+            uri ?: return
+            // funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}
+            startActivity(Intent(this, TransActivity::class.java).apply {
+                data = android.net.Uri.parse("funny://translation/image_translate?imageUri=$uri")
+            })
+        }
 
         finish()
     }
