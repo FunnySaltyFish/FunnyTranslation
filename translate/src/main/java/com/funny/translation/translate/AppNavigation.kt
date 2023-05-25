@@ -138,13 +138,14 @@ fun AppNavigation(
                         deepLinks = listOf(
                             navDeepLink {
                                 uriPattern =
-                                    "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
+                                    "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}&doClip={doClip}"
                             }
                         ),
                         arguments = listOf(
-                            navArgument("imageUri") {  },
+                            navArgument("imageUri") { type = NavType.StringType; defaultValue = null; nullable = true },
                             navArgument("sourceId") { type = NavType.IntType; defaultValue = Language.AUTO.id },
-                            navArgument("targetId") { type = NavType.IntType; defaultValue = Language.CHINESE.id  }
+                            navArgument("targetId") { type = NavType.IntType; defaultValue = Language.CHINESE.id  },
+                            navArgument("doClip") { type = NavType.BoolType; defaultValue = false  }
                         )
                     ) {
                         // 使用 Intent 跳转目前会导致 Activity 重建
@@ -152,7 +153,8 @@ fun AppNavigation(
                         ImageTransScreen(
                             imageUri = it.arguments?.getString("imageUri")?.toUri(),
                             sourceId = it.arguments?.getInt("sourceId"),
-                            targetId = it.arguments?.getInt("targetId")
+                            targetId = it.arguments?.getInt("targetId"),
+                            doClipFirst = it.arguments?.getBoolean("doClip") ?: false
                         )
                     }
                     animateComposable(TranslateScreen.AboutScreen.route) {

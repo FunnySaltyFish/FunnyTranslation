@@ -26,6 +26,8 @@ class StartCaptureScreenActivity : AppCompatActivity() {
         internal const val ACTION_CAPTURE = "capture"
 
         fun start(rect: Rect?) {
+            // 但现在有个问题，跳转时先跳到了 TransActivity，再打开的当前 Activity
+            // TODO 优化成直接打开当前 Activity
             val context = BaseApplication.getCurrentActivity()
             val intent =
                 Intent(context, StartCaptureScreenActivity::class.java)

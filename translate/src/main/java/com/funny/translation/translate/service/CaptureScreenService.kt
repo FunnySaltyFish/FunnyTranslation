@@ -16,7 +16,6 @@ import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.*
 import android.util.Log
-import android.view.WindowManager
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import com.funny.translation.helper.BitmapUtil
@@ -39,6 +38,7 @@ class CaptureScreenService : Service() {
 
         val hasMediaProjection get() = mResultData != null
         val TEMP_CAPTURED_IMAGE_PATH = appCtx.externalCacheDir?.absolutePath + "/temp_captured_image.jpg"
+        val WHOLE_SCREEN_RECT = Rect(-1, -1, -1, -1)
     }
 
     private var mRect: Rect? = null
@@ -157,7 +157,7 @@ class CaptureScreenService : Service() {
                 )
                 bitmap.copyPixelsFromBuffer(buffer)
                 Log.d(TAG, "onImageAvailable: $mRect")
-                if (mRect != null) {
+                if (mRect != null && mRect != WHOLE_SCREEN_RECT) {
                     // 做裁剪
                     val rect = Rect(
                         mRect!!.left,
@@ -189,7 +189,7 @@ class CaptureScreenService : Service() {
         // 已经存在，就带到前台
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         val fileUri = Uri.fromFile(File(TEMP_CAPTURED_IMAGE_PATH))
-        intent.data = Uri.parse("funny://translation/image_translate?imageUri=${fileUri}")
+        intent.data = Uri.parse("funny://translation/image_translate?imageUri=${fileUri}&doClip=true")
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }

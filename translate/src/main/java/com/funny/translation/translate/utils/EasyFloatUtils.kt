@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.animation.Animation
@@ -14,12 +14,13 @@ import android.widget.*
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.TranslateConfig
-import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
+import com.funny.translation.translate.activity.StartCaptureScreenActivity
 import com.funny.translation.translate.engine.TextTranslationEngines
+import com.funny.translation.translate.service.CaptureScreenService
 import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
@@ -215,17 +216,6 @@ object EasyFloatUtils {
         }
 
         view.findViewById<TextView?>(R.id.float_window_translate).apply {
-            setOnLongClickListener {
-                val clipboardText = ClipBoardUtil.read(context).trim()
-                Log.d(TAG, "clipboardText: $clipboardText")
-                if (clipboardText != "") {
-                    VibratorUtils.vibrate(100)
-                    edittext.setText(clipboardText)
-                    translateConfigFlow.value =
-                        translateConfigFlow.value.copy(sourceString = clipboardText)
-                }
-                true
-            }
             setOnClickListener {
                 val inputText = edittext.text.trim()
                 if (inputText.isNotEmpty()) {
@@ -298,6 +288,16 @@ object EasyFloatUtils {
                     view.findViewById<RoundImageView>(R.id.float_ball_image).apply {
                         setOnClickListener {
                             showTransWindow()
+                        }
+                        setOnLongClickListener {
+                            VibratorUtils.vibrate()
+                            if (!CaptureScreenService.hasMediaProjection) {
+                                // 如果没有权限，则跳转到申请权限的界面
+                                StartCaptureScreenActivity.start(null)
+                            } else {
+                                StartCaptureScreenActivity.start(CaptureScreenService.WHOLE_SCREEN_RECT)
+                            }
+                            true
                         }
                     }
                     plusView = view.findViewById<ImageView>(R.id.float_ball_plus).apply {
