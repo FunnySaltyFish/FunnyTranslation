@@ -30,7 +30,7 @@ internal fun SettingBaseItem(
     action: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
-    val throttleHandler = rememberSaveable(1000, saver = ThrottleHandler.Saver) { ThrottleHandler(1000) }
+    val throttleHandler = rememberSaveable(300, saver = ThrottleHandler.Saver) { ThrottleHandler(1000) }
     Surface(
         onClick = {
             throttleHandler.process(onClick)

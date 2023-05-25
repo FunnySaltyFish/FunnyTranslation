@@ -47,6 +47,7 @@ import com.funny.translation.theme.ThemeStaticColors
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
+import com.funny.translation.translate.ui.widget.ArrowTile
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.RadioTile
 import com.funny.translation.ui.touchToScale
@@ -152,25 +153,20 @@ private fun SelectDynamicTheme(modifier: Modifier) {
             else context.toastOnUi("此功能需要Android 12及以上版本！")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        JetSettingTile(
-            modifier = Modifier
-                .fillMaxWidth()
-                .throttleClick {
-                    if (DefaultVipInterceptor()) {
-                        pickLauncher.launch(
-                            PhotoPickerActivity.intentOf(
-                                context,
-                                CoilMediaPhotoProviderFactory::class.java,
-                                CustomPhotoPickerActivity::class.java,
-                                pickedItems = arrayListOf(),
-                                pickLimitCount = 1,
-                            )
-                        )
-                    }
-                }
-                .padding(8.dp),
-            text = "从图片选择"
-        ) {}
+        ArrowTile(text = "从图片选择") {
+            if (DefaultVipInterceptor()) {
+                pickLauncher.launch(
+                    PhotoPickerActivity.intentOf(
+                        context,
+                        CoilMediaPhotoProviderFactory::class.java,
+                        CustomPhotoPickerActivity::class.java,
+                        pickedItems = arrayListOf(),
+                        pickLimitCount = 1,
+                    )
+                )
+            }
+        }
+
         if (selectImageUri != null) {
             Spacer(modifier = Modifier.height(12.dp))
             AsyncImage(model = selectImageUri, contentDescription = "Selected Image", modifier = Modifier

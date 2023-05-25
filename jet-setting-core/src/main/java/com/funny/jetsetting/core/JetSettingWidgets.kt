@@ -59,7 +59,10 @@ fun JetSettingSwitch(
             })
         },
         onClick = {
-            state.value = !state.value
+            if (interceptor.invoke()) {
+                state.value = !state.value
+                onCheck(state.value)
+            }
         }
     )
 }
