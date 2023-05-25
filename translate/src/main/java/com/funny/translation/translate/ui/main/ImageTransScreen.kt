@@ -3,6 +3,7 @@ package com.funny.translation.translate.ui.main
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,6 +50,7 @@ import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
+import kotlin.math.min
 
 private const val TAG = "ImageTransScreen"
 
@@ -58,6 +60,7 @@ fun ImageTransScreen(
     imageUri: Uri? = null,
     sourceId : Int? = null,
     targetId : Int? = null,
+    doClipFirst: Boolean = false
 ) {
     val vm: ImageTransViewModel = viewModel()
     val context = LocalContext.current
@@ -72,18 +75,6 @@ fun ImageTransScreen(
             vm.imageUri = null
             vm.cancel()
         }
-    }
-
-    // 如果进入页面时参数携带了图片uri，则直接使用该uri进行翻译
-    LaunchedEffect(key1 = imageUri){
-        if (imageUri == null) return@LaunchedEffect
-        vm.imageUri = imageUri
-        val imageSize = BitmapUtil.getImageSizeFromUri(appCtx, imageUri)
-        if (imageSize == (-1 to -1)) return@LaunchedEffect
-        vm.updateImgSize(imageSize.first, imageSize.second)
-        vm.sourceLanguage = sourceId?.let { findLanguageById(it) } ?: Language.AUTO
-        vm.targetLanguage = targetId?.let { findLanguageById(it) } ?: Language.CHINESE
-        vm.translate()
     }
 
     val clipperLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -122,6 +113,24 @@ fun ImageTransScreen(
                 }
             }
         }
+
+    // 如果进入页面时参数携带了图片uri
+    LaunchedEffect(key1 = imageUri){
+        if (imageUri == null) return@LaunchedEffect
+        // 如果不需要裁剪，那么直接翻译
+        if (!doClipFirst) {
+            vm.imageUri = imageUri
+            val imageSize = BitmapUtil.getImageSizeFromUri(appCtx, imageUri)
+            if (imageSize == (-1 to -1)) return@LaunchedEffect
+            vm.updateImgSize(imageSize.first, imageSize.second)
+            vm.sourceLanguage = sourceId?.let { findLanguageById(it) } ?: Language.AUTO
+            vm.targetLanguage = targetId?.let { findLanguageById(it) } ?: Language.CHINESE
+            vm.translate()
+        } else {
+            // 反之调到裁剪页面
+            doClip(imageUri)
+        }
+    }
 
     if (vm.imageUri != null) {
         ImageTranslationPart(vm = vm)
@@ -307,19 +316,21 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
         // .clickable { showResult = !showResult }
     ){
         LaunchedEffect(maxWidth, maxHeight){
-            // 竖屏以宽为比例缩放，横屏以高为比例
-            scaleByWidth = maxWidth < maxHeight
             with(density) {
-                imageInitialScale = if (scaleByWidth) maxWidth.toPx() / vm.imgWidth else maxHeight.toPx() / vm.imgHeight
+                val sw = maxWidth.toPx() / vm.imgWidth
+                val sh = maxHeight.toPx() / vm.imgHeight
+                scaleByWidth = sw < sh
+                imageInitialScale = min(sw, sh)
                 composableHeight = maxHeight.toPx()
+                Log.d(TAG, "ResultPart: size: ${maxWidth.toPx()}, ${maxHeight.toPx()}, img: ${vm.imgWidth}, ${vm.imgHeight}")
+                Log.d(TAG, "ResultPart: sw: $sw, sh: $sh, imageInitialScale: $imageInitialScale, scaleByWidth: $scaleByWidth")
             }
-
         }
 
         val lazyListState = rememberLazyListState()
         val photoProvider = remember(vm.imageUri) {
             vm.imageUri?.let {
-                CustomCoilProvider(it, it, if (vm.imgWidth < vm.imgHeight) vm.imgWidth.toFloat() / vm.imgHeight else vm.imgHeight.toFloat() / vm.imgWidth, lazyListState)
+                CustomCoilProvider(it, it, vm.imgWidth.toFloat() / vm.imgHeight, lazyListState)
             }
         }
         photoProvider?.let {
