@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,6 +65,6 @@ fun ArrowTile(
             modifier = Modifier.weight(1f),
             color = textColor
         )
-        Icon(Icons.Default.ArrowRight, contentDescription = null, tint = textColor)
+        Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = textColor)
     }
 }

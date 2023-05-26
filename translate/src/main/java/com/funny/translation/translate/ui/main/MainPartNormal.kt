@@ -10,14 +10,20 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,14 +41,14 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.WebViewActivity
 import com.funny.translation.translate.ui.screen.TranslateScreen
-import com.funny.translation.translate.ui.widget.ExchangeButton
-import com.funny.translation.translate.ui.widget.NoticeBar
-import com.funny.translation.translate.ui.widget.UpperPartBackground
+import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.touchToScale
+import kotlinx.coroutines.launch
 
 // 主页面，在未输入状态下展示的页面，默认
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun MainPartNormal(
     vm: MainViewModel,
@@ -50,41 +56,84 @@ internal fun MainPartNormal(
     showEngineSelectAction: () -> Unit,
     openDrawerAction: SimpleAction?,
 ) {
-    Column(
-        Modifier
+    val swipeableState = rememberSwipeableState(SwipeShowType.Main)
+    val scope = rememberCoroutineScope()
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                // 因为 HistoryScreen 是列表，如果滑到底部仍然有多余的滑动距离，就关闭
+                // Log.d("NestedScrollConnection", "onPostScroll: $available")
+                if (!swipeableState.isAnimationRunning && source == NestedScrollSource.Drag && available.y < -30.0f) {
+                    scope.launch {
+                        swipeableState.animateTo(SwipeShowType.Main)
+                    }
+                    return Offset(0f, available.y)
+                }
+                return super.onPostScroll(consumed, available, source)
+            }
+        }
+    }
+
+    SwipeCrossFadeLayout(
+        state = swipeableState,
+        modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        UpperPartBackground {
-            MainTopBarNormal(showDrawerAction = openDrawerAction)
-            Notice(Modifier.fillMaxWidth(0.9f))
-            Spacer(modifier = Modifier.height(8.dp))
-            HintText(onClick = { vm.updateMainScreenState(MainScreenState.Inputting) })
+        
+        mainUpper = {
+            UpperPartBackground {
+                MainTopBarNormal(showDrawerAction = openDrawerAction)
+                Notice(Modifier.fillMaxWidth(0.9f))
+                Spacer(modifier = Modifier.height(8.dp))
+                HintText(onClick = { vm.updateMainScreenState(MainScreenState.Inputting) })
+            }
+        },
+        mainLower = {
+            Column(
+                Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                LanguageSelectRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    sourceLanguage = vm.sourceLanguage,
+                    updateSourceLanguage = vm::updateSourceLanguage,
+                    targetLanguage = vm.targetLanguage,
+                    updateTargetLanguage = vm::updateTargetLanguage,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                FunctionsRow(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 24.dp,
+                            end = 24.dp,
+                            top = 8.dp,
+                            bottom = if (isScreenHorizontal) 8.dp else 40.dp
+                        ),
+                    showEngineSelectAction
+                )
+            }
+        },
+        foreground = {
+            HistoryScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(nestedScrollConnection)
+            ) {
+                scope.launch {
+                    swipeableState.animateTo(SwipeShowType.Main)
+                }
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        LanguageSelectRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            sourceLanguage = vm.sourceLanguage,
-            updateSourceLanguage = vm::updateSourceLanguage,
-            targetLanguage = vm.targetLanguage,
-            updateTargetLanguage = vm::updateTargetLanguage,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        FunctionsRow(
-            Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 24.dp,
-                    end = 24.dp,
-                    top = 8.dp,
-                    bottom = if (isScreenHorizontal) 8.dp else 40.dp
-                ),
-            showEngineSelectAction
-        )
-    }
+    )
 }
 
 @Composable
@@ -311,7 +360,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
     val activityVM = LocalActivityVM.current
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = activityVM.uid){
+    LaunchedEffect(key1 = activityVM.uid) {
         Log.d(TAG, "UserInfoPanel: uid is: ${activityVM.uid}, token is: ${activityVM.token}")
     }
 
@@ -349,7 +398,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
                             .clip(CircleShape),
                         placeholder = painterResource(R.drawable.ic_loading)
                     )
-                    if (userBean.isValidVip()){
+                    if (userBean.isValidVip()) {
                         Icon(
 
                             modifier = Modifier

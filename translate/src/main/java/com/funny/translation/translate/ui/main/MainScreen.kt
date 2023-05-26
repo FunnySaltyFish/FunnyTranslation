@@ -94,8 +94,6 @@ fun TextTransScreen(
     // 方便各个页面展示 snackBar
     // CompositionLocal 相关知识可参阅 https://developer.android.google.cn/jetpack/compose/compositionlocal?hl=zh-cn
     val snackbarHostState = LocalSnackbarState.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val activityVM: ActivityViewModel = LocalActivityVM.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = sourceText) {

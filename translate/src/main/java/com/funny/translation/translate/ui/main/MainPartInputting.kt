@@ -62,6 +62,7 @@ fun MainPartInputting(
     val goBackAction = remember {
         {
             vm.updateMainScreenState(MainScreenState.Normal)
+            vm.translateText = ""
         }
     }
     BackHandler(onBack = goBackAction)
@@ -72,7 +73,7 @@ fun MainPartInputting(
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UpperPartBackground {
+        UpperPartBackground(modifier = Modifier.weight(1f)) {
             MainTopBarInputting(
                 showEngineSelectAction = showEngineSelectAction,
                 navigateBackAction = goBackAction

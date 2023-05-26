@@ -28,7 +28,6 @@ object AppConfig {
     val lowerThanM = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M
 
     // 下面为可设置的状态
-    val sShowTransHistory = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SHOW_HISTORY, false)
     val sTextMenuFloatingWindow = mutableDataSaverStateOf(DataSaverUtils, "KEY_TEXT_MENU_FLOATING_WINDOW", false)
     val sSpringFestivalTheme = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SPRING_THEME, false)
     val sEnterToTranslate = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_ENTER_TO_TRANSLATE, false)

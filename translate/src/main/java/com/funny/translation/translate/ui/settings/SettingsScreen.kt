@@ -71,13 +71,6 @@ fun SettingsScreen() {
                 if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
             }
             JetSettingSwitch(
-                state = AppConfig.sShowTransHistory,
-                resourceId = R.drawable.ic_history,
-                text = stringResource(R.string.setting_show_history)
-            ) {
-
-            }
-            JetSettingSwitch(
                 state = AppConfig.sTextMenuFloatingWindow,
                 resourceId = R.drawable.ic_float_window,
                 text = stringResource(R.string.setting_text_menu_floating_window),
