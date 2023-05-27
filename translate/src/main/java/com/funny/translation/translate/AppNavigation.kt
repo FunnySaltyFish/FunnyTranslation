@@ -2,6 +2,7 @@
 
 package com.funny.translation.translate
 
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
@@ -27,6 +28,7 @@ import com.funny.translation.Consts
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.TransTheme
+import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
@@ -41,6 +43,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
 
 private const val TAG = "AppNav"
 val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -171,6 +174,9 @@ fun AppNavigation(
                     }
                     animateComposable(TranslateScreen.FloatWindowScreen.route) {
                         FloatWindowScreen()
+                    }
+                    composable(TranslateScreen.FavoriteScreen.route) {
+                        FavoriteScreen()
                     }
                     addSettingsNavigation()
                     addUserProfileRoutes(
@@ -303,6 +309,16 @@ fun NavGraphBuilder.animateComposable(
     ) {
         content(it)
     }
+}
+
+// 跳转到翻译页面，并开始翻译
+fun NavHostController.navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
+    val text = URLEncoder.encode(sourceText, "utf-8")
+    this.navigate(
+        NavDeepLinkRequest.Builder
+            .fromUri(Uri.parse("funny://translation/translate?text=$text&sourceId=${sourceLanguage.id}&targetId=${targetLanguage.id}"))
+            .build()
+    )
 }
 
 // 下面这个方法是配合底部导航栏使用的，但是新版去除了底部导航栏

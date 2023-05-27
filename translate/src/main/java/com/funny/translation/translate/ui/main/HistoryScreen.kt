@@ -35,8 +35,8 @@ fun HistoryScreen(
 ) {
     val vm: MainViewModel = viewModel()
     UpperPartBackground(modifier = modifier) {
-        HistoryTopBar(navigateBackAction)
-        TransHistoryList(
+        FavoriteTopBar(navigateBackAction)
+        TransFavoriteList(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -56,7 +56,7 @@ fun HistoryScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HistoryTopBar(
+private fun FavoriteTopBar(
     navigateBackAction: SimpleAction
 ) {
     TopAppBar(
@@ -76,7 +76,7 @@ private fun HistoryTopBar(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun TransHistoryList(
+private fun TransFavoriteList(
     modifier: Modifier,
     transHistories: LazyPagingItems<TransHistoryBean>,
     onClickHistory: (TransHistoryBean) -> Unit,
@@ -86,7 +86,7 @@ private fun TransHistoryList(
     LazyColumn(
         modifier = modifier, reverseLayout = true // 这一条使得最新的历史会在最下面
     ) {
-        items(transHistories) { transHistory ->
+        items(transHistories, key = { it.id }) { transHistory ->
             transHistory ?: return@items
             Row(
                 Modifier

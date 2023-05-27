@@ -137,4 +137,5 @@
     <string name="failed_to_save_screenshot">保存截图失败</string>
     <string name="failed_to_view_image">查看图片失败</string>
     <string name="stop">停止捕捉屏幕</string>
+    <string name="no_favorite">暂无收藏，去翻译页面添加吧~</string>
 </resources>

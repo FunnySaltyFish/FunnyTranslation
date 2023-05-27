@@ -193,10 +193,6 @@ class TransActivity : AppCompatActivity() {
     }
 
     private fun navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
-        navController?.navigate(
-            NavDeepLinkRequest.Builder
-                .fromUri(Uri.parse("funny://translation/translate?text=$sourceText&sourceId=${sourceLanguage.id}&targetId=${targetLanguage.id}"))
-                .build()
-        )
+        navController?.navigateToTextTrans(sourceText, sourceLanguage, targetLanguage)
     }
 }

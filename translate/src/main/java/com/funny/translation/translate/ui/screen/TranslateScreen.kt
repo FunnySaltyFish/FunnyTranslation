@@ -6,6 +6,7 @@ import com.funny.translation.translate.R
 sealed class TranslateScreen(val titleId: Int, val route: String) {
     object MainScreen : TranslateScreen(R.string.nav_main, "nav_trans_main")
     object ImageTranslateScreen: TranslateScreen(R.string.image_translate, "nav_trans_img")
+    object FavoriteScreen: TranslateScreen(R.string.favorite, "nav_trans_favorite")
     object SettingScreen : TranslateScreen(R.string.nav_settings, "nav_trans_settings")
     object PluginScreen : TranslateScreen(R.string.nav_plugin, "nav_trans_plugin")
     object ThanksScreen : TranslateScreen(R.string.nav_thanks, "nav_thanks")

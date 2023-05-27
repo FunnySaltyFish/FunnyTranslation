@@ -20,6 +20,7 @@ import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTaskText
 import com.funny.translation.translate.*
 import com.funny.translation.translate.database.DefaultData
+import com.funny.translation.translate.database.TransFavoriteBean
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TextTranslationEngines
@@ -33,7 +34,6 @@ import kotlinx.coroutines.sync.withLock
 class MainViewModel : ViewModel() {
     // 全局UI状态
     var currentState: MainScreenState by mutableStateOf(MainScreenState.Normal)
-    var showListType: ShowListType by mutableStateOf(ShowListType.History)
 
     var translateText by mutableStateOf("")
     val actualTransText: String
@@ -77,9 +77,11 @@ class MainViewModel : ViewModel() {
         MutableStateFlow(it)
     }
 
-    val transHistories = Pager(PagingConfig(pageSize = 10)) {
-        appDB.transHistoryDao.queryAllPaging()
-    }.flow.cachedIn(viewModelScope)
+    val transHistories by lazy {
+        Pager(PagingConfig(pageSize = 10)) {
+            appDB.transHistoryDao.queryAllPaging()
+        }.flow.cachedIn(viewModelScope)
+    }
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -131,9 +133,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    // 收藏与取消收藏，参数 favorite 为 false 时收藏，为 true 时取消收藏
-    fun doFavorite(favorite: Boolean, result: TranslationResult){
-
+    // 收藏与取消收藏，参数 favourited 为 false 时收藏，为 true 时取消收藏
+    fun doFavorite(favourited: Boolean, result: TranslationResult){
+        viewModelScope.launch(Dispatchers.IO) {
+            val favoriteBean = TransFavoriteBean.fromTransResult(result, TranslateConfig.sourceString, sourceLanguage.id)
+            if(favourited){
+                appDB.transFavoriteDao.deleteTransFavorite(favoriteBean)
+            }else{
+                appDB.transFavoriteDao.insertTransFavorite(favoriteBean)
+            }
+        }
     }
 
     fun addSelectedEngines(vararg engines: TranslationEngine) {
@@ -159,7 +168,6 @@ class MainViewModel : ViewModel() {
         resultList.clear()
         progress = 0f
         addTransHistory(actualTransText, sourceLanguage, targetLanguage)
-        showListType = ShowListType.Result
         updateMainScreenState(MainScreenState.Translating)
         translateJob = viewModelScope.launch {
             // 延时，等待插件加载完
@@ -316,7 +324,6 @@ class MainViewModel : ViewModel() {
             it.add(result)
             it.sortBy(SortResultUtils.defaultResultSort)
         }
-        if (showListType != ShowListType.Result) showListType = ShowListType.Result
     }
 
     private suspend fun updateTranslateResultWithMutex(result: TranslationResult) {

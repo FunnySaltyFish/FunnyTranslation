@@ -35,13 +35,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.funny.translation.TranslateConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
+import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.ui.touchToScale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 @Composable
@@ -183,7 +187,7 @@ private fun SwipeableText(
 }
 
 @Composable
-private fun SpeakButton(
+internal fun SpeakButton(
     modifier: Modifier = Modifier,
     text: String,
     language: Language,
@@ -229,7 +233,7 @@ private fun SpeakButton(
 }
 
 @Composable
-private fun CopyButton(
+internal fun CopyButton(
     modifier: Modifier = Modifier,
     text: String,
     tint: Color
@@ -311,7 +315,7 @@ private fun ResultItem(
                 }
             }
             // 收藏、朗读、复制三个图标
-            var favorite by rememberSaveable { mutableStateOf(false) }
+            var favorite by rememberFavoriteState(result = result)
             IconButton(onClick = {
                 doFavorite(favorite, result)
                 favorite = !favorite
@@ -350,4 +354,23 @@ private fun ResultItem(
             )
         }
     }
+}
+
+@Composable
+private fun rememberFavoriteState(
+    result: TranslationResult
+): MutableState<Boolean> {
+    val state = remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = Unit) {
+        withContext(Dispatchers.IO) {
+            state.value = appDB.transFavoriteDao.count(
+                TranslateConfig.sourceString,
+                result.basicResult.trans,
+                TranslateConfig.sourceLanguage.id,
+                TranslateConfig.targetLanguage.id,
+                result.engineName
+            ) > 0
+        }
+    }
+    return state
 }

@@ -12,11 +12,12 @@ val appDB by lazy{
     AppDatabase.createDatabase()
 }
 
-@Database(entities = [JsBean::class, TransHistoryBean::class], version = 5, autoMigrations = [])
+@Database(entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class], version = 6, autoMigrations = [])
 @TypeConverters(LanguageListConverter::class, StringListConverter::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract val jsDao : JsDao
     abstract val transHistoryDao: TransHistoryDao
+    abstract val transFavoriteDao: TransFavoriteDao
 
     companion object{
         fun createDatabase() =
@@ -26,6 +27,7 @@ abstract class AppDatabase : RoomDatabase(){
                 .addMigrations(MIGRATION_2_3)
                 .addMigrations(MIGRATION_3_4)
                 .addMigrations(MIGRATION_4_5)
+                .addMigrations(MIGRATION_5_6)
                 .build()
 
         /**
@@ -34,6 +36,7 @@ abstract class AppDatabase : RoomDatabase(){
          * 2->3:添加 targetSupportVersion 字段
          * 3->4:新增表 table_trans_history
          * 4->5:去除无用的主键 id，解决一些id重复导致的bug
+         * 5-6:新增表 table_trans_favorite
          */
         private val MIGRATION_1_2 = object : Migration(1,2){
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -66,6 +69,20 @@ abstract class AppDatabase : RoomDatabase(){
                 database.execSQL("insert into table_js_temp select * from table_js;")
                 database.execSQL("drop table table_js;")
                 database.execSQL("ALTER TABLE table_js_temp RENAME TO table_js;")
+            }
+        }
+
+        // create table_trans_favorite
+        private val MIGRATION_5_6 = object : Migration(5, 6){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""create table if not exists table_trans_favorite(
+                    |id integer primary key autoincrement not null,
+                    |sourceString text not null,
+                    |resultText text not null,
+                    |sourceLanguageId integer not null default 0,
+                    |targetLanguageId integer not null default 0,
+                    |engineName text not null default '未知引擎',
+                    |time integer not null)""".trimMargin())
             }
         }
 

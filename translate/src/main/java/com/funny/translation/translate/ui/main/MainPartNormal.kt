@@ -46,8 +46,6 @@ import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
 
 // 主页面，在未输入状态下展示的页面，默认
-
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun MainPartNormal(
@@ -212,7 +210,7 @@ fun FunctionsRow(
             iconId = R.drawable.ic_star_filled,
             text = stringResource(id = R.string.favorites)
         ) {
-//            navHostController.navigateSingleTop(TranslateScreen.FavoritesScreen.route)
+            navHostController.navigateSingleTop(TranslateScreen.FavoriteScreen.route)
         }
     }
 }
@@ -427,5 +425,6 @@ fun UserInfoPanel(navHostController: NavHostController) {
             )
         }
     }
-
 }
+
+
