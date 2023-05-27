@@ -115,7 +115,7 @@ private fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginS
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
-        Modifier.fillMaxWidth(WIDTH_FRACTION),
+        Modifier.fillMaxWidth(WIDTH_FRACTION).fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputUserName(vm, if (vm.passwordType == "1") ImeAction.Done else ImeAction.Next)
@@ -251,11 +251,8 @@ private fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginS
 @Composable
 private fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<Intent>, onRegisterSuccess: () -> Unit = {}) {
     val context = LocalContext.current
-    var gameInputMode by remember {
-        mutableStateOf(true)
-    }
     Column(
-        Modifier.fillMaxWidth(WIDTH_FRACTION),
+        Modifier.fillMaxWidth(WIDTH_FRACTION).fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputUserName(vm)
@@ -263,16 +260,8 @@ private fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLau
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.passwordType == "2"){
-            InputPassword(vm = vm, readonly = !AppConfig.lowerThanM && gameInputMode)
+            InputPassword(vm = vm, readonly = !AppConfig.lowerThanM)
             Spacer(modifier = Modifier.height(8.dp))
-            if (gameInputMode) {
-                CompletableButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = true,
-                    onClick = { activityLauncher.launch(Intent(context, GameActivity::class.java)) }
-                ) { Text(text = "玩游戏输入密码") }
-                Text(modifier = Modifier.clickable { gameInputMode = false }, text = "我想自己输密码", style = MaterialTheme.typography.labelSmall)
-            }
         }
         else {
             CompletableButton(
