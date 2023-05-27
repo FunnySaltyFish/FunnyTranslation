@@ -56,6 +56,7 @@ val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
     error("Local ActivityVM has not been initialized! ")
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -108,13 +109,16 @@ fun AppNavigation(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
                 }
-            ) { padding ->
+            ) { scaffoldPadding ->
                 AnimatedNavHost(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
                     modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(bottom = padding.calculateBottomPadding())
+                        // 下面的三个看起来很奇怪，但它来自于 https://issuetracker.google.com/issues/249727298
+                        // 否则，imePadding() 工作不正常（在三大金刚键的导航模式下会会多出一段）
+                        .padding(scaffoldPadding)
+                        .consumeWindowInsets(scaffoldPadding)
+                        .systemBarsPadding()
                 ) {
                     composable(
                         TranslateScreen.MainScreen.route,

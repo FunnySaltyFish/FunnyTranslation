@@ -33,6 +33,7 @@ import com.lzf.easyfloat.widget.BaseSwitchView
 import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.net.URLEncoder
 import kotlin.math.min
 
 
@@ -229,7 +230,8 @@ object EasyFloatUtils {
             setOnClickListener {
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = Uri.parse("funny://translation/translate?text=${edittext.text}&sourceId=${spinnerSource.selectedItemPosition}&targetId=${spinnerTarget.selectedItemPosition}")
+                    val text = URLEncoder.encode(edittext.text.trim().toString(), "utf-8")
+                    data = Uri.parse("funny://translation/translate?text=$text&sourceId=${spinnerSource.selectedItemPosition}&targetId=${spinnerTarget.selectedItemPosition}")
                     flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK
                     putExtra(Consts.EXTRA_OPEN_IN_APP, true)
                 }.let {
