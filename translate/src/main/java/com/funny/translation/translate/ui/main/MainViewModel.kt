@@ -14,7 +14,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
-import com.funny.translation.TranslateConfig
+import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTaskText
@@ -136,7 +136,7 @@ class MainViewModel : ViewModel() {
     // 收藏与取消收藏，参数 favourited 为 false 时收藏，为 true 时取消收藏
     fun doFavorite(favourited: Boolean, result: TranslationResult){
         viewModelScope.launch(Dispatchers.IO) {
-            val favoriteBean = TransFavoriteBean.fromTransResult(result, TranslateConfig.sourceString, sourceLanguage.id)
+            val favoriteBean = TransFavoriteBean.fromTransResult(result, GlobalTranslationConfig.sourceString, sourceLanguage.id)
             if(favourited){
                 appDB.transFavoriteDao.deleteTransFavorite(favoriteBean)
             }else{
@@ -175,9 +175,9 @@ class MainViewModel : ViewModel() {
                 delay(100)
             }
 
-            TranslateConfig.sourceLanguage = sourceLanguage
-            TranslateConfig.targetLanguage = targetLanguage
-            TranslateConfig.sourceString =   actualTransText
+            GlobalTranslationConfig.sourceLanguage = sourceLanguage
+            GlobalTranslationConfig.targetLanguage = targetLanguage
+            GlobalTranslationConfig.sourceString =   actualTransText
             if (AppConfig.sParallelTrans.value) {
                 translateInParallel()
                 Log.d(TAG, "translate: translateInParallel finished")

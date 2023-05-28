@@ -95,10 +95,8 @@ fun Context.openUrl(uri: Uri) {
 }
 
 
-fun Context.toastOnUi(message: Int) {
-    runOnUI {
-        ToastUtils.showShort(message)
-    }
+fun Context.toastOnUi(message: Int, length: Int = Toast.LENGTH_SHORT) {
+    toastOnUi(getString(message), length)
 }
 
 fun Context.toastOnUi(message: CharSequence?, length: Int = Toast.LENGTH_SHORT) {

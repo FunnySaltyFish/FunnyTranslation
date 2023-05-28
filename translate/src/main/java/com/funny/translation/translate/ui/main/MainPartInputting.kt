@@ -83,7 +83,6 @@ fun MainPartInputting(
                     .fillMaxWidth()
                     .weight(1f),
                 vm = vm,
-                updateShowListType = {},
                 startTranslateActon = ::startTranslate
             )
         }
@@ -163,7 +162,6 @@ private fun MainTopBarInputting(
 private fun InputPart(
     modifier: Modifier,
     vm: MainViewModel,
-    updateShowListType: (ShowListType) -> Unit,
     startTranslateActon: SimpleAction
 ) {
     var shouldRequestFocus by remember { mutableStateOf(false) }
@@ -192,7 +190,6 @@ private fun InputPart(
             textProvider = { vm.translateText },
             updateText = {
                 vm.updateTranslateText(it)
-                if (it == "") updateShowListType(ShowListType.History)
             },
             shouldRequest = shouldRequestFocus,
             updateFocusRequest = {

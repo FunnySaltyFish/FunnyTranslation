@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.funny.translation.translate
 
 import android.net.Uri
@@ -43,7 +41,6 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
 
 private const val TAG = "AppNav"
 val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -257,13 +254,14 @@ private fun NavGraphBuilder.addSettingsNavigation() {
     }
 }
 
-fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = true){
+fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = false){
     val navController = this
     navController.navigate(route) {
-        //当底部导航导航到在非首页的页面时，执行手机的返回键 回到首页
+        // 先清空其他栈，使得返回时能直接回到主界面
         if (popUpToMain) {
             popUpTo(navController.graph.startDestinationId) {
                 saveState = true
+                inclusive = false
                 //currentScreen = TranslateScreen.MainScreen
             }
         }
@@ -316,11 +314,16 @@ fun NavGraphBuilder.animateComposable(
 }
 
 // 跳转到翻译页面，并开始翻译
-fun NavHostController.navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
-    val text = URLEncoder.encode(sourceText, "utf-8")
+fun NavHostController.navigateToTextTrans(sourceText: String?, sourceLanguage: Language, targetLanguage: Language) {
+    val text = Uri.encode(sourceText)
     this.navigate(
         NavDeepLinkRequest.Builder
             .fromUri(Uri.parse("funny://translation/translate?text=$text&sourceId=${sourceLanguage.id}&targetId=${targetLanguage.id}"))
+            .build(),
+        navOptions = NavOptions.Builder()
+            .setPopUpTo(TranslateScreen.MainScreen.route, true)
+            .setLaunchSingleTop(true)
+//             .setRestoreState(true)
             .build()
     )
 }

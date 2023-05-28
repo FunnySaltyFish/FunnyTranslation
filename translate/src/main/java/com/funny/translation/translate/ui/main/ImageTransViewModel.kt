@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.funny.compose.loading.LoadingState
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
-import com.funny.translation.TranslateConfig
+import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
@@ -59,7 +59,7 @@ class ImageTransViewModel: ViewModel() {
                 val bytes = BitmapUtil.getBitmapFormUri(appCtx, 4096, 4096, 2 * 1024 * 1024, imageUri!!)
                 bytes ?: return@launch
                 Log.d(TAG, "translate: imageSize: ${bytes.size}")
-                with(TranslateConfig){
+                with(GlobalTranslationConfig){
                     this.sourceLanguage = this@ImageTransViewModel.sourceLanguage
                     this.targetLanguage = this@ImageTransViewModel.targetLanguage
                     this.sourceString   = ""

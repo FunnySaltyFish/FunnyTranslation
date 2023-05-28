@@ -145,25 +145,21 @@ class TransActivity : AppCompatActivity() {
      */
     private fun getIntentData(intent: Intent?) {
         val action: String? = intent?.action
+        Log.d(TAG, "getIntentData: action:$action, data:${intent?.data}")
         // 这里处理以 url 形式传递的文本
-//        if (Intent.ACTION_VIEW == action) {
-//            val data: Uri? = intent.data
-//            // Log.d(TAG, "getIntentData: data:$data")
-//            if (data != null && data.scheme == "funny" && data.host == "translation") {
-//                with(activityViewModel.tempTransConfig) {
-//                    sourceString = data.getQueryParameter("text")
-//                    val s = data.getQueryParameter("sourceId")
-//                    if (s != null) sourceLanguage = findLanguageById(s.toInt())
-//                    val t = data.getQueryParameter("targetId")
-//                    if (t != null) targetLanguage = findLanguageById(t.toInt())
-//                }
-//                Log.d(TAG, "getIntentData: ${activityViewModel.tempTransConfig}")
-//                // shouldJumpToMainScreen.value = true
-//            }
-//        }
-//        // 这里处理的是外部分享过来的文本
-//        else
-        if (Intent.ACTION_SEND == action && "text/plain" == intent.type) {
+        if (Intent.ACTION_VIEW == action) {
+            val data: Uri? = intent.data
+            // Log.d(TAG, "getIntentData: data:$data")
+            if (data != null && data.scheme == "funny" && data.host == "translation") {
+               navigateToTextTrans(
+                   data.getQueryParameter("text") ?: "",
+                   findLanguageById(data.getQueryParameter("sourceId")?.toInt() ?: 0),
+                   findLanguageById(data.getQueryParameter("targetId")?.toInt() ?: 1)
+               )
+            }
+        }
+        // 这里处理的是外部分享过来的文本
+        else if (Intent.ACTION_SEND == action && "text/plain" == intent.type) {
             val text = intent.getStringExtra(Intent.EXTRA_TEXT)?.trim() ?: ""
             if (text != "") {
                 Log.d(TAG, "获取到其他应用传来的文本: $text")
@@ -192,7 +188,7 @@ class TransActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
+    fun navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
         navController?.navigateToTextTrans(sourceText, sourceLanguage, targetLanguage)
     }
 }

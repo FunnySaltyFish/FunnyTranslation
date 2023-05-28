@@ -32,8 +32,6 @@ class ActivityViewModel : ViewModel() {
     var lastBackTime: Long = 0
     var hasCheckedUpdate = false
 
-    // 由悬浮窗或其他应用传过来的临时翻译参数
-    val tempTransConfig = TranslationConfig()
     var noticeInfo: MutableState<NoticeInfo?> = mutableStateOf(null)
 
     var userInfo by AppConfig.userInfo

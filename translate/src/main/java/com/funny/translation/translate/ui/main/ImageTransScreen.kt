@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +38,7 @@ import cn.qhplus.emo.photo.activity.*
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.ui.GesturePhoto
 import com.funny.compose.loading.LoadingState
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
@@ -71,6 +73,9 @@ fun ImageTransScreen(
     val currentEnabledLanguages by enabledLanguages.collectAsState()
 
     DisposableEffect(key1 = Unit){
+        if (!AppConfig.userInfo.value.isValid()) {
+            context.toastOnUi(R.string.login_to_use_image_translation, Toast.LENGTH_LONG)
+        }
         onDispose {
             vm.imageUri = null
             vm.cancel()

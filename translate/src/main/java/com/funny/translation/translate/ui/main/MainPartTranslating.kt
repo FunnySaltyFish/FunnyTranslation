@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.funny.translation.TranslateConfig
+import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
@@ -364,10 +364,10 @@ private fun rememberFavoriteState(
     LaunchedEffect(key1 = Unit) {
         withContext(Dispatchers.IO) {
             state.value = appDB.transFavoriteDao.count(
-                TranslateConfig.sourceString,
+                GlobalTranslationConfig.sourceString,
                 result.basicResult.trans,
-                TranslateConfig.sourceLanguage.id,
-                TranslateConfig.targetLanguage.id,
+                GlobalTranslationConfig.sourceLanguage.id,
+                GlobalTranslationConfig.targetLanguage.id,
                 result.engineName
             ) > 0
         }

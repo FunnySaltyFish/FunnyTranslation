@@ -66,7 +66,7 @@ object AppConfig {
     }
 }
 
-object TranslateConfig {
+object GlobalTranslationConfig {
     var sourceLanguage : Language = Language.AUTO
     var targetLanguage : Language = Language.ENGLISH
     var sourceString : String = ""

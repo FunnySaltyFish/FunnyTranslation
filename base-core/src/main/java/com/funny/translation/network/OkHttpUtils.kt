@@ -2,17 +2,13 @@ package com.funny.translation.network
 
 import android.content.Intent
 import android.util.Log
-import android.util.Log.VERBOSE
 import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
-import com.funny.translation.TranslateConfig
+import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.sign.SignUtils
-import com.ihsanbal.logging.Level
-import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -88,9 +84,9 @@ object OkHttpUtils {
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/translate")){
                 builder.addHeader("sign", SignUtils.encodeSign(
                     uid = AppConfig.uid.toLong(), appVersionCode = AppConfig.versionCode,
-                    sourceLanguageCode = TranslateConfig.sourceLanguage.id,
-                    targetLanguageCode = TranslateConfig.targetLanguage.id,
-                    text = TranslateConfig.sourceString,
+                    sourceLanguageCode = GlobalTranslationConfig.sourceLanguage.id,
+                    targetLanguageCode = GlobalTranslationConfig.targetLanguage.id,
+                    text = GlobalTranslationConfig.sourceString,
                     extra = ""
                 ).also {
                     Log.d(TAG, "createBaseClient: add sign: $it")
@@ -100,8 +96,8 @@ object OkHttpUtils {
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/image_translate")){
                 builder.addHeader("sign", SignUtils.encodeSign(
                     uid = AppConfig.uid.toLong(), appVersionCode = AppConfig.versionCode,
-                    sourceLanguageCode = TranslateConfig.sourceLanguage.id,
-                    targetLanguageCode = TranslateConfig.targetLanguage.id,
+                    sourceLanguageCode = GlobalTranslationConfig.sourceLanguage.id,
+                    targetLanguageCode = GlobalTranslationConfig.targetLanguage.id,
                     text = "Image",
                     extra = ""
                 ).also {

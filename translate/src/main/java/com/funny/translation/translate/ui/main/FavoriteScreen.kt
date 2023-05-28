@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,11 +29,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.funny.translation.translate.LocalNavController
+import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransFavoriteBean
-import com.funny.translation.translate.findLanguageById
-import com.funny.translation.translate.navigateToTextTrans
 
 @Composable
 fun FavoriteScreen(
@@ -39,9 +39,13 @@ fun FavoriteScreen(
 ) {
     val vm: FavoriteViewModel = viewModel()
     val navController = LocalNavController.current
+    val activity = LocalContext.current as TransActivity
+    BackHandler {
+        navController.navigateToTextTrans("", Language.AUTO, Language.CHINESE)
+    }
     Column(modifier = modifier) {
         FavoriteTopBar(navigateBackAction = {
-            navController.popBackStack()
+            navController.navigateToTextTrans("", Language.AUTO, Language.CHINESE)
         })
         TransFavoriteList(
             modifier = Modifier

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Rect
 import android.net.Uri
 import android.view.Gravity
 import android.view.View
@@ -13,7 +12,7 @@ import android.view.animation.RotateAnimation
 import android.widget.*
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
-import com.funny.translation.TranslateConfig
+import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.toastOnUi
@@ -33,7 +32,6 @@ import com.lzf.easyfloat.widget.BaseSwitchView
 import com.tomlonghurst.roundimageview.RoundImageView
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.net.URLEncoder
 import kotlin.math.min
 
 
@@ -190,7 +188,7 @@ object EasyFloatUtils {
                         )
 
                         // 设置全局的翻译参数
-                        with(TranslateConfig){
+                        with(GlobalTranslationConfig){
                             this.sourceLanguage = task.sourceLanguage
                             this.targetLanguage = task.targetLanguage
                             this.sourceString   = task.sourceString
@@ -230,7 +228,7 @@ object EasyFloatUtils {
             setOnClickListener {
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    val text = URLEncoder.encode(edittext.text.trim().toString(), "utf-8")
+                    val text = Uri.encode(edittext.text.trim().toString())
                     data = Uri.parse("funny://translation/translate?text=$text&sourceId=${spinnerSource.selectedItemPosition}&targetId=${spinnerTarget.selectedItemPosition}")
                     flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK
                     putExtra(Consts.EXTRA_OPEN_IN_APP, true)

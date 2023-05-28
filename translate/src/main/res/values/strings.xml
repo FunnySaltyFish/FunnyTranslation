@@ -138,4 +138,5 @@
     <string name="failed_to_view_image">查看图片失败</string>
     <string name="stop">停止捕捉屏幕</string>
     <string name="no_favorite">暂无收藏，去翻译页面添加吧~</string>
+    <string name="login_to_use_image_translation">因成本原因，图片翻译功能需要登录后再使用，敬请谅解</string>
 </resources>
