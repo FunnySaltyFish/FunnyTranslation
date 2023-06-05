@@ -118,4 +118,27 @@
     <string name="speak_source_string">Read Original Text</string>
     <string name="join_qq_group">Join QQ Group</string>
     <string name="message_out_of_max_engine_limit_novip">You can only choose up to %d engines, upgrade to VIP to enjoy more</string>
+    <string name="menu">Menu</string>
+    <string name="image_translate">Image Translation</string>
+    <string name="favorites">Favorites</string>
+    <string name="trans_text_input_hint">Translate Your Reminiscence</string>
+    <string name="back">Back</string>
+    <string name="source_text">Source Text</string>
+    <string name="favorite">Favorite</string>
+    <string name="quit_translating_alert">The current translation is in progress. Are you sure you want to quit?</string>
+    <string name="local_plugins">Installed Plugins</string>
+    <string name="plugin_info_template">Author: %s Version: v%d</string>
+    <string name="setting_translate">Translation Settings</string>
+    <string name="special_thanks">Special Thanks</string>
+    <string name="float_window">Floating Window</string>
+    <string name="open_float_window">Open Floating Window</string>
+    <string name="setting_time_limited">Time-Limited Settings</string>
+    <string name="failed_to_take_screenshot">Failed to Take Screenshot</string>
+    <string name="failed_to_save_screenshot">Failed to Save Screenshot</string>
+    <string name="failed_to_view_image">Failed to View Image</string>
+    <string name="stop">Stop Capturing Screen</string>
+    <string name="no_favorite">No favorites yet, add them on translation page~</string>
+    <string name="login_to_use_image_translation">Due to cost reasons, image translation function needs to be logged in to use, please understand</string>
+    <string name="show_detail_result">Detailed Translation</string>
+    <string name="show_detail_result_desc">To display more detailed translation results, such as phonetic symbols, parts of speech, examples, etc., the engine interface needs to support it (currently only supported by Youdao and Google).</string>
 </resources>
