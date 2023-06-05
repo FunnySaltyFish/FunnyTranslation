@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -72,20 +73,20 @@ fun SettingsScreen() {
             }
             JetSettingSwitch(
                 state = AppConfig.sTextMenuFloatingWindow,
-                resourceId = R.drawable.ic_float_window,
+                resourceId = R.drawable.ic_float_window_bold,
                 text = stringResource(R.string.setting_text_menu_floating_window),
                 description = stringResource(id = R.string.setting_text_menu_floating_window_desc)
             ) {
 
             }
             JetSettingTile(
-                resourceId = R.drawable.ic_sort,
+                imageVector = Icons.Default.Sort,
                 text = stringResource(R.string.sort_result),
             ) {
                 navController.navigate(TranslateScreen.SortResultScreen.route)
             }
             JetSettingTile(
-                resourceId = R.drawable.ic_select,
+                resourceId = R.drawable.ic_language_select,
                 text = stringResource(R.string.select_language),
             ) {
                 navController.navigate(TranslateScreen.SelectLanguageScreen.route)
@@ -147,6 +148,12 @@ fun SettingsScreen() {
                 text = stringResource(id = R.string.parallel_trans),
                 description = stringResource(id = R.string.parallel_trans_desc),
                 resourceId = R.drawable.ic_parallel
+            )
+            ProJetSettingCheckbox(
+                state = AppConfig.sShowDetailResult,
+                text = stringResource(id = R.string.show_detail_result),
+                description = stringResource(id = R.string.show_detail_result_desc),
+                resourceId = R.drawable.ic_detail
             )
             JetSettingTile(
                 resourceId = R.drawable.ic_theme,

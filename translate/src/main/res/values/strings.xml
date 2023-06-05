@@ -118,9 +118,9 @@
     <string name="speak_source_string">朗读原文</string>
     <string name="join_qq_group">加入Q群</string>
     <string name="message_out_of_max_engine_limit_novip">您最高只能选择%d个引擎，升级VIP享更多</string>
-    <string name="menu">菜单\n</string>
+    <string name="menu">菜单</string>
     <string name="image_translate">图片翻译</string>
-    <string name="favorites">收藏夹\n</string>
+    <string name="favorites">收藏夹</string>
     <string name="trans_text_input_hint">译你所忆……</string>
     <string name="back">返回</string>
     <string name="source_text">源文本</string>
@@ -139,4 +139,6 @@
     <string name="stop">停止捕捉屏幕</string>
     <string name="no_favorite">暂无收藏，去翻译页面添加吧~</string>
     <string name="login_to_use_image_translation">因成本原因，图片翻译功能需要登录后再使用，敬请谅解</string>
+    <string name="show_detail_result">详细翻译</string>
+    <string name="show_detail_result_desc">为更多的引擎显示详细翻译结果，如注音、词性、示例等，需要引擎接口支持（当前仅有道、谷歌）</string>
 </resources>

@@ -37,6 +37,7 @@ object AppConfig {
 
     // 以下为Pro专享
     val sParallelTrans = mutableDataSaverStateOf(DataSaverUtils, "KEY_PARALLEL_TRANS", false)
+    val sShowDetailResult = mutableDataSaverStateOf(DataSaverUtils, "KEY_SHOW_DETAIL_RESULT", false)
 
     fun updateJwtToken(newToken: String) {
         userInfo.value = userInfo.value.copy(jwt_token = newToken)
@@ -47,10 +48,12 @@ object AppConfig {
     // 开启 VIP 的一些功能，供体验
     fun enableVipFeatures(){
         sParallelTrans.value = true
+        sShowDetailResult.value = true
     }
 
-    fun disableVipFeatures(){
+    private fun disableVipFeatures(){
         sParallelTrans.value = false
+        sShowDetailResult.value = false
         ThemeConfig.updateThemeType(ThemeType.Default)
     }
 

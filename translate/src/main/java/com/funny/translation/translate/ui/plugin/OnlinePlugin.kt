@@ -104,8 +104,8 @@ internal fun OnlinePluginItem(
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(0.9f),
             maxLines = if (expand) Int.MAX_VALUE else 1,
-            onLinkClicked = {
-                WebViewActivity.start(context, it)
+            onLinkClicked = { context, url ->
+                WebViewActivity.start(context, url)
             }
         )
         Spacer(modifier = Modifier.height(12.dp))

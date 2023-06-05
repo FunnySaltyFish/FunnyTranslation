@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import coil.ImageLoader
+import com.funny.translation.translate.activity.WebViewActivity
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
@@ -54,7 +55,10 @@ fun MarkdownText(
     // it also enable the parent view to receive the click event
     disableLinkMovementMethod: Boolean = false,
     imageLoader: ImageLoader? = null,
-    onLinkClicked: ((String) -> Unit)? = null,
+    onLinkClicked: ((Context, String) -> Unit)? = { context, url ->
+        // default behavior is to open the link in the browser
+        WebViewActivity.start(context, url)
+    },
     onTextLayout: ((numLines: Int) -> Unit)? = null
 ) {
     val defaultColor: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
@@ -141,7 +145,7 @@ private fun createTextView(
 private fun createMarkdownRender(
     context: Context,
     imageLoader: ImageLoader?,
-    onLinkClicked: ((String) -> Unit)? = null
+    onLinkClicked: ((Context, String) -> Unit)? = null
 ): Markwon {
     val coilImageLoader = imageLoader ?: ImageLoader.Builder(context)
         .apply {
@@ -157,9 +161,9 @@ private fun createMarkdownRender(
         .usePlugin(LinkifyPlugin.create())
         .usePlugin(object: AbstractMarkwonPlugin() {
             override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
-                builder.linkResolver { view, link ->
+                builder.linkResolver { _, link ->
                     // handle individual clicks on Textview link
-                    onLinkClicked?.invoke(link)
+                    onLinkClicked?.invoke(context, link)
                 }
             }
         })

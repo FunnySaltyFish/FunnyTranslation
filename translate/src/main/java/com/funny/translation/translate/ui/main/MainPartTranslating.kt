@@ -96,7 +96,9 @@ fun MainPartTranslating(vm: MainViewModel) {
 private fun TranslateProgress(
     progress: Float
 ) {
-    AnimatedVisibility(visible = progress < 100) {
+    // 这个 99 （而不是 100） 是为了解决浮点数累加导致的问题，比如 33.3 + 33.3 + 33.3 = 99.9 != 100
+    // >= 99 就认为是翻译完了
+    AnimatedVisibility(visible = progress < 99) {
         LinearProgressIndicator(
             progress = progress / 100,
             modifier = Modifier.fillMaxWidth(),
@@ -128,6 +130,7 @@ private fun SourceTextPart(
     }
 }
 
+// TODO 会员详细
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -286,7 +289,6 @@ private fun ResultItem(
     }
     Column(
         modifier = modifier
-            .touchToScale()
             .offset { IntOffset(offsetAnim.value.roundToInt(), 0) }
             .fillMaxWidth()
             .background(
