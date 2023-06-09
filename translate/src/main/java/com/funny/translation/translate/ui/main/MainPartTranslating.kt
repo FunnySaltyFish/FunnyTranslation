@@ -250,7 +250,7 @@ internal fun CopyButton(
     ) {
         Icon(
             Icons.Default.CopyAll,
-            contentDescription = stringResource(id = R.string.copy),
+            contentDescription = stringResource(id = R.string.copy_content),
             tint = tint,
             modifier = Modifier.size(24.dp)
         )

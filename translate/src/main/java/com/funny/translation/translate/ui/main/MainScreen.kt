@@ -147,7 +147,7 @@ fun TextTransScreen(
             )
         }, confirmButton = {
             TextButton(onClick = { showEngineSelect = false }) {
-                Text(text = stringResource(id = R.string.confirm))
+                Text(text = stringResource(id = R.string.message_confirm))
             }
         })
     }

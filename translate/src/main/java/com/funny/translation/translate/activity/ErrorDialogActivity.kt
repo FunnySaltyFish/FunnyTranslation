@@ -23,10 +23,10 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
-import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.R
 import com.funny.translation.translate.extentions.trimLineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
 import java.io.DataOutputStream
@@ -44,7 +44,7 @@ class ErrorDialogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crashMessage = intent.getStringExtra("CRASH_MESSAGE")
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {
             if (crashMessage != null) {
                 saveCrashMessage(crashMessage!!)
             }
@@ -68,7 +68,6 @@ class ErrorDialogActivity : AppCompatActivity() {
         outputFile.writeText(msg)
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ErrorDialog() {
         var showDialog by remember {

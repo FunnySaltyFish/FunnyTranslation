@@ -84,7 +84,7 @@ class CustomPhotoClipperActivity: PhotoClipperActivity() {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            stringResource(id = R.string.confirm),
+                            stringResource(id = com.funny.translation.jsBean.core.R.string.confirm),
                             fontSize = 20.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold

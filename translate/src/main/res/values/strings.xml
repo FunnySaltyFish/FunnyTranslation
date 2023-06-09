@@ -141,4 +141,5 @@
     <string name="login_to_use_image_translation">因成本原因，图片翻译功能需要登录后再使用，敬请谅解</string>
     <string name="show_detail_result">详细翻译</string>
     <string name="show_detail_result_desc">为更多的引擎显示详细翻译结果，如注音、词性、示例等，需要引擎接口支持（当前仅有道、谷歌）</string>
+    <string name="cancel">取消</string>
 </resources>

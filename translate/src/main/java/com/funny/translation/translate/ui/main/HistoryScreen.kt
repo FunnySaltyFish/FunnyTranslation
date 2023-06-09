@@ -115,7 +115,7 @@ private fun TransFavoriteList(
                     }) {
                         Icon(
                             painterResource(id = R.drawable.ic_copy_content),
-                            stringResource(R.string.copy)
+                            stringResource(R.string.copy_content)
                         )
                     }
                     IconButton(onClick = {
