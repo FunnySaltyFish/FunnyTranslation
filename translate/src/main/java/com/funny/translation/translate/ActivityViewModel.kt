@@ -18,7 +18,6 @@ import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.bean.NoticeInfo
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.network.UpdateDownloadManager
-import com.funny.translation.translate.ui.bean.TranslationConfig
 import com.funny.translation.translate.utils.ApplicationUtil
 import com.funny.translation.translate.utils.StringUtil
 import kotlinx.coroutines.Dispatchers

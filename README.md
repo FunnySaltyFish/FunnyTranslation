@@ -96,7 +96,7 @@ UI v4：
 ### 致谢
 
 - 页面设计（UI v3）参考自 酷安@江戸川コナン（已授权）
-- 宣传图来自 酷安@松川吖
+- 页面设计（UI v4）和宣传图来自 酷安@松川吖
 - 感谢所有赞助过项目的小伙伴们！
 - 感谢所有贡献者们！
 
@@ -107,3 +107,8 @@ UI v4：
 </a>
 
 如果此项目对您有帮助，欢迎不吝**Star**~
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=FunnySaltyFish/FunnyTranslation&type=Date)](https://star-history.com/#FunnySaltyFish/FunnyTranslation&Date)
+
