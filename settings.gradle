@@ -34,6 +34,6 @@ include ":language-universal"
 include ':base-core'
 include ':translate'
 include ':jet-setting-core'
-include ':bottom-navigation'
+//include ':bottom-navigation'
 include ':login'
 

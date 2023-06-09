@@ -14,7 +14,6 @@
   ~   limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.rosemoe.editor.langs.base">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
 </manifest>

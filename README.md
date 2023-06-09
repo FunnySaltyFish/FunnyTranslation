@@ -73,7 +73,7 @@ UI v4：
 
 #### 运行前准备
 
-- 您需要使用 [Android Studio](https://developer.android.google.cn/studio/)  **2020.3.1 及以上版本，高度建议为最新的稳定版**
+- 自23年6月起，项目迁移到了 `Gradle 8` + `AGP 8`，因此您需要使用 [Android Studio](https://developer.android.google.cn/studio/)  **Flamingo | 2022.2.1 及以上版本，高度建议为最新的稳定版**
 
 - 为了安全起见，开源部分不包括有关签名信息的`signing.properties`文件，如需打 Release 包请您补全此文件
 
