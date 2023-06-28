@@ -2,6 +2,7 @@ package com.funny.translation.translate.ui.main
 
 import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -74,6 +75,13 @@ internal fun MainPartNormal(
                 }
                 return super.onPostScroll(consumed, available, source)
             }
+        }
+    }
+
+    // 返回键关闭
+    BackHandler(swipeableState.currentValue == SwipeShowType.Foreground) {
+        scope.launch {
+            swipeableState.animateTo(SwipeShowType.Main)
         }
     }
 
