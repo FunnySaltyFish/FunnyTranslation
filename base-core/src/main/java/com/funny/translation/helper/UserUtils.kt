@@ -72,7 +72,7 @@ interface UserService {
         @Field("email") email: String,
         @Field("phone") phone: String,
         @Field("verify_code") verifyCode: String,
-        @Field("did") did: String = AppConfig.androidId
+        @Field("did") did: String
     ): CommonData<UserBean>
 
     @POST("user/logout")
@@ -80,7 +80,7 @@ interface UserService {
     // uid: Int, did: String
     suspend fun logout(
         @Field("uid") uid: Int,
-        @Field("did") did: String = AppConfig.androidId
+        @Field("did") did: String
     ): CommonData<Unit>
 
     @POST("user/get_user_info")
@@ -174,7 +174,7 @@ object UserUtils {
         email: String,
         verifyCode: String
     ) = withContext(Dispatchers.IO){
-        val loginData = userService.login(username, password, password_type, email, "", verifyCode)
+        val loginData = userService.login(username, password, password_type, email, "", verifyCode, AppConfig.androidId)
         if (loginData.code != 50) {
             throw SignInException(loginData.error_msg ?: "未知错误")
         }

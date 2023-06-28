@@ -2,6 +2,7 @@ package com.funny.translation
 
 import android.annotation.SuppressLint
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -12,6 +13,9 @@ import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.Language
 
+private const val TAG = "AppConfig"
+
+@SuppressLint("HardwareIds")
 @Keep
 object AppConfig {
     var SCREEN_WIDTH = 0
@@ -22,8 +26,12 @@ object AppConfig {
     val jwtToken by derivedStateOf { userInfo.value.jwt_token }
 
     var versionCode = BaseApplication.getLocalPackageInfo()?.versionCode ?: 0
-    @SuppressLint("HardwareIds")
-    val androidId = Settings.Secure.getString(BaseApplication.ctx.contentResolver, Settings.Secure.ANDROID_ID)
+
+    // 隐私合规，延迟获取
+    val androidId by lazy {
+        Log.d(TAG, "get Android_ID")
+        Settings.Secure.getString(BaseApplication.ctx.contentResolver, Settings.Secure.ANDROID_ID)
+    }
 
     val lowerThanM = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M
 
