@@ -1,13 +1,9 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.funny.trans.login.ui
 
-import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.*
@@ -30,18 +26,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.funny.trans.login.GameActivity
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserBean
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 internal const val WIDTH_FRACTION = 0.8f
 
@@ -62,7 +62,7 @@ fun LoginPage(
     }
 
     Column(
-        Modifier.fillMaxHeight(),
+        Modifier.fillMaxHeight().imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -97,25 +97,63 @@ fun LoginPage(
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
+        var privacyGranted by remember { mutableStateOf(false) }
+        val shrinkAnim = remember { Animatable(0f) }
+        val context = LocalContext.current
+        val remindToGrantPrivacyAction = remember {
+            {
+                scope.launch {
+                    intArrayOf(20, 0).forEach {
+                        shrinkAnim.animateTo(it.toFloat(), spring(Spring.DampingRatioHighBouncy))
+                    }
+                }
+                VibratorUtils.vibrate(70)
+                context.toastOnUi("请先同意隐私政策和用户协议！")
+            }
+        }
+
         HorizontalPager(
             pageCount = 2,
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.weight(1f),
             state = pagerState,
         ) { page ->
             when (page) {
-                0 -> LoginForm(navController, vm, onLoginSuccess = onLoginSuccess)
-                1 -> RegisterForm(vm, activityLauncher, onRegisterSuccess = { changePage(0) })
+                0 -> LoginForm(navController, vm, onLoginSuccess = onLoginSuccess, privacyGranted = privacyGranted, remindToGrantPrivacyAction = remindToGrantPrivacyAction)
+                1 -> RegisterForm(vm, onRegisterSuccess = { changePage(0) }, privacyGranted = privacyGranted, remindToGrantPrivacyAction = remindToGrantPrivacyAction)
             }
         }
+        Row(
+            Modifier
+                .padding(8.dp)
+                .offset { IntOffset(0, shrinkAnim.value.roundToInt()) },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(checked = privacyGranted, onCheckedChange = { privacyGranted = it })
+            MarkdownText(
+                "我已阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)和[用户协议](https://api.funnysaltyfish.fun/trans/v1/api/user_agreement)",
+                color = contentColorFor(backgroundColor = MaterialTheme.colorScheme.background).copy(0.8f),
+                fontSize = 12.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(18.dp))
     }
 }
 
 @Composable
-private fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginSuccess: (UserBean) -> Unit = {}) {
+private fun LoginForm(
+    navController: NavController,
+    vm: LoginViewModel,
+    privacyGranted: Boolean = false,
+    onLoginSuccess: (UserBean) -> Unit = {},
+    remindToGrantPrivacyAction: () -> Unit = {},
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
-        Modifier.fillMaxWidth(WIDTH_FRACTION).fillMaxHeight(),
+        Modifier
+            .fillMaxWidth(WIDTH_FRACTION)
+            .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputUserName(vm, if (vm.passwordType == "1") ImeAction.Done else ImeAction.Next)
@@ -195,6 +233,10 @@ private fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginS
         }
         Button(
             onClick = {
+                if (!privacyGranted) {
+                    remindToGrantPrivacyAction()
+                    return@Button
+                }
                 vm.login(
                     onSuccess = {
                         context.toastOnUi("登录成功！")
@@ -249,10 +291,17 @@ private fun LoginForm(navController: NavController, vm: LoginViewModel, onLoginS
 }
 
 @Composable
-private fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLauncher<Intent>, onRegisterSuccess: () -> Unit = {}) {
+private fun RegisterForm(
+    vm: LoginViewModel,
+    privacyGranted: Boolean,
+    onRegisterSuccess: () -> Unit = {},
+    remindToGrantPrivacyAction: () -> Unit,
+) {
     val context = LocalContext.current
     Column(
-        Modifier.fillMaxWidth(WIDTH_FRACTION).fillMaxHeight(),
+        Modifier
+            .fillMaxWidth(WIDTH_FRACTION)
+            .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         InputUserName(vm)
@@ -260,7 +309,7 @@ private fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLau
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.passwordType == "2"){
-            InputPassword(vm = vm, readonly = !AppConfig.lowerThanM)
+            InputPassword(vm = vm, readonly = false)
             Spacer(modifier = Modifier.height(8.dp))
         }
         else {
@@ -312,6 +361,10 @@ private fun RegisterForm(vm: LoginViewModel, activityLauncher: ActivityResultLau
         }
         Button(
             onClick = {
+                if (!privacyGranted) {
+                    remindToGrantPrivacyAction()
+                    return@Button
+                }
                 vm.register(
                     onSuccess = {
                         context.toastOnUi("注册成功！")

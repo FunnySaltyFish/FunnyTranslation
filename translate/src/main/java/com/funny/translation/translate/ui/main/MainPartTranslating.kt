@@ -43,7 +43,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
-import com.funny.translation.ui.touchToScale
+import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt

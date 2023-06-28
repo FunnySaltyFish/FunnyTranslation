@@ -72,7 +72,7 @@
 
         </activity>
         <activity
-            android:name=".activity.WebViewActivity"
+            android:name="com.funny.translation.WebViewActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

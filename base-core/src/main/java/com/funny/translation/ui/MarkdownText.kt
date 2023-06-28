@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.widget
+package com.funny.translation.ui
 
 /**
  * https://github.com/jeziellago/compose-markdown
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import coil.ImageLoader
-import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.WebViewActivity
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration

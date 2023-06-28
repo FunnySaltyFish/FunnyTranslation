@@ -35,7 +35,7 @@ import com.funny.translation.translate.ui.settings.*
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
-import com.funny.translation.translate.ui.widget.MarkdownText
+import com.funny.translation.ui.MarkdownText
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation

@@ -1,17 +1,15 @@
-package com.funny.translation.translate.activity
+package com.funny.translation
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.webkit.*
-import android.window.OnBackInvokedDispatcher
+import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,15 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.os.BuildCompat
 import androidx.core.view.WindowCompat
+import com.funny.translation.jsBean.core.R
 import com.funny.translation.theme.TransTheme
-import com.funny.translation.translate.R
 import com.funny.translation.ui.*
 import com.smarx.notchlib.NotchScreenManager
 
 private const val TAG = "WebViewActivity"
-class WebViewActivity : AppCompatActivity() {
+class WebViewActivity : ComponentActivity() {
 
     companion object {
         private var backEvent: (() -> Unit)? = null
@@ -38,7 +35,7 @@ class WebViewActivity : AppCompatActivity() {
             val intent = Intent(context, WebViewActivity::class.java)
             intent.putExtra("load_url",url)
             context.startActivity(intent)
-            this.backEvent = backEvent
+            Companion.backEvent = backEvent
         }
     }
 

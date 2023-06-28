@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.ui.main.SimpleAction
-import com.funny.translation.translate.ui.widget.MarkdownText
+import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
 
 

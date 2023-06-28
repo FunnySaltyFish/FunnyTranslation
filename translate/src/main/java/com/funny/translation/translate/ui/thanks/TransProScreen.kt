@@ -35,9 +35,9 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.bean.VipConfig
-import com.funny.translation.translate.ui.widget.MarkdownText
+import com.funny.translation.ui.MarkdownText
 import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.translate.ui.widget.TextFlashCanvas
 import com.funny.translation.translate.ui.widget.TextFlashCanvasState

@@ -41,8 +41,9 @@ import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
 

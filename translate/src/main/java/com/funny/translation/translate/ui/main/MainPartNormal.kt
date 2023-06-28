@@ -40,7 +40,7 @@ import com.funny.compose.loading.LoadingContent
 import com.funny.trans.login.LoginActivity
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
-import com.funny.translation.translate.activity.WebViewActivity
+import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.touchToScale
