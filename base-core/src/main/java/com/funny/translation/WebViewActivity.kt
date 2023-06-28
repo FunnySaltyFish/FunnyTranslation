@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.funny.translation.helper.WebViewResourceHelper
 import com.funny.translation.jsBean.core.R
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.ui.*
@@ -141,6 +142,8 @@ fun WebViewPage(url: String) {
                     builtInZoomControls = true //设置内置的缩放控件。若为false，则该WebView不可缩放
                     displayZoomControls = false //隐藏原生的缩放控件
                 }
+
+                WebViewResourceHelper.addChromeResourceIfNeeded(context)
             }
         }
     }
