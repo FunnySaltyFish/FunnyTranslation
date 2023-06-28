@@ -19,8 +19,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavHostController
 import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.AppConfig
@@ -78,9 +76,9 @@ class TransActivity : AppCompatActivity() {
         setContent {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
-                AppNavigation {
+                AppNavigation(exitAppAction = {
                     this.finish()
-                }
+                })
             }
         }
 

@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.bean
+package com.funny.translation.translate.bean
 
 import com.funny.translation.translate.Language
 

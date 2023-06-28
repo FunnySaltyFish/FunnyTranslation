@@ -37,3 +37,4 @@ include ':jet-setting-core'
 //include ':bottom-navigation'
 include ':login'
 
+include ':ai'

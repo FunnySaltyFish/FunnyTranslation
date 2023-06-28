@@ -94,6 +94,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion Versions.composeCompilerVersion
     }
+
     namespace 'com.funny.translation.translate'
 }
 
@@ -138,9 +139,16 @@ dependencies {
 //    implementation "com.github.leavesCZY:Matisse:0.0.6"
 
     // 图片选择器
-    implementation "cn.qhplus.emo:photo-coil:0.6.0"
+    implementation "cn.qhplus.emo:photo-coil:0.7.0"
     // 图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
+
+    // import Kotlin API client BOM
+    implementation platform('com.aallam.openai:openai-client-bom:3.2.5')
+
+    // define dependencies without versions
+    implementation 'com.aallam.openai:openai-client'
+    runtimeOnly 'io.ktor:ktor-client-okhttp'
 
     // To recognize Latin script
 //    implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
@@ -152,6 +160,7 @@ dependencies {
     implementation project(path: ":codeeditor")
     implementation project(path: ":login")
     implementation project(path: ':jet-setting-core')
+    implementation project(path: ":ai")
     // v2.6.0起不用了，但是它的效果还挺有趣的
     // 可以见 https://github.com/FunnySaltyFish/FunnyBottomNavigation
     // implementation project(path: ":bottom-navigation")

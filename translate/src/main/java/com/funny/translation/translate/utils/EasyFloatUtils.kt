@@ -20,7 +20,7 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.activity.StartCaptureScreenActivity
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.service.CaptureScreenService
-import com.funny.translation.translate.ui.bean.TranslationConfig
+import com.funny.translation.translate.bean.TranslationConfig
 import com.lzf.easyfloat.EasyFloat
 import com.lzf.easyfloat.enums.ShowPattern
 import com.lzf.easyfloat.enums.SidePattern

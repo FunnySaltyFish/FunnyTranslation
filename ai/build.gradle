@@ -34,14 +34,15 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion Versions.composeCompilerVersion
     }
-    namespace 'com.funny.trans.login'
+
+    namespace 'com.funny.translation.ai'
 }
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
 
-    api (project(':base-core'))
+    implementation (project(':base-core'))
 
     debugImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
