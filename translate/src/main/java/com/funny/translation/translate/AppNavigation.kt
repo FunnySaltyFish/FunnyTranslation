@@ -184,7 +184,7 @@ fun AppNavigation(
                         navHostController = navController,
                         onLoginSuccess = { userBean ->
                             Log.d(TAG, "登录成功: 用户: $userBean")
-                            if (userBean.isValid()) AppConfig.login(userBean)
+                            if (userBean.isValid()) AppConfig.login(userBean, updateVipFeatures = true)
                         },
                         onResetPasswordSuccess = {
                             context.toastOnUi("修改密码成功，请重新登陆~")

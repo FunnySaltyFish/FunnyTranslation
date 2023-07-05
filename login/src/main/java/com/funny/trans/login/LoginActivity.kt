@@ -11,9 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.trans.login.ui.LoginNavigation
-import com.funny.trans.login.ui.LoginPage
 import com.funny.translation.AppConfig
-import com.funny.translation.Consts
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.theme.TransTheme
@@ -50,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
                 TransTheme {
                     LoginNavigation(onLoginSuccess = {
                         Log.d(TAG, "登录成功: 用户: $it")
-                        if(it.isValid()) AppConfig.login(it)
+                        if(it.isValid()) AppConfig.login(it, updateVipFeatures = true)
                         setResult(RESULT_OK, Intent())
                         finish()
                     })

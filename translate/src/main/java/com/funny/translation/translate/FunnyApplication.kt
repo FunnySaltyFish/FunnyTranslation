@@ -10,7 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.geometry.Offset
 import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
-import com.funny.translation.bean.UserBean
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.codeeditor.ui.editor.EditorSchemes
 import com.funny.translation.helper.DeviceUtils
 import com.funny.translation.helper.JsonX
@@ -50,7 +50,7 @@ class FunnyApplication : BaseApplication() {
         }
 
         // For ComposeDataSaver
-        registerTypeConverters<UserBean>(
+        registerTypeConverters<UserInfoBean>(
             save = {
                 JsonX.toJson(it)
             },
@@ -59,12 +59,12 @@ class FunnyApplication : BaseApplication() {
                 try {
                     val matchResult = OLD_VIP_START_TIME.find(it)
                     if (matchResult != null)
-                        JsonX.fromJson(it.replace(OLD_VIP_START_TIME, "$1:null"), UserBean::class)
+                        JsonX.fromJson(it.replace(OLD_VIP_START_TIME, "$1:null"), UserInfoBean::class)
                     else
-                        JsonX.fromJson(it, UserBean::class)
+                        JsonX.fromJson(it, UserInfoBean::class)
                 } catch (e: Exception){
                     e.printStackTrace()
-                    UserBean()
+                    UserInfoBean()
                 }
             }
         )

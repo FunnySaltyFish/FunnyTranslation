@@ -5,7 +5,15 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
@@ -14,8 +22,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -34,7 +48,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
-import cn.qhplus.emo.photo.activity.*
+import cn.qhplus.emo.photo.activity.PhotoClipperActivity
+import cn.qhplus.emo.photo.activity.PhotoPickResult
+import cn.qhplus.emo.photo.activity.PhotoPickerActivity
+import cn.qhplus.emo.photo.activity.getPhotoClipperResult
+import cn.qhplus.emo.photo.activity.getPhotoPickResult
 import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.coil.CoilPhotoProvider
 import coil.compose.AsyncImage
@@ -42,7 +60,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.trans.login.ui.LoginRoute
 import com.funny.trans.login.ui.addLoginRoutes
 import com.funny.translation.AppConfig
-import com.funny.translation.bean.UserBean
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
@@ -62,7 +80,7 @@ enum class UserProfileScreenRoutes {
     val route:String get() = "user_profile_route_${name.lowercase()}"
 }
 
-fun NavGraphBuilder.addUserProfileRoutes(navHostController: NavHostController, onLoginSuccess: (UserBean) -> Unit, onResetPasswordSuccess: () -> Unit) {
+fun NavGraphBuilder.addUserProfileRoutes(navHostController: NavHostController, onLoginSuccess: (UserInfoBean) -> Unit, onResetPasswordSuccess: () -> Unit) {
     navigation(UserProfileScreenRoutes.Settings.route, TranslateScreen.UserProfileScreen.route){
         animateComposable(UserProfileScreenRoutes.Settings.route){
             UserProfileSettings(navHostController = navHostController)
@@ -153,8 +171,11 @@ fun UserProfileSettings(navHostController: NavHostController) {
                 placeholder = painterResource(R.drawable.ic_loading)
             )
         }
+        Tile(text = stringResource(R.string.change_username), onClick =  {
+            navHostController.navigateSingleTop(LoginRoute.ChangeUsernamePage.route)
+        })
         Tile(text = stringResource(R.string.modify_password), onClick = {
-            navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route, false)
+            navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
         })
         Tile(text = stringResource(R.string.img_remaining_points)){
             Text(text = userInfo.img_remain_points.toString())
@@ -162,7 +183,11 @@ fun UserProfileSettings(navHostController: NavHostController) {
         Tile(text = stringResource(R.string.vip_end_time)){
             Text(text = userInfo.vipEndTimeStr())
         }
-        Divider(Modifier.fillMaxWidth())
+        Divider()
+        Tile(text = stringResource(R.string.disable_account)) {
+            navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
+        }
+        Divider()
         Spacer(modifier = Modifier.height(64.dp))
         Button(modifier = Modifier.align(CenterHorizontally), onClick = {
             AppConfig.logout()

@@ -32,7 +32,7 @@ fun ResetPasswordPage(
         val context = LocalContext.current
 
         SideEffect {
-            AppConfig.userInfo.value.takeIf { it.isValid()} ?.let {
+            AppConfig.userInfo.value.takeIf { it.isValid() }?.let {
                 vm.email = it.email
                 vm.username = it.username
             }
@@ -40,7 +40,11 @@ fun ResetPasswordPage(
 
         Spacer(modifier = Modifier.height(60.dp))
         Column(Modifier.fillMaxWidth(WIDTH_FRACTION)) {
-            InputUserName(vm = vm)
+            InputUsername(
+                usernameProvider = vm::username,
+                updateUsername = vm::updateUsername,
+                isValidUsernameProvider = vm::isValidUsername
+            )
             Spacer(modifier = Modifier.height(8.dp))
             InputEmail(
                 modifier = Modifier.fillMaxWidth(),
@@ -54,7 +58,11 @@ fun ResetPasswordPage(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            InputPassword(vm = vm, readonly = false)
+            InputPassword(
+                passwordProvider = vm::password,
+                updatePassword = vm::updatePassword,
+                readonly = false
+            )
             // 重复密码
             var repeatPassword by remember { mutableStateOf("") }
 
@@ -68,14 +76,19 @@ fun ResetPasswordPage(
                 modifier = Modifier.fillMaxWidth(),
                 isError = isRepeatPwdError,
                 label = { Text("重复密码") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             val enable by remember {
                 derivedStateOf {
-                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(vm.password) && vm.password == repeatPassword
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(
+                        vm.password
+                    ) && vm.password == repeatPassword
                 }
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = {

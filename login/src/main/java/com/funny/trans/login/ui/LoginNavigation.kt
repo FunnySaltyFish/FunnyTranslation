@@ -3,18 +3,15 @@ package com.funny.trans.login.ui
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import com.funny.translation.bean.UserBean
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -25,12 +22,13 @@ sealed class LoginRoute(val route: String) {
     object LoginPage: LoginRoute("login_page")
     object ResetPasswordPage: LoginRoute("reset_password")
     object FindUsernamePage: LoginRoute("find_user_name")
+    object ChangeUsernamePage: LoginRoute("change_user_name")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LoginNavigation(
-    onLoginSuccess: (UserBean) -> Unit,
+    onLoginSuccess: (UserInfoBean) -> Unit,
 ) {
     val navController = rememberAnimatedNavController()
     val context = LocalContext.current
@@ -55,7 +53,7 @@ fun LoginNavigation(
 
 fun NavGraphBuilder.addLoginRoutes(
     navController: NavHostController,
-    onLoginSuccess: (UserBean) -> Unit,
+    onLoginSuccess: (UserInfoBean) -> Unit,
     onResetPasswordSuccess: () -> Unit,
 ){
     animateComposable(LoginRoute.LoginPage.route){
@@ -66,6 +64,9 @@ fun NavGraphBuilder.addLoginRoutes(
     }
     animateComposable(LoginRoute.FindUsernamePage.route){
         FindUsernamePage()
+    }
+    animateComposable(LoginRoute.ChangeUsernamePage.route){
+        ChangeUsernamePage(navController = navController)
     }
 }
 

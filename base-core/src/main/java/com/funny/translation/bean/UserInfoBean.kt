@@ -4,7 +4,8 @@ import androidx.annotation.Keep
 import com.funny.translation.helper.DateSerializerType1
 import com.funny.translation.helper.TimeUtils
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.Date
+import kotlin.time.Duration.Companion.days
 
 /**
  * class User:
@@ -26,7 +27,7 @@ import java.util.*
  */
 @Keep
 @Serializable
-data class UserBean(
+data class UserInfoBean(
     val uid: Int = -1,
     val username: String = "",
     val password: String = "",
@@ -38,7 +39,8 @@ data class UserBean(
     @Serializable(with = DateSerializerType1::class) val vip_start_time: Date? = null,
     val vip_duration: Long = -1,
     val jwt_token: String = "",
-    val img_remain_points: Float = 0.0f
+    val img_remain_points: Float = 0.0f,
+    @Serializable(with = DateSerializerType1::class) val lastChangeUsernameTime: Date? = null
 ){
     fun isValid() = uid >= 0 && jwt_token != ""
     fun isValidVip() =
@@ -49,6 +51,16 @@ data class UserBean(
         TimeUtils.formatTime(endTime)
     } else {
         "--"
+    }
+
+    fun canChangeUsername() =
+        lastChangeUsernameTime?.time == null || System.currentTimeMillis() - lastChangeUsernameTime.time > 30.days.inWholeMilliseconds
+
+    fun nextChangeUsernameTimeStr() = if (canChangeUsername()) {
+        "--"
+    } else {
+        val nextTime = lastChangeUsernameTime!!.time + 30.days.inWholeMilliseconds
+        TimeUtils.formatTime(nextTime)
     }
 }
 

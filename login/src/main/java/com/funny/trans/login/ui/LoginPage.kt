@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,7 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
-import com.funny.translation.bean.UserBean
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.VibratorUtils
@@ -49,7 +48,7 @@ internal const val WIDTH_FRACTION = 0.8f
 @Composable
 fun LoginPage(
     navController: NavController,
-    onLoginSuccess: (UserBean) -> Unit,
+    onLoginSuccess: (UserInfoBean) -> Unit,
 ) {
     val vm: LoginViewModel = viewModel()
     val activityLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -62,7 +61,9 @@ fun LoginPage(
     }
 
     Column(
-        Modifier.fillMaxHeight().imePadding(),
+        Modifier
+            .fillMaxHeight()
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -145,7 +146,7 @@ private fun LoginForm(
     navController: NavController,
     vm: LoginViewModel,
     privacyGranted: Boolean = false,
-    onLoginSuccess: (UserBean) -> Unit = {},
+    onLoginSuccess: (UserInfoBean) -> Unit = {},
     remindToGrantPrivacyAction: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -156,14 +157,14 @@ private fun LoginForm(
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        InputUserName(vm, if (vm.passwordType == "1") ImeAction.Done else ImeAction.Next)
+        InputUsernameWrapper(vm, if (vm.passwordType == "1") ImeAction.Done else ImeAction.Next)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.shouldVerifyEmailWhenLogin){
             InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, initialSent = true)
             Spacer(modifier = Modifier.height(12.dp))
         }
         if (vm.passwordType == "2"){
-            InputPassword(vm = vm, readonly = false)
+            InputPasswordWrapper(vm = vm, readonly = false)
         } else CompletableButton(
             onClick = {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -212,9 +213,8 @@ private fun LoginForm(
             Text("验证指纹")
         }
         ExchangePasswordType(
-            passwordType = vm.passwordType,
-            updatePasswordType = { vm.passwordType = it }
-        )
+            passwordType = vm.passwordType
+        ) { vm.passwordType = it }
         Spacer(modifier = Modifier.height(12.dp))
 
         // 因为下面的表达式变化速度快过UI的变化速度，为了减少重组次数，此处使用 derivedStateOf
@@ -304,12 +304,12 @@ private fun RegisterForm(
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        InputUserName(vm)
+        InputUsernameWrapper(vm)
         Spacer(modifier = Modifier.height(8.dp))
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.passwordType == "2"){
-            InputPassword(vm = vm, readonly = false)
+            InputPasswordWrapper(vm = vm, readonly = false)
             Spacer(modifier = Modifier.height(8.dp))
         }
         else {
@@ -347,9 +347,8 @@ private fun RegisterForm(
             }
         }
         ExchangePasswordType(
-            passwordType = vm.passwordType,
-            updatePasswordType = { vm.passwordType = it }
-        )
+            passwordType = vm.passwordType
+        ) { vm.passwordType = it }
         Spacer(modifier = Modifier.height(12.dp))
         val enableRegister by remember {
             derivedStateOf {
@@ -384,9 +383,9 @@ private fun RegisterForm(
 }
 
 @Composable
-private fun ColumnScope.ExchangePasswordType(
+private fun ExchangePasswordType(
     passwordType: String,
-    updatePasswordType: (String)-> Unit
+    updatePasswordType: (String) -> Unit
 ){
     if (passwordType == "2" && !AppConfig.lowerThanM){
         Spacer(modifier = Modifier.height(4.dp))
@@ -397,40 +396,14 @@ private fun ColumnScope.ExchangePasswordType(
     }
 }
 
-@Composable
-fun CompletableButton(
-    modifier: Modifier,
-    enabled: Boolean,
-    onClick: () -> Unit,
-    completed: Boolean = false,
-    text: @Composable () -> Unit
-) {
-    OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) {
-        text()
-        if (completed) Icon(
-            painterResource(id = R.drawable.ic_finish),
-            contentDescription = stringResource(R.string.finished),
-            modifier = Modifier.padding(start = 4.dp),
-            tint = MaterialTheme.colorScheme.primary
-        )
-    }
-}
+
 
 @Composable
-fun InputUserName(vm: LoginViewModel, imeAction: ImeAction = ImeAction.Next) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = vm.username,
-        onValueChange = { vm.username = it },
-        isError = vm.username != "" && !vm.isValidUsername,
-        label = { Text(text = "用户名") },
-        placeholder = { Text("3-16位，无特殊符号") },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = imeAction
-        ),
-    )
+private fun InputUsernameWrapper(
+    vm: LoginViewModel,
+    imeAction: ImeAction = ImeAction.Next,
+) {
+    InputUsername(usernameProvider = vm::username, updateUsername = vm::updateUsername, isValidUsernameProvider = vm::isValidUsername, imeAction = imeAction)
 }
 
 @Composable
@@ -502,19 +475,11 @@ fun InputEmail(
 }
 
 @Composable
-fun InputPassword(
+private fun InputPasswordWrapper(
     vm: LoginViewModel,
     readonly: Boolean
 ) {
-    val isPwdError by remember {
-        derivedStateOf { vm.password != "" && !UserUtils.isValidPassword(vm.password) }
-    }
-    OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = vm.password, onValueChange = { vm.password = it}, enabled = true, placeholder = {
-        Text(text = "长度8-16位，包含大小写字母和数字")
-    }, label = { Text(text = "密码") }, readOnly = readonly, isError = isPwdError, keyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Password,
-        imeAction = ImeAction.Next
-    ))
+    InputPassword(passwordProvider = vm::password, updatePassword = vm::updatePassword, readonly = readonly)
 }
 
 /**

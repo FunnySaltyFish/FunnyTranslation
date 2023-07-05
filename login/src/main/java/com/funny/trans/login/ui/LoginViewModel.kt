@@ -8,11 +8,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.translation.bean.UserBean
+import com.funny.translation.AppConfig
+import com.funny.translation.bean.UserInfoBean
+import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.SignUpException
 import com.funny.translation.helper.UserUtils
-import com.funny.translation.AppConfig
-import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.toastOnUi
 import kotlinx.coroutines.launch
 
@@ -50,7 +50,7 @@ class LoginViewModel : ViewModel() {
     }
 
     fun login(
-        onSuccess: (UserBean) -> Unit,
+        onSuccess: (UserInfoBean) -> Unit,
         onError: (String) -> Unit
     ){
         viewModelScope.launch {
@@ -154,6 +154,9 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    fun updateUsername(s: String) { username = s }
+    fun updatePassword(s: String) { password = s }
 
 
 }

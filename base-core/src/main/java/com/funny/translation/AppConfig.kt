@@ -7,7 +7,7 @@ import androidx.annotation.Keep
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
-import com.funny.translation.bean.UserBean
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
@@ -21,16 +21,16 @@ object AppConfig {
     var SCREEN_WIDTH = 0
     var SCREEN_HEIGHT = 0
 
-    var userInfo = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_USER_INFO, UserBean())
+    var userInfo = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_USER_INFO, UserInfoBean())
     val uid by derivedStateOf { userInfo.value.uid }
     val jwtToken by derivedStateOf { userInfo.value.jwt_token }
 
     var versionCode = BaseApplication.getLocalPackageInfo()?.versionCode ?: 0
 
     // 隐私合规，延迟获取
-    val androidId by lazy {
+    val androidId: String by lazy {
         Log.d(TAG, "get Android_ID")
-        Settings.Secure.getString(BaseApplication.ctx.contentResolver, Settings.Secure.ANDROID_ID)
+        Settings.Secure.getString(BaseApplication.ctx.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
     }
 
     val lowerThanM = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M
@@ -66,14 +66,16 @@ object AppConfig {
     }
 
     fun logout(){
-        userInfo.value = UserBean()
+        userInfo.value = UserInfoBean()
         disableVipFeatures()
     }
 
-    fun login(userBean: UserBean){
-        userInfo.value = userBean
-        if (userBean.isValidVip()) enableVipFeatures()
-        else disableVipFeatures()
+    fun login(userInfoBean: UserInfoBean, updateVipFeatures: Boolean = false) {
+        userInfo.value = userInfoBean
+        if (updateVipFeatures) {
+            if (userInfoBean.isValidVip()) enableVipFeatures()
+            else disableVipFeatures()
+        }
     }
 }
 

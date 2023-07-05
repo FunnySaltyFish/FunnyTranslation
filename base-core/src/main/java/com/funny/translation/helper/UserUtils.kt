@@ -6,15 +6,12 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import com.funny.translation.AppConfig
-import com.funny.translation.Consts
-import com.funny.translation.bean.UserBean
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.network.CommonData
-import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Body
 import retrofit2.http.Field
@@ -73,7 +70,7 @@ interface UserService {
         @Field("phone") phone: String,
         @Field("verify_code") verifyCode: String,
         @Field("did") did: String
-    ): CommonData<UserBean>
+    ): CommonData<UserInfoBean>
 
     @POST("user/logout")
     @FormUrlEncoded
@@ -87,7 +84,7 @@ interface UserService {
     @FormUrlEncoded
     suspend fun getInfo(
         @Field("uid") uid: Int
-    ): CommonData<UserBean>
+    ): CommonData<UserInfoBean>
 
     @POST("user/get_user_email")
     @FormUrlEncoded
@@ -122,6 +119,14 @@ interface UserService {
         @Field("email") email: String,
         @Field("code") code: String
     ): CommonData<List<String>>
+
+    // changeUsername
+    @POST("user/change_username")
+    @FormUrlEncoded
+    suspend fun changeUsername(
+        @Field("uid") uid: Int,
+        @Field("new_username") username: String,
+    ): CommonData<Unit>
 
 }
 
@@ -219,6 +224,14 @@ object UserUtils {
         val sendData = userService.sendFindUsernameEmail(email)
         if (sendData.code != 50) {
             throw Exception("发送验证码失败！（${sendData.error_msg}）")
+        }
+    }
+
+    // changeUsername
+    suspend fun changeUsername(uid: Int, newUsername: String) = withContext(Dispatchers.IO){
+        val changeData = userService.changeUsername(uid, newUsername)
+        if (changeData.code != 50) {
+            throw Exception("修改用户名失败！（${changeData.error_msg}）")
         }
     }
 
