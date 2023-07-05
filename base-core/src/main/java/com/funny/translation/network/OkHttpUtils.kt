@@ -25,7 +25,6 @@ object OkHttpUtils {
     private const val READ_TIMEOUT = 10L
     private const val TAG = "OkHttpUtils"
 
-    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     private fun saveCookie(url: String?, domain: String?, cookies: String) {
         url ?: return
         DataSaverUtils.saveData(url, cookies)
@@ -49,7 +48,7 @@ object OkHttpUtils {
         addInterceptor {
             val request = it.request()
             val builder = request.newBuilder()
-            val newUrl = URL(removeExtraSlashOfUrl(request.url.toString())).also { url -> builder.url(url) }
+            var newUrl = URL(removeExtraSlashOfUrl(request.url.toString()))
             val domain = request.url.host
             // get domain cookie
             if (domain.isNotEmpty()) {
@@ -91,6 +90,11 @@ object OkHttpUtils {
                 ).also {
                     Log.d(TAG, "createBaseClient: add sign: $it")
                 })
+
+                // 如果是 vip 且开启了显示详细结果，那么加上 show_detail=true
+                if (AppConfig.isVip() && AppConfig.sShowDetailResult.value) {
+                    newUrl = URL("$newUrl&show_detail=true")
+                }
             }
 
             if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/image_translate")){
@@ -105,6 +109,7 @@ object OkHttpUtils {
                 })
             }
 
+            builder.url(newUrl)
             it.proceed(builder.build())
         }
 
