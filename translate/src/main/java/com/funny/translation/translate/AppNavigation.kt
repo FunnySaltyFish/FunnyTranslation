@@ -24,7 +24,6 @@ import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
@@ -181,17 +180,11 @@ fun AppNavigation(
                     }
                     addSettingsNavigation()
                     addUserProfileRoutes(
-                        navHostController = navController,
-                        onLoginSuccess = { userBean ->
-                            Log.d(TAG, "登录成功: 用户: $userBean")
-                            if (userBean.isValid()) AppConfig.login(userBean, updateVipFeatures = true)
-                        },
-                        onResetPasswordSuccess = {
-                            context.toastOnUi("修改密码成功，请重新登陆~")
-                            AppConfig.logout()
-                            navController.popBackStack(navController.graph.startDestinationId, false)
-                        }
-                    )
+                        navHostController = navController
+                    ) { userBean ->
+                        Log.d(TAG, "登录成功: 用户: $userBean")
+                        if (userBean.isValid()) AppConfig.login(userBean, updateVipFeatures = true)
+                    }
                 }
             }
 

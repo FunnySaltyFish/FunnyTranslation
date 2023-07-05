@@ -49,6 +49,14 @@ interface UserService {
         @Field("email") email: String
     ): CommonData<Unit>
 
+    // fun sendCancelAccountEmail(username: String, email: String)
+    @POST("user/send_cancel_account_email")
+    @FormUrlEncoded
+    suspend fun sendCancelAccountEmail(
+        @Field("username") username: String,
+        @Field("email") email: String
+    ): CommonData<Unit>
+
 
     @POST("user/register")
     @FormUrlEncoded
@@ -126,6 +134,18 @@ interface UserService {
     suspend fun changeUsername(
         @Field("uid") uid: Int,
         @Field("new_username") username: String,
+    ): CommonData<Unit>
+
+    // cancelUser
+    /**
+     * uid = int(request.form.get("uid", -1))
+       verify_code = int(request.form.get("verify_code", ""))
+       email = get_user_email(uid)
+     */
+    @POST("user/cancel_account")
+    @FormUrlEncoded
+    suspend fun cancelAccount(
+        @Field("verify_code") verifyCode: String,
     ): CommonData<Unit>
 
 }
@@ -227,6 +247,14 @@ object UserUtils {
         }
     }
 
+    // cancelAccountEmail
+    suspend fun sendCancelAccountEmail(username: String, email: String) = withContext(Dispatchers.IO){
+        val sendData = userService.sendCancelAccountEmail(username, email)
+        if (sendData.code != 50) {
+            throw Exception("发送验证码失败！（${sendData.error_msg}）")
+        }
+    }
+
     // changeUsername
     suspend fun changeUsername(uid: Int, newUsername: String) = withContext(Dispatchers.IO){
         val changeData = userService.changeUsername(uid, newUsername)
@@ -317,6 +345,15 @@ object UserUtils {
             throw Exception(findData.error_msg ?: "未知错误")
         }
         return@withContext findData.data
+    }
+
+    // cancelAccount
+    suspend fun cancelAccount(verifyCode: String) = withContext(Dispatchers.IO){
+        val cancelData = userService.cancelAccount(verifyCode)
+        if (cancelData.code != 50) {
+            throw Exception(cancelData.error_msg ?: "未知错误")
+        }
+        return@withContext cancelData.data
     }
 }
 

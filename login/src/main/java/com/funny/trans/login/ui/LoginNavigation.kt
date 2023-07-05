@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.funny.translation.bean.UserInfoBean
-import com.funny.translation.helper.toastOnUi
 import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -23,6 +22,7 @@ sealed class LoginRoute(val route: String) {
     object ResetPasswordPage: LoginRoute("reset_password")
     object FindUsernamePage: LoginRoute("find_user_name")
     object ChangeUsernamePage: LoginRoute("change_user_name")
+    object CancelAccountPage: LoginRoute("cancel_account")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -44,29 +44,28 @@ fun LoginNavigation(
             )
             .statusBarsPadding(),
     ){
-        addLoginRoutes(navController, onLoginSuccess = onLoginSuccess, onResetPasswordSuccess = {
-            context.toastOnUi("密码重置成功！")
-            navController.popBackStack()
-        })
+        addLoginRoutes(navController, onLoginSuccess = onLoginSuccess)
     }
 }
 
 fun NavGraphBuilder.addLoginRoutes(
     navController: NavHostController,
     onLoginSuccess: (UserInfoBean) -> Unit,
-    onResetPasswordSuccess: () -> Unit,
 ){
     animateComposable(LoginRoute.LoginPage.route){
         LoginPage(navController = navController, onLoginSuccess = onLoginSuccess)
     }
     animateComposable(LoginRoute.ResetPasswordPage.route){
-        ResetPasswordPage(onSuccess = onResetPasswordSuccess)
+        ResetPasswordPage(navController = navController)
     }
     animateComposable(LoginRoute.FindUsernamePage.route){
         FindUsernamePage()
     }
     animateComposable(LoginRoute.ChangeUsernamePage.route){
         ChangeUsernamePage(navController = navController)
+    }
+    animateComposable(LoginRoute.CancelAccountPage.route){
+        CancelAccountPage(navController = navController)
     }
 }
 

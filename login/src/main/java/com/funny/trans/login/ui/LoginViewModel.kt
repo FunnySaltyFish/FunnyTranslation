@@ -131,6 +131,18 @@ class LoginViewModel : ViewModel() {
         }
     }
 
+    fun sendCancelAccountEmail(context: Context){
+        viewModelScope.launch {
+            try {
+                UserUtils.sendCancelAccountEmail(username, email)
+                context.toastOnUi("注销账号邮件已发送，请注意查收~")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            }
+        }
+    }
+
     fun resetPassword(context: Context, onSuccess: () -> Unit){
         viewModelScope.launch {
             try {
@@ -151,6 +163,18 @@ class LoginViewModel : ViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 context.toastOnUi(e.message ?: "找回用户名失败，未知错误！")
+            }
+        }
+    }
+
+    fun cancelAccount(context: Context, onSuccess: () -> Unit){
+        viewModelScope.launch {
+            try {
+                UserUtils.cancelAccount(verifyCode)
+                onSuccess()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                context.toastOnUi(e.message ?: "注销账号失败，未知错误！")
             }
         }
     }

@@ -80,12 +80,15 @@ enum class UserProfileScreenRoutes {
     val route:String get() = "user_profile_route_${name.lowercase()}"
 }
 
-fun NavGraphBuilder.addUserProfileRoutes(navHostController: NavHostController, onLoginSuccess: (UserInfoBean) -> Unit, onResetPasswordSuccess: () -> Unit) {
+fun NavGraphBuilder.addUserProfileRoutes(
+    navHostController: NavHostController,
+    onLoginSuccess: (UserInfoBean) -> Unit
+) {
     navigation(UserProfileScreenRoutes.Settings.route, TranslateScreen.UserProfileScreen.route){
         animateComposable(UserProfileScreenRoutes.Settings.route){
             UserProfileSettings(navHostController = navHostController)
         }
-        addLoginRoutes(navHostController, onLoginSuccess, onResetPasswordSuccess)
+        addLoginRoutes(navHostController, onLoginSuccess)
     }
 }
 
@@ -184,9 +187,9 @@ fun UserProfileSettings(navHostController: NavHostController) {
             Text(text = userInfo.vipEndTimeStr())
         }
         Divider()
-        Tile(text = stringResource(R.string.disable_account)) {
-            navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
-        }
+        Tile(text = stringResource(R.string.disable_account), onClick = {
+            navHostController.navigateSingleTop(LoginRoute.CancelAccountPage.route)
+        })
         Divider()
         Spacer(modifier = Modifier.height(64.dp))
         Button(modifier = Modifier.align(CenterHorizontally), onClick = {
