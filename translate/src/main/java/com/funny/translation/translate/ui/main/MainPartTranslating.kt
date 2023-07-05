@@ -348,11 +348,13 @@ private fun ResultItem(
             )
         }
         if (expandDetail) {
+            Divider(modifier = Modifier.padding(top = 4.dp))
             MarkdownText(
                 markdown = result.detailText!!,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
+                selectable = true
             )
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
@@ -32,12 +33,16 @@ import com.funny.translation.WebViewActivity
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
+import io.noties.markwon.MarkwonSpansFactory
+import io.noties.markwon.MarkwonVisitor
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.html.HtmlPlugin
 import io.noties.markwon.image.coil.CoilImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
+import me.saket.bettermovementmethod.BetterLinkMovementMethod
+import org.commonmark.node.Node
 
 @Composable
 fun MarkdownText(
@@ -47,6 +52,7 @@ fun MarkdownText(
     fontSize: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign? = null,
     maxLines: Int = Int.MAX_VALUE,
+    selectable: Boolean = false,
     @FontRes fontResource: Int? = null,
     style: TextStyle = LocalTextStyle.current,
     @IdRes viewId: Int? = null,
@@ -78,6 +84,7 @@ fun MarkdownText(
                 textAlign = textAlign,
                 viewId = viewId,
                 onClick = onClick,
+                selectable = selectable
             )
         },
         update = { textView ->
@@ -105,7 +112,8 @@ private fun createTextView(
     @FontRes fontResource: Int? = null,
     style: TextStyle,
     @IdRes viewId: Int? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    selectable: Boolean = false
 ): TextView {
 
     val textColor = color.takeOrElse { style.color.takeOrElse { defaultColor } }
@@ -121,6 +129,10 @@ private fun createTextView(
         setTextColor(textColor.toArgb())
         setMaxLines(maxLines)
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, mergedStyle.fontSize.value)
+        if (selectable) {
+            setTextIsSelectable(true)
+            movementMethod = BetterLinkMovementMethod.getInstance();
+        }
 
         viewId?.let { id = viewId }
         textAlign?.let { align ->
@@ -167,5 +179,34 @@ private fun createMarkdownRender(
                 }
             }
         })
+        .usePlugin(LessSpacingAfterHeadingAndListPlugin)
         .build()
+}
+
+private val LessSpacingAfterHeadingAndListPlugin = object : AbstractMarkwonPlugin() {
+    override fun configureSpansFactory(builder: MarkwonSpansFactory.Builder) {
+
+    }
+
+    override fun configureVisitor(builder: MarkwonVisitor.Builder) {
+        builder.blockHandler(object : MarkwonVisitor.BlockHandler {
+            override fun blockStart(visitor: MarkwonVisitor, node: Node) {
+                visitor.ensureNewLine()
+            }
+
+            override fun blockEnd(visitor: MarkwonVisitor, node: Node) {
+                if (visitor.hasNext(node)) {
+                    visitor.ensureNewLine()
+                }
+            }
+        })
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewMDText() {
+    val markdown = "### 注音  \nhəˈlō  \n### 定义  \n**惊叹词**   \n- used as a greeting or to begin a phone conversation.  \n  - hello there, Katie!  \n  \n**名词**   \n- an utterance of “hello”; a greeting.  \n  - she was getting polite nods and hellos from people  \n  \n**动词**   \n- say or shout “hello”; greet someone.  \n  - I pressed the phone button and helloed  \n"
+    MarkdownText(markdown = markdown)
+
 }
