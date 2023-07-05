@@ -27,7 +27,7 @@ object ClipBoardUtil {
         return ""
     }
 
-    fun copy(ctx: Context, content: String?) {
+    fun copy(ctx: Context, content: CharSequence?) {
         //获取剪贴板管理器：
         // 获取系统剪贴板
         val clipboard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return

@@ -57,24 +57,24 @@
     <LinearLayout
         android:id="@+id/float_window_linear"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/float_window_spinner_source"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
         android:orientation="horizontal"
-        android:gravity="top"
+        android:gravity="center"
         android:paddingHorizontal="8dp">
 
         <com.funny.translation.translate.ui.widget.EditTextField
             android:id="@+id/float_window_input"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
 
             android:layout_weight="6"
 
             android:background="@drawable/bg_edittext"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textColor="@color/white"
             android:textCursorDrawable="@drawable/item_white_cursor"
             app:clearButtonDrawable="@drawable/ic_clear_button"
@@ -120,6 +120,23 @@
         android:contentDescription="@string/speak"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_speaker_1"
+        android:tint="@color/white"
+        tools:ignore="UseAppTint"
+        />
+
+    <ImageButton
+        android:id="@+id/float_window_copy_btn"
+        android:visibility="invisible"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_below="@+id/float_window_text"
+        android:layout_toEndOf="@id/float_window_speak_btn"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="1dp"
+        android:background="#00000000"
+        android:contentDescription="@string/copy_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_copy_content"
         android:tint="@color/white"
         tools:ignore="UseAppTint"
         />

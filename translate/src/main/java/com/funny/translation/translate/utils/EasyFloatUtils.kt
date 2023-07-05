@@ -13,6 +13,7 @@ import android.widget.*
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.GlobalTranslationConfig
+import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.toastOnUi
@@ -161,9 +162,18 @@ object EasyFloatUtils {
             setOnClickListener {
                 val txt = resultText.text
                 if (txt.isNotEmpty()){
-                    AudioPlayer.play(txt.toString(), findLanguageById(spinnerTarget.selectedItemPosition)){
+                    AudioPlayer.playOrPause(txt.toString(), findLanguageById(spinnerTarget.selectedItemPosition)){
                         context.toastOnUi("朗读错误")
                     }
+                }
+            }
+        }
+        val copyBtn = view.findViewById<ImageButton>(R.id.float_window_copy_btn).apply {
+            setOnClickListener {
+                val txt = resultText.text
+                if (txt.isNotEmpty()){
+                    ClipBoardUtil.copy(context, txt)
+                    context.toastOnUi("已复制到剪贴板")
                 }
             }
         }
@@ -200,8 +210,11 @@ object EasyFloatUtils {
                         task.translate()
                         withContext(Dispatchers.Main) {
                             resultText.text = task.result.basicResult.trans
-                            if(speakBtn.visibility != View.VISIBLE){
+                            if (speakBtn.visibility != View.VISIBLE){
                                 speakBtn.visibility = View.VISIBLE
+                            }
+                            if (copyBtn.visibility != View.VISIBLE){
+                                copyBtn.visibility = View.VISIBLE
                             }
                         }
                     }

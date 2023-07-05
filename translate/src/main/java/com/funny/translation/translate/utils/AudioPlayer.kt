@@ -28,7 +28,7 @@ object AudioPlayer {
         }
     }
 
-    fun play(
+    fun playOrPause(
         word : String,
         language: Language,
         onComplete : ()->Unit = {},
@@ -55,8 +55,17 @@ object AudioPlayer {
                 onComplete()
             }
             if(mediaPlayer.isPlaying) {
-                mediaPlayer.pause()
-                onInterrupt()
+                // 点两次当做暂停
+                if (currentPlayingText == word) {
+                    appCtx.toastOnUi("已停止当前朗读~")
+                    mediaPlayer.pause()
+                    currentPlayingText = ""
+                    onComplete()
+                    return
+                } else {
+                    mediaPlayer.pause()
+                    onInterrupt()
+                }
             }
             mediaPlayer.reset()
             mediaPlayer.setDataSource(FunnyApplication.ctx, Uri.parse(url))

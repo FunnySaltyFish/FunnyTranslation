@@ -53,7 +53,8 @@ class MainViewModel : ViewModel() {
     private val totalProgress: Int get() = selectedEngines.size
 
     // 下面是一些需要计算的变量，比如流和列表
-    val jsEnginesFlow : Flow<List<JsTranslateTaskText>> = appDB.jsDao.getEnabledJs().mapLatest { list ->
+    val jsEnginesFlow : Flow<List<JsTranslateTaskText>> = appDB.jsDao.getEnabledJs().distinctUntilChanged().mapLatest { list ->
+        Log.d(TAG, "jsEngineFlow was re-triggered")
         list.map {
             JsTranslateTaskText(jsEngine = JsEngine(jsBean = it)).apply {
                 this.selected = DataSaverUtils.readData(this.selectKey, false)

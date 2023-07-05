@@ -213,7 +213,7 @@ internal fun SpeakButton(
                 AudioPlayer.pause()
             } else {
                 speakerState.play()
-                AudioPlayer.play(
+                AudioPlayer.playOrPause(
                     text,
                     language,
                     onError = {
