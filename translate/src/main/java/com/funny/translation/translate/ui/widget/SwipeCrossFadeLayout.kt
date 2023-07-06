@@ -21,6 +21,7 @@ fun SwipeCrossFadeLayout(
     mainUpper: @Composable () -> Unit,
     mainLower: @Composable () -> Unit,
     foreground: @Composable () -> Unit,
+    onProgressChanged: (Float) -> Unit = {  },
 ) {
     var containerHeight by remember { mutableStateOf(100) }
     var mainUpperHeight by remember { mutableStateOf(0) }
@@ -53,6 +54,7 @@ fun SwipeCrossFadeLayout(
         mainUpperHeight = mainUpperPlaceable.height
 
         val progress = (state.offset.value / lowerPartHeight).coerceIn(0f, 1f)
+        onProgressChanged(progress)
         val foregroundHeight = mainUpperHeight + progress * lowerPartHeight
 
         // Log.d(TAG, "progress: $progress, containerHeight: $containerHeight, mainPartHeight: $mainUpperHeight, foregroundHeight: $foregroundHeight, lowerPartHeight: $lowerPartHeight")
@@ -75,7 +77,7 @@ fun SwipeCrossFadeLayout(
             }
             if (progress > 0.01f) {
                 foregroundPlaceable.placeRelativeWithLayer(0, 0) {
-                    alpha = lerp(0.5f, 1f, progress)
+                    alpha = lerp(0.2f, 1f, progress)
                     // shadowElevation = if (progress == 1f) 0f else 8f
                 }
             }

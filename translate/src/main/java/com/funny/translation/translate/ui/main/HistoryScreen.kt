@@ -3,6 +3,7 @@ package com.funny.translation.translate.ui.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -14,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,17 +30,22 @@ import com.funny.translation.translate.findLanguageById
 import com.funny.translation.translate.ui.widget.UpperPartBackground
 import com.funny.translation.ui.touchToScale
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
+    progressProvider: () -> Float,
     navigateBackAction: SimpleAction
 ) {
     val vm: MainViewModel = viewModel()
-    UpperPartBackground(modifier = modifier) {
+    UpperPartBackground(
+        modifier = modifier,
+        cornerSizeProvider = { ( (1 - progressProvider()) * 40).dp }
+    ) {
         FavoriteTopBar(navigateBackAction)
         TransFavoriteList(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(8.dp),
             transHistories = vm.transHistories.collectAsLazyPagingItems(),
             onClickHistory = { transHistory ->
@@ -84,44 +91,51 @@ private fun TransFavoriteList(
 ) {
     val context = LocalContext.current
     LazyColumn(
-        modifier = modifier, reverseLayout = true // 这一条使得最新的历史会在最下面
+        modifier = modifier,
+        reverseLayout = true // 这一条使得最新的历史会在最下面
     ) {
-        items(transHistories, key = { it.id }) { transHistory ->
-            transHistory ?: return@items
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .touchToScale {
-                        onClickHistory(transHistory)
-                    }
-                    .padding(start = 8.dp)
-                    .animateItemPlacement(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = transHistory.sourceString,
-                    fontWeight = FontWeight.W600,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 16.sp
-                )
-                Row {
-                    IconButton(onClick = {
-                        ClipBoardUtil.copy(
-                            context,
-                            transHistory.sourceString
-                        )
-                    }) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_copy_content),
-                            stringResource(R.string.copy_content)
-                        )
-                    }
-                    IconButton(onClick = {
-                        onDeleteHistory(transHistory.sourceString)
-                    }) {
-                        Icon(Icons.Default.Delete, "删除此历史记录")
+        if (transHistories.itemSnapshotList.isEmpty()) {
+            item {
+                Text(text = "暂无历史记录", modifier = Modifier.fillMaxWidth().padding(8.dp), textAlign = TextAlign.Center)
+            }
+        } else {
+            items(transHistories, key = { it.id }) { transHistory ->
+                transHistory ?: return@items
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .touchToScale {
+                            onClickHistory(transHistory)
+                        }
+                        .padding(start = 8.dp)
+                        .animateItemPlacement(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = transHistory.sourceString,
+                        fontWeight = FontWeight.W600,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 16.sp
+                    )
+                    Row {
+                        IconButton(onClick = {
+                            ClipBoardUtil.copy(
+                                context,
+                                transHistory.sourceString
+                            )
+                        }) {
+                            Icon(
+                                painterResource(id = R.drawable.ic_copy_content),
+                                stringResource(R.string.copy_content)
+                            )
+                        }
+                        IconButton(onClick = {
+                            onDeleteHistory(transHistory.sourceString)
+                        }) {
+                            Icon(Icons.Default.Delete, "删除此历史记录")
+                        }
                     }
                 }
             }

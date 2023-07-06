@@ -102,11 +102,13 @@ internal fun MainPartNormal(
         }
     }
 
+    val progressState = remember { mutableStateOf(1f) }
     SwipeCrossFadeLayout(
         state = swipeableState,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer),
+        onProgressChanged = { progressState.value = it },
         
         mainUpper = {
             UpperPartBackground {
@@ -149,7 +151,8 @@ internal fun MainPartNormal(
             HistoryScreen(
                 modifier = Modifier
                     .fillMaxSize()
-                    .nestedScroll(nestedScrollConnection)
+                    .nestedScroll(nestedScrollConnection),
+                progressProvider = { progressState.value }
             ) {
                 scope.launch {
                     swipeableState.animateTo(SwipeShowType.Main)
