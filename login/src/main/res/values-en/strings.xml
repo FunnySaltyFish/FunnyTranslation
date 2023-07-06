@@ -3,4 +3,7 @@
     <string name="finished">Finished</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="confirm_disable_account">Confirm Disable Account</string>
+    <string name="confirm">Confirm to Continue</string>
+    <string name="cancel">Cancel</string>
 </resources>

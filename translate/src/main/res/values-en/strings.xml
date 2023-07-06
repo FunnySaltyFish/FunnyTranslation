@@ -141,4 +141,11 @@
     <string name="login_to_use_image_translation">Due to cost reasons, image translation function needs to be logged in to use, please understand</string>
     <string name="show_detail_result">Detailed Translation</string>
     <string name="show_detail_result_desc">To display more detailed translation results, such as phonetic symbols, parts of speech, examples, etc., the engine interface needs to support it (currently only supported by Youdao and Google).</string>
+    <string name="cancel">Cancel</string>
+    <string name="ig_bottom_placeholder">Please enter…</string>
+    <string name="chat_input_hint">Please enter</string>
+    <string name="send">Send</string>
+    <string name="delete_message">Delete this message</string>
+    <string name="change_username">Change Username</string>
+    <string name="disable_account">Cancel Account</string>
 </resources>
