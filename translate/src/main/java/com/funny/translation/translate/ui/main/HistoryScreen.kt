@@ -3,7 +3,6 @@ package com.funny.translation.translate.ui.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -30,7 +29,6 @@ import com.funny.translation.translate.findLanguageById
 import com.funny.translation.translate.ui.widget.UpperPartBackground
 import com.funny.translation.ui.touchToScale
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,

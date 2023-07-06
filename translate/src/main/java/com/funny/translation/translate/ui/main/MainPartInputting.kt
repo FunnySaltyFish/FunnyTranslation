@@ -110,20 +110,21 @@ private fun TranslateAndClearRow(
         horizontalArrangement = Arrangement.End
     ) {
         ElevatedButton(
+            onClick = { vm.translateText = "" },
+            modifier = Modifier
+                .padding(end = 8.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.clear_content),
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+        ElevatedButton(
             onClick = startTranslateActon,
             modifier = Modifier
         ) {
             Text(
                 text = stringResource(id = R.string.translate),
-            )
-        }
-        ElevatedButton(
-            onClick = { vm.translateText = "" },
-            modifier = Modifier
-                .padding(start = 8.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.clear_content),
             )
         }
     }
