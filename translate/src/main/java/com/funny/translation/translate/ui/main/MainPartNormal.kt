@@ -34,13 +34,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.funny.compose.loading.LoadingContent
 import com.funny.trans.login.LoginActivity
+import com.funny.translation.AppConfig
+import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
-import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.touchToScale
@@ -74,6 +76,21 @@ internal fun MainPartNormal(
                     return Offset(0f, available.y)
                 }
                 return super.onPostScroll(consumed, available, source)
+            }
+        }
+    }
+
+    val activityVM = LocalActivityVM.current
+    LaunchedEffect(key1 = Unit) {
+        activityVM.activityLifecycleEvent.collect {
+            Log.d("MainPartNormal", "activityLifecycleEvent: $it")
+            when (it) {
+                Lifecycle.Event.ON_RESUME -> {
+                    if (AppConfig.sAutoFocus.value && swipeableState.currentValue == SwipeShowType.Main) {
+                        vm.updateMainScreenState(MainScreenState.Inputting)
+                    }
+                }
+                else -> Unit
             }
         }
     }

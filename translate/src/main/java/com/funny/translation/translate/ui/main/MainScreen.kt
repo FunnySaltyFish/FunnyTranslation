@@ -215,6 +215,7 @@ private fun MainPart(
     openDrawerAction: SimpleAction?,
 ) {
     val vm: MainViewModel = viewModel()
+
     SimpleNavigation(currentScreen = vm.currentState, modifier = modifier) { state ->
         when (state) {
             MainScreenState.Normal -> MainPartNormal(
