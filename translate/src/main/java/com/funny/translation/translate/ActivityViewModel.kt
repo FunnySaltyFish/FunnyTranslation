@@ -7,6 +7,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.azhon.appupdate.config.UpdateConfiguration
@@ -32,7 +34,7 @@ import kotlinx.coroutines.withContext
 import java.util.Date
 
 
-class ActivityViewModel : ViewModel() {
+class ActivityViewModel : ViewModel(), LifecycleEventObserver {
 
     var lastBackTime: Long = 0
     var hasCheckedUpdate = false
@@ -44,7 +46,6 @@ class ActivityViewModel : ViewModel() {
     val token by derivedStateOf { userInfo.jwt_token }
 
     // 用于 Composable 跨层级直接观察 Activity 生命周期，实现方法有点奇特
-    // 目前只手动下发 onResume 事件
     val activityLifecycleEvent = MutableSharedFlow<Lifecycle.Event>()
 
     companion object {
@@ -123,4 +124,9 @@ class ActivityViewModel : ViewModel() {
         }
     }
 
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        viewModelScope.launch {
+            activityLifecycleEvent.emit(event)
+        }
+    }
 }

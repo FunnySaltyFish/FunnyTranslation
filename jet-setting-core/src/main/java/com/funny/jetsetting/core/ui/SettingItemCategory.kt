@@ -3,6 +3,7 @@ package com.funny.jetsetting.core.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -31,5 +32,5 @@ fun SettingItemCategory(
 }
 
 internal object SettingItemCategoryTokens {
-    val TitlePadding = 16.dp
+    val TitlePadding = PaddingValues(start = 20.dp, end = 16.dp, top = 24.dp, bottom = 8.dp)
 }

@@ -81,11 +81,11 @@ internal fun MainPartNormal(
     }
 
     val activityVM = LocalActivityVM.current
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = activityVM) {
         activityVM.activityLifecycleEvent.collect {
             Log.d("MainPartNormal", "activityLifecycleEvent: $it")
             when (it) {
-                Lifecycle.Event.ON_RESUME -> {
+                Lifecycle.Event.ON_RESUME, Lifecycle.Event.ON_CREATE -> {
                     if (AppConfig.sAutoFocus.value && swipeableState.currentValue == SwipeShowType.Main) {
                         vm.updateMainScreenState(MainScreenState.Inputting)
                     }

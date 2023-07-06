@@ -19,14 +19,17 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
@@ -49,7 +52,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.funny.jetsetting.core.JetSettingSwitch
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.jetsetting.core.ui.SettingItemCategory
@@ -77,6 +79,7 @@ import org.burnoutcrew.reorderable.reorderable
 
 private const val TAG = "SettingScreen"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen() {
     val navController = LocalNavController.current
@@ -88,9 +91,24 @@ fun SettingsScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(8.dp)
             .verticalScroll(scrollState)
     ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = stringResource(id = R.string.nav_settings),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(id = R.string.back)
+                    )
+                }
+            }
+        )
         SettingItemCategory(
             title = {
                 ItemHeading(text = stringResource(id = R.string.setting_translate))
@@ -107,6 +125,7 @@ fun SettingsScreen() {
                 state = AppConfig.sAutoFocus,
                 text = stringResource(R.string.setting_auto_focus),
                 resourceId = R.drawable.ic_keyboard,
+                description = stringResource(id = R.string.setting_auto_focus_desc)
             ) {
 
             }
@@ -359,7 +378,6 @@ internal fun ItemHeading(text: String) {
     Text(
         modifier = Modifier.semantics { heading() },
         text = text,
-        fontSize = 28.sp,
         fontWeight = FontWeight.Bold
     )
 }

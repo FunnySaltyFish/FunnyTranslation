@@ -17,7 +17,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
@@ -66,6 +65,7 @@ class TransActivity : AppCompatActivity() {
 
         context = this
         activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
+        lifecycle.addObserver(activityViewModel)
 
         registerNetworkReceiver()
         getIntentData(intent)
@@ -104,11 +104,6 @@ class TransActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume: ")
-
-        lifecycleScope.launch {
-            activityViewModel.activityLifecycleEvent.emit(Lifecycle.Event.ON_RESUME)
-        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -125,6 +120,7 @@ class TransActivity : AppCompatActivity() {
     override fun onDestroy() {
         Log.d(TAG, "onDestroy: ")
         EasyFloatUtils.dismissAll()
+        lifecycle.removeObserver(activityViewModel)
         unregisterReceiver(netWorkReceiver)
         DataSaverUtils.remove(Consts.KEY_APP_CURRENT_SCREEN)
         super.onDestroy()

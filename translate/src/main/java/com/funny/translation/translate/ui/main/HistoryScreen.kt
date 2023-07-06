@@ -43,7 +43,7 @@ fun HistoryScreen(
         FavoriteTopBar(navigateBackAction)
         TransFavoriteList(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(8.dp),
             transHistories = vm.transHistories.collectAsLazyPagingItems(),
             onClickHistory = { transHistory ->
