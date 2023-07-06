@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 55,
-      "versionName": "2.6.5",
+      "versionCode": 56,
+      "versionName": "2.6.6",
       "outputFile": "translate-release.apk"
     }
   ],
