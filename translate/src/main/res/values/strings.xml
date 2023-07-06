@@ -148,5 +148,5 @@
     <string name="delete_message">删除此消息</string>
     <string name="change_username">更改用户名</string>
     <string name="disable_account">注销账户</string>
-    <string name="setting_auto_focus_desc">当首次打开应用或者从后台打开应用主页时，自动进入输入状态</string>
+    <string name="setting_auto_focus_desc">当从后台打开应用主页时，自动进入输入状态</string>
 </resources>

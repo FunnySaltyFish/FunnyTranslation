@@ -33,9 +33,9 @@
     <string name="message_delete_plugin">Are you sure you want to delete this plugin? This operation is IRREVOCABLE.</string>
     <string name="import_plugin">Import Plugin</string>
     <string name="create_plugin">New Plugin</string>
-    <string name="bind_engine">Build-in engines</string>
-    <string name="plugin_engine">Plugin Engine</string>
-    <string name="engine_select">Set Engine</string>
+    <string name="bind_engine">Build-in Engines</string>
+    <string name="plugin_engine">Plugins</string>
+    <string name="engine_select">Engine</string>
     <string name="nav_thanks">Thanks</string>
     <string name="thanks">Thanks</string>
     <string name="join_sponsor">Sponsor us</string>
@@ -79,7 +79,7 @@
     <string name="action_see_notice_detail">Show detail of the announcement</string>
     <string name="des_current_source_lang">Current selected source language is </string>
     <string name="des_current_target_lang">Current selected target language is </string>
-    <string name="float_window_tip">About Float Window</string>
+    <string name="float_window_tip"> Permission is required to use the floating window. Please grant the corresponding permission correctly.\nThe floating ball can be dragged and moved to the designated position for deletion. \nTranslate by tapping the bottom right corner of the floating window to directly open the application.\nDrag the floating ball to a certain position and hold it for two seconds to trigger area screenshot translation. After selecting the area, you can jump to the translation.\nPress and hold the floating ball to directly translate the current screen content.</string>
     <string name="empty_plugin_tip">It seems that nothing is here.\n Try to add a new plugin to explore more.</string>
     <string name="user_profile">User Profile</string>
     <string name="setting_enter_to_translate">"Click Enter To Translate "</string>
@@ -105,7 +105,7 @@
     <string name="modify_password">Modify Password</string>
     <string name="img_remaining_points">Remaining Image Points</string>
     <string name="setting_show_image_trans_btn">Show Image Translation Button</string>
-    <string name="trans_pro">Trans Station Pro</string>
+    <string name="trans_pro">Pro</string>
     <string name="alipay">Alipay</string>
     <string name="wechat_pay">WeChat Pay</string>
     <string name="buy_number">Purchase Quantity</string>
@@ -119,9 +119,9 @@
     <string name="join_qq_group">Join QQ Group</string>
     <string name="message_out_of_max_engine_limit_novip">You can only choose up to %d engines, upgrade to VIP to enjoy more</string>
     <string name="menu">Menu</string>
-    <string name="image_translate">Image Translation</string>
+    <string name="image_translate">Image</string>
     <string name="favorites">Favorites</string>
-    <string name="trans_text_input_hint">Translate Your Reminiscence</string>
+    <string name="trans_text_input_hint">Translate What You Want...</string>
     <string name="back">Back</string>
     <string name="source_text">Source Text</string>
     <string name="favorite">Favorite</string>
@@ -148,4 +148,5 @@
     <string name="delete_message">Delete this message</string>
     <string name="change_username">Change Username</string>
     <string name="disable_account">Cancel Account</string>
+    <string name="setting_auto_focus_desc">When the home page of the application is opened from the background, the input state is automatically entered</string>
 </resources>
