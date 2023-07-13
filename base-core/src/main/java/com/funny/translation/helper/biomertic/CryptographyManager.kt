@@ -164,7 +164,7 @@ private class CryptographyManagerImpl : CryptographyManager {
             setBlockModes(ENCRYPTION_BLOCK_MODE)
             setEncryptionPaddings(ENCRYPTION_PADDING)
             setKeySize(KEY_SIZE)
-            setUserAuthenticationRequired(true)
+            setUserAuthenticationRequired(false)
         }
 
         val keyGenParams = paramsBuilder.build()
