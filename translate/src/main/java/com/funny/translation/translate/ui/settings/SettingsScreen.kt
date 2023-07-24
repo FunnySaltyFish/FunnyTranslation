@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Checkbox
@@ -29,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
@@ -52,6 +50,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.funny.jetsetting.core.JetSettingDialog
 import com.funny.jetsetting.core.JetSettingSwitch
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.jetsetting.core.ui.SettingItemCategory
@@ -67,6 +66,7 @@ import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.Dispatchers
@@ -87,28 +87,22 @@ fun SettingsScreen() {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
-    Column(
+    CommonPage(
+        title = stringResource(id = R.string.nav_settings),
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-            .verticalScroll(scrollState)
+            .verticalScroll(scrollState),
     ) {
-        TopAppBar(
+        SettingItemCategory(
             title = {
-                Text(
-                    text = stringResource(id = R.string.nav_settings),
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back)
-                    )
-                }
+                ItemHeading(text = stringResource(id = R.string.app_language))
             }
-        )
+        ) {
+            JetSettingDialog(text = stringResource(id = R.string.app_language)) {
+
+            }
+        }
         SettingItemCategory(
             title = {
                 ItemHeading(text = stringResource(id = R.string.setting_translate))

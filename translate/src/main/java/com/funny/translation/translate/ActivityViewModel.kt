@@ -65,6 +65,7 @@ class ActivityViewModel : ViewModel(), LifecycleEventObserver {
                     }
                 }.onFailure {
                     appCtx.toastOnUi("刷新用户信息失败~")
+                    it.printStackTrace()
                 }
             }
         }

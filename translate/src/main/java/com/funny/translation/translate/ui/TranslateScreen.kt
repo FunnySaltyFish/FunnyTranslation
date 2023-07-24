@@ -2,7 +2,6 @@ package com.funny.translation.translate.ui.screen
 
 import com.funny.translation.translate.R
 
-
 sealed class TranslateScreen(val titleId: Int, val route: String) {
     object MainScreen : TranslateScreen(R.string.nav_main, "nav_trans_main")
     object ImageTranslateScreen: TranslateScreen(R.string.image_translate, "nav_trans_img")

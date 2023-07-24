@@ -5,11 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -19,30 +17,16 @@ import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
+import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.ui.touchToScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FloatWindowScreen() {
-    val navController = LocalNavController.current
     val context = LocalContext.current
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        TopAppBar(
-            title = {
-                Text(text = stringResource(id = R.string.float_window))
-            },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        Icons.Default.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back)
-                    )
-                }
-            },
-        )
+    CommonPage(title = stringResource(id = R.string.float_window)) {
         JetSettingSwitch(state = AppConfig.sShowFloatWindow, text = stringResource(id = R.string.open_float_window)) {
             try {
                 if (it) EasyFloatUtils.showFloatBall(context as Activity)
@@ -66,6 +50,4 @@ fun FloatWindowScreen() {
                 .padding(horizontal = 16.dp))
         }
     }
-
-
 }

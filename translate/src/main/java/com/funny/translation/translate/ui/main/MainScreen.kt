@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
@@ -38,7 +39,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainScreen"
-internal typealias SimpleAction = () -> Unit
 
 // 用于选择引擎时的回调
 private interface UpdateSelectedEngine {

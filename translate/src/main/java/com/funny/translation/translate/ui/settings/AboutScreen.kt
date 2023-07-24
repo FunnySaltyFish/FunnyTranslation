@@ -1,7 +1,13 @@
 package com.funny.translation.translate.ui.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,25 +32,23 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.jetsetting.core.JetSettingTile
-import com.funny.jetsetting.core.ui.SettingItemCategory
+import com.funny.translation.WebViewActivity
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.isLight
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
-import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.ui.touchToScale
 
 @Composable
 fun AboutScreen() {
     val context = LocalContext.current
     val navController = LocalNavController.current
-    SettingItemCategory(
-        title = {
-            ItemHeading(text = stringResource(id = R.string.about))
-        }
+    CommonPage(
+        title = stringResource(id = R.string.about)
     ) {
         JetSettingTile(
             resourceId = R.drawable.ic_qq,
@@ -81,26 +85,28 @@ fun AboutScreen() {
 fun OpenSourceLibScreen() {
     val vm : SettingsScreenViewModel = viewModel()
     val (state, retry) = rememberRetryableLoadingState(loader = vm::loadOpenSourceLibInfo)
-    LazyColumn(
-        Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        loadingList(state, retry, key = { it.name }){ info ->
-            val color = if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.primaryContainer
-            OpenSourceLibItem(
-                modifier = Modifier
-                    .touchToScale()
-                    .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(color)
-                    .padding(top = 12.dp, start = 12.dp, end = 12.dp),
-                info = info
-            )
+    CommonPage(title = stringResource(id = R.string.open_source_library)) {
+        LazyColumn(
+            Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            loadingList(state, retry, key = { it.name }) { info ->
+                val color =
+                    if (info.author == "FunnySaltyFish" && MaterialTheme.colorScheme.isLight) MaterialColors.Orange200 else MaterialTheme.colorScheme.primaryContainer
+                OpenSourceLibItem(
+                    modifier = Modifier
+                        .touchToScale()
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(12.dp))
+                        .background(color)
+                        .padding(top = 12.dp, start = 12.dp, end = 12.dp),
+                    info = info
+                )
+            }
         }
     }
-
 }
 
 @Composable

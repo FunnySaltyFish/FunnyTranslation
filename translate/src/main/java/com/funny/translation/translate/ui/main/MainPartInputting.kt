@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R

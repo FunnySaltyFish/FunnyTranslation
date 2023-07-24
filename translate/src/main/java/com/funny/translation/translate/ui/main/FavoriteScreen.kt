@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.main
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,21 +30,18 @@ import androidx.paging.compose.items
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransFavoriteBean
+import com.funny.translation.translate.ui.widget.CommonPage
 
 @Composable
 fun FavoriteScreen(
     modifier: Modifier = Modifier,
 ) {
-    val vm: FavoriteViewModel = viewModel()
-    val navController = LocalNavController.current
-    val activity = LocalContext.current as TransActivity
-    BackHandler {
-        navController.navigateToTextTrans("", Language.AUTO, Language.CHINESE)
-    }
-    Column(modifier = modifier) {
-        FavoriteTopBar(navigateBackAction = {
-            navController.navigateToTextTrans("", Language.AUTO, Language.CHINESE)
-        })
+    CommonPage(
+        modifier = modifier,
+        title = stringResource(id = R.string.favorite)
+    ) {
+        val navController = LocalNavController.current
+        val vm: FavoriteViewModel = viewModel()
         TransFavoriteList(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,25 +59,6 @@ fun FavoriteScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FavoriteTopBar(
-    navigateBackAction: SimpleAction
-) {
-    TopAppBar(
-        title = {
-            Text(text = stringResource(id = R.string.favorite))
-        },
-        navigationIcon = {
-            IconButton(onClick = navigateBackAction) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = stringResource(id = R.string.back)
-                )
-            }
-        }
-    )
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -192,7 +168,7 @@ fun SwipeToDismissItem(
     // 侧滑删除所需State
     val dismissState = rememberDismissState()
     // 按指定方向触发删除后的回调，在此处变更具体数据
-    if(dismissState.isDismissed(DismissDirection.StartToEnd)){
+    if (dismissState.isDismissed(DismissDirection.StartToEnd)) {
         onDismissed()
     }
     SwipeToDismiss(
@@ -206,7 +182,7 @@ fun SwipeToDismissItem(
             val color by animateColorAsState(
                 when (dismissState.targetValue) {
                     DismissValue.Default -> Color.LightGray
-                    DismissValue.DismissedToEnd, DismissValue.DismissedToStart-> MaterialTheme.colorScheme.errorContainer
+                    DismissValue.DismissedToEnd, DismissValue.DismissedToStart -> MaterialTheme.colorScheme.errorContainer
                 }
             )
             val alignment = when (direction) {

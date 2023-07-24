@@ -25,13 +25,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -41,12 +45,14 @@ import com.funny.compose.loading.LoadingContent
 import com.funny.trans.login.LoginActivity
 import com.funny.translation.AppConfig
 import com.funny.translation.WebViewActivity
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 // 主页面，在未输入状态下展示的页面，默认
 @OptIn(ExperimentalMaterialApi::class)
@@ -90,6 +96,7 @@ internal fun MainPartNormal(
                         vm.updateMainScreenState(MainScreenState.Inputting)
                     }
                 }
+
                 else -> Unit
             }
         }
@@ -109,7 +116,7 @@ internal fun MainPartNormal(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer),
         onProgressChanged = { progressState.value = it },
-        
+
         mainUpper = {
             UpperPartBackground {
                 MainTopBarNormal(showDrawerAction = openDrawerAction)
@@ -127,7 +134,7 @@ internal fun MainPartNormal(
                 LanguageSelectRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                        .padding(horizontal = 40.dp, vertical = 12.dp),
                     sourceLanguage = vm.sourceLanguage,
                     updateSourceLanguage = vm::updateSourceLanguage,
                     targetLanguage = vm.targetLanguage,
@@ -283,32 +290,70 @@ internal fun LanguageSelectRow(
     updateTargetLanguage: (Language) -> Unit,
 ) {
     val enabledLanguages by enabledLanguages.collectAsState()
-    Row(
+    ChildrenFixedSizeRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        LanguageSelect(
-            Modifier.semantics {
-                contentDescription = appCtx.getString(R.string.des_current_source_lang)
-            },
-            language = sourceLanguage,
-            languages = enabledLanguages,
-            updateLanguage = updateSourceLanguage
-        )
-        ExchangeButton(tint = exchangeButtonTint) {
-            val temp = sourceLanguage
-            updateSourceLanguage(targetLanguage)
-            updateTargetLanguage(temp)
+        elementsPadding = 16.dp,
+        left = {
+            LanguageSelect(
+                Modifier.semantics {
+                    contentDescription = appCtx.getString(R.string.des_current_source_lang)
+                },
+                language = sourceLanguage,
+                languages = enabledLanguages,
+                updateLanguage = updateSourceLanguage
+            )
+        }, center = {
+            ExchangeButton(tint = exchangeButtonTint) {
+                val temp = sourceLanguage
+                updateSourceLanguage(targetLanguage)
+                updateTargetLanguage(temp)
+            }
+        }, right = {
+            LanguageSelect(
+                Modifier.semantics {
+                    contentDescription = appCtx.getString(R.string.des_current_target_lang)
+                },
+                language = targetLanguage,
+                languages = enabledLanguages,
+                updateLanguage = updateTargetLanguage
+            )
         }
-        LanguageSelect(
-            Modifier.semantics {
-                contentDescription = appCtx.getString(R.string.des_current_target_lang)
-            },
-            language = targetLanguage,
-            languages = enabledLanguages,
-            updateLanguage = updateTargetLanguage
+    )
+}
+
+@Composable
+private fun ChildrenFixedSizeRow(
+    modifier: Modifier = Modifier,
+    elementsPadding: Dp = 40.dp,
+    left: @Composable () -> Unit,
+    center: @Composable () -> Unit,
+    right: @Composable () -> Unit,
+) {
+    val density = LocalDensity.current
+    val ep = remember(elementsPadding) {
+        density.run {
+            elementsPadding.toPx().roundToInt()
+        }
+    }
+    SubcomposeLayout(modifier) { constraints: Constraints ->
+        val allWidth = constraints.maxWidth
+        val centerPlaceable = subcompose("center", center).first().measure(
+            constraints.copy(minWidth = 0)
         )
+        val centerWidth = centerPlaceable.width
+        val w = ((allWidth - centerWidth - 2 * ep) / 2)
+        val leftPlaceable = subcompose("left", left).first().measure(
+            constraints.copy(minWidth = w, maxWidth = w)
+        )
+        val rightPlaceable = subcompose("right", right).first().measure(
+            constraints.copy(minWidth = w, maxWidth = w)
+        )
+        val h = maxOf(centerPlaceable.height, leftPlaceable.height, rightPlaceable.height)
+        layout(constraints.maxWidth, h) {
+            leftPlaceable.placeRelative(0, (h - leftPlaceable.height) / 2)
+            centerPlaceable.placeRelative(w + ep, (h - centerPlaceable.height) / 2)
+            rightPlaceable.placeRelative(allWidth - w, (h - rightPlaceable.height) / 2)
+        }
     }
 }
 
@@ -361,9 +406,13 @@ private fun LanguageSelect(
         }, shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
-        ), contentPadding = PaddingValues(horizontal = 40.dp, vertical = 16.dp)
+        ), contentPadding = PaddingValues(horizontal = 0.dp, vertical = 16.dp)
     ) {
-        Text(text = language.displayText, fontSize = 18.sp, fontWeight = FontWeight.W600)
+        AutoResizedText(
+            text = language.displayText,
+            style = LocalTextStyle.current.copy(fontSize = 18.sp, fontWeight = FontWeight.W600),
+            byHeight = false
+        )
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -419,7 +468,9 @@ fun UserInfoPanel(navHostController: NavHostController) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box {
                     AsyncImage(
-                        model = userBean.avatar_url, contentDescription = "头像", modifier = Modifier
+                        model = userBean.avatar_url,
+                        contentDescription = "头像",
+                        modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape),
                         placeholder = painterResource(R.drawable.ic_loading)

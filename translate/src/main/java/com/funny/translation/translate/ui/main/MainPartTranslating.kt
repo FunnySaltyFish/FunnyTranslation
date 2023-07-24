@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CopyAll
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -73,8 +72,11 @@ fun MainPartTranslating(vm: MainViewModel) {
     }
 
     BackHandler(onBack = goBack)
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        MainTopBarTranslating(navigateBackAction = goBack)
+    CommonPage(
+        navigationIcon = {
+            CommonNavBackIcon(navigateBackAction = goBack)
+        }
+    ) {
         TranslateProgress(progress = vm.progress)
         SourceTextPart(
             modifier = Modifier.fillMaxWidth(0.88f),
@@ -131,26 +133,6 @@ private fun SourceTextPart(
 }
 
 // TODO 会员详细
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MainTopBarTranslating(
-    navigateBackAction: SimpleAction,
-) {
-    TopAppBar(
-        title = {},
-        navigationIcon = {
-            IconButton(onClick = navigateBackAction) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = stringResource(id = R.string.back)
-                )
-            }
-        },
-        actions = {
-        }
-    )
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

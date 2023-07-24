@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,9 +22,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.findLanguageById
+import com.funny.translation.translate.ui.widget.CommonNavBackIcon
+import com.funny.translation.translate.ui.widget.CommonTopBar
 import com.funny.translation.translate.ui.widget.UpperPartBackground
 import com.funny.translation.ui.touchToScale
 
@@ -38,9 +40,14 @@ fun HistoryScreen(
     val vm: MainViewModel = viewModel()
     UpperPartBackground(
         modifier = modifier,
-        cornerSizeProvider = { ( (1 - progressProvider()) * 40).dp }
+        cornerSizeProvider = { ((1 - progressProvider()) * 40).dp }
     ) {
-        FavoriteTopBar(navigateBackAction)
+        CommonTopBar(
+            title = stringResource(id = R.string.favorite),
+            navigationIcon = {
+                CommonNavBackIcon(navigateBackAction = navigateBackAction)
+            }
+        )
         TransFavoriteList(
             modifier = Modifier
                 .fillMaxWidth()
@@ -59,26 +66,6 @@ fun HistoryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FavoriteTopBar(
-    navigateBackAction: SimpleAction
-) {
-    TopAppBar(
-        title = {
-            Text(text = "历史记录")
-        },
-        navigationIcon = {
-            IconButton(onClick = navigateBackAction) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = stringResource(id = R.string.back)
-                )
-            }
-        }
-    )
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TransFavoriteList(
@@ -94,7 +81,11 @@ private fun TransFavoriteList(
     ) {
         if (transHistories.itemSnapshotList.isEmpty()) {
             item {
-                Text(text = "暂无历史记录", modifier = Modifier.fillMaxWidth().padding(8.dp), textAlign = TextAlign.Center)
+                Text(
+                    text = "暂无历史记录", modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp), textAlign = TextAlign.Center
+                )
             }
         } else {
             items(transHistories, key = { it.id }) { transHistory ->
