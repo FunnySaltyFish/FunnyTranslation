@@ -11,17 +11,16 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.AppConfig
+import com.funny.translation.BaseActivity
 import com.funny.translation.Consts
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
@@ -29,7 +28,6 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.externalCache
 import com.funny.translation.network.NetworkReceiver
 import com.funny.translation.translate.utils.EasyFloatUtils
-import com.smarx.notchlib.NotchScreenManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -46,7 +44,7 @@ import kotlinx.coroutines.launch
  *
  */
 
-class TransActivity : AppCompatActivity() {
+class TransActivity : BaseActivity() {
     private lateinit var activityViewModel: ActivityViewModel
     private lateinit var context: Context
     private lateinit var netWorkReceiver: NetworkReceiver
@@ -62,6 +60,7 @@ class TransActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Debug.addTarget(DefaultDebugTarget)
+        initLanguageDisplay(resources)
 
         context = this
         activityViewModel = ViewModelProvider(this).get(ActivityViewModel::class.java)
@@ -69,10 +68,6 @@ class TransActivity : AppCompatActivity() {
 
         registerNetworkReceiver()
         getIntentData(intent)
-
-        // 状态栏沉浸
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        NotchScreenManager.getInstance().setDisplayInNotch(this)
 
         setContent {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
@@ -83,7 +78,9 @@ class TransActivity : AppCompatActivity() {
             }
         }
 
+
         if (!initialized) {
+
             // 做一些耗时的后台任务
             lifecycleScope.launch(Dispatchers.IO) {
                 // MobileAds.initialize(context) {}

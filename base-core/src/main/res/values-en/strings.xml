@@ -17,4 +17,5 @@
     <string name="request_permission">Request Permissions</string>
     <string name="confirm">Confirm</string>
     <string name="language_spanish">Spanish</string>
+    <string name="follow_system">Follow System</string>
 </resources>

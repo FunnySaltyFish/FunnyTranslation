@@ -51,8 +51,9 @@ dependencies {
     implementation platform("androidx.compose:compose-bom:${Versions.composeBomVersion}")
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.material:material"
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha07"
     implementation "androidx.compose.material3:material3"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

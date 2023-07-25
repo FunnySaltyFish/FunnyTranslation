@@ -149,4 +149,7 @@
     <string name="change_username">Change Username</string>
     <string name="disable_account">Cancel Account</string>
     <string name="setting_auto_focus_desc">When the home page of the application is opened from the background, the input state is automatically entered</string>
+    <string name="app_language">Display Language</string>
+    <string name="confirm_and_restart_app">Confirm and restart</string>
+    <string name="setting_app_preference">Application</string>
 </resources>

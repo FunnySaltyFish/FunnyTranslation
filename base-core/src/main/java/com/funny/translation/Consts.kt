@@ -3,6 +3,7 @@ package com.funny.translation
 object Consts {
 
 
+
     const val INTENT_ACTION_CLICK_FLOAT_WINDOW_TILE = "action_click_float_window_tile"
     const val INTENT_EXTRA_OPEN_FLOAT_WINDOW  = "extra_open_float_window"
     const val EXTRA_OPEN_IN_APP = "extra_open_in_app"
@@ -15,6 +16,7 @@ object Consts {
     const val KEY_TRANS_PAGE_INPUT_BOTTOM = "trans_page_input_bottom"
     const val KEY_USER_INFO = "user_info"
     const val KEY_APP_CURRENT_SCREEN = "key_app_nav_current_screen"
+    const val KEY_APP_LANGUAGE = "app_language"
 
     const val EXTRA_USER_INFO = "extra_user_info"
 

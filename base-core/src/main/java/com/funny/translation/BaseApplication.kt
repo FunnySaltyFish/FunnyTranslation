@@ -2,22 +2,35 @@ package com.funny.translation
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
+import com.funny.translation.helper.LocaleUtils
 import com.tencent.mmkv.MMKV
-import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.properties.Delegates
 
 
 open class BaseApplication : Application() {
+    override fun attachBaseContext(base: Context?) {
+        val context = base?.let {
+            LocaleUtils.init(it)
+            MMKV.initialize(base)
+            val locale = LocaleUtils.getLocaleDirectly()
+            LocaleUtils.getWarpedContext(it, locale)
+        }
+        super.attachBaseContext(context)
+    }
+
     override fun onCreate() {
         super.onCreate()
+
+//        MMKV.initialize(this)
         ctx = this
-        MMKV.initialize(this)
+
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks{
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 activityStack.push(activity)

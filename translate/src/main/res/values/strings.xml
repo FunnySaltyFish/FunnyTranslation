@@ -150,4 +150,6 @@
     <string name="disable_account">注销账户</string>
     <string name="setting_auto_focus_desc">当从后台打开应用主页时，自动进入输入状态</string>
     <string name="app_language">应用显示语言</string>
+    <string name="confirm_and_restart_app">确认并重启</string>
+    <string name="setting_app_preference">应用</string>
 </resources>

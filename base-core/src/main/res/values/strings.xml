@@ -17,4 +17,5 @@
     <string name="request_permission">请求权限</string>
     <string name="confirm">确认</string>
     <string name="language_spanish">西班牙语</string>
+    <string name="follow_system">跟随系统</string>
 </resources>

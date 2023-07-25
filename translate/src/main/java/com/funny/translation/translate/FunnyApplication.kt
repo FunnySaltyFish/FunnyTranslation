@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.geometry.Offset
 import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
+import com.funny.translation.bean.AppLanguage
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.codeeditor.ui.editor.EditorSchemes
 import com.funny.translation.helper.DeviceUtils
@@ -44,7 +45,6 @@ class FunnyApplication : BaseApplication() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            initLanguageDisplay(resources)
             SignUtils.loadJs()
             SortResultUtils.init()
         }
@@ -99,8 +99,14 @@ class FunnyApplication : BaseApplication() {
             restore = { if (it == "null") null else Uri.parse(it) }
         )
 
+        registerTypeConverters<AppLanguage>(
+            save = { it.ordinal.toString() },
+            restore = { AppLanguage.values()[it.toInt()] }
+        )
+
         registerTypeConverters<ThemeType>(save = ThemeType.Saver, restore = ThemeType.Restorer)
         registerTypeConverters<TranslateScreen>(save = TranslateScreen.Saver, restore = TranslateScreen.Restorer)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

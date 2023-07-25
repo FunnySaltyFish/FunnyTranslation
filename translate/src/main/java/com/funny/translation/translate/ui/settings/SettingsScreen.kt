@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.settings
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -50,13 +51,15 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.funny.jetsetting.core.JetSettingDialog
+import com.funny.jetsetting.core.JetSettingListDialog
 import com.funny.jetsetting.core.JetSettingSwitch
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.jetsetting.core.ui.SettingItemCategory
 import com.funny.translation.AppConfig
+import com.funny.translation.bean.AppLanguage
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
+import com.funny.translation.helper.LocaleUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.LocalNavController
@@ -69,6 +72,7 @@ import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.SortResultUtils
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -96,12 +100,12 @@ fun SettingsScreen() {
     ) {
         SettingItemCategory(
             title = {
-                ItemHeading(text = stringResource(id = R.string.app_language))
-            }
+                ItemHeading(text = stringResource(id = R.string.setting_app_preference))
+            },
         ) {
-            JetSettingDialog(text = stringResource(id = R.string.app_language)) {
-
-            }
+            // 设置应用显示的语言
+            // 跟随系统、简体中文、英语
+            SelectAppLanguage()
         }
         SettingItemCategory(
             title = {
@@ -215,6 +219,31 @@ fun SettingsScreen() {
             }
         }
     }
+}
+
+@Composable
+private fun SelectAppLanguage() {
+    val languages = AppLanguage.values().toList().toImmutableList()
+    val context = LocalContext.current
+    var tempLanguage by remember { mutableStateOf(LocaleUtils.getAppLanguage()) }
+
+    JetSettingListDialog(
+        list = languages,
+        text = stringResource(id = R.string.app_language),
+        resourceId = R.drawable.ic_language_select,
+        selected = tempLanguage,
+        updateSelected = {
+            tempLanguage = it
+        },
+        confirmButtonText = stringResource(id = R.string.confirm_and_restart_app),
+        confirmButtonAction = {
+            LocaleUtils.saveAppLanguage(tempLanguage)
+            // restart App
+            val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+    )
 }
 
 internal val DefaultVipInterceptor = {

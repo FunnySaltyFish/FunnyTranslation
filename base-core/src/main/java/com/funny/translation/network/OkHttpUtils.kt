@@ -2,13 +2,17 @@ package com.funny.translation.network
 
 import android.content.Intent
 import android.util.Log
+import android.util.Log.DEBUG
 import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.sign.SignUtils
+import com.ihsanbal.logging.Level
+import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -109,7 +113,8 @@ object OkHttpUtils {
             val domain = request.url.host
 
             // token 过期了
-            if (response.code == 401 && requestUrl.startsWith(NetworkConfig.BASE_URL)){
+            // 422: jwt 校验错误
+            if (response.code in intArrayOf(401, 422) && requestUrl.startsWith(NetworkConfig.BASE_URL)){
                 val clazz = Class.forName("com.funny.trans.login.LoginActivity")
                 val intent = Intent().apply {
                     setClass(BaseApplication.ctx, clazz)
@@ -133,10 +138,10 @@ object OkHttpUtils {
             response
         }
 
-//        addInterceptor(LoggingInterceptor.Builder()
-//            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
-//            .log(VERBOSE)
-//            .build())
+        addInterceptor(LoggingInterceptor.Builder()
+            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
+            .log(DEBUG)
+            .build())
 
     }.build()
 

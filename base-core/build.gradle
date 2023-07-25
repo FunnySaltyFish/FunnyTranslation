@@ -118,6 +118,7 @@ dependencies {
     api "androidx.compose.ui:ui-tooling"
     api "androidx.compose.animation:animation"
 
+    api "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     api "androidx.navigation:navigation-compose:2.6.0-rc01"
     api "androidx.activity:activity-compose:${Versions.activityComposeVersion}"
     api "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifeCycleViewModelComposeVersion}"
