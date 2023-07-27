@@ -175,7 +175,7 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.FloatWindowScreen.route) {
                         FloatWindowScreen()
                     }
-                    composable(TranslateScreen.FavoriteScreen.route) {
+                    animateComposable(TranslateScreen.FavoriteScreen.route) {
                         FavoriteScreen()
                     }
                     addSettingsNavigation()
