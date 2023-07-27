@@ -28,6 +28,7 @@ import com.funny.translation.translate.network.UpdateDownloadManager
 import com.funny.translation.translate.utils.ApplicationUtil
 import com.funny.translation.translate.utils.StringUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -127,6 +128,11 @@ class ActivityViewModel : ViewModel(), LifecycleEventObserver {
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         viewModelScope.launch {
+            // Log.d(TAG, "onStateChanged: emit $event")
+            // 等待 Composable 订阅，以避免 Composable 未订阅时发送的事件丢失
+            while (activityLifecycleEvent.subscriptionCount.value == 0) {
+                delay(100)
+            }
             activityLifecycleEvent.emit(event)
         }
     }
