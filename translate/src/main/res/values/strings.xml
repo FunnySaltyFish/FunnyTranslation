@@ -12,7 +12,7 @@
     <string name="engine">翻译引擎</string>
     <string name="engine_baidu">百度翻译</string>
     <string name="engine_youdao_easy">有道翻译(简版)</string>
-    <string name="engine_youdao_normal">有道翻译(标准版)</string>
+    <string name="engine_youdao_normal">有道翻译</string>
     <string name="engine_jinshan">金山翻译</string>
     <string name="engine_google">谷歌翻译</string>
     <string name="error_result">翻译错误</string>
