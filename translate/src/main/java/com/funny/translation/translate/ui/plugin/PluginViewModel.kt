@@ -15,6 +15,7 @@ import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,11 @@ class PluginViewModel : ViewModel() {
 
     var needToDeletePlugin: JsBean? by mutableStateOf(null)
 
-    suspend fun getOnlinePlugins(): List<JsBean> = pluginService.getOnlinePlugins()
+    suspend fun getOnlinePlugins(): List<JsBean> {
+        // 做完页面打开的动画后再请求，降低卡顿
+        delay(700)
+        return pluginService.getOnlinePlugins()
+    }
 
     fun updateLocalPluginSelect(jsBean: JsBean) {
         jsBean.enabled = 1 - jsBean.enabled
