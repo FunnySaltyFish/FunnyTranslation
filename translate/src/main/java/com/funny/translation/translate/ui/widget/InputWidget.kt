@@ -46,7 +46,6 @@ fun InputText(
     }
     AndroidView(factory = {
         EditText(it).apply {
-            doOnTextChanged { text, start, before, count -> updateText(text.toString()) }
 //            maxLines = 6
             hint = context.getString(R.string.trans_text_input_hint)
             background = null
@@ -62,14 +61,18 @@ fun InputText(
                 setOnEditorActionListener { v, actionId, event ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
                         translateAction?.invoke()
-                        false
-                    }else {
                         true
+                    }else {
+                        false
                     }
                 }
             }
 
-             setOnFocusChangeListener { v, hasFocus -> updateFocusRequest(hasFocus) }
+            setOnFocusChangeListener { v, hasFocus -> updateFocusRequest(hasFocus) }
+            // 下面这一行的顺序被放在了最后
+            // 起初它在最开始，但是 inputType = EditorInfo.TYPE_CLASS_TEXT 或导致触发 onTextChanged( text = "" )
+            // 从而导致 updateText("")，从翻译结果页面返回后，输入框会被清空
+            doOnTextChanged { text, start, before, count -> updateText(text.toString()) }
         }
     }, update = {
         val text = textProvider()
