@@ -152,4 +152,5 @@
     <string name="app_language">应用显示语言</string>
     <string name="confirm_and_restart_app">确认并重启</string>
     <string name="setting_app_preference">应用</string>
+    <string name="recommendation_app">应用推荐</string>
 </resources>

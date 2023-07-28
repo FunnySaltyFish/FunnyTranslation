@@ -17,6 +17,7 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
     object TransProScreen:    TranslateScreen(R.string.trans_pro, "nav_trans_pro")
     object ThemeScreen : TranslateScreen(R.string.theme, "nav_trans_theme")
     object FloatWindowScreen: TranslateScreen(R.string.float_window, "nav_trans_float_window_screen")
+    object AppRecommendationScreen: TranslateScreen(R.string.recommendation_app, "nav_app_recommendation")
 
     companion object {
         val Saver = { screen: TranslateScreen ->

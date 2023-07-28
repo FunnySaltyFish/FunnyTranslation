@@ -370,6 +370,7 @@ private fun Drawer(
             drawerItem(R.drawable.ic_float_window_bold, TranslateScreen.FloatWindowScreen)
             drawerItem(R.drawable.ic_about, TranslateScreen.AboutScreen)
             drawerItem(R.drawable.ic_thanks, TranslateScreen.ThanksScreen)
+            drawerItem(R.drawable.ic_app, TranslateScreen.AppRecommendationScreen)
         }
         PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }

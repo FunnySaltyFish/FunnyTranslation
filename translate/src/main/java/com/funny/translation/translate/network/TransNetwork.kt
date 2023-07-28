@@ -1,7 +1,13 @@
 package com.funny.translation.translate.network
 
 import com.funny.translation.network.ServiceCreator
-import com.funny.translation.translate.network.service.*
+import com.funny.translation.translate.network.service.AppRecommendationService
+import com.funny.translation.translate.network.service.AppUpdateService
+import com.funny.translation.translate.network.service.ImageTranslateService
+import com.funny.translation.translate.network.service.NoticeService
+import com.funny.translation.translate.network.service.PluginService
+import com.funny.translation.translate.network.service.SponsorService
+import com.funny.translation.translate.network.service.VipService
 
 object TransNetwork {
     val sponsorService by lazy {
@@ -26,5 +32,9 @@ object TransNetwork {
 
     val vipService by lazy {
         ServiceCreator.create(VipService::class.java)
+    }
+
+    val appRecommendationService by lazy {
+        ServiceCreator.create(AppRecommendationService::class.java)
     }
 }

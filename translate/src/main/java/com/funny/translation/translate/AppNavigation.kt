@@ -31,6 +31,7 @@ import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.settings.*
+import com.funny.translation.translate.ui.thanks.AppRecommendationScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
@@ -177,6 +178,9 @@ fun AppNavigation(
                     }
                     animateComposable(TranslateScreen.FavoriteScreen.route) {
                         FavoriteScreen()
+                    }
+                    animateComposable(TranslateScreen.AppRecommendationScreen.route) {
+                        AppRecommendationScreen()
                     }
                     addSettingsNavigation()
                     addUserProfileRoutes(
