@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FunnyTranslation</string>
+    <string name="app_name">Transdation</string>
     <string name="clear_content">Clear input</string>
     <string name="exchange">Exchange</string>
     <string name="copy_content">Copy content</string>

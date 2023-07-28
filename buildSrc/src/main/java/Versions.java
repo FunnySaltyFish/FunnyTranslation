@@ -1,8 +1,8 @@
 public final class Versions {
 
     // Project versions
-    public final static String versionName = "2.6.6";
-    public final static int versionCode = 56;
+    public final static String versionName = "2.6.7";
+    public final static int versionCode = 57;
 
     // Platform & Tool versions
     public final static String buildToolsVersion = "33.0.0";
@@ -23,6 +23,6 @@ public final class Versions {
 
     public static final String kotlinVersion = "1.8.10";
     public static final String composeCompilerVersion = "1.4.4";
-    public static final String composeBomVersion = "2023.05.01";
+    public static final String composeBomVersion = "2023.06.01";
 
 }
