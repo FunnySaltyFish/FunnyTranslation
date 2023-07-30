@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -83,7 +82,6 @@ import org.burnoutcrew.reorderable.reorderable
 
 private const val TAG = "SettingScreen"
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen() {
     val navController = LocalNavController.current
@@ -129,7 +127,7 @@ fun SettingsScreen() {
             }
             JetSettingSwitch(
                 state = AppConfig.sTextMenuFloatingWindow,
-                resourceId = R.drawable.ic_float_window_bold,
+                resourceId = R.drawable.ic_float_window,
                 text = stringResource(R.string.setting_text_menu_floating_window),
                 description = stringResource(id = R.string.setting_text_menu_floating_window_desc)
             ) {

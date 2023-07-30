@@ -23,24 +23,15 @@ import com.funny.jetsetting.core.ui.throttleClick
 import com.funny.translation.helper.openUrl
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.RecommendApp
+import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.ui.widget.CommonPage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
-suspend fun getRecommendApp(): List<RecommendApp> {
-    val recommendAppList = listOf(
-        RecommendApp(
-            name = "Funny Translate",
-            description = "Funny Translate is a translation tool that supports multiple languages and multiple translation engines. It is a translation tool that can be used offline and online. It is a translation tool that",
-            iconUrl = "https://img.funnysaltyfish.fun/i/2022/09/02/63118ad144349.png",
-            detailUrl = "https://www.funnysaltyfish.fun/trans"
-        ),
-        RecommendApp(
-            name = "Funny Translate2",
-            description = "Funny Translate is a translation tool that supports multiple languages and multiple translation engines. It is a translation tool that can be used offline and online. It is a translation tool that",
-            iconUrl = "https://img.funnysaltyfish.fun/i/2022/09/02/63118ad144349.png",
-            detailUrl = "https://www.funnysaltyfish.fun/trans"
-        )
-    )
-    return recommendAppList
+suspend fun getRecommendApp(): List<RecommendApp> = withContext(Dispatchers.IO) {
+    delay(700)
+    TransNetwork.appRecommendationService.getRecommendApp()
 }
 
 @Composable

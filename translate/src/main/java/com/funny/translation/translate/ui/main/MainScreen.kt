@@ -367,7 +367,7 @@ private fun Drawer(
             Spacer(modifier = Modifier.height(8.dp))
             drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen)
             drawerItem(R.drawable.ic_settings, TranslateScreen.SettingScreen)
-            drawerItem(R.drawable.ic_float_window_bold, TranslateScreen.FloatWindowScreen)
+            drawerItem(R.drawable.ic_float_window, TranslateScreen.FloatWindowScreen)
             drawerItem(R.drawable.ic_about, TranslateScreen.AboutScreen)
             drawerItem(R.drawable.ic_thanks, TranslateScreen.ThanksScreen)
             drawerItem(R.drawable.ic_app, TranslateScreen.AppRecommendationScreen)

@@ -66,6 +66,8 @@ object OkHttpUtils {
             if (newUrl.host.contains(NetworkConfig.API_HOST)){
                 builder.addHeader("Referer", "FunnyTranslation")
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
+                builder.addHeader("App-Build-Type", BuildConfig.BUILD_TYPE)
+                builder.addHeader("App-Flavor", "mainland")
             }
 
 //            val invocation = request.tag(Invocation::class.java)
