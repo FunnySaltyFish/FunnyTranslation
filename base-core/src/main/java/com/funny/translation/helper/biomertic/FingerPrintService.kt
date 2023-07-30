@@ -21,6 +21,6 @@ interface FingerPrintService {
         @Field("username") username: String,
         @Field("did") did: String,
         @Field("encrypted_info") encryptedInfo: String,
-        @Field("iv") iv: String
+        @Field("iv") iv: String,
     )
 }

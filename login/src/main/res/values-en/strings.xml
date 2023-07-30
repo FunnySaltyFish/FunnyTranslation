@@ -6,4 +6,6 @@
     <string name="confirm_disable_account">Confirm Disable Account</string>
     <string name="confirm">Confirm to Continue</string>
     <string name="cancel">Cancel</string>
+    <string name="warning">Warning</string>
+    <string name="cancel_account_tip">Please note that you are attempting to cancel your account. Once the cancellation is completed, the account will no longer be usable and cannot be undone. Proceed with caution and ensure that you have backed up, transferred, or saved all important information and data related to this account. If you confirm the cancellation, please proceed with the operation. If you have any questions, please feel free to contact us!</string>
 </resources>

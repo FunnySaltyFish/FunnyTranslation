@@ -23,7 +23,7 @@ private const val EXTRA_NEW_DEVICE = "new_device"
 @RequiresApi(Build.VERSION_CODES.M)
 object BiometricUtils {
     private const val TAG = "BiometricUtils"
-    const val SHARED_PREFS_FILENAME = "biometric_prefs"
+    private const val SHARED_PREFS_FILENAME = "biometric_prefs_v2"
     const val CIPHERTEXT_WRAPPER = "ciphertext_wrapper"
     private const val SECRET_KEY = "trans_key"
 
@@ -64,7 +64,7 @@ object BiometricUtils {
             username = username,
             did = AppConfig.androidId,
             encryptedInfo = tempSetFingerPrintInfo.encrypted_info,
-            iv = tempSetFingerPrintInfo.iv
+            iv = tempSetFingerPrintInfo.iv,
         )
     }
 

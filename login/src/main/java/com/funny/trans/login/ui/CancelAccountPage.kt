@@ -88,9 +88,9 @@ fun TipDialog(navController: NavController) {
     var showTipDialog by remember { mutableStateOf(true) }
     if (showTipDialog) {
         AlertDialog(
-            onDismissRequest = { showTipDialog = false },
-            title = { Text("警告") },
-            text = { MarkdownText("请注意，您正在尝试注销您的账户。一旦注销完成，该账户将无法再使用，并且**无法撤销**。谨慎操作，确保您已备份、转移或保存了与该账户相关的所有重要资料和数据。如果您确认要注销，请继续进行操作。如有任何疑问，请随时联系我们！") },
+            onDismissRequest = {  },
+            title = { Text(stringResource(R.string.warning)) },
+            text = { MarkdownText(stringResource(R.string.cancel_account_tip)) },
             confirmButton = {
                 CountDownTimeButton(
                     modifier = Modifier,
