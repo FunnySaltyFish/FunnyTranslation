@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.compose.ai.ChatBot
 import com.funny.compose.ai.TestChatBot
+import com.funny.compose.ai.TestServerChatBot
+import com.funny.compose.ai.bean.ChatMemoryFixedLength
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
+import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.helper.DataSaverUtils
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -19,10 +23,15 @@ class ChatViewModel: ViewModel() {
     val messages: MutableState<List<ChatMessage>> = mutableStateOf(listOf())
     val currentMessage: MutableState<ChatMessage?> = mutableStateOf(null)
     val convId: MutableState<String?> = mutableStateOf(null)
+    val systemPrompt = mutableDataSaverStateOf(DataSaverUtils, "key_chat_base_prompt", BASE_PROMPT)
+    val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedLength(2))
     
     init {
-        chatBot.value = TestChatBot()
+        chatBot.value = TestServerChatBot()
         convId.value = "convId"
+
+        addMessage(SENDER_ME, "Hello, I'm ${chatBot.value.name}.")
+        addMessage(chatBot.value.name, "I'm a test chat bot.\nSo\nIt is important to see something interesting.")
     }
 
     private fun addMessage(chatMessage: ChatMessage) {
@@ -43,6 +52,20 @@ class ChatViewModel: ViewModel() {
         )
     }
 
+    private fun addErrorMessage(error: String) {
+        val convId = convId.value ?: return
+        addMessage(
+            ChatMessage(
+                UUID.randomUUID().toString(),
+                chatBot.value.id,
+                convId,
+                chatBot.value.name,
+                error,
+                ChatMessageTypes.ERROR
+            )
+        )
+    }
+
     fun ask(message: String){
         if (message.isEmpty()) return
         convId.value ?: return
@@ -50,7 +73,7 @@ class ChatViewModel: ViewModel() {
         inputText.value = ""
 
         viewModelScope.launch {
-            chatBot.value.chat(convId.value, message).collect {
+            chatBot.value.chat(convId.value, message, messages.value, systemPrompt.value, memory.value).collect {
                 when (it) {
                     is StreamMessage.Start -> {
                         currentMessage.value = ChatMessage(
@@ -70,10 +93,18 @@ class ChatViewModel: ViewModel() {
                         addMessage(currentMessage.value!!)
                         currentMessage.value = null
                     }
+                    is StreamMessage.Error -> {
+                        addErrorMessage(it.error)
+                        currentMessage.value = null
+                    }
                 }
             }
         }
     }
     
     fun updateInputText(text: String) { inputText.value = text }
+
+    companion object {
+        private const val BASE_PROMPT = "You're ChatGPT, a helpful AI assistant."
+    }
 }

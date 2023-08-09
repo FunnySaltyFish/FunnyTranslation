@@ -1,0 +1,1 @@
+package com.funny.compose.ai.bean

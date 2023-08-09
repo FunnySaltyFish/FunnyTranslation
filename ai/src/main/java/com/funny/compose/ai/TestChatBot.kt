@@ -1,5 +1,7 @@
 package com.funny.compose.ai
 
+import com.funny.compose.ai.bean.ChatMemory
+import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.StreamMessage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -9,11 +11,14 @@ class TestChatBot: ChatBot() {
     override val id: Int = 0
     override val name: String = "Test"
     override val avatar: String = "https://c-ssl.duitang.com/uploads/blog/202206/12/20220612164733_72d8b.jpg"
-    override var convIds: List<String>
-        get() = listOf("convIdTest")
-        set(value) {}
 
-    override suspend fun chat(conversationId: String?, message: String): Flow<StreamMessage> =
+    override suspend fun chat(
+        conversationId: String?,
+        currentMessage: String,
+        messages: List<ChatMessage>,
+        systemPrompt: String,
+        memory: ChatMemory
+    ): Flow<StreamMessage> =
         flow {
             emit(StreamMessage.Start)
             emit(StreamMessage.Part("Hello, I'm $name.\n"))

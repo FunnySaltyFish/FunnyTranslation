@@ -137,15 +137,15 @@ fun ChatMessageList(
         modifier = modifier
     ) {
         items(chats) { message ->
-            MessageItem(message, copyAction = {},
-                deleteAction = {})
+            MessageItem(message, copyAction = {}, deleteAction = {}, refreshAction = {})
         }
         if (currentMessage != null) {
             item {
                 MessageItem(
                     currentMessage,
                     copyAction = {},
-                    deleteAction = {}
+                    deleteAction = {},
+                    refreshAction = {}
                 )
             }
         }

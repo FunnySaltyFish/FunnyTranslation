@@ -33,6 +33,7 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
+import com.funny.translation.translate.ui.ai.ChatScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import kotlinx.coroutines.delay
@@ -66,7 +67,10 @@ fun MainScreen(
     sourceId: Int?,
     targetId: Int?
 ) {
-    TextTransScreen(sourceText, sourceId?.let { findLanguageById(it) }, targetId?.let { findLanguageById(it) })
+    ChatScreen {
+
+    }
+    // TextTransScreen(sourceText, sourceId?.let { findLanguageById(it) }, targetId?.let { findLanguageById(it) })
 }
 
 @ExperimentalComposeUiApi
@@ -234,7 +238,7 @@ private fun MainPart(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
 @Composable
 private fun EngineSelect(

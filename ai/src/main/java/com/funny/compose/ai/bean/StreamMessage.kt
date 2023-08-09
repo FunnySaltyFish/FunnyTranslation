@@ -4,4 +4,5 @@ sealed class StreamMessage(val id: String = "", val type: Int = ChatMessageTypes
     object Start: StreamMessage()
     object End: StreamMessage()
     class Part(val part: String): StreamMessage()
+    class Error(val error: String): StreamMessage()
 }

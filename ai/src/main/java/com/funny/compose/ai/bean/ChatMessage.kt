@@ -29,9 +29,13 @@ data class ChatMessage(
     val sendByMe: Boolean get() = sender == SENDER_ME
     // 是否正在响应中
     val responding: Boolean = true
+    // 是否在响应过程中出错
+    var error: String? = null
+
 }
 
 object ChatMessageTypes {
     const val TEXT = 0
     const val IMAGE = 1
+    const val ERROR = 99
 }

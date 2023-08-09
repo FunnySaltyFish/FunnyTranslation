@@ -121,7 +121,7 @@
     <string name="menu">Menu</string>
     <string name="image_translate">Image</string>
     <string name="favorites">Favorites</string>
-    <string name="trans_text_input_hint">Translate What You Want...</string>
+    <string name="trans_text_input_hint">Translate What You Want…</string>
     <string name="back">Back</string>
     <string name="source_text">Source Text</string>
     <string name="favorite">Favorite</string>

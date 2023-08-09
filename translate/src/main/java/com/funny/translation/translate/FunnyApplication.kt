@@ -8,6 +8,7 @@ import android.os.Build
 import android.view.Gravity
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.geometry.Offset
+import com.funny.compose.ai.bean.ChatMemory
 import com.funny.data_saver.core.DataSaverConverter.registerTypeConverters
 import com.funny.translation.BaseApplication
 import com.funny.translation.bean.AppLanguage
@@ -106,7 +107,7 @@ class FunnyApplication : BaseApplication() {
 
         registerTypeConverters<ThemeType>(save = ThemeType.Saver, restore = ThemeType.Restorer)
         registerTypeConverters<TranslateScreen>(save = TranslateScreen.Saver, restore = TranslateScreen.Restorer)
-
+        registerTypeConverters<ChatMemory>(save = ChatMemory.Saver, restore = ChatMemory.Restorer)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
