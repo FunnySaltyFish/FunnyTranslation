@@ -42,7 +42,7 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     // implementation 'io.github.hamawhitegg:langchain-core:0.1.11'
-    implementation("io.github.wangmuy.llmchain:core:0.0.1-SNAPSHOT") { changing=true }
+    // implementation("io.github.wangmuy.llmchain:core:0.0.1-SNAPSHOT") { changing=true }
 
 
     implementation (project(':base-core'))

@@ -119,14 +119,14 @@ dependencies {
     api "androidx.compose.animation:animation"
 
     api "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
-    api "androidx.navigation:navigation-compose:2.6.0-rc01"
+    api "androidx.navigation:navigation-compose:2.7.0-rc01"
     api "androidx.activity:activity-compose:${Versions.activityComposeVersion}"
     api "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifeCycleViewModelComposeVersion}"
 
     api "androidx.compose.material3:material3"
     api "androidx.compose.material3:material3-window-size-class"
 
-    def accompanist_version = "0.30.0"
+    def accompanist_version = "0.31.6-rc"
     api "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     api "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     api "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"

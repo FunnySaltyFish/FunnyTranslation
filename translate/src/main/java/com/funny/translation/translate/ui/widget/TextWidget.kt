@@ -1,9 +1,6 @@
 package com.funny.translation.translate.ui.widget
 
-import android.util.Log
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,11 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -56,8 +51,8 @@ fun NumberChangeAnimatedText(
             AnimatedContent(
                 targetState = it,
                 transitionSpec = {
-                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) with
-                            fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Up)
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) with
+                            fadeOut() + slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up)
                 }
             ) { char ->
                 Text(text = char.toString(), modifier = modifier.padding(textPadding), fontSize = textSize, color = textColor, fontWeight = textWeight)

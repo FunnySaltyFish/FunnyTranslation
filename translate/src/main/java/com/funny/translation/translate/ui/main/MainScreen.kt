@@ -33,7 +33,6 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
-import com.funny.translation.translate.ui.ai.ChatScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import kotlinx.coroutines.delay
@@ -55,7 +54,7 @@ enum class MainScreenState {
 }
 
 /**
- * 项目的翻译页面, [图片](https://web.funnysaltyfish.fun/temp_img/202111102032441.jpg)
+ * 项目的翻译页面, [图片](https://www.funnysaltyfish.fun/trans)
  */
 @OptIn(
     ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class,
@@ -67,10 +66,7 @@ fun MainScreen(
     sourceId: Int?,
     targetId: Int?
 ) {
-    ChatScreen {
-
-    }
-    // TextTransScreen(sourceText, sourceId?.let { findLanguageById(it) }, targetId?.let { findLanguageById(it) })
+     TextTransScreen(sourceText, sourceId?.let { findLanguageById(it) }, targetId?.let { findLanguageById(it) })
 }
 
 @ExperimentalComposeUiApi

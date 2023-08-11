@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,7 +54,10 @@ fun AnnualReportScreen() {
             AutoFadeInComposableColumn(modifier = Modifier
                 .fillMaxSize()
                 .animatedGradientBackground(MaterialColors.DeepPurple800, Color.Black)){
-                LabelText(text = "截至目前，你似乎还没有用过译站哦\n快去试试翻译，然后再回来看看吧~", modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).padding(24.dp))
+                LabelText(text = "截至目前，你似乎还没有用过译站哦\n快去试试翻译，然后再回来看看吧~", modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center)
+                    .padding(24.dp))
             }
         }
     ) {
@@ -64,7 +68,10 @@ fun AnnualReportScreen() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnnualReport(vm : AnnualReportViewModel) {
-    VerticalPager(pageCount = 6, modifier = Modifier
+    val state = rememberPagerState {
+        6
+    }
+    VerticalPager(state = state, modifier = Modifier
         .fillMaxSize()
         .animatedGradientBackground(
             MaterialColors.DeepPurple800, Color.Black

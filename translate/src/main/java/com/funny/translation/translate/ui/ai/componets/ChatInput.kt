@@ -1,12 +1,9 @@
 package com.funny.translation.translate.ui.ai.componets
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -32,7 +28,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.funny.translation.translate.R
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ChatInputTextField(
     modifier: Modifier,
@@ -61,9 +56,10 @@ fun ChatInputTextField(
             AnimatedContent(
                 targetState = clearBtnVisible,
                 transitionSpec = {
-                    slideIntoContainer(AnimatedContentScope.SlideDirection.Up) with
-                            fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Up)
-                }
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up) togetherWith
+                            fadeOut() + slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up)
+                },
+                label = ""
             ) { visible ->
                 Row {
                     if (visible) {

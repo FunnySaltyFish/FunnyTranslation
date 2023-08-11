@@ -3,7 +3,7 @@ package com.funny.translation.translate
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -19,6 +19,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
@@ -36,10 +39,6 @@ import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
 import com.funny.translation.ui.MarkdownText
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 
 private const val TAG = "AppNav"
@@ -61,7 +60,7 @@ val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
 fun AppNavigation(
     exitAppAction: () -> Unit
 ) {
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
     val context = LocalContext.current
 
     LaunchedEffect(key1 = navController){
@@ -107,7 +106,7 @@ fun AppNavigation(
                     SnackbarHost(hostState = snackbarHostState)
                 }
             ) { scaffoldPadding ->
-                AnimatedNavHost(
+                NavHost(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
                     modifier = Modifier
@@ -269,7 +268,6 @@ fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = fa
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.animateComposable(
     route: String,
     animDuration: Int = 700,
@@ -283,25 +281,25 @@ fun NavGraphBuilder.animateComposable(
         deepLinks = deepLinks,
         enterTransition = {
             slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Left,
+                AnimatedContentTransitionScope.SlideDirection.Left,
                 animationSpec = tween(animDuration)
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                AnimatedContentScope.SlideDirection.Left,
+                AnimatedContentTransitionScope.SlideDirection.Left,
                 animationSpec = tween(animDuration)
             )
         },
         popEnterTransition = {
             slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Right,
+                AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(animDuration)
             )
         },
         popExitTransition = {
             slideOutOfContainer(
-                AnimatedContentScope.SlideDirection.Right,
+                AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(animDuration)
             )
         }

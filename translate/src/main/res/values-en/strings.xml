@@ -152,4 +152,5 @@
     <string name="app_language">Display Language</string>
     <string name="confirm_and_restart_app">Confirm and restart</string>
     <string name="setting_app_preference">Application</string>
+    <string name="recommendation_app">App Recommendation</string>
 </resources>

@@ -51,14 +51,15 @@ fun LoginPage(
     onLoginSuccess: (UserInfoBean) -> Unit,
 ) {
     val vm: LoginViewModel = viewModel()
-    val activityLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        Log.d("GameActivityResult", "LoginScreen: data: ${result.data?.extras}")
-        result.data?.getStringExtra("password")?.let {
-            Log.d("GameActivityResult", "LoginScreen: password: $it")
-            vm.password = it
-            vm.passwordType = "2"
+    val activityLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d("GameActivityResult", "LoginScreen: data: ${result.data?.extras}")
+            result.data?.getStringExtra("password")?.let {
+                Log.d("GameActivityResult", "LoginScreen: password: $it")
+                vm.password = it
+                vm.passwordType = "2"
+            }
         }
-    }
 
     Column(
         Modifier
@@ -68,7 +69,7 @@ fun LoginPage(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        val pagerState = rememberPagerState()
+        val pagerState = rememberPagerState(pageCount = { 2 })
         val scope = rememberCoroutineScope()
         fun changePage(index: Int) = scope.launch {
             pagerState.animateScrollToPage(index)
@@ -114,13 +115,16 @@ fun LoginPage(
         }
 
         HorizontalPager(
-            pageCount = 2,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
             state = pagerState,
         ) { page ->
-            when (page) {
-                0 -> LoginForm(navController, vm, onLoginSuccess = onLoginSuccess, privacyGranted = privacyGranted, remindToGrantPrivacyAction = remindToGrantPrivacyAction)
-                1 -> RegisterForm(vm, onRegisterSuccess = { changePage(0) }, privacyGranted = privacyGranted, remindToGrantPrivacyAction = remindToGrantPrivacyAction)
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                when (page) {
+                    0 -> LoginForm(navController, vm, onLoginSuccess = onLoginSuccess, privacyGranted = privacyGranted, remindToGrantPrivacyAction = remindToGrantPrivacyAction)
+                    1 -> RegisterForm(vm, onRegisterSuccess = { changePage(0) }, privacyGranted = privacyGranted, remindToGrantPrivacyAction = remindToGrantPrivacyAction)
+                }
             }
         }
         Row(
@@ -133,7 +137,9 @@ fun LoginPage(
             Checkbox(checked = privacyGranted, onCheckedChange = { privacyGranted = it })
             MarkdownText(
                 "我已阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)和[用户协议](https://api.funnysaltyfish.fun/trans/v1/api/user_agreement)",
-                color = contentColorFor(backgroundColor = MaterialTheme.colorScheme.background).copy(0.8f),
+                color = contentColorFor(backgroundColor = MaterialTheme.colorScheme.background).copy(
+                    0.8f
+                ),
                 fontSize = 12.sp
             )
         }
@@ -159,11 +165,11 @@ private fun LoginForm(
     ) {
         InputUsernameWrapper(vm, if (vm.passwordType == "1") ImeAction.Done else ImeAction.Next)
         Spacer(modifier = Modifier.height(12.dp))
-        if (vm.shouldVerifyEmailWhenLogin){
+        if (vm.shouldVerifyEmailWhenLogin) {
             InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, initialSent = true)
             Spacer(modifier = Modifier.height(12.dp))
         }
-        if (vm.passwordType == "2"){
+        if (vm.passwordType == "2") {
             InputPasswordWrapper(vm = vm, readonly = false)
         } else CompletableButton(
             onClick = {
@@ -182,8 +188,8 @@ private fun LoginForm(
                         },
                         onError = { errorCode, errorMsg -> context.toastOnUi("认证失败！（$errorCode: $errorMsg）") },
                         onNewFingerPrint = { email ->
-                            if(email.isNotEmpty()){
-                                try{
+                            if (email.isNotEmpty()) {
+                                try {
                                     scope.launch {
                                         vm.shouldVerifyEmailWhenLogin = true
                                         vm.email = email
@@ -191,7 +197,7 @@ private fun LoginForm(
                                         UserUtils.sendVerifyEmail(vm.username, email)
                                         context.toastOnUi("邮件发送成功，请注意查收！")
                                     }
-                                }catch (e: Exception){
+                                } catch (e: Exception) {
                                     context.toastOnUi("邮件发送失败！")
                                 }
                             }
@@ -202,7 +208,10 @@ private fun LoginForm(
                         }
                     )
                 } else {
-                    context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)
+                    context.toastOnUi(
+                        "您的安卓版本过低，不支持指纹认证！将使用密码认证~",
+                        Toast.LENGTH_LONG
+                    )
                     vm.passwordType = "2"
                 }
             },
@@ -223,7 +232,7 @@ private fun LoginForm(
                 if (vm.shouldVerifyEmailWhenLogin) {
                     vm.isValidUsername && vm.finishValidateFingerPrint && vm.isValidEmail && vm.verifyCode.length == 6
                 } else {
-                    when(vm.passwordType){
+                    when (vm.passwordType) {
                         "1" -> vm.isValidUsername && vm.finishValidateFingerPrint
                         "2" -> vm.isValidUsername && UserUtils.isValidPassword(vm.password)
                         else -> false
@@ -262,10 +271,10 @@ private fun LoginForm(
         ) {
             TextButton(
                 onClick = {
-                    navController.navigate(LoginRoute.FindUsernamePage.route){
+                    navController.navigate(LoginRoute.FindUsernamePage.route) {
                         launchSingleTop = true
                         restoreState = true
-                        popUpTo(LoginRoute.LoginPage.route){
+                        popUpTo(LoginRoute.LoginPage.route) {
                             inclusive = false
                         }
                     }
@@ -275,10 +284,10 @@ private fun LoginForm(
             }
             TextButton(
                 onClick = {
-                    navController.navigate(LoginRoute.ResetPasswordPage.route){
+                    navController.navigate(LoginRoute.ResetPasswordPage.route) {
                         launchSingleTop = true
                         restoreState = true
-                        popUpTo(LoginRoute.LoginPage.route){
+                        popUpTo(LoginRoute.LoginPage.route) {
                             inclusive = false
                         }
                     }
@@ -308,11 +317,10 @@ private fun RegisterForm(
         Spacer(modifier = Modifier.height(8.dp))
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
-        if (vm.passwordType == "2"){
+        if (vm.passwordType == "2") {
             InputPasswordWrapper(vm = vm, readonly = false)
             Spacer(modifier = Modifier.height(8.dp))
-        }
-        else {
+        } else {
             CompletableButton(
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -335,7 +343,10 @@ private fun RegisterForm(
                             }
                         )
                     } else {
-                        context.toastOnUi("您的安卓版本过低，不支持指纹认证！将使用密码认证~", Toast.LENGTH_LONG)
+                        context.toastOnUi(
+                            "您的安卓版本过低，不支持指纹认证！将使用密码认证~",
+                            Toast.LENGTH_LONG
+                        )
                         vm.passwordType = "2"
                     }
                 },
@@ -352,10 +363,12 @@ private fun RegisterForm(
         Spacer(modifier = Modifier.height(12.dp))
         val enableRegister by remember {
             derivedStateOf {
-                if(vm.passwordType == "1")
+                if (vm.passwordType == "1")
                     vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.finishSetFingerPrint
                 else
-                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(vm.password)
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(
+                        vm.password
+                    )
             }
         }
         Button(
@@ -386,16 +399,23 @@ private fun RegisterForm(
 private fun ExchangePasswordType(
     passwordType: String,
     updatePasswordType: (String) -> Unit
-){
-    if (passwordType == "2" && !AppConfig.lowerThanM){
+) {
+    if (passwordType == "2" && !AppConfig.lowerThanM) {
         Spacer(modifier = Modifier.height(4.dp))
-        Text(modifier = Modifier.clickable { updatePasswordType("1") }, text = "切换为指纹", style = MaterialTheme.typography.labelSmall)
+        Text(
+            modifier = Modifier.clickable { updatePasswordType("1") },
+            text = "切换为指纹",
+            style = MaterialTheme.typography.labelSmall
+        )
     } else if (passwordType == "1") {
         Spacer(modifier = Modifier.height(4.dp))
-        Text(modifier = Modifier.clickable { updatePasswordType("2") }, text = "切换为密码", style = MaterialTheme.typography.labelSmall)
+        Text(
+            modifier = Modifier.clickable { updatePasswordType("2") },
+            text = "切换为密码",
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }
-
 
 
 @Composable
@@ -403,7 +423,12 @@ private fun InputUsernameWrapper(
     vm: LoginViewModel,
     imeAction: ImeAction = ImeAction.Next,
 ) {
-    InputUsername(usernameProvider = vm::username, updateUsername = vm::updateUsername, isValidUsernameProvider = vm::isValidUsername, imeAction = imeAction)
+    InputUsername(
+        usernameProvider = vm::username,
+        updateUsername = vm::updateUsername,
+        isValidUsernameProvider = vm::isValidUsername,
+        imeAction = imeAction
+    )
 }
 
 @Composable
@@ -479,7 +504,11 @@ private fun InputPasswordWrapper(
     vm: LoginViewModel,
     readonly: Boolean
 ) {
-    InputPassword(passwordProvider = vm::password, updatePassword = vm::updatePassword, readonly = readonly)
+    InputPassword(
+        passwordProvider = vm::password,
+        updatePassword = vm::updatePassword,
+        readonly = readonly
+    )
 }
 
 /**

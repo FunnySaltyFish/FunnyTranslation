@@ -5,8 +5,8 @@ public final class Versions {
     public final static int versionCode = 57;
 
     // Platform & Tool versions
-    public final static String buildToolsVersion = "33.0.1";
-    public final static int compileSdkVersion = 33;
+    public final static String buildToolsVersion = "34.0.0";
+    public final static int compileSdkVersion = 34;
     public final static int minSdkVersion = 21;
     public final static int targetSdkVersion = 33;
 
@@ -23,6 +23,6 @@ public final class Versions {
 
     public static final String kotlinVersion = "1.8.10";
     public static final String composeCompilerVersion = "1.4.4";
-    public static final String composeBomVersion = "2023.06.01";
+    public static final String composeBomVersion = "2023.08.00";
 
 }

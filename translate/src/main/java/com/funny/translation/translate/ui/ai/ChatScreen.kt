@@ -150,6 +150,8 @@ fun ChatMessageList(
             }
         }
     }
+
+    Recomposer
 }
 
 @Composable
