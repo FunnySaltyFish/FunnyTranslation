@@ -80,7 +80,6 @@
             android:label="@string/crash"
             android:theme="@style/AppTheme.Dialog" />
         <activity android:name=".activity.CustomPhotoPickerActivity" />
-        <activity android:name=".activity.CustomPhotoClipperActivity" />
         <activity
             android:name=".activity.ShareActivity"
             android:exported="true"

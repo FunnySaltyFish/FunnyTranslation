@@ -7,8 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.webkit.*
-import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -20,15 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import com.funny.translation.helper.WebViewResourceHelper
 import com.funny.translation.jsBean.core.R
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.ui.*
-import com.smarx.notchlib.NotchScreenManager
 
 private const val TAG = "WebViewActivity"
-class WebViewActivity : ComponentActivity() {
+class WebViewActivity : BaseActivity() {
 
     companion object {
         private var backEvent: (() -> Unit)? = null
@@ -43,21 +39,10 @@ class WebViewActivity : ComponentActivity() {
     @SuppressLint("ClickableViewAccessibility", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        NotchScreenManager.getInstance().setDisplayInNotch(this)
-
-        // This callback will only be called when MyFragment is at least Started.
-        val callback = onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                handleBackPressed()
-                finish()
-            }
-        })
-
         val url = intent.getStringExtra("load_url") ?: ""
 
         setContent {
-            TransTheme() {
+            TransTheme {
                 if (url.isNotEmpty()){
                     WebViewPage(url = url)
                 } else {

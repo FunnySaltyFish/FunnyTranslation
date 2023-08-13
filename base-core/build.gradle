@@ -119,7 +119,7 @@ dependencies {
     api "androidx.compose.animation:animation"
 
     api "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
-    api "androidx.navigation:navigation-compose:2.7.0-rc01"
+    api "androidx.navigation:navigation-compose:2.7.0"
     api "androidx.activity:activity-compose:${Versions.activityComposeVersion}"
     api "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.lifeCycleViewModelComposeVersion}"
 
@@ -140,7 +140,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-task encryptFunnyJs(type: Exec) {
+tasks.register('encryptFunnyJs', Exec) {
     // 如果 funny_sign_v1_release 存在，则用它
     def release = new File(rootDir, "funny_sign_v1_release_template.js")
     println("release.exists() = " + release.exists())

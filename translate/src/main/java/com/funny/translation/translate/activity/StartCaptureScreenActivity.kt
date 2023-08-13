@@ -2,7 +2,6 @@ package com.funny.translation.translate.activity
 
 import android.app.Activity
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Rect
@@ -24,7 +23,6 @@ class StartCaptureScreenActivity : AppCompatActivity() {
         private const val EXTRA_KEY_RECT = "rect"
         internal const val ACTION_INIT = "init"
         internal const val ACTION_CAPTURE = "capture"
-
         fun start(rect: Rect?) {
             // 但现在有个问题，跳转时先跳到了 TransActivity，再打开的当前 Activity
             // TODO 优化成直接打开当前 Activity
@@ -85,7 +83,7 @@ class StartCaptureScreenActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val intent = Intent(this, CaptureScreenService::class.java)
-         bindService(intent, mConnection, BIND_AUTO_CREATE)
+        bindService(intent, mConnection, BIND_AUTO_CREATE)
     }
 
     override fun onStop() {
