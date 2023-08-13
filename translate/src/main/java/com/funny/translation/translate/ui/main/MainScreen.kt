@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -184,9 +185,9 @@ fun TextTransScreen(
                     Drawer(
                         Modifier
                             .fillMaxHeight()
-                            .width(300.dp)
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(12.dp)
+                            .width(280.dp)
+                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
+                            .padding(start = 16.dp, end = 16.dp, top = 32.dp)
                     )
                 },
                 drawerState = drawerState
@@ -327,11 +328,23 @@ private fun Drawer(
                     stringResource(id = targetScreen.titleId)
                 )
             },
-            label = { Text(text = stringResource(id = targetScreen.titleId)) },
+            label = { Text(text = stringResource(id = targetScreen.titleId), modifier = Modifier.padding(start = 12.dp)) },
             selected = false,
             onClick = {
                 navController.navigateSingleTop(targetScreen.route)
-            }
+            },
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = Color.Unspecified
+            )
+        )
+    }
+
+    val divider = @Composable {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
         )
     }
 
@@ -366,10 +379,13 @@ private fun Drawer(
             UserInfoPanel(navHostController = navController)
             Spacer(modifier = Modifier.height(8.dp))
             drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen)
+            divider()
             drawerItem(R.drawable.ic_settings, TranslateScreen.SettingScreen)
             drawerItem(R.drawable.ic_float_window, TranslateScreen.FloatWindowScreen)
+            divider()
             drawerItem(R.drawable.ic_about, TranslateScreen.AboutScreen)
             drawerItem(R.drawable.ic_thanks, TranslateScreen.ThanksScreen)
+            divider()
             drawerItem(R.drawable.ic_app, TranslateScreen.AppRecommendationScreen)
         }
         PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))

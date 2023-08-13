@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -109,13 +110,13 @@ internal fun MainPartNormal(
         }
     }
 
-    val progressState = remember { mutableStateOf(1f) }
+    val progressState = remember { mutableFloatStateOf(1f) }
     SwipeCrossFadeLayout(
         state = swipeableState,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer),
-        onProgressChanged = { progressState.value = it },
+        onProgressChanged = { progressState.floatValue = it },
 
         mainUpper = {
             UpperPartBackground {
@@ -159,7 +160,7 @@ internal fun MainPartNormal(
                 modifier = Modifier
                     .fillMaxSize()
                     .nestedScroll(nestedScrollConnection),
-                progressProvider = { progressState.value }
+                progressProvider = { progressState.floatValue }
             ) {
                 scope.launch {
                     swipeableState.animateTo(SwipeShowType.Main)
@@ -460,6 +461,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
                 }
             }
             .fillMaxWidth()
+            .padding(horizontal = 8.dp)
             .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
             .padding(vertical = 12.dp),
         loader = { activityVM.userInfo }
@@ -472,7 +474,8 @@ fun UserInfoPanel(navHostController: NavHostController) {
                         contentDescription = "头像",
                         modifier = Modifier
                             .size(100.dp)
-                            .clip(CircleShape),
+                            .clip(CircleShape)
+                            .shadow(2.dp, CircleShape),
                         placeholder = painterResource(R.drawable.ic_loading)
                     )
                     if (userBean.isValidVip()) {
@@ -505,5 +508,3 @@ fun UserInfoPanel(navHostController: NavHostController) {
         }
     }
 }
-
-
