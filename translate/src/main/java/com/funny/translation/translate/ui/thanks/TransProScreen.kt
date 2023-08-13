@@ -1,14 +1,46 @@
 package com.funny.translation.translate.ui.thanks
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,42 +61,54 @@ import androidx.compose.ui.unit.sp
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.translation.AppConfig
+import com.funny.translation.WebViewActivity
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readAssets
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
-import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.bean.VipConfig
-import com.funny.translation.ui.MarkdownText
 import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.translate.ui.widget.TextFlashCanvas
 import com.funny.translation.translate.ui.widget.TextFlashCanvasState
 import com.funny.translation.translate.utils.VipUtils
+import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 import kotlin.time.Duration.Companion.milliseconds
 
 private enum class PayMethod(val iconRes: Int, val titleRes: Int, val code: String) {
     Alipay(R.drawable.ic_alipay, R.string.alipay, "alipay"), Wechat(R.drawable.ic_wechat, R.string.wechat_pay, "wxpay")
 }
 
+private var showAnim: Boolean = true
+
 @Composable
 fun TransProScreen(){
-    TextFlashCanvas(
-        modifier = Modifier.fillMaxSize(),
-        state = remember { TextFlashCanvasState() },
-        text = "译站专业版",
-        textStyle = TextStyle(
-            color = Color(0xfffeeb8f),
-            fontSize = 48.sp,
-            fontWeight = FontWeight.Bold
-        ),
-        enterAnimDuration = 2000
-    ){
+    if (showAnim) {
+        TextFlashCanvas(
+            modifier = Modifier.fillMaxSize(),
+            state = remember { TextFlashCanvasState() },
+            text = "译站专业版",
+            textStyle = TextStyle(
+                color = Color(0xfffeeb8f),
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            enterAnimDuration = 1500,
+            showTextDuration = 2000
+        ) {
+            TransProContent()
+        }
+        DisposableEffect(key1 = Unit) {
+            onDispose {
+                showAnim = false
+            }
+        }
+    } else {
         TransProContent()
     }
 }

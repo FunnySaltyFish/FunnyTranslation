@@ -474,8 +474,8 @@ fun UserInfoPanel(navHostController: NavHostController) {
                         contentDescription = "头像",
                         modifier = Modifier
                             .size(100.dp)
-                            .clip(CircleShape)
-                            .shadow(2.dp, CircleShape),
+                            //.clip(CircleShape)
+                            .shadow(8.dp, CircleShape, ambientColor = Color(0xffbdbdbd)),
                         placeholder = painterResource(R.drawable.ic_loading)
                     )
                     if (userBean.isValidVip()) {
