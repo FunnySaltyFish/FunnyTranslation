@@ -61,6 +61,7 @@ import com.funny.trans.login.ui.LoginRoute
 import com.funny.trans.login.ui.addLoginRoutes
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
@@ -183,7 +184,11 @@ fun UserProfileSettings(navHostController: NavHostController) {
         Tile(text = stringResource(R.string.img_remaining_points)){
             Text(text = userInfo.img_remain_points.toString())
         }
-        Tile(text = stringResource(R.string.vip_end_time)){
+        val firstClickHandler = remember { FastClickHandler {
+            AppConfig.developerMode.value = true
+            context.toastOnUi(R.string.open_devloper_mode)
+        }}
+        Tile(text = stringResource(R.string.vip_end_time), onClick = firstClickHandler){
             Text(text = userInfo.vipEndTimeStr())
         }
         Divider()
@@ -248,4 +253,21 @@ private fun Tile(
         endIcon()
     }
 
+}
+
+
+private class FastClickHandler(val totalTimes: Int = 5, val durationInMills: Int = 2000, val action: SimpleAction): () -> Unit {
+    var firstClickTime = 0L
+    var times = 0
+    override fun invoke() {
+        if (firstClickTime == 0L) firstClickTime = System.currentTimeMillis()
+        times++
+        if (times == totalTimes) {
+            if (System.currentTimeMillis() - firstClickTime < durationInMills) action()
+            else {
+                firstClickTime = 0L
+            }
+            times = 0
+        }
+    }
 }

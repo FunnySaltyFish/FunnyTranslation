@@ -63,7 +63,7 @@ object OkHttpUtils {
                 }
             }
             // 对所有向本项目请求的域名均加上应用名称
-            if (newUrl.host.contains(NetworkConfig.API_HOST)){
+            if (newUrl.host.contains(ServiceCreator.API_HOST)){
                 builder.addHeader("Referer", "FunnyTranslation")
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
                 builder.addHeader("App-Build-Type", BuildConfig.BUILD_TYPE)
@@ -81,12 +81,12 @@ object OkHttpUtils {
 //            }
 
             // 访问 trans/v1下的所有api均带上请求头-jwt
-            if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH)){
+            if (newUrl.path.startsWith(ServiceCreator.TRANS_PATH)){
                 val jwt = AppConfig.jwtToken
                 if (jwt != "") builder.addHeader("Authorization", "Bearer $jwt")
             }
 
-            if (newUrl.path.startsWith(NetworkConfig.TRANS_PATH + "api/translate")){
+            if (newUrl.path.startsWith(ServiceCreator.TRANS_PATH + "api/translate")){
                 builder.addHeader("sign", SignUtils.encodeSign(
                     uid = AppConfig.uid.toLong(), appVersionCode = AppConfig.versionCode,
                     sourceLanguageCode = GlobalTranslationConfig.sourceLanguage.id,
@@ -116,7 +116,7 @@ object OkHttpUtils {
 
             // token 过期了
             // 422: jwt 校验错误
-            if (response.code in intArrayOf(401, 422) && requestUrl.startsWith(NetworkConfig.BASE_URL)){
+            if (response.code in intArrayOf(401, 422) && requestUrl.startsWith(ServiceCreator.BASE_URL)){
                 val clazz = Class.forName("com.funny.trans.login.LoginActivity")
                 val intent = Intent().apply {
                     setClass(BaseApplication.ctx, clazz)

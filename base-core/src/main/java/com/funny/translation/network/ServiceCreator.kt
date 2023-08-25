@@ -1,5 +1,7 @@
 package com.funny.translation.network
 
+import com.funny.translation.AppConfig
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.JsonX
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -20,14 +22,22 @@ import java.lang.reflect.Type
  */
 
 object ServiceCreator {
+    const val API_HOST = "https://api.funnysaltyfish.fun" // # "http://192.168.10.104:5001"//
+    const val TRANS_PATH = "/trans/v1/"
+    private val DEFAULT_BASE_URL = OkHttpUtils.removeExtraSlashOfUrl("$API_HOST/$TRANS_PATH")
 
-    val BASE_URL = NetworkConfig.BASE_URL
+    var BASE_URL = if (AppConfig.developerMode.value) DataSaverUtils.readData("BASE_URL", DEFAULT_BASE_URL) else DEFAULT_BASE_URL
+        set(value) {
+            if (!AppConfig.developerMode.value) return
+            retrofit = retrofit.newBuilder().baseUrl(value).build()
+            field = value
+        }
 
-    private val retrofit by lazy{
+    private var retrofit = run {
         val appName = "FunnyTranslation"
         val okHttpClient = OkHttpUtils.okHttpClient
         RetrofitBuild(
-            url = NetworkConfig.BASE_URL,
+            url = BASE_URL,
             client = okHttpClient,
         ).retrofit
     }

@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
@@ -50,6 +51,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.funny.jetsetting.core.JetSettingDialog
 import com.funny.jetsetting.core.JetSettingListDialog
 import com.funny.jetsetting.core.JetSettingSwitch
 import com.funny.jetsetting.core.JetSettingTile
@@ -60,6 +62,7 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.LocaleUtils
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
@@ -96,6 +99,12 @@ fun SettingsScreen() {
             .background(MaterialTheme.colorScheme.surface)
             .verticalScroll(scrollState),
     ) {
+        if (AppConfig.developerMode.value) {
+            SettingItemCategory(title = { ItemHeading(text = stringResource(id = R.string.developer_mode)) }) {
+                JetSettingSwitch(state = AppConfig.developerMode, text = stringResource(id = R.string.developer_mode))
+                DevSetBaseUrl()
+            }
+        }
         SettingItemCategory(
             title = {
                 ItemHeading(text = stringResource(id = R.string.setting_app_preference))
@@ -244,6 +253,21 @@ private fun SelectAppLanguage() {
     )
 }
 
+@Composable
+private fun DevSetBaseUrl() {
+    var text by remember {
+        mutableStateOf(ServiceCreator.BASE_URL)
+    }
+    JetSettingDialog(
+        text = stringResource(id = R.string.setting_base_url),
+        confirmButtonAction = {
+            ServiceCreator.BASE_URL = text
+            Unit
+        }) {
+        TextField(value = text, onValueChange = { text = it })
+    }
+}
+
 internal val DefaultVipInterceptor = {
     if (!AppConfig.isVip()) {
         appCtx.toastOnUi("此设置为会员专享功能，请先开通后再使用~")
@@ -304,21 +328,21 @@ fun SortResult(
             ) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Spacer(modifier = Modifier.width(24.dp))
-                    Icon(painterResource(id = R.drawable.ic_drag),"Drag to sort")
+                    Icon(painterResource(id = R.drawable.ic_drag), "Drag to sort")
                     Text(
                         text = item,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
-                
+
                 Divider()
             }
         }
     }
 
-    DisposableEffect(key1 = null){
+    DisposableEffect(key1 = null) {
         onDispose {
-            if(!SortResultUtils.checkEquals(data)){
+            if (!SortResultUtils.checkEquals(data)) {
                 Log.d(TAG, "SortResult: 不相等")
                 SortResultUtils.resetMappingAndSave(data)
             }
@@ -332,27 +356,27 @@ fun SelectLanguage(modifier: Modifier) {
         allLanguages.map { DataSaverUtils.readData(it.selectedKey, true) }.toMutableStateList()
     }
 
-    fun setEnabledState(language: Language, enabled: Boolean){
+    fun setEnabledState(language: Language, enabled: Boolean) {
         DataSaverUtils.saveData(language.selectedKey, enabled)
         if (enabled) {
             enabledLanguages.value = (enabledLanguages.value + language).sortedBy { it.id }
-        }else{
+        } else {
             enabledLanguages.value = (enabledLanguages.value - language).sortedBy { it.id }
         }
     }
 
-    fun setAllState(state : Boolean){
-        for (i in 0 until data.size){
+    fun setAllState(state: Boolean) {
+        for (i in 0 until data.size) {
             data[i] = state
             setEnabledState(allLanguages[i], state)
         }
     }
 
-    DisposableEffect(key1 = Unit){
+    DisposableEffect(key1 = Unit) {
         onDispose {
             // 如果什么都没选，退出的时候默认帮忙选几个
-            data.firstOrNull{it} ?: kotlin.run {
-                for (i in 0..2){
+            data.firstOrNull { it } ?: kotlin.run {
+                for (i in 0..2) {
                     setEnabledState(allLanguages[i], true)
                 }
             }
@@ -366,21 +390,31 @@ fun SelectLanguage(modifier: Modifier) {
         item {
             var selectAll by rememberSaveable {
                 // 当所有开始都被选上时，默认就是全选状态
-                mutableStateOf(data.firstOrNull { !it } == null )
+                mutableStateOf(data.firstOrNull { !it } == null)
             }
             val tintColor by animateColorAsState(targetValue = if (selectAll) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
-            IconButton(onClick = {
-                selectAll = !selectAll
-                setAllState(selectAll)
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(Alignment.End)) {
-                Icon(painter = painterResource(id = R.drawable.ic_select_all), contentDescription = "是否全选", tint= tintColor)
+            IconButton(
+                onClick = {
+                    selectAll = !selectAll
+                    setAllState(selectAll)
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.End)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_select_all),
+                    contentDescription = "是否全选",
+                    tint = tintColor
+                )
             }
         }
 
         itemsIndexed(data, { i, _ -> i }) { i, selected ->
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
                     text = allLanguages[i].displayText,
                     modifier = Modifier.padding(16.dp)

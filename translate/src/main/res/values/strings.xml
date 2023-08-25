@@ -153,4 +153,7 @@
     <string name="confirm_and_restart_app">确认并重启</string>
     <string name="setting_app_preference">应用</string>
     <string name="recommendation_app">应用推荐</string>
+    <string name="developer_mode">开发者模式</string>
+    <string name="setting_base_url">BaseUrl</string>
+    <string name="open_devloper_mode">已开启开发者模式！</string>
 </resources>

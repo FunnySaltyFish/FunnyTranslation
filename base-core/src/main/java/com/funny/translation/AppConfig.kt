@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.Language
@@ -46,6 +47,13 @@ object AppConfig {
     // 以下为Pro专享
     val sParallelTrans = mutableDataSaverStateOf(DataSaverUtils, "KEY_PARALLEL_TRANS", false)
     val sShowDetailResult = mutableDataSaverStateOf(DataSaverUtils, "KEY_SHOW_DETAIL_RESULT", false)
+
+    //
+    var developerMode = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEVELOPER_MODE", false)
+        set(newState) {
+            if (!BuildConfig.DEBUG && newState.value) return
+            field = newState
+        }
 
     fun updateJwtToken(newToken: String) {
         userInfo.value = userInfo.value.copy(jwt_token = newToken)

@@ -3,9 +3,7 @@ package com.funny.translation.sign
 import com.funny.translation.BaseApplication
 import com.funny.translation.helper.readAssets
 import com.funny.translation.js.config.JsConfig
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.script.Invocable
 
