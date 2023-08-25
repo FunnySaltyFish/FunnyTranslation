@@ -1,9 +1,9 @@
 package com.funny.translation.translate.task
 
-import android.util.Log
-import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.ImageTranslationTask
+import com.funny.translation.translate.R
 import com.funny.translation.translate.TranslationException
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.engine.ImageTranslationEngines
 import com.funny.translation.translate.network.TransNetwork
@@ -27,13 +27,15 @@ class ImageTranslationBaidu(): ImageTranslationTask(), ImageTranslationEngine by
                  .addFormDataPart("image", "image", file)
                  .build()
              val data = TransNetwork.imageTranslateService.getTransResult(body)
-             if (data.code == 50) {
-                 data.data?.let {
-                     result = it
-                     Log.d("ImgTransBaidu", "translate result: $it")
+             when (data.code) {
+                 50 -> {
+                     data.data?.let {
+                         result = it
+                         // Log.d("ImgTransBaidu", "translate result: $it")
+                     }
                  }
-             } else {
-                 throw TranslationException(data.message ?: data.error_msg ?: "未知错误")
+                 69006 -> throw TranslationException(appCtx.getString(R.string.too_large_image))
+                 else -> throw TranslationException(data.message ?: data.error_msg ?: "未知错误")
              }
          }
      }

@@ -156,4 +156,5 @@
     <string name="developer_mode">开发者模式</string>
     <string name="setting_base_url">BaseUrl</string>
     <string name="open_devloper_mode">已开启开发者模式！</string>
+    <string name="too_large_image">图片太大了，请尝试裁剪或换用其他引擎</string>
 </resources>

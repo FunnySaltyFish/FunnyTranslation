@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransFavoriteBean
+import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonPage
 
 @Composable
@@ -87,7 +87,6 @@ private fun TransFavoriteList(
             }
         }
         items(transFavorites, key = { it.id }) { transFavorite ->
-            transFavorite ?: return@items
             SwipeToDismissItem(modifier = Modifier.fillMaxWidth(), onDismissed = {
                 onDeleteFavorite(transFavorite)
             }) {

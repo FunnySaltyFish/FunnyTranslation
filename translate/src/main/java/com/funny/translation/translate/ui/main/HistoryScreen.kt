@@ -20,16 +20,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.findLanguageById
+import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonNavBackIcon
 import com.funny.translation.translate.ui.widget.CommonTopBar
 import com.funny.translation.translate.ui.widget.UpperPartBackground
 import com.funny.translation.ui.touchToScale
+
 
 @Composable
 fun HistoryScreen(

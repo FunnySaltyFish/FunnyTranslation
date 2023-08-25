@@ -170,7 +170,7 @@ fun AppNavigation(
                         TransProScreen()
                     }
                     animateComposable(TranslateScreen.ThanksScreen.route){
-                        ThanksScreen(navController)
+                        ThanksScreen()
                     }
                     animateComposable(TranslateScreen.FloatWindowScreen.route) {
                         FloatWindowScreen()

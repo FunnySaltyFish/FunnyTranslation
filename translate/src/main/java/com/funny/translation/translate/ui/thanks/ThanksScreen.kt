@@ -16,13 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -45,14 +43,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.funny.compose.loading.DefaultFailure
 import com.funny.compose.loading.DefaultLoading
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.translate.R
+import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.ui.touchToScale
@@ -74,11 +71,10 @@ private val specialThanksList = arrayListOf(
     SpecialThanksBean("所有帮助过的小伙伴们", "感谢你们的支持"),
 ).toImmutableList()
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class,
-    ExperimentalMaterial3Api::class
+@OptIn(ExperimentalFoundationApi::class
 )
 @Composable
-fun ThanksScreen(navHostController: NavHostController) {
+fun ThanksScreen() {
     val vm: ThanksViewModel = viewModel()
     val sponsors = vm.sponsors.collectAsLazyPagingItems()
     var sponsorSortType : SponsorSortType by rememberDataSaverState("KEY_SPONSOR_SORT_TYPE", SponsorSortType.Money)
@@ -121,9 +117,7 @@ fun ThanksScreen(navHostController: NavHostController) {
 
             }
             items(sponsors, key = { it.key }) { sponsor ->
-                sponsor?.let {
-                    SponsorItem(sponsor = it)
-                }
+                SponsorItem(sponsor = sponsor)
             }
             val loadStates = sponsors.loadState
             when {

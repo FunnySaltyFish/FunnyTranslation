@@ -117,8 +117,9 @@ dependencies {
 //    implementation 'com.github.jeziellago:compose-markdown:0.2.6'
 
     // 分页加载
-    implementation "androidx.paging:paging-compose:1.0.0-alpha17"
-    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
+    def paging_version = "3.2.0"
+    implementation "androidx.paging:paging-compose:$paging_version"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
     // CameraX core library using the camera2 implementation
     def camerax_version = "1.3.0-alpha02"
@@ -138,7 +139,8 @@ dependencies {
 //    implementation "com.github.leavesCZY:Matisse:0.0.6"
 
     // 图片选择器
-    implementation "cn.qhplus.emo:photo-coil:0.7.0"
+    implementation(platform("cn.qhplus.emo:bom:2023.08.00"))
+    implementation "cn.qhplus.emo:photo-coil"
     // 图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
 
