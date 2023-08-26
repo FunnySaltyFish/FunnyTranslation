@@ -153,4 +153,17 @@
     <string name="confirm_and_restart_app">Confirm and restart</string>
     <string name="setting_app_preference">Application</string>
     <string name="recommendation_app">App Recommendation</string>
+    <string name="developer_mode">Developer Mode</string>
+    <string name="setting_base_url" translatable="false">Base URL</string>
+    <string name="open_developer_mode">Developer mode has been enabled!</string>
+    <string name="too_large_image">The image is too large. Please try cropping it or using another engine.</string>
+    <string name="developer">Developer</string>
+    <string name="discussion">Discussion</string>
+    <string name="contact_developer_via_email">Contact the developer via email</string>
+    <string name="more_about">More</string>
+    <string name="user_agreement">User Agreement</string>
+    <string name="join_qq_group_description">Join QQ group to communicate with other users</string>
+    <string name="contact_developer_via_email_description">Send an email to funnysaltyfish@foxmail.com</string>
+    <string name="source_code_description">Go to GitHub to view the project\'s source code</string>
+    <string name="build_type">Build Type:</string>
 </resources>

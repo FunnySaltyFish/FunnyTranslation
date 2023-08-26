@@ -21,13 +21,14 @@ class FunnyIcon(
 fun IconWidget(
     modifier: Modifier = Modifier,
     funnyIcon : FunnyIcon,
-    tintColor : Color = MaterialTheme.colorScheme.secondary
+    tintColor : Color = MaterialTheme.colorScheme.secondary,
+    contentDescription: String? = null,
 ) {
     val icon = funnyIcon.get()
     if (icon is ImageVector){
-        Icon(imageVector = icon, contentDescription = "", tint = tintColor, modifier = modifier.size(24.dp))
+        Icon(imageVector = icon, contentDescription = contentDescription, tint = tintColor, modifier = modifier.size(24.dp))
     }else if(icon is Int){
-        Icon(painter = painterResource(id = icon), contentDescription = "", tint = tintColor, modifier = modifier.size(24.dp))
+        Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tintColor, modifier = modifier.size(24.dp))
     }
 
 }

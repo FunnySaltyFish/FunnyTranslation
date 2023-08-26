@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.W300
 import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,53 +35,141 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.jetsetting.core.JetSettingTile
+import com.funny.jetsetting.core.ui.FunnyIcon
+import com.funny.jetsetting.core.ui.SettingItemCategory
+import com.funny.translation.AppConfig
 import com.funny.translation.WebViewActivity
+import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.isLight
+import com.funny.translation.translate.BuildConfig
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.translate.ui.widget.ShadowedRoundImage
 import com.funny.translation.ui.touchToScale
 
 @Composable
+@Preview
 fun AboutScreen() {
     val context = LocalContext.current
     val navController = LocalNavController.current
     CommonPage(
         title = stringResource(id = R.string.about)
     ) {
-        JetSettingTile(
-            resourceId = R.drawable.ic_qq,
-            text = stringResource(R.string.join_qq_group)
-        ) {
-            WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
-        }
-        JetSettingTile(
-            resourceId = R.drawable.ic_github,
-            text = stringResource(R.string.source_code)
-        ) {
-            context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star))
-            WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
-        }
-        JetSettingTile(
-            resourceId = R.drawable.ic_open_source_library,
-            text = stringResource(id = R.string.open_source_library)
-        ) {
-            navController.navigate(TranslateScreen.OpenSourceLibScreen.route)
-        }
-        JetSettingTile(
-            resourceId = R.drawable.ic_privacy,
-            text = stringResource(R.string.privacy)
-        ) {
-            WebViewActivity.start(
-                context,
-                "https://api.funnysaltyfish.fun/trans/v1/api/privacy"
+        /**
+         * 译站|Transtation
+         * v2.6.7, com.funny.translation
+         * 开发者
+         * FunnySaltyFish
+         * 一条咸鱼，不知味道如何？
+         * 讨论
+         * 查看我们的QQ群聊
+         * 与其他用户一同交流
+         * 通过电子邮件联系开发者
+         * 发送电子邮件至funnysaltyfish@foxmail.com
+         * 项目源代码
+         * Github
+         * 前往Github查看项目源代码
+         */
+        LargeImageTile(
+            funnyIcon = FunnyIcon(resourceId = R.drawable.ic_launcher_icon),
+            text = "译站 | Transtation",
+            description = "v${AppConfig.versionName}, ${stringResource(id = R.string.build_type)}${BuildConfig.BUILD_TYPE}"
+        )
+        SettingItemCategory(title = {
+            Text(text = stringResource(id = R.string.developer))
+        }) {
+            LargeImageTile(
+                text = "FunnySaltyFish",
+                description = "独立 Android 开发者",
+                funnyIcon = FunnyIcon(resourceId = R.drawable.ic_developer_avatar)
             )
         }
+        SettingItemCategory(title = {
+            Text(text = stringResource(id = R.string.discussion))
+        }) {
+            JetSettingTile(
+                resourceId = R.drawable.ic_qq,
+                text = stringResource(R.string.join_qq_group),
+                description = stringResource(R.string.join_qq_group_description)
+            ) {
+                WebViewActivity.start(context, "https://jq.qq.com/?_wv=1027&k=3Bvvfzdu")
+            }
+            JetSettingTile(
+                imageVector = Icons.Default.Email,
+                text = stringResource(R.string.contact_developer_via_email),
+                description = stringResource(R.string.contact_developer_via_email_description)
+            ) {
+                context.openUrl("mailto://funnysaltyfish@foxmail")
+            }
+        }
+        SettingItemCategory(title = {
+            Text(text = stringResource(id = R.string.source_code))
+        }) {
+            JetSettingTile(
+                resourceId = R.drawable.ic_github,
+                text = stringResource(R.string.source_code),
+                description = stringResource(R.string.source_code_description)
+            ) {
+                context.toastOnUi(FunnyApplication.resources.getText(R.string.welcome_star))
+                WebViewActivity.start(context, "https://github.com/FunnySaltyFish/FunnyTranslation")
+            }
+        }
+        SettingItemCategory(title = {
+            Text(text = stringResource(id = R.string.more_about))
+        }) {
+            JetSettingTile(
+                resourceId = R.drawable.ic_open_source_library,
+                text = stringResource(id = R.string.open_source_library)
+            ) {
+                navController.navigate(TranslateScreen.OpenSourceLibScreen.route)
+            }
+            JetSettingTile(
+                resourceId = R.drawable.ic_privacy,
+                text = stringResource(R.string.privacy)
+            ) {
+                WebViewActivity.start(
+                    context,
+                    "https://api.funnysaltyfish.fun/trans/v1/api/privacy"
+                )
+            }
+            // 用户协议
+            JetSettingTile(
+                resourceId = R.drawable.ic_user_agreement,
+                text = stringResource(id = R.string.user_agreement)
+            ) {
+                WebViewActivity.start(
+                    context,
+                    "https://api.funnysaltyfish.fun/trans/v1/api/user_agreement"
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun LargeImageTile(
+    modifier: Modifier = Modifier,
+    funnyIcon: FunnyIcon,
+    text: String,
+    description: String,
+) {
+    ListItem(
+        modifier = modifier,
+        headlineContent = {
+            Text(text = text, fontSize = 18.sp, fontWeight = W500)
+        },
+        leadingContent = {
+            ShadowedRoundImage(modifier = Modifier.size(64.dp), funnyIcon = funnyIcon)
+        },
+        supportingContent = {
+            Text(text = description)
+        }
+    )
 }
 
 @Composable

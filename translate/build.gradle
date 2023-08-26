@@ -98,7 +98,7 @@ android {
     namespace 'com.funny.translation.translate'
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy {
         force "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
     }
@@ -145,11 +145,11 @@ dependencies {
     implementation 'com.github.yalantis:ucrop:2.2.6'
 
     // import Kotlin API client BOM
-    implementation platform('com.aallam.openai:openai-client-bom:3.2.5')
-
-    // define dependencies without versions
-    implementation 'com.aallam.openai:openai-client'
-    runtimeOnly 'io.ktor:ktor-client-okhttp'
+//    implementation platform('com.aallam.openai:openai-client-bom:3.2.5')
+//
+//    // define dependencies without versions
+//    implementation 'com.aallam.openai:openai-client'
+//    runtimeOnly 'io.ktor:ktor-client-okhttp'
 
     // To recognize Latin script
 //    implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'

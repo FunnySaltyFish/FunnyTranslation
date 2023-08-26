@@ -19,6 +19,7 @@ private const val TAG = "AppConfig"
 @SuppressLint("HardwareIds")
 @Keep
 object AppConfig {
+
     var SCREEN_WIDTH = 0
     var SCREEN_HEIGHT = 0
 
@@ -27,6 +28,7 @@ object AppConfig {
     val jwtToken by derivedStateOf { userInfo.value.jwt_token }
 
     var versionCode = BaseApplication.getLocalPackageInfo()?.versionCode ?: 0
+    val versionName = BaseApplication.getLocalPackageInfo()?.versionName ?: ""
 
     // 隐私合规，延迟获取
     val androidId: String by lazy {

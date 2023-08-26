@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -109,6 +106,7 @@ fun JetSettingTile(
     imageVector: ImageVector? = null,
     resourceId: Int? = null,
     text: String,
+    description: String? = null,
     interceptor: () -> Boolean = { true },
     onClick: () -> Unit
 ) {
@@ -118,7 +116,7 @@ fun JetSettingTile(
             Text(text = text)
         },
         action = {
-           Icon(Icons.Default.KeyboardArrowRight, "Goto", )
+           // Icon(Icons.Default.KeyboardArrowRight, "Goto", )
         },
         icon = {
             val icon = FunnyIcon(imageVector, resourceId)
@@ -127,6 +125,11 @@ fun JetSettingTile(
         onClick = {
             if (interceptor.invoke()) {
                 onClick()
+            }
+        },
+        text = {
+            description?.let {
+                Text(text = it)
             }
         }
     )

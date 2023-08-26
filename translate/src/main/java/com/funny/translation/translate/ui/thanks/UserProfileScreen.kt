@@ -186,7 +186,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
         }
         val firstClickHandler = remember { FastClickHandler {
             AppConfig.developerMode.value = true
-            context.toastOnUi(R.string.open_devloper_mode)
+            context.toastOnUi(R.string.open_developer_mode)
         }}
         Tile(text = stringResource(R.string.vip_end_time), onClick = firstClickHandler){
             Text(text = userInfo.vipEndTimeStr())

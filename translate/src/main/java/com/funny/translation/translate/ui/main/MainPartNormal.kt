@@ -20,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -41,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.funny.compose.loading.LoadingContent
 import com.funny.trans.login.LoginActivity
 import com.funny.translation.AppConfig
@@ -469,14 +467,10 @@ fun UserInfoPanel(navHostController: NavHostController) {
         if (userBean.isValid()) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box {
-                    AsyncImage(
+                    ShadowedAsyncRoundImage(
+                        modifier = Modifier.size(100.dp),
                         model = userBean.avatar_url,
-                        contentDescription = "头像",
-                        modifier = Modifier
-                            .size(100.dp)
-                            //.clip(CircleShape)
-                            .shadow(8.dp, CircleShape, ambientColor = Color(0xffbdbdbd)),
-                        placeholder = painterResource(R.drawable.ic_loading)
+                        contentDescription = stringResource(id = R.string.avatar)
                     )
                     if (userBean.isValidVip()) {
                         Icon(
