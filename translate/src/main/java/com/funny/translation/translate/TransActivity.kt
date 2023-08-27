@@ -18,16 +18,15 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
-import com.azhon.appupdate.utils.ApkUtil
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseActivity
 import com.funny.translation.Consts
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.helper.externalCache
 import com.funny.translation.network.NetworkReceiver
 import com.funny.translation.translate.utils.EasyFloatUtils
+import com.funny.translation.translate.utils.UpdateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -85,8 +84,7 @@ class TransActivity : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 // MobileAds.initialize(context) {}
                 activityViewModel.getNotice()
-                activityViewModel.checkUpdate(context)
-                ApkUtil.deleteOldApk(context, FunnyApplication.ctx.externalCache.absolutePath + "/update_apk.apk")
+                UpdateUtils.checkUpdate(context)
             }
 
             // 显示悬浮窗

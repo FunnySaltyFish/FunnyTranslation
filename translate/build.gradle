@@ -59,6 +59,17 @@ android {
         }
     }
 
+    flavorDimensions "default"
+    productFlavors {
+        common {
+            dimension "default"
+        }
+        google {
+            dimension "default"
+            applicationIdSuffix ".google"
+            versionNameSuffix "-google"
+        }
+    }
 
     buildTypes {
         release {
@@ -130,9 +141,6 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:${camerax_version}")
 
 
-    // 应用更新
-    implementation 'com.github.azhon:AppUpdate:3.0.6'
-
     implementation 'com.github.princekin-f:EasyFloat:2.0.4'
     implementation 'com.github.thomhurst:RoundImageView:1.0.2'
     implementation "org.burnoutcrew.composereorderable:reorderable:0.7.4"
@@ -156,6 +164,9 @@ dependencies {
 
     // Google Ad
 //    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+
+    // 应用更新
+    commonImplementation ('com.github.azhon:AppUpdate:3.0.6')
 
     implementation project(path: ":base-core")
     implementation project(path: ":codeeditor")
