@@ -166,4 +166,5 @@
     <string name="contact_developer_via_email_description">发送电子邮箱至 funnysaltyfish@foxmail.com</string>
     <string name="source_code_description">前往 GitHub 查看项目源代码</string>
     <string name="build_type">构建类型：</string>
+    <string name="history">历史记录</string>
 </resources>

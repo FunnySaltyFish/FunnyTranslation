@@ -44,7 +44,7 @@ fun HistoryScreen(
         cornerSizeProvider = { ((1 - progressProvider()) * 40).dp }
     ) {
         CommonTopBar(
-            title = stringResource(id = R.string.favorite),
+            title = stringResource(id = R.string.history),
             navigationIcon = {
                 CommonNavBackIcon(navigateBackAction = navigateBackAction)
             }
