@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,7 +82,8 @@ private fun TransFavoriteList(
                     Text(
                         text = stringResource(id = R.string.no_favorite),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center
                     )
                 }
             }

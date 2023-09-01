@@ -7,9 +7,9 @@ import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.GlobalTranslationConfig
+import com.funny.translation.core.BuildConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.sign.SignUtils
 import com.ihsanbal.logging.Level
 import com.ihsanbal.logging.LoggingInterceptor

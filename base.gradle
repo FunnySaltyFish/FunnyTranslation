@@ -1,0 +1,77 @@
+android {
+    compileSdk Versions.compileSdkVersion
+    buildToolsVersion Versions.buildToolsVersion
+
+    defaultConfig {
+        minSdk Versions.minSdkVersion
+        targetSdk Versions.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
+    }
+
+    signingConfigs {
+        release {
+            // 如果需要打release包，请在项目根目录下自行添加此文件
+            /**
+             *  STORE_FILE=yourAppStroe.keystore
+             STORE_PASSWORD=yourStorePwd
+             KEY_ALIAS=yourKeyAlias
+             KEY_PASSWORD=yourAliasPwd
+             */
+            def props = new Properties()
+            def propFile = new File("signing.properties")
+            if (propFile.exists()) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(propFile), "utf-8"))
+                props.load(reader)
+
+                storeFile file(props['STORE_FILE'])
+                storePassword props['STORE_PASSWORD']
+                keyAlias props['KEY_ALIAS']
+                keyPassword props['KEY_PASSWORD']
+
+                enableV1Signing true
+                enableV2Signing true
+                enableV3Signing true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.composeCompilerVersion
+    }
+}

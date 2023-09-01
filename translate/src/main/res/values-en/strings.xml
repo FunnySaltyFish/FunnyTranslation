@@ -137,7 +137,7 @@
     <string name="failed_to_save_screenshot">Failed to Save Screenshot</string>
     <string name="failed_to_view_image">Failed to View Image</string>
     <string name="stop">Stop Capturing Screen</string>
-    <string name="no_favorite">No favorites yet, add them on translation page~</string>
+    <string name="no_favorite">No favorites yet,\nadd one by translating~</string>
     <string name="login_to_use_image_translation">Due to cost reasons, image translation function needs to be logged in to use, please understand</string>
     <string name="show_detail_result">Detailed Translation</string>
     <string name="show_detail_result_desc">To display more detailed translation results, such as phonetic symbols, parts of speech, examples, etc., the engine interface needs to support it (currently only supported by Youdao and Google).</string>

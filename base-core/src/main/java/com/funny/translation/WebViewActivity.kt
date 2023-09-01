@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.funny.translation.core.R
 import com.funny.translation.helper.WebViewResourceHelper
-import com.funny.translation.jsBean.core.R
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.ui.*
 

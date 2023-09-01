@@ -5,7 +5,7 @@ import com.funny.compose.ai.bean.ChatMemory
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.compose.ai.bean.StreamMessage
-import com.funny.translation.jsBean.core.BuildConfig
+import com.funny.translation.core.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion

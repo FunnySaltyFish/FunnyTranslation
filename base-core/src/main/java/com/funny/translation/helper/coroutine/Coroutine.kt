@@ -1,7 +1,18 @@
 package com.funny.translation.helper.coroutine
 
-import com.funny.translation.jsBean.core.BuildConfig
-import kotlinx.coroutines.*
+import com.funny.translation.core.BuildConfig
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
 
 class Coroutine<T>(

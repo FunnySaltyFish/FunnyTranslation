@@ -1,7 +1,7 @@
 package com.funny.translation.bean
 
 import com.funny.translation.BaseApplication
-import com.funny.translation.jsBean.core.R
+import com.funny.translation.core.R
 import java.util.Locale
 
 enum class AppLanguage(private val descriptionId: Int) {

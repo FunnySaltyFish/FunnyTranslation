@@ -8,8 +8,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.bean.UserInfoBean
+import com.funny.translation.core.BuildConfig
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.jsBean.core.BuildConfig
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.Language

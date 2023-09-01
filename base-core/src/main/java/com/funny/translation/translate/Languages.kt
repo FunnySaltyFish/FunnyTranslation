@@ -2,9 +2,8 @@ package com.funny.translation.translate
 
 import android.content.res.Resources
 import androidx.annotation.Keep
+import com.funny.translation.core.R
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.jsBean.core.R
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Keep
