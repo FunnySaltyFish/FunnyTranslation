@@ -3,8 +3,16 @@ package com.funny.translation.theme
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -182,25 +190,29 @@ fun TransTheme(
             }
             else -> null
         }
-    SystemBarSettings(hideStatusBar)
+
+    val mContent = @Composable {
+        SystemBarSettings()
+        content()
+    }
 
     when (ThemeConfig.sThemeType.value) {
         ThemeType.StaticDefault, ThemeType.DynamicNative -> {
             MaterialTheme(
                 colorScheme = colorScheme ?: if (dark) DarkColors else LightColors,
-                content = content
+                content = mContent
             )
         }
         is ThemeType.DynamicFromImage -> {
             MonetTheme(
                 color = (ThemeConfig.sThemeType.value as ThemeType.DynamicFromImage).color,
-                content = content
+                content = mContent
             )
         }
         is ThemeType.StaticFromColor -> {
             MonetTheme(
                 color = (ThemeConfig.sThemeType.value as ThemeType.StaticFromColor).color,
-                content = content
+                content = mContent
             )
         }
     }

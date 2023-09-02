@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -63,7 +64,7 @@ fun AppNavigation(
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = navController){
+    LaunchedEffect(key1 = navController) {
         (context as TransActivity).navController = navController
     }
 
@@ -101,6 +102,8 @@ fun AppNavigation(
         LocalDataSaver provides DataSaverUtils
     ) {
         TransTheme {
+//            Box(modifier = Modifier.fillMaxSize().background(Color.Blue))
+            val layoutDirection = LocalLayoutDirection.current
             Scaffold(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
@@ -112,9 +115,13 @@ fun AppNavigation(
                     modifier = Modifier
                         // 下面的三个看起来很奇怪，但它来自于 https://issuetracker.google.com/issues/249727298
                         // 否则，imePadding() 工作不正常（在三大金刚键的导航模式下会会多出一段）
-                        .padding(scaffoldPadding)
+                        .padding(
+                            top = scaffoldPadding.calculateTopPadding(),
+                            start = scaffoldPadding.calculateStartPadding(layoutDirection),
+                            end = scaffoldPadding.calculateEndPadding(layoutDirection),
+                        )
                         .consumeWindowInsets(scaffoldPadding)
-                        .systemBarsPadding()
+                        .statusBarsPadding()
                 ) {
                     composable(
                         TranslateScreen.MainScreen.route,
@@ -125,9 +132,13 @@ fun AppNavigation(
                             }
                         ),
                         arguments = listOf(
-                            navArgument("text") {  },
-                            navArgument("sourceId") { type = NavType.IntType; defaultValue = Language.AUTO.id },
-                            navArgument("targetId") { type = NavType.IntType; defaultValue = Language.CHINESE.id  }
+                            navArgument("text") { },
+                            navArgument("sourceId") {
+                                type = NavType.IntType; defaultValue = Language.AUTO.id
+                            },
+                            navArgument("targetId") {
+                                type = NavType.IntType; defaultValue = Language.CHINESE.id
+                            }
                         )
                     ) {
                         MainScreen(
@@ -145,10 +156,16 @@ fun AppNavigation(
                             }
                         ),
                         arguments = listOf(
-                            navArgument("imageUri") { type = NavType.StringType; defaultValue = null; nullable = true },
-                            navArgument("sourceId") { type = NavType.IntType; defaultValue = Language.AUTO.id },
-                            navArgument("targetId") { type = NavType.IntType; defaultValue = Language.CHINESE.id  },
-                            navArgument("doClip") { type = NavType.BoolType; defaultValue = false  }
+                            navArgument("imageUri") {
+                                type = NavType.StringType; defaultValue = null; nullable = true
+                            },
+                            navArgument("sourceId") {
+                                type = NavType.IntType; defaultValue = Language.AUTO.id
+                            },
+                            navArgument("targetId") {
+                                type = NavType.IntType; defaultValue = Language.CHINESE.id
+                            },
+                            navArgument("doClip") { type = NavType.BoolType; defaultValue = false }
                         )
                     ) {
                         // 使用 Intent 跳转目前会导致 Activity 重建
@@ -169,7 +186,7 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.TransProScreen.route) {
                         TransProScreen()
                     }
-                    animateComposable(TranslateScreen.ThanksScreen.route){
+                    animateComposable(TranslateScreen.ThanksScreen.route) {
                         ThanksScreen()
                     }
                     animateComposable(TranslateScreen.FloatWindowScreen.route) {
@@ -250,7 +267,7 @@ private fun NavGraphBuilder.addSettingsNavigation() {
     }
 }
 
-fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = false){
+fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = false) {
     val navController = this
     navController.navigate(route) {
         // 先清空其他栈，使得返回时能直接回到主界面
@@ -309,7 +326,11 @@ fun NavGraphBuilder.animateComposable(
 }
 
 // 跳转到翻译页面，并开始翻译
-fun NavHostController.navigateToTextTrans(sourceText: String?, sourceLanguage: Language, targetLanguage: Language) {
+fun NavHostController.navigateToTextTrans(
+    sourceText: String?,
+    sourceLanguage: Language,
+    targetLanguage: Language
+) {
     val text = Uri.encode(sourceText)
     this.navigate(
         NavDeepLinkRequest.Builder
@@ -328,7 +349,8 @@ fun NavHostController.navigateToTextTrans(sourceText: String?, sourceLanguage: L
 @Stable
 @Composable
 private fun NavHostController.currentScreenAsState(): MutableState<TranslateScreen> {
-    val selectedItem: MutableState<TranslateScreen> = rememberDataSaverState(Consts.KEY_APP_CURRENT_SCREEN, TranslateScreen.MainScreen)
+    val selectedItem: MutableState<TranslateScreen> =
+        rememberDataSaverState(Consts.KEY_APP_CURRENT_SCREEN, TranslateScreen.MainScreen)
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -336,12 +358,15 @@ private fun NavHostController.currentScreenAsState(): MutableState<TranslateScre
                 destination.hierarchy.any { it.route == TranslateScreen.MainScreen.route } -> {
                     selectedItem.value = TranslateScreen.MainScreen
                 }
+
                 destination.hierarchy.any { it.route == TranslateScreen.SettingScreen.route } -> {
                     selectedItem.value = TranslateScreen.SettingScreen
                 }
+
                 destination.hierarchy.any { it.route == TranslateScreen.PluginScreen.route } -> {
                     selectedItem.value = TranslateScreen.PluginScreen
                 }
+
                 destination.hierarchy.any { it.route == TranslateScreen.ThanksScreen.route } -> {
                     selectedItem.value = TranslateScreen.ThanksScreen
                 }

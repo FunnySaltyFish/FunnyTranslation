@@ -180,7 +180,7 @@ fun OpenSourceLibScreen() {
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(12.dp))
                         .background(color)
-                        .padding(top = 12.dp, start = 12.dp, end = 12.dp),
+                        .padding(top = 12.dp, start = 12.dp, end = 12.dp, bottom = 4.dp),
                     info = info
                 )
             }

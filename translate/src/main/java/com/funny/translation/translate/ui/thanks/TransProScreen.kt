@@ -119,7 +119,7 @@ fun TransProContent() {
         Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(start = 12.dp, end = 12.dp, top = 40.dp, bottom = 2.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 40.dp, bottom = 12.dp)
             .verticalScroll(rememberScrollState())
     ) {
         val (state, retry) = rememberRetryableLoadingState(loader = VipUtils::getVipConfigs)
