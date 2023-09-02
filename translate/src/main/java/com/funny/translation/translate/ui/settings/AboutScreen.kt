@@ -60,21 +60,6 @@ fun AboutScreen() {
     CommonPage(
         title = stringResource(id = R.string.about)
     ) {
-        /**
-         * 译站|Transtation
-         * v2.6.7, com.funny.translation
-         * 开发者
-         * FunnySaltyFish
-         * 一条咸鱼，不知味道如何？
-         * 讨论
-         * 查看我们的QQ群聊
-         * 与其他用户一同交流
-         * 通过电子邮件联系开发者
-         * 发送电子邮件至funnysaltyfish@foxmail.com
-         * 项目源代码
-         * Github
-         * 前往Github查看项目源代码
-         */
         LargeImageTile(
             funnyIcon = FunnyIcon(resourceId = R.drawable.ic_launcher_icon),
             text = "译站 | Transtation",
@@ -161,7 +146,7 @@ private fun LargeImageTile(
     ListItem(
         modifier = modifier,
         headlineContent = {
-            Text(text = text, fontSize = 18.sp, fontWeight = W500)
+            Text(text = text, fontWeight = W500, modifier = Modifier.padding(bottom = 2.dp))
         },
         leadingContent = {
             ShadowedRoundImage(modifier = Modifier.size(64.dp), funnyIcon = funnyIcon)

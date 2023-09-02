@@ -83,7 +83,7 @@ private fun TransFavoriteList(
         if (transHistories.itemSnapshotList.isEmpty()) {
             item {
                 Text(
-                    text = "暂无历史记录", modifier = Modifier
+                    text = stringResource(R.string.no_history), modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp), textAlign = TextAlign.Center
                 )

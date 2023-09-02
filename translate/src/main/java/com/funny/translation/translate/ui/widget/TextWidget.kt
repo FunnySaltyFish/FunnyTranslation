@@ -118,7 +118,8 @@ fun AutoResizedText(
     text: String,
     style: TextStyle = MaterialTheme.typography.headlineLarge,
     color: Color = style.color,
-    byHeight: Boolean = true
+    maxLines: Int = Int.MAX_VALUE,
+    byHeight: Boolean = true,
 ) {
     var resizedTextStyle by remember { mutableStateOf(style) }
     var shouldDraw by remember { mutableStateOf(false) }
@@ -133,7 +134,7 @@ fun AutoResizedText(
                 drawContent()
             }
         },
-        softWrap = true,
+        softWrap = maxLines > 1,
         style = resizedTextStyle.copy(fontSize = resizedTextStyle.fontSize),
         onTextLayout = { result ->
             if (if (byHeight) result.didOverflowHeight else result.didOverflowWidth) {
@@ -148,7 +149,8 @@ fun AutoResizedText(
             } else {
                 shouldDraw = true
             }
-        }
+        },
+        maxLines = maxLines
     )
 }
 

@@ -166,4 +166,6 @@
     <string name="contact_developer_via_email_description">Send an email to funnysaltyfish@foxmail.com</string>
     <string name="source_code_description">Go to GitHub to view the project\'s source code</string>
     <string name="build_type">Build Type:</string>
+    <string name="history">History</string>
+    <string name="no_history">No history yet, do translating first</string>
 </resources>

@@ -154,7 +154,7 @@
     <string name="setting_app_preference">应用</string>
     <string name="recommendation_app">应用推荐</string>
     <string name="developer_mode">开发者模式</string>
-    <string name="setting_base_url" translatable="false">BaseUrl</string>
+    <string name="setting_base_url">BaseUrl</string>
     <string name="open_developer_mode">已开启开发者模式！</string>
     <string name="too_large_image">图片太大了，请尝试裁剪或换用其他引擎</string>
     <string name="developer">开发者</string>
@@ -167,4 +167,5 @@
     <string name="source_code_description">前往 GitHub 查看项目源代码</string>
     <string name="build_type">构建类型：</string>
     <string name="history">历史记录</string>
+    <string name="no_history">暂无历史记录</string>
 </resources>

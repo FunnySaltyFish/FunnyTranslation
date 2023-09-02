@@ -179,6 +179,7 @@ private fun HintText(
         fontWeight = FontWeight.W600,
         color = Color.LightGray,
         textAlign = TextAlign.Start,
+        lineHeight = 32.sp,
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 28.dp)
@@ -405,11 +406,12 @@ private fun LanguageSelect(
         }, shape = RoundedCornerShape(8.dp), colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
-        ), contentPadding = PaddingValues(horizontal = 0.dp, vertical = 16.dp)
+        ), contentPadding = PaddingValues(horizontal = 2.dp, vertical = 16.dp)
     ) {
         AutoResizedText(
             text = language.displayText,
             style = LocalTextStyle.current.copy(fontSize = 18.sp, fontWeight = FontWeight.W600),
+            maxLines = 1,
             byHeight = false
         )
         DropdownMenu(

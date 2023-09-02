@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
@@ -15,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -54,12 +56,14 @@ internal fun SettingBaseItem(
             ) {
                 ProvideTextStyle(
                     MaterialTheme.typography.titleLarge.copy(
-                        fontSize = 20.sp
+                        fontSize = 16.sp, fontWeight = FontWeight.W500
                     )
                 ) {
                     title()
                 }
-                ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                ProvideTextStyle(MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 14.sp, lineHeight = 16.sp, fontWeight = FontWeight.W300, color = LocalContentColor.current.copy(alpha = 0.8f)
+                )) {
                     text?.invoke()
                 }
             }
