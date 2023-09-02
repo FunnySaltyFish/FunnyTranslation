@@ -67,7 +67,7 @@ object OkHttpUtils {
                 builder.addHeader("Referer", "FunnyTranslation")
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
                 builder.addHeader("App-Build-Type", BuildConfig.BUILD_TYPE)
-                builder.addHeader("App-Flavor", "mainland")
+                builder.addHeader("App-Flavor", BuildConfig.FLAVOR)
             }
 
 //            val invocation = request.tag(Invocation::class.java)

@@ -42,7 +42,7 @@ dependencies {
     api 'com.github.gedoor:rhino-android:1.6'
 
     // Coil
-    api "io.coil-kt:coil-compose:2.2.0"
+    api "io.coil-kt:coil-compose:2.4.0"
 
     // 刘海屏适配
     api 'com.github.smarxpan:NotchScreenTool:0.0.1'

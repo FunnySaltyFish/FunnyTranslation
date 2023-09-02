@@ -58,12 +58,22 @@ android {
         }
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    flavorDimensions "default"
+    productFlavors {
+        common {
+            dimension "default"
+            if (buildFeatures.buildConfig) {
+                buildConfigField("String", "FLAVOR", "\"common\"")
+            }
+        }
+        google {
+            dimension "default"
+            if (buildFeatures.buildConfig) {
+                buildConfigField("String", "FLAVOR", "\"google\"")
+            }
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

@@ -55,13 +55,10 @@ android {
         }
     }
 
-    flavorDimensions "default"
     productFlavors {
         common {
-            dimension "default"
         }
         google {
-            dimension "default"
             applicationIdSuffix ".google"
             versionNameSuffix "-google"
         }

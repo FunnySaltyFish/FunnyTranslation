@@ -22,7 +22,7 @@ import java.lang.reflect.Type
  */
 
 object ServiceCreator {
-    const val API_HOST = "https://api.funnysaltyfish.fun" // # "http://192.168.10.104:5001"//
+    const val API_HOST = "https://api.funnysaltyfish.fun"
     const val TRANS_PATH = "/trans/v1/"
     private val DEFAULT_BASE_URL = OkHttpUtils.removeExtraSlashOfUrl("$API_HOST/$TRANS_PATH")
 
