@@ -217,7 +217,12 @@ private fun MainPart(
 ) {
     val vm: MainViewModel = viewModel()
 
-    SimpleNavigation(currentScreen = vm.currentState, modifier = modifier) { state ->
+    SimpleNavigation(
+        currentScreen = vm.currentState,
+        modifier = modifier.statusBarsPadding().then(
+            if (isScreenHorizontal) Modifier.navigationBarsPadding() else Modifier
+        )
+    ) { state ->
         when (state) {
             MainScreenState.Normal -> MainPartNormal(
                 vm = vm,
@@ -374,6 +379,7 @@ private fun Drawer(
         Column(
             Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
             UserInfoPanel(navHostController = navController)

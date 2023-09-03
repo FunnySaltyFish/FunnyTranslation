@@ -2,6 +2,9 @@ package com.funny.translation.theme
 
 import android.os.Build
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +14,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
@@ -24,7 +28,6 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.DeviceUtils
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.ui.SystemBarSettings
 import com.kyant.monet.LocalTonalPalettes
 import com.kyant.monet.PaletteStyle
 import com.kyant.monet.TonalPalettes
@@ -192,7 +195,24 @@ fun TransTheme(
         }
 
     val mContent = @Composable {
-        SystemBarSettings()
+        // SystemBarSettings(hideStatusBar)
+        val darkTheme = isSystemInDarkTheme()
+        val context = LocalContext.current as ComponentActivity
+        val c = MaterialTheme.colorScheme.primaryContainer.toArgb()
+        DisposableEffect(darkTheme) {
+            context.enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.auto(
+                    android.graphics.Color.TRANSPARENT,
+                    android.graphics.Color.TRANSPARENT,
+                ) { darkTheme },
+                navigationBarStyle =
+                    if (darkTheme) SystemBarStyle.dark(transparent)
+                    else SystemBarStyle.light(transparent, c),
+            )
+            context.window.navigationBarDividerColor = transparent
+
+            onDispose {}
+        }
         content()
     }
 
@@ -239,3 +259,17 @@ fun MonetTheme(color: Color, content: @Composable () -> Unit) {
         )
     }
 }
+
+/**
+ * The default light scrim, as defined by androidx and the platform:
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=35-38;drc=27e7d52e8604a080133e8b842db10c89b4482598
+ */
+private val lightScrim = android.graphics.Color.argb(0x00, 0x00, 0x00, 0x00)
+
+private val transparent = android.graphics.Color.argb(0x00, 0x00, 0x00, 0x00)
+
+/**
+ * The default dark scrim, as defined by androidx and the platform:
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=40-44;drc=27e7d52e8604a080133e8b842db10c89b4482598
+ */
+private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)

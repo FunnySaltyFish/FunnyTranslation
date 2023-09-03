@@ -147,7 +147,7 @@ internal fun MainPartNormal(
                             start = 24.dp,
                             end = 24.dp,
                             top = 8.dp,
-                            bottom = if (isScreenHorizontal) 8.dp else 40.dp
+                            bottom = if (isScreenHorizontal) 8.dp else 52.dp
                         ),
                     showEngineSelectAction
                 )

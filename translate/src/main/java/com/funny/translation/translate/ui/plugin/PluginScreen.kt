@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,13 +34,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
+import com.funny.translation.WebViewActivity
 import com.funny.translation.codeeditor.CodeEditorActivity
 import com.funny.translation.helper.readText
 import com.funny.translation.js.bean.JsBean
-import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
-import com.funny.translation.WebViewActivity
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
@@ -162,20 +160,39 @@ fun PluginScreen() {
         }
     }
 
-    Column(Modifier.fillMaxSize()) {
-        PluginScreenTopBar(
-            showAddPluginMenu = showAddPluginMenu,
-            updateShowAddPluginMenu = { showAddPluginMenu = it },
-            importPluginAction = { importPluginLauncher.launch(arrayOf("application/javascript")) },
-            newFileAction = {
-                ContextCompat.startActivity(
-                    context,
-                    Intent(context, CodeEditorActivity::class.java),
-                    null
+    val updateShowAddPluginMenu = { show: Boolean -> showAddPluginMenu = show }
+    CommonPage(
+        title = stringResource(id = R.string.manage_plugins),
+        actions = {
+            IconButton(onClick = { updateShowAddPluginMenu(true) }) {
+                Icon(
+                    Icons.Default.AddCircle,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    contentDescription = "Add plugins"
                 )
-            },
-        )
-
+                DropdownMenu(
+                    expanded = showAddPluginMenu,
+                    onDismissRequest = { updateShowAddPluginMenu(false) }) {
+                    DropdownMenuItem(onClick = {
+                        updateShowAddPluginMenu(false)
+                        importPluginLauncher.launch(arrayOf("application/javascript"))
+                    }, text = {
+                        Text(stringResource(id = R.string.import_plugin))
+                    })
+                    DropdownMenuItem(onClick = {
+                        updateShowAddPluginMenu(false)
+                        ContextCompat.startActivity(
+                            context,
+                            Intent(context, CodeEditorActivity::class.java),
+                            null
+                        )
+                    }, text = {
+                        Text(stringResource(id = R.string.create_plugin))
+                    })
+                }
+            }
+        }
+    ) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
             if (maxWidth > 720.dp) { //宽屏
                 Row(
@@ -256,58 +273,6 @@ fun LazyListScope.expandableStickyRow(
     }
 
     if (expand) contentList()
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PluginScreenTopBar(
-    showAddPluginMenu: Boolean,
-    updateShowAddPluginMenu: (Boolean) -> Unit,
-    importPluginAction: () -> Unit,
-    newFileAction: () -> Unit
-) {
-    val navController = LocalNavController.current
-    TopAppBar(
-        modifier = Modifier.padding(end = 18.dp),
-        title = {
-            Text(text = stringResource(id = R.string.manage_plugins))
-        },
-        navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    contentDescription = "Back"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { updateShowAddPluginMenu(true) }) {
-                Icon(
-                    Icons.Default.AddCircle,
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    contentDescription = "Add plugins"
-                )
-                DropdownMenu(
-                    expanded = showAddPluginMenu,
-                    onDismissRequest = { updateShowAddPluginMenu(false) }) {
-                    DropdownMenuItem(onClick = {
-                        updateShowAddPluginMenu(false)
-                        importPluginAction()
-                    }, text = {
-                        Text(stringResource(id = R.string.import_plugin))
-                    })
-                    DropdownMenuItem(onClick = {
-                        updateShowAddPluginMenu(false)
-                        newFileAction()
-                    }, text = {
-                        Text(stringResource(id = R.string.create_plugin))
-                    })
-                }
-            }
-        }
-    )
 }
 
 

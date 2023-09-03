@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -302,49 +301,51 @@ private fun ProJetSettingCheckbox(
 fun SortResult(
     modifier: Modifier = Modifier
 ) {
-    val state = rememberReorderState()
-    val localEngines by SortResultUtils.localEngines.collectAsState()
-    val data by remember {
-        derivedStateOf {
-            localEngines.toMutableStateList()
-        }
-    }
-    LazyColumn(
-        state = state.listState,
-        modifier = modifier
-            .then(
-                Modifier.reorderable(
-                    state,
-                    onMove = { from, to -> data.move(from.index, to.index) })
-            )
-    ) {
-        itemsIndexed(data, { i, _ -> i }) { i, item ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .draggedItem(state.offsetByIndex(i))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .detectReorderAfterLongPress(state)
-            ) {
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Spacer(modifier = Modifier.width(24.dp))
-                    Icon(painterResource(id = R.drawable.ic_drag), "Drag to sort")
-                    Text(
-                        text = item,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-
-                Divider()
+    CommonPage(title = stringResource(id = R.string.sort_result)) {
+        val state = rememberReorderState()
+        val localEngines by SortResultUtils.localEngines.collectAsState()
+        val data by remember {
+            derivedStateOf {
+                localEngines.toMutableStateList()
             }
         }
-    }
+        LazyColumn(
+            state = state.listState,
+            modifier = modifier
+                .then(
+                    Modifier.reorderable(
+                        state,
+                        onMove = { from, to -> data.move(from.index, to.index) })
+                )
+        ) {
+            itemsIndexed(data, { i, _ -> i }) { i, item ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .draggedItem(state.offsetByIndex(i))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .detectReorderAfterLongPress(state)
+                ) {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(modifier = Modifier.width(24.dp))
+                        Icon(painterResource(id = R.drawable.ic_drag), "Drag to sort")
+                        Text(
+                            text = item,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
 
-    DisposableEffect(key1 = null) {
-        onDispose {
-            if (!SortResultUtils.checkEquals(data)) {
-                Log.d(TAG, "SortResult: 不相等")
-                SortResultUtils.resetMappingAndSave(data)
+                    Divider()
+                }
+            }
+        }
+
+        DisposableEffect(key1 = null) {
+            onDispose {
+                if (!SortResultUtils.checkEquals(data)) {
+                    Log.d(TAG, "SortResult: 不相等")
+                    SortResultUtils.resetMappingAndSave(data)
+                }
             }
         }
     }
@@ -372,22 +373,9 @@ fun SelectLanguage(modifier: Modifier) {
         }
     }
 
-    DisposableEffect(key1 = Unit) {
-        onDispose {
-            // 如果什么都没选，退出的时候默认帮忙选几个
-            data.firstOrNull { it } ?: kotlin.run {
-                for (i in 0..2) {
-                    setEnabledState(allLanguages[i], true)
-                }
-            }
-        }
-    }
-
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(12.dp)
-    ) {
-        item {
+    CommonPage(
+        title = stringResource(id = R.string.select_language),
+        actions = {
             var selectAll by rememberSaveable {
                 // 当所有开始都被选上时，默认就是全选状态
                 mutableStateOf(data.firstOrNull { !it } == null)
@@ -397,9 +385,7 @@ fun SelectLanguage(modifier: Modifier) {
                 onClick = {
                     selectAll = !selectAll
                     setAllState(selectAll)
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentWidth(Alignment.End)
+                }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_select_all),
@@ -408,21 +394,38 @@ fun SelectLanguage(modifier: Modifier) {
                 )
             }
         }
+    ) {
+        DisposableEffect(key1 = Unit) {
+            onDispose {
+                // 如果什么都没选，退出的时候默认帮忙选几个
+                data.firstOrNull { it } ?: kotlin.run {
+                    for (i in 0..2) {
+                        setEnabledState(allLanguages[i], true)
+                    }
+                }
+            }
+        }
 
-        itemsIndexed(data, { i, _ -> i }) { i, selected ->
-            Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = allLanguages[i].displayText,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Checkbox(checked = selected, onCheckedChange = {
-                    data[i] = it
-                    setEnabledState(allLanguages[i], it)
-                })
+        LazyColumn(
+            modifier = modifier,
+            contentPadding = PaddingValues(12.dp)
+        ) {
+
+            itemsIndexed(data, { i, _ -> i }) { i, selected ->
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = allLanguages[i].displayText,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Checkbox(checked = selected, onCheckedChange = {
+                        data[i] = it
+                        setEnabledState(allLanguages[i], it)
+                    })
+                }
             }
         }
     }

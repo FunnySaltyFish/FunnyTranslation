@@ -1,5 +1,6 @@
 package com.funny.translation.translate
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -53,10 +54,10 @@ val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
     error("Local ActivityVM has not been initialized! ")
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AppNavigation(
     exitAppAction: () -> Unit
@@ -115,13 +116,6 @@ fun AppNavigation(
                     modifier = Modifier
                         // 下面的三个看起来很奇怪，但它来自于 https://issuetracker.google.com/issues/249727298
                         // 否则，imePadding() 工作不正常（在三大金刚键的导航模式下会会多出一段）
-                        .padding(
-                            top = scaffoldPadding.calculateTopPadding(),
-                            start = scaffoldPadding.calculateStartPadding(layoutDirection),
-                            end = scaffoldPadding.calculateEndPadding(layoutDirection),
-                        )
-                        .consumeWindowInsets(scaffoldPadding)
-                        .statusBarsPadding()
                 ) {
                     composable(
                         TranslateScreen.MainScreen.route,
@@ -165,7 +159,9 @@ fun AppNavigation(
                             navArgument("targetId") {
                                 type = NavType.IntType; defaultValue = Language.CHINESE.id
                             },
-                            navArgument("doClip") { type = NavType.BoolType; defaultValue = false }
+                            navArgument("doClip") {
+                                type = NavType.BoolType; defaultValue = false
+                            }
                         )
                     ) {
                         // 使用 Intent 跳转目前会导致 Activity 重建

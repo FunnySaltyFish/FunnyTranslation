@@ -143,7 +143,7 @@ fun LoginPage(
                 fontSize = 12.sp
             )
         }
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.navigationBarsPadding())
     }
 }
 

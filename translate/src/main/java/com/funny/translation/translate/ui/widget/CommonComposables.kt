@@ -3,8 +3,11 @@ package com.funny.translation.translate.ui.widget
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +44,9 @@ fun CommonPage(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier.fillMaxSize(),
+        modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CommonTopBar(title = title, navigationIcon = navigationIcon, navController = navController, actions = actions)
@@ -66,7 +71,10 @@ fun CommonTopBar(
             }
         },
         navigationIcon = navigationIcon,
-        actions = actions
+        actions = {
+            actions()
+            Spacer(modifier = Modifier.width(12.dp))
+        }
     )
 }
 

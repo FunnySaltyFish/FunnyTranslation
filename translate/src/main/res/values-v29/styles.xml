@@ -2,5 +2,7 @@
 <resources>
     <style name="AppTheme" parent="BaseTheme">
         <item name="android:forceDarkAllowed">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:navigationBarDividerColor">#00000000</item>
     </style>
 </resources>

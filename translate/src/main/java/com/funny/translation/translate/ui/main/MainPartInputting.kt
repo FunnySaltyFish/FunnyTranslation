@@ -71,6 +71,7 @@ fun MainPartInputting(
         Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primaryContainer)
+            .navigationBarsPadding()
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

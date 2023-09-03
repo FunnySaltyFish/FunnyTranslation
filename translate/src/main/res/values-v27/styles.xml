@@ -2,5 +2,6 @@
 <resources>
     <style name="AppTheme" parent="BaseTheme">
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:navigationBarDividerColor">#00000000</item>
     </style>
 </resources>
