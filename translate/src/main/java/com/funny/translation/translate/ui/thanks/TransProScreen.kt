@@ -106,7 +106,7 @@ fun TransProScreen(){
         }
         DisposableEffect(key1 = Unit) {
             onDispose {
-//                showAnim = false
+                showAnim = false
             }
         }
     } else {

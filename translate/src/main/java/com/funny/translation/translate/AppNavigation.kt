@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,6 +52,8 @@ val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> {
 val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
     error("Local ActivityVM has not been initialized! ")
 }
+
+const val NAV_ANIM_DURATION = 500
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -103,8 +104,6 @@ fun AppNavigation(
         LocalDataSaver provides DataSaverUtils
     ) {
         TransTheme {
-//            Box(modifier = Modifier.fillMaxSize().background(Color.Blue))
-            val layoutDirection = LocalLayoutDirection.current
             Scaffold(
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
@@ -114,8 +113,6 @@ fun AppNavigation(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
                     modifier = Modifier
-                        // 下面的三个看起来很奇怪，但它来自于 https://issuetracker.google.com/issues/249727298
-                        // 否则，imePadding() 工作不正常（在三大金刚键的导航模式下会会多出一段）
                 ) {
                     composable(
                         TranslateScreen.MainScreen.route,
@@ -283,7 +280,7 @@ fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = fa
 
 fun NavGraphBuilder.animateComposable(
     route: String,
-    animDuration: Int = 700,
+    animDuration: Int = NAV_ANIM_DURATION,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit

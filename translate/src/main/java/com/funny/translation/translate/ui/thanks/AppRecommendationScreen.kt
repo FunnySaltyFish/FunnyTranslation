@@ -21,6 +21,7 @@ import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.jetsetting.core.ui.throttleClick
 import com.funny.translation.helper.openUrl
+import com.funny.translation.translate.NAV_ANIM_DURATION
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.RecommendApp
 import com.funny.translation.translate.network.TransNetwork
@@ -30,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 suspend fun getRecommendApp(): List<RecommendApp> = withContext(Dispatchers.IO) {
-    delay(700)
+    delay(NAV_ANIM_DURATION.toLong())
     TransNetwork.appRecommendationService.getRecommendApp()
 }
 

@@ -10,6 +10,7 @@ import com.funny.translation.helper.coroutine.Coroutine.Companion.async
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
+import com.funny.translation.translate.NAV_ANIM_DURATION
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.network.TransNetwork
@@ -35,7 +36,7 @@ class PluginViewModel : ViewModel() {
 
     suspend fun getOnlinePlugins(): List<JsBean> {
         // 做完页面打开的动画后再请求，降低卡顿
-        delay(700)
+        delay(NAV_ANIM_DURATION.toLong())
         return pluginService.getOnlinePlugins()
     }
 

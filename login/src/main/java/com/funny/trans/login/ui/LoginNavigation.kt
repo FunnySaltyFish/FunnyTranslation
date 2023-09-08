@@ -68,7 +68,7 @@ fun NavGraphBuilder.addLoginRoutes(
 
 private fun NavGraphBuilder.animateComposable(
     route: String,
-    animDuration: Int = 700,
+    animDuration: Int = 400,
     content: @Composable () -> Unit,
 ) {
     composable(
