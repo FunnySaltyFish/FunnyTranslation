@@ -19,11 +19,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
@@ -32,7 +34,10 @@ import java.util.Date
 
 @Composable
 fun ChangeUsernamePage(navController: NavController) {
-    Column(Modifier.fillMaxSize().padding(top = 40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(top = 40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         val user by AppConfig.userInfo
         var username by remember { mutableStateOf(user.username) }
         val canChangeUsername by remember { derivedStateOf { user.canChangeUsername() } }
@@ -60,12 +65,12 @@ fun ChangeUsernamePage(navController: NavController) {
                         }
                     }
                 }) {
-                    Text(text = "确认修改")
+                    Text(text = stringResource(R.string.confirm_to_modify))
                 }
             } else {
                 // 您每 30 天可以修改一次用户名
                 Text(text = buildAnnotatedString {
-                    append("您每 30 天可以修改一次用户名，下次修改的时间为")
+                    append(stringResource(R.string.change_username_tip))
                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                         append(nextChangeUsernameString)
                     }

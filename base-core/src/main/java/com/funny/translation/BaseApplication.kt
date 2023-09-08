@@ -68,6 +68,4 @@ open class BaseApplication : Application() {
         private val activityStack = Stack<Activity>()
         private const val TAG = "BaseApplication"
     }
-
-
 }

@@ -63,11 +63,11 @@ import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.animateComposable
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
-import com.funny.translation.translate.animateComposable
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.utils.QQUtils

@@ -16,6 +16,9 @@ import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
 import kotlinx.coroutines.launch
 
+const val PASSWORD_TYPE_FINGERPRINT = "1"
+const val PASSWORD_TYPE_PASSWORD = "2"
+
 class LoginViewModel : ViewModel() {
     var username by mutableStateOf("")
     var password by mutableStateOf("")
@@ -30,7 +33,7 @@ class LoginViewModel : ViewModel() {
 
     // 1 -> 指纹
     // 2 -> 密码
-    var passwordType by mutableStateOf(if(AppConfig.lowerThanM) "2" else "1")
+    var passwordType by mutableStateOf(if(AppConfig.lowerThanM) PASSWORD_TYPE_PASSWORD else PASSWORD_TYPE_FINGERPRINT)
     // 当在新设备登录时，需要验证邮箱
     var shouldVerifyEmailWhenLogin by mutableStateOf(false)
 
@@ -55,7 +58,7 @@ class LoginViewModel : ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                val userBean = if (passwordType == "1"){
+                val userBean = if (passwordType == PASSWORD_TYPE_FINGERPRINT){
                     UserUtils.login(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, if(shouldVerifyEmailWhenLogin) verifyCode else "")
                 } else {
                     UserUtils.login(username, password, passwordType, email, "")
@@ -78,7 +81,7 @@ class LoginViewModel : ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                if (passwordType == "1"){
+                if (passwordType == PASSWORD_TYPE_FINGERPRINT){
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
                         throw SignUpException("当前用户名与设置指纹时用户名不同，请重新设置指纹")
                     UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")

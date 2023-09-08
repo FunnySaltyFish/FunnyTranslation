@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.helper.NAV_ANIM_DURATION
 import com.funny.translation.helper.coroutine.Coroutine.Companion.async
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.config.JsConfig
-import com.funny.translation.translate.NAV_ANIM_DURATION
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.network.TransNetwork

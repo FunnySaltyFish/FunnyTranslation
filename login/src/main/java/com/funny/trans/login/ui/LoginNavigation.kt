@@ -1,7 +1,5 @@
 package com.funny.trans.login.ui
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
@@ -10,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.funny.translation.bean.UserInfoBean
+import com.funny.translation.helper.animateComposable
 import com.funny.translation.ui.animatedGradientBackground
 
 sealed class LoginRoute(val route: String) {
@@ -62,42 +60,5 @@ fun NavGraphBuilder.addLoginRoutes(
     }
     animateComposable(LoginRoute.CancelAccountPage.route){
         CancelAccountPage(navController = navController)
-    }
-}
-
-
-private fun NavGraphBuilder.animateComposable(
-    route: String,
-    animDuration: Int = 400,
-    content: @Composable () -> Unit,
-) {
-    composable(
-        route,
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Up,
-                animationSpec = tween(animDuration)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Up,
-                animationSpec = tween(animDuration)
-            )
-        },
-        popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Down,
-                animationSpec = tween(animDuration)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Down,
-                animationSpec = tween(animDuration)
-            )
-        }
-    ) {
-        content()
     }
 }

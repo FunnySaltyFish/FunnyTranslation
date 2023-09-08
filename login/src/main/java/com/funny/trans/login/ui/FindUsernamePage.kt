@@ -9,8 +9,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.trans.login.R
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 
 @Composable
@@ -51,10 +54,10 @@ fun FindUsernamePage() {
                 vm.findUsername(context, onSuccess = {
                     usernameList.clear()
                     usernameList.addAll(it)
-                    context.toastOnUi("查询到此邮件关联的账户共${it.size}条")
+                    context.toastOnUi(string(R.string.find_account_amount, it.size))
                 })
             }, enabled = enable) {
-                Text(text = "查询关联账户")
+                Text(text = stringResource(R.string.query_related_account))
             }
 
             Spacer(modifier = Modifier.height(8.dp))

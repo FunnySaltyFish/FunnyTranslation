@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
@@ -28,6 +25,7 @@ import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
@@ -52,8 +50,6 @@ val LocalSnackbarState = staticCompositionLocalOf<SnackbarHostState> {
 val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
     error("Local ActivityVM has not been initialized! ")
 }
-
-const val NAV_ANIM_DURATION = 500
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -275,46 +271,6 @@ fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = fa
         launchSingleTop = true
         //切换状态的时候保存页面状态
         restoreState = true
-    }
-}
-
-fun NavGraphBuilder.animateComposable(
-    route: String,
-    animDuration: Int = NAV_ANIM_DURATION,
-    arguments: List<NamedNavArgument> = emptyList(),
-    deepLinks: List<NavDeepLink> = emptyList(),
-    content: @Composable AnimatedVisibilityScope.(NavBackStackEntry) -> Unit
-) {
-    composable(
-        route,
-        arguments = arguments,
-        deepLinks = deepLinks,
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(animDuration)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(animDuration)
-            )
-        },
-        popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(animDuration)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(animDuration)
-            )
-        }
-    ) {
-        content(it)
     }
 }
 

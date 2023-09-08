@@ -35,8 +35,8 @@ fun InputUsername(
         value = username,
         onValueChange = updateUsername,
         isError = username != "" && !isValidUsername,
-        label = { Text(text = "用户名") },
-        placeholder = { Text("3-16位，无特殊符号") },
+        label = { Text(text = stringResource(R.string.username)) },
+        placeholder = { Text(stringResource(R.string.username_rule)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -48,8 +48,7 @@ fun InputUsername(
 @Composable
 fun InputPassword(
     passwordProvider: () -> String,
-    updatePassword: (String) -> Unit,
-    readonly: Boolean
+    updatePassword: (String) -> Unit
 ) {
     val password = passwordProvider()
     val isPwdError by remember {
@@ -60,10 +59,9 @@ fun InputPassword(
         onValueChange = updatePassword,
         enabled = true,
         placeholder = {
-            Text(text = "长度8-16位，包含大小写字母和数字")
+            Text(text = stringResource(R.string.password_rule))
         },
-        label = { Text(text = "密码") },
-        readOnly = readonly,
+        label = { Text(text = stringResource(R.string.password)) },
         isError = isPwdError,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,

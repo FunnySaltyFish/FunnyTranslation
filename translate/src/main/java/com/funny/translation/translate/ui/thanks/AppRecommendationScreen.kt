@@ -20,8 +20,8 @@ import coil.compose.SubcomposeAsyncImage
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.jetsetting.core.ui.throttleClick
+import com.funny.translation.helper.NAV_ANIM_DURATION
 import com.funny.translation.helper.openUrl
-import com.funny.translation.translate.NAV_ANIM_DURATION
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.RecommendApp
 import com.funny.translation.translate.network.TransNetwork

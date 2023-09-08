@@ -12,11 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.toastOnUi
@@ -62,8 +64,7 @@ fun ResetPasswordPage(
             Spacer(modifier = Modifier.height(8.dp))
             InputPassword(
                 passwordProvider = vm::password,
-                updatePassword = vm::updatePassword,
-                readonly = false
+                updatePassword = vm::updatePassword
             )
             // 重复密码
             var repeatPassword by remember { mutableStateOf("") }
@@ -77,7 +78,7 @@ fun ResetPasswordPage(
                 onValueChange = { repeatPassword = it },
                 modifier = Modifier.fillMaxWidth(),
                 isError = isRepeatPwdError,
-                label = { Text("重复密码") },
+                label = { Text(stringResource(R.string.repeat_password)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
@@ -99,7 +100,7 @@ fun ResetPasswordPage(
                     navController.popBackStack()
                 })
             }, enabled = enable) {
-                Text(text = "重置密码")
+                Text(text = stringResource(R.string.reset_password))
             }
         }
     }
