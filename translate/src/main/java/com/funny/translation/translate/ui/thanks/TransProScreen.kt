@@ -98,14 +98,15 @@ fun TransProScreen(){
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold
             ),
-            enterAnimDuration = 1500,
-            showTextDuration = 2000
+            enterAnimDuration = 1000,
+            showTextDuration = 1000,
+            exitAnimDuration = 300
         ) {
             TransProContent()
         }
         DisposableEffect(key1 = Unit) {
             onDispose {
-                showAnim = false
+//                showAnim = false
             }
         }
     } else {

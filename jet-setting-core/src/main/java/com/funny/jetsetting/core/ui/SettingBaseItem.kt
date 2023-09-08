@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// https://github.com/re-ovo/compose-setting
+// modified from https://github.com/re-ovo/compose-setting
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +32,8 @@ internal fun SettingBaseItem(
     action: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
-    val throttleHandler = rememberSaveable(300, saver = ThrottleHandler.Saver) { ThrottleHandler(1000) }
+    val throttleHandler =
+        rememberSaveable(300, saver = ThrottleHandler.Saver) { ThrottleHandler(1000) }
     Surface(
         onClick = {
             throttleHandler.process(onClick)
@@ -56,14 +57,19 @@ internal fun SettingBaseItem(
             ) {
                 ProvideTextStyle(
                     MaterialTheme.typography.titleLarge.copy(
-                        fontSize = 16.sp, fontWeight = FontWeight.W500
+                        fontSize = 16.sp, fontWeight = FontWeight.Normal
                     )
                 ) {
                     title()
                 }
-                ProvideTextStyle(MaterialTheme.typography.bodySmall.copy(
-                    fontSize = 14.sp, lineHeight = 16.sp, fontWeight = FontWeight.W300, color = LocalContentColor.current.copy(alpha = 0.8f)
-                )) {
+                ProvideTextStyle(
+                    MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 14.sp,
+                        lineHeight = 16.sp,
+                        fontWeight = FontWeight.Light,
+                        color = LocalContentColor.current.copy(alpha = 0.8f)
+                    )
+                ) {
                     text?.invoke()
                 }
             }
