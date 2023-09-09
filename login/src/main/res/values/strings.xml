@@ -10,7 +10,7 @@
     <string name="cancel_account_tip">请注意，您正在尝试注销您的账户。一旦注销完成，该账户将无法再使用，并且**无法撤销**。谨慎操作，确保您已备份、转移或保存了与该账户相关的所有重要资料和数据。如果您确认要注销，请继续进行操作。如有任何疑问，请随时联系我们！</string>
     <string name="tip_confirm_privacy_first">请先同意隐私政策和用户协议！</string>
     <string name="tip_agree_privacy">我已阅读并同意[隐私政策](https://api.funnysaltyfish.fun/trans/v1/api/privacy)和[用户协议](https://api.funnysaltyfish.fun/trans/v1/api/user_agreement)</string>
-    <string name="error_sending_email">邮件发送失败！</string>
+    <string name="error_sending_email">邮件发送失败，请稍后再试！</string>
     <string name="fingerprint_not_support">您的安卓版本过低，不支持指纹认证！将使用密码认证~</string>
     <string name="validate_fingerprint">验证指纹</string>
     <string name="login_success">登录成功！</string>
@@ -38,4 +38,11 @@
     <string name="verify_code">验证码</string>
     <string name="please_input_verify_code">请输入收到的验证码</string>
     <string name="get_verify_code">获取验证码</string>
+    <string name="error_verify_email">发送验证码失败，未知错误！</string>
+    <string name="change_to_fingerprint">切换为指纹</string>
+    <string name="change_to_password">切换为密码</string>
+    <string name="login_failed_empty_result">登录失败，返回的用户信息为空！</string>
+    <string name="login_failed_unknown_err">登录失败，未知错误！</string>
+    <string name="different_fingerprint">当前用户名与设置指纹时用户名不同，请重新设置指纹</string>
+    <string name="reset_password_failed">重置密码失败，未知错误！</string>
 </resources>

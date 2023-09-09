@@ -37,5 +37,12 @@
     <string name="please_input_validate_email">Please enter a valid mainstream email</string>
     <string name="verify_code">Verification Code</string>
     <string name="please_input_verify_code">Please enter the received verification code</string>
-    <string name="get_verify_code">Get Verification Code</string>
+    <string name="get_verify_code">Send</string>
+    <string name="error_verify_email">Failed to send verification code, unknown error!</string>
+    <string name="change_to_fingerprint">Switch to Fingerprint</string>
+    <string name="change_to_password">Switch to Password</string>
+    <string name="login_failed_empty_result">Login failed, user information returned is empty!</string>
+    <string name="login_failed_unknown_err">Login failed, unknown error!</string>
+    <string name="different_fingerprint">The current username is different from the username set when setting up fingerprint authentication. Please set up fingerprint authentication again.</string>
+    <string name="reset_password_failed">Failed to reset password, unknown error!</string>
 </resources>

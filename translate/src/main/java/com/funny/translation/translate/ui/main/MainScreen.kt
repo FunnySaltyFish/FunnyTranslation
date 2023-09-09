@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,7 +29,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
-import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.api
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
@@ -355,20 +354,15 @@ private fun Drawer(
 
     // 刷新用户信息
     var refreshing by remember { mutableStateOf(false) }
-    val context = LocalContext.current
     val state = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             refreshing = true
             val user = AppConfig.userInfo.value
             if (user.isValid()){
-                try {
-                    UserUtils.getUserInfo(user.uid)?.let {
-                        AppConfig.userInfo.value = it
-                        context.toastOnUi("更新用户信息成功~")
+                api(UserUtils.userService::getInfo, user.uid) {
+                    addSuccess {
+                        it.data?.let {  user -> AppConfig.login(user) }
                     }
-                }catch (e: Exception){
-                    e.printStackTrace()
-                    context.toastOnUi("更新用户信息失败！")
                 }
             }
             delay(100) // 组件bug：时间过短，收不回去

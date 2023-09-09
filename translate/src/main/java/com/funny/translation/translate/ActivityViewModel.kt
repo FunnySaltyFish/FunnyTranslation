@@ -12,9 +12,9 @@ import androidx.lifecycle.viewModelScope
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.UserUtils
-import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
+import com.funny.translation.network.api
 import com.funny.translation.translate.bean.NoticeInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -47,13 +47,10 @@ class ActivityViewModel : ViewModel(), LifecycleEventObserver {
     fun refreshUserInfo() {
         if (userInfo.isValid()) {
             viewModelScope.launch {
-                kotlin.runCatching {
-                    UserUtils.getUserInfo(userInfo.uid)?.let {
-                        AppConfig.login(it)
+                api(UserUtils.userService::getInfo, uid) {
+                    success {
+                        it.data?.let {  user -> AppConfig.login(user) }
                     }
-                }.onFailure {
-                    appCtx.toastOnUi("刷新用户信息失败~")
-                    it.printStackTrace()
                 }
             }
         }

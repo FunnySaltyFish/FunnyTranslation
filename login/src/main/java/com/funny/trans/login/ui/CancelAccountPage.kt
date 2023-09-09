@@ -70,12 +70,12 @@ fun CancelAccountPage(
                 }
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                vm.cancelAccount(context, onSuccess = {
+                vm.cancelAccount {
                     context.toastOnUi("账号注销成功")
                     AppConfig.logout()
                     navController.popBackStack() // 账号详情
                     navController.popBackStack() // 主页
-                })
+                }
             }, enabled = enable) {
                 Text(text = "确认注销")
             }

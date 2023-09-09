@@ -12,6 +12,7 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.helper.biomertic.*
 import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.network.ServiceCreator
+import com.funny.translation.network.api
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -155,10 +156,8 @@ object BiometricUtils {
 
         if (ciphertextWrapper == null) {
             scope.launch(Dispatchers.IO) {
-                val email = kotlin.runCatching { UserUtils.getUserEmail(username) }.onFailure {
-                    it.printStackTrace()
-                }.getOrDefault("")
-                if (email == ""){
+                val email = api(UserUtils.userService::getUserEmail, username)
+                if (email == null || email == ""){
                     activity.toastOnUi("您似乎没有注册过，请先注册账号吧~")
                     return@launch
                 }

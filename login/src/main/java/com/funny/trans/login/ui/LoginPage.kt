@@ -40,6 +40,7 @@ import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.api
 import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -181,14 +182,14 @@ private fun LoginForm(
     ) {
         InputUsernameWrapper(
             vm,
-            if (vm.passwordType == PASSWORD_TYPE_PASSWORD) ImeAction.Done else ImeAction.Next
+            if (vm.passwordType == PASSWORD_TYPE_FINGERPRINT) ImeAction.Done else ImeAction.Next
         )
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.shouldVerifyEmailWhenLogin) {
             InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm, initialSent = true)
             Spacer(modifier = Modifier.height(12.dp))
         }
-        if (vm.passwordType == PASSWORD_TYPE_FINGERPRINT) {
+        if (vm.passwordType == PASSWORD_TYPE_PASSWORD) {
             InputPasswordWrapper(vm = vm)
         } else CompletableButton(
             onClick = {
@@ -213,8 +214,7 @@ private fun LoginForm(
                                         vm.shouldVerifyEmailWhenLogin = true
                                         vm.email = email
                                         BiometricUtils.uploadFingerPrint(username = vm.username)
-                                        UserUtils.sendVerifyEmail(vm.username, email)
-                                        context.toastOnUi("邮件发送成功，请注意查收！")
+                                        api(UserUtils.userService::sendVerifyEmail, vm.username, email)
                                     }
                                 } catch (e: Exception) {
                                     context.toastOnUi(R.string.error_sending_email)
@@ -222,7 +222,7 @@ private fun LoginForm(
                             }
                         },
                         onUsePassword = {
-                            vm.passwordType = PASSWORD_TYPE_FINGERPRINT
+                            vm.passwordType = PASSWORD_TYPE_PASSWORD
                             vm.password = ""
                         }
                     )
@@ -231,7 +231,7 @@ private fun LoginForm(
                         R.string.fingerprint_not_support,
                         Toast.LENGTH_LONG
                     )
-                    vm.passwordType = PASSWORD_TYPE_FINGERPRINT
+                    vm.passwordType = PASSWORD_TYPE_PASSWORD
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -252,11 +252,8 @@ private fun LoginForm(
                     vm.isValidUsername && vm.finishValidateFingerPrint && vm.isValidEmail && vm.verifyCode.length == 6
                 } else {
                     when (vm.passwordType) {
-                        PASSWORD_TYPE_PASSWORD -> vm.isValidUsername && vm.finishValidateFingerPrint
-                        PASSWORD_TYPE_FINGERPRINT -> vm.isValidUsername && UserUtils.isValidPassword(
-                            vm.password
-                        )
-
+                        PASSWORD_TYPE_FINGERPRINT -> vm.isValidUsername && vm.finishValidateFingerPrint
+                        PASSWORD_TYPE_PASSWORD -> vm.isValidUsername && UserUtils.isValidPassword(vm.password)
                         else -> false
                     }
                 }
@@ -340,7 +337,7 @@ private fun RegisterForm(
         Spacer(modifier = Modifier.height(8.dp))
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
         Spacer(modifier = Modifier.height(12.dp))
-        if (vm.passwordType == PASSWORD_TYPE_FINGERPRINT) {
+        if (vm.passwordType == PASSWORD_TYPE_PASSWORD) {
             InputPasswordWrapper(vm = vm)
             Spacer(modifier = Modifier.height(8.dp))
         } else {
@@ -366,7 +363,7 @@ private fun RegisterForm(
                                     errorMsg
                                 )) },
                             onUsePassword = {
-                                vm.passwordType = PASSWORD_TYPE_FINGERPRINT
+                                vm.passwordType = PASSWORD_TYPE_PASSWORD
                                 vm.password = ""
                             }
                         )
@@ -375,7 +372,7 @@ private fun RegisterForm(
                             string(R.string.fingerprint_not_support),
                             Toast.LENGTH_LONG
                         )
-                        vm.passwordType = PASSWORD_TYPE_FINGERPRINT
+                        vm.passwordType = PASSWORD_TYPE_PASSWORD
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -391,12 +388,10 @@ private fun RegisterForm(
         Spacer(modifier = Modifier.height(12.dp))
         val enableRegister by remember {
             derivedStateOf {
-                if (vm.passwordType == PASSWORD_TYPE_PASSWORD)
+                if (vm.passwordType == PASSWORD_TYPE_FINGERPRINT)
                     vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && vm.finishSetFingerPrint
                 else
-                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(
-                        vm.password
-                    )
+                    vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(vm.password)
             }
         }
         Button(
@@ -428,18 +423,18 @@ private fun ExchangePasswordType(
     passwordType: String,
     updatePasswordType: (String) -> Unit
 ) {
-    if (passwordType == PASSWORD_TYPE_FINGERPRINT && !AppConfig.lowerThanM) {
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            modifier = Modifier.clickable { updatePasswordType(PASSWORD_TYPE_PASSWORD) },
-            text = "切换为指纹",
-            style = MaterialTheme.typography.labelSmall
-        )
-    } else if (passwordType == PASSWORD_TYPE_PASSWORD) {
+    if (passwordType == PASSWORD_TYPE_PASSWORD && !AppConfig.lowerThanM) {
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             modifier = Modifier.clickable { updatePasswordType(PASSWORD_TYPE_FINGERPRINT) },
-            text = "切换为密码",
+            text = stringResource(R.string.change_to_fingerprint),
+            style = MaterialTheme.typography.labelSmall
+        )
+    } else if (passwordType == PASSWORD_TYPE_FINGERPRINT) {
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            modifier = Modifier.clickable { updatePasswordType(PASSWORD_TYPE_PASSWORD) },
+            text = stringResource(R.string.change_to_password),
             style = MaterialTheme.typography.labelSmall
         )
     }

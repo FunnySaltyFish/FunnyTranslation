@@ -51,11 +51,11 @@ fun FindUsernamePage() {
                 mutableStateListOf<String>()
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                vm.findUsername(context, onSuccess = {
+                vm.findUsername {
                     usernameList.clear()
                     usernameList.addAll(it)
                     context.toastOnUi(string(R.string.find_account_amount, it.size))
-                })
+                }
             }, enabled = enable) {
                 Text(text = stringResource(R.string.query_related_account))
             }

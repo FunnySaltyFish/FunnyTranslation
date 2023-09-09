@@ -18,4 +18,6 @@
     <string name="confirm">确认</string>
     <string name="language_spanish">西班牙语</string>
     <string name="follow_system">跟随系统</string>
+    <string name="unknown_error">未知错误</string>
+    <string name="failed_unknown_err">失败，未知错误！</string>
 </resources>

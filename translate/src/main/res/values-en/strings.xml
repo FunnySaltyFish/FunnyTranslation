@@ -168,4 +168,7 @@
     <string name="build_type">Build Type:</string>
     <string name="history">History</string>
     <string name="no_history">No history yet, do translating first</string>
+    <string name="logout">Logout</string>
+    <string name="join_group_tip_p1">Other functions are under development, you can join the beta testing group</string>
+    <string name="join_group_tip_p2">to get early access to new features</string>
 </resources>

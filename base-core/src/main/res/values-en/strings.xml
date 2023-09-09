@@ -18,4 +18,6 @@
     <string name="confirm">Confirm</string>
     <string name="language_spanish">Spanish</string>
     <string name="follow_system">Follow System</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="failed_unknown_err"> failed, unknown error!</string>
 </resources>

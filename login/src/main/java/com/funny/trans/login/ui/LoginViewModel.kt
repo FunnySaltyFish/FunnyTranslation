@@ -8,12 +8,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.SignUpException
 import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.displayMsg
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.api
 import kotlinx.coroutines.launch
 
 const val PASSWORD_TYPE_FINGERPRINT = "1"
@@ -40,8 +44,7 @@ class LoginViewModel : ViewModel() {
     var encryptedInfo = ""
     var iv = ""
 
-    val loginData
-        get() = username + "@" + AppConfig.androidId
+    private val userService = UserUtils.userService
 
     private fun clear(){
         email = ""
@@ -66,11 +69,11 @@ class LoginViewModel : ViewModel() {
                 if (userBean != null) {
                     onSuccess(userBean)
                 }else{
-                    onError("登录失败，返回的用户信息为空！")
+                    onError(string(R.string.login_failed_empty_result))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "登录失败，未知错误！")
+                onError(e.displayMsg(string(R.string.login)))
             }
         }
     }
@@ -83,7 +86,7 @@ class LoginViewModel : ViewModel() {
             try {
                 if (passwordType == PASSWORD_TYPE_FINGERPRINT){
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
-                        throw SignUpException("当前用户名与设置指纹时用户名不同，请重新设置指纹")
+                        throw SignUpException(string(R.string.different_fingerprint))
                     UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")
                 } else {
                     UserUtils.register(username, password, passwordType, email, verifyCode, "")
@@ -92,7 +95,7 @@ class LoginViewModel : ViewModel() {
                 clear()
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "注册失败，未知错误！")
+                onError(e.displayMsg(string(R.string.register)))
             }
         }
 
@@ -100,90 +103,77 @@ class LoginViewModel : ViewModel() {
 
     fun sendVerifyEmail(context: Context){
         viewModelScope.launch {
-            try {
-                UserUtils.sendVerifyEmail(username, email)
-                context.toastOnUi("验证邮件已发送，请注意查收~")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            api(userService::sendVerifyEmail, username, email) {
+                error {
+                    context.toastOnUi(string(R.string.error_sending_email))
+                }
             }
         }
     }
 
     fun sendResetPasswordEmail(context: Context){
         viewModelScope.launch {
-            try {
-                UserUtils.sendResetPasswordEmail(username, email)
-                context.toastOnUi("重置密码邮件已发送，请注意查收~")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            api(userService::sendResetPasswordEmail, username, email) {
+                error {
+                    context.toastOnUi(string(R.string.error_sending_email))
+                }
             }
         }
     }
 
     fun sendFindUsernameEmail(context: Context){
         viewModelScope.launch {
-            try {
-                UserUtils.sendFindUsernameEmail(email)
-                context.toastOnUi("找回用户名邮件已发送，请注意查收~")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            api(userService::sendFindUsernameEmail, email) {
+                error {
+                    context.toastOnUi(string(R.string.error_sending_email))
+                }
             }
         }
     }
 
     fun sendCancelAccountEmail(context: Context){
         viewModelScope.launch {
-            try {
-                UserUtils.sendCancelAccountEmail(username, email)
-                context.toastOnUi("注销账号邮件已发送，请注意查收~")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi("发送失败，请稍后再试~（${e.message}）")
+            api(userService::sendCancelAccountEmail, username, email) {
+                error {
+                    context.toastOnUi(string(R.string.error_sending_email))
+                }
             }
         }
     }
 
     fun resetPassword(context: Context, onSuccess: () -> Unit){
         viewModelScope.launch {
-            try {
-                UserUtils.resetPassword(username, password, verifyCode)
-                onSuccess()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi(e.message ?: "重置密码失败，未知错误！")
+            api(userService::resetPassword, username, password, verifyCode) {
+                error {
+                    context.toastOnUi(string(R.string.reset_password_failed))
+                }
+                success {
+                    onSuccess()
+                }
             }
         }
     }
 
-    fun findUsername(context: Context, onSuccess: (List<String>) -> Unit){
+    fun findUsername(onSuccess: (List<String>) -> Unit){
         viewModelScope.launch {
-            try {
-                val username = UserUtils.findUsername(email, verifyCode)
-                onSuccess(username ?: emptyList())
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi(e.message ?: "找回用户名失败，未知错误！")
+            api(userService::findUsername, email, verifyCode) {
+                success {
+                    onSuccess(it.data ?: emptyList())
+                }
             }
         }
     }
 
-    fun cancelAccount(context: Context, onSuccess: () -> Unit){
+    fun cancelAccount(onSuccess: () -> Unit){
         viewModelScope.launch {
-            try {
-                UserUtils.cancelAccount(verifyCode)
-                onSuccess()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.toastOnUi(e.message ?: "注销账号失败，未知错误！")
+            api(userService::cancelAccount, verifyCode) {
+                success {
+                    onSuccess()
+                }
             }
         }
     }
 
     fun updateUsername(s: String) { username = s }
     fun updatePassword(s: String) { password = s }
-
-
 }

@@ -18,7 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,7 +27,7 @@ import androidx.navigation.NavController
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.UserUtils
-import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.api
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -43,7 +42,6 @@ fun ChangeUsernamePage(navController: NavController) {
         val canChangeUsername by remember { derivedStateOf { user.canChangeUsername() } }
         val nextChangeUsernameString = remember(user) { user.nextChangeUsernameTimeStr() }
         val scope = rememberCoroutineScope()
-        val context = LocalContext.current
         Column(Modifier.fillMaxWidth(WIDTH_FRACTION), horizontalAlignment = Alignment.CenterHorizontally) {
             InputUsername(
                 usernameProvider = { username },
@@ -54,14 +52,11 @@ fun ChangeUsernamePage(navController: NavController) {
             if (canChangeUsername) {
                 Button(onClick = {
                     scope.launch {
-                        try {
-                            UserUtils.changeUsername(user.uid, username)
-                            context.toastOnUi("修改用户名成功")
-                            AppConfig.userInfo.value = user.copy(username = username, lastChangeUsernameTime = Date())
-                            navController.popBackStack()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            context.toastOnUi(e.message)
+                        api(UserUtils.userService::changeUsername, user.uid, username) {
+                            addSuccess {
+                                AppConfig.userInfo.value = user.copy(username = username, lastChangeUsernameTime = Date())
+                                navController.popBackStack()
+                            }
                         }
                     }
                 }) {

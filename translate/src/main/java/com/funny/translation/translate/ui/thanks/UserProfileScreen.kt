@@ -64,6 +64,7 @@ import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.animateComposable
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
@@ -201,12 +202,12 @@ fun UserProfileSettings(navHostController: NavHostController) {
             AppConfig.logout()
             navHostController.popBackStack()
         }) {
-            Text(text = "退出登录")
+            Text(text = stringResource(R.string.logout))
         }
 
         val text = remember {
             buildAnnotatedString {
-                append("其他功能开发中，可以加入内测群")
+                append(string(R.string.join_group_tip_p1))
                 pushStringAnnotation(
                     tag = "url",
                     annotation = "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D"
@@ -215,7 +216,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
                     append(" 857362450 ")
                 }
                 pop()
-                append("抢先体验开发中功能")
+                append(string(R.string.join_group_tip_p2))
             }
         }
         ClickableText(

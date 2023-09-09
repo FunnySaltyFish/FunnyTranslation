@@ -168,4 +168,7 @@
     <string name="build_type">构建类型：</string>
     <string name="history">历史记录</string>
     <string name="no_history">暂无历史记录</string>
+    <string name="logout">退出登录</string>
+    <string name="join_group_tip_p1">其他功能开发中，可以加入内测群</string>
+    <string name="join_group_tip_p2">抢先体验开发中功能</string>
 </resources>

@@ -4,11 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.network.CommonData
 import com.funny.translation.network.ServiceCreator
+import com.funny.translation.network.api
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
@@ -19,7 +19,6 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface UserService {
-
     @POST("user/verify_email")
     @FormUrlEncoded
     suspend fun verifyEmail(
@@ -137,11 +136,6 @@ interface UserService {
     ): CommonData<Unit>
 
     // cancelUser
-    /**
-     * uid = int(request.form.get("uid", -1))
-       verify_code = int(request.form.get("verify_code", ""))
-       email = get_user_email(uid)
-     */
     @POST("user/cancel_account")
     @FormUrlEncoded
     suspend fun cancelAccount(
@@ -155,7 +149,7 @@ object UserUtils {
     // 头像最高尺寸
     private const val TARGET_AVATAR_SIZE = 256
 
-    private val userService by lazy(LazyThreadSafetyMode.PUBLICATION){
+    val userService by lazy(LazyThreadSafetyMode.PUBLICATION){
         ServiceCreator.create(UserService::class.java)
     }
 
@@ -195,108 +189,33 @@ object UserUtils {
         username: String,
         // 密码格式： did#encrypted_info#iv
         password: String,
-        password_type: String,
+        passwordType: String,
         email: String,
         verifyCode: String
-    ) = withContext(Dispatchers.IO){
-        val loginData = userService.login(username, password, password_type, email, "", verifyCode, AppConfig.androidId)
-        if (loginData.code != 50) {
-            throw SignInException(loginData.error_msg ?: "未知错误")
+    ) = api(userService::login, username, password, passwordType, email, "", verifyCode, AppConfig.androidId) {
+        fail {
+            throw SignInException(it.displayErrorMsg)
         }
-        return@withContext loginData.data
     }
 
     suspend fun register(
         username: String,
         password: String,
-        password_type: String,
+        passwordType: String,
         email: String,
         verifyCode: String,
         phone: String
     ) = withContext(Dispatchers.IO){
-        val verifyData = userService.verifyEmail(email, verifyCode)
-        if (verifyData.code != 50) {
-            throw SignUpException("邮箱验证码错误")
-        }
-
-        val registerData = userService.register(username, password, password_type, email, phone)
-        if (registerData.code != 50) {
-            throw SignUpException(registerData.error_msg ?: "未知错误")
-        }
-        return@withContext registerData.data
-    }
-
-    suspend fun sendVerifyEmail(username: String, email: String) = withContext(Dispatchers.IO){
-        val sendData = userService.sendVerifyEmail(username, email)
-        if (sendData.code != 50) {
-            throw Exception("发送验证码失败！（${sendData.error_msg}）")
-        }
-    }
-
-    suspend fun sendResetPasswordEmail(username: String, email: String) = withContext(Dispatchers.IO){
-        val sendData = userService.sendResetPasswordEmail(username, email)
-        if (sendData.code != 50) {
-            throw Exception("发送验证码失败！（${sendData.error_msg}）")
-        }
-    }
-
-    suspend fun sendFindUsernameEmail(email: String) = withContext(Dispatchers.IO){
-        val sendData = userService.sendFindUsernameEmail(email)
-        if (sendData.code != 50) {
-            throw Exception("发送验证码失败！（${sendData.error_msg}）")
-        }
-    }
-
-    // cancelAccountEmail
-    suspend fun sendCancelAccountEmail(username: String, email: String) = withContext(Dispatchers.IO){
-        val sendData = userService.sendCancelAccountEmail(username, email)
-        if (sendData.code != 50) {
-            throw Exception("发送验证码失败！（${sendData.error_msg}）")
-        }
-    }
-
-    // changeUsername
-    suspend fun changeUsername(uid: Int, newUsername: String) = withContext(Dispatchers.IO){
-        val changeData = userService.changeUsername(uid, newUsername)
-        if (changeData.code != 50) {
-            throw Exception("修改用户名失败！（${changeData.error_msg}）")
-        }
-    }
-
-    suspend fun getUserInfo(uid: Int) = withContext(Dispatchers.IO){
-        if (uid < 0) return@withContext null
-        val userInfoData = userService.getInfo(uid)
-        if (userInfoData.code != 50){
-            throw Exception("获取用户信息失败")
-        }
-        userInfoData.data
-//        UserBean(username = "FunnySaltyFish", uid = 1, avatar_url = "https://img2.woyaogexing.com/2022/08/27/667cc0590584fd54!400x400.jpg", email = "", password = "", phone = "")
-    }
-
-    suspend fun getUserEmail(username: String) = withContext(Dispatchers.IO){
-        if (username == "") return@withContext ""
-        val userInfoData = userService.getUserEmail(username)
-        if (userInfoData.code != 50){
-            throw Exception(userInfoData.error_msg ?: "获取用户邮箱失败")
-        }
-        userInfoData.data ?: ""
-//        UserBean(username = "FunnySaltyFish", uid = 1, avatar_url = "https://img2.woyaogexing.com/2022/08/27/667cc0590584fd54!400x400.jpg", email = "", password = "", phone = "")
-    }
-
-    // 依据uid刷新JWT Token，并保存到本地
-    // 错误会在内部捕获
-    suspend fun refreshJwtToken() = withContext(Dispatchers.IO){
-        val uid = AppConfig.uid
-        if (uid < 0) return@withContext
-        try {
-            val data = userService.refreshToken(uid)
-            if (data.code == 50) {
-                AppConfig.updateJwtToken(data.data ?: "")
-                Log.i(TAG, "refreshJwtToken: 刷新Token成功")
+        api(userService::verifyEmail, email, verifyCode) {
+            fail {
+                throw SignUpException(it.displayErrorMsg)
             }
-        }catch (e: Exception){
-            e.printStackTrace()
-            Log.e(TAG, "refreshJwtToken: 失败")
+        }
+
+        return@withContext api(userService::register, username, password, passwordType, email, phone) {
+            fail {
+                throw SignUpException(it.displayErrorMsg)
+            }
         }
     }
 
@@ -329,31 +248,6 @@ object UserUtils {
             }
         }
         return ""
-    }
-
-    suspend fun resetPassword(username: String, password: String, verifyCode: String) = withContext(Dispatchers.IO){
-        val resetData = userService.resetPassword(username, password, verifyCode)
-        if (resetData.code != 50) {
-            throw Exception(resetData.error_msg ?: "未知错误")
-        }
-        return@withContext resetData.data
-    }
-
-    suspend fun findUsername(email: String, verifyCode: String) = withContext(Dispatchers.IO){
-        val findData = userService.findUsername(email, verifyCode)
-        if (findData.code != 50) {
-            throw Exception(findData.error_msg ?: "未知错误")
-        }
-        return@withContext findData.data
-    }
-
-    // cancelAccount
-    suspend fun cancelAccount(verifyCode: String) = withContext(Dispatchers.IO){
-        val cancelData = userService.cancelAccount(verifyCode)
-        if (cancelData.code != 50) {
-            throw Exception(cancelData.error_msg ?: "未知错误")
-        }
-        return@withContext cancelData.data
     }
 }
 
