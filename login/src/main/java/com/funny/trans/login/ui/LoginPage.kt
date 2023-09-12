@@ -267,11 +267,9 @@ private fun LoginForm(
                 }
                 vm.login(
                     onSuccess = {
-                        context.toastOnUi(R.string.login_success)
                         onLoginSuccess(it)
                     },
                     onError = { msg ->
-                        context.toastOnUi(string(R.string.login_failed, msg))
                     }
                 )
             },
@@ -336,6 +334,20 @@ private fun RegisterForm(
         InputUsernameWrapper(vm)
         Spacer(modifier = Modifier.height(8.dp))
         InputEmailWrapper(modifier = Modifier.fillMaxWidth(), vm = vm)
+        // 邀请码
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = vm.inviteCode,
+            onValueChange = { vm.inviteCode = it },
+            isError = vm.inviteCode != "" && !vm.isValidInviteCode,
+            label = { Text(text = stringResource(R.string.invite_code)) },
+            placeholder = { Text(stringResource(R.string.please_input_invite_code)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
+        )
         Spacer(modifier = Modifier.height(12.dp))
         if (vm.passwordType == PASSWORD_TYPE_PASSWORD) {
             InputPasswordWrapper(vm = vm)
@@ -401,10 +413,7 @@ private fun RegisterForm(
                     return@Button
                 }
                 vm.register(
-                    onSuccess = {
-                        context.toastOnUi(string(R.string.register_success))
-                        onRegisterSuccess()
-                    },
+                    onSuccess = onRegisterSuccess,
                     onError = { msg ->
                         context.toastOnUi(string(R.string.register_failed_with_msg, msg))
                     }
@@ -486,7 +495,7 @@ fun InputEmail(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { onValueChange(it.lowercase()) },
             isError = isError,
             label = { Text(text = stringResource(R.string.Email)) },
             placeholder = { Text(stringResource(R.string.please_input_validate_email)) },
@@ -506,11 +515,14 @@ fun InputEmail(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
+        val isVerifyCodeError by remember(verifyCode) {
+            derivedStateOf { verifyCode != "" && verifyCode.length != 6 }
+        }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = verifyCode,
             onValueChange = onVerifyCodeChange,
-            isError = false,
+            isError = isVerifyCodeError,
             label = { Text(text = stringResource(R.string.verify_code)) },
             placeholder = { Text(stringResource(R.string.please_input_verify_code)) },
             singleLine = true,

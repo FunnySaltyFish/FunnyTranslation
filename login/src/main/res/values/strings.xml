@@ -45,4 +45,6 @@
     <string name="login_failed_unknown_err">登录失败，未知错误！</string>
     <string name="different_fingerprint">当前用户名与设置指纹时用户名不同，请重新设置指纹</string>
     <string name="reset_password_failed">重置密码失败，未知错误！</string>
+    <string name="invite_code">邀请码</string>
+    <string name="please_input_invite_code">选填，受邀成功后双方均可获得会员天数</string>
 </resources>

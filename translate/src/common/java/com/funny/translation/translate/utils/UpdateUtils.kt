@@ -5,6 +5,7 @@ import android.util.Log
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.Consts
+import com.funny.translation.helper.ApplicationUtil
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.externalCache
 import com.funny.translation.translate.FunnyApplication

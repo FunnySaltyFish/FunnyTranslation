@@ -45,4 +45,6 @@
     <string name="login_failed_unknown_err">Login failed, unknown error!</string>
     <string name="different_fingerprint">The current username is different from the username set when setting up fingerprint authentication. Please set up fingerprint authentication again.</string>
     <string name="reset_password_failed">Failed to reset password, unknown error!</string>
+    <string name="invite_code">Invitation Code</string>
+    <string name="please_input_invite_code">Optional, both parties can receive VIP if success</string>
 </resources>

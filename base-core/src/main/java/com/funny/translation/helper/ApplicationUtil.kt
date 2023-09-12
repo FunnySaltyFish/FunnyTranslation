@@ -1,10 +1,10 @@
-package com.funny.translation.translate.utils
+package com.funny.translation.helper
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 
 object ApplicationUtil {
     /**
@@ -41,6 +41,13 @@ object ApplicationUtil {
             e.printStackTrace()
         }
         return appVersionName
+    }
+
+    fun restartApp(context: Context) {
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+        intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        context.startActivity(intent)
+        android.os.Process.killProcess(android.os.Process.myPid())
     }
 
 }

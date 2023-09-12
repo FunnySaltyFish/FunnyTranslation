@@ -171,4 +171,11 @@
     <string name="logout">Logout</string>
     <string name="join_group_tip_p1">Other functions are under development, you can join the beta testing group</string>
     <string name="join_group_tip_p2">to get early access to new features</string>
+    <string name="my_description">Independent Android Developer</string>
+    <string name="generate_invite_code">Generate Invitation Code</string>
+    <string name="invite_code">Invitation Code</string>
+    <string name="invited_users">Invitation List</string>
+    <string name="ok">Close</string>
+    <string name="retry">Retry</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
 </resources>

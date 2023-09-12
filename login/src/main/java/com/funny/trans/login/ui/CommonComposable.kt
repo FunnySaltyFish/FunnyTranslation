@@ -51,7 +51,7 @@ fun InputPassword(
     updatePassword: (String) -> Unit
 ) {
     val password = passwordProvider()
-    val isPwdError by remember {
+    val isPwdError by remember(password) {
         derivedStateOf { password != "" && !UserUtils.isValidPassword(password) }
     }
     OutlinedTextField(modifier = Modifier.fillMaxWidth(),

@@ -9,6 +9,7 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.core.BuildConfig
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.LocaleUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.sign.SignUtils
 import com.ihsanbal.logging.Level
@@ -68,6 +69,7 @@ object OkHttpUtils {
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
                 builder.addHeader("App-Build-Type", BuildConfig.BUILD_TYPE)
                 builder.addHeader("App-Flavor", BuildConfig.FLAVOR)
+                builder.addHeader("Accept-Language", LocaleUtils.getAppLanguage().toLocale().language)
             }
 
 //            val invocation = request.tag(Invocation::class.java)

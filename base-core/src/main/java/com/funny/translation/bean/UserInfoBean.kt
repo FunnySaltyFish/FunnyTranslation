@@ -40,7 +40,9 @@ data class UserInfoBean(
     val vip_duration: Long = -1,
     val jwt_token: String = "",
     val img_remain_points: Float = 0.0f,
-    @Serializable(with = DateSerializerType1::class) val lastChangeUsernameTime: Date? = null
+    @Serializable(with = DateSerializerType1::class) val lastChangeUsernameTime: Date? = null,
+    val invite_code: String = "",
+    val inviter_uid: Int = -1,
 ){
     fun isValid() = uid >= 0 && jwt_token != ""
     fun isValidVip() =

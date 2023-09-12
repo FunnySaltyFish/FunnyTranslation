@@ -1,6 +1,5 @@
 package com.funny.translation.helper
 
-import com.funny.translation.js.bean.JsBean
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json

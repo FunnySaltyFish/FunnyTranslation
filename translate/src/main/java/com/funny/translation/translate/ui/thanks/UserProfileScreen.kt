@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -57,15 +59,18 @@ import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.coil.CoilPhotoProvider
 import coil.compose.AsyncImage
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.compose.loading.loadingList
+import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.trans.login.ui.LoginRoute
 import com.funny.trans.login.ui.addLoginRoutes
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
-import com.funny.translation.helper.SimpleAction
+import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.api
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
@@ -185,12 +190,33 @@ fun UserProfileSettings(navHostController: NavHostController) {
         Tile(text = stringResource(R.string.img_remaining_points)){
             Text(text = userInfo.img_remain_points.toString())
         }
-        val firstClickHandler = remember { FastClickHandler {
-            AppConfig.developerMode.value = true
-            context.toastOnUi(R.string.open_developer_mode)
-        }}
-        Tile(text = stringResource(R.string.vip_end_time), onClick = firstClickHandler){
+        Tile(text = stringResource(R.string.vip_end_time)){
             Text(text = userInfo.vipEndTimeStr())
+        }
+        Divider()
+        // 生成邀请码
+        Tile(text = stringResource(R.string.invite_code), onClick = {
+            if (userInfo.invite_code.isBlank()) {
+                scope.launch {
+                    api(UserUtils.userService::generateInviteCode) {
+                        addSuccess {
+                            AppConfig.userInfo.value = userInfo.copy(invite_code = it.data ?: "")
+                        }
+                    }
+                }
+            } else {
+                ClipBoardUtil.copy(context, userInfo.invite_code)
+                context.toastOnUi(R.string.copied_to_clipboard)
+            }
+        }) {
+            Text(userInfo.invite_code.ifEmpty { "点击生成" })
+        }
+        // 查询被邀请人
+        val (showInviteUserDialog, update) = remember { mutableStateOf(false) }
+        Tile(text = stringResource(R.string.invited_users), onClick = {
+            update(true)
+        }) {
+            InvitedUserAlertDialog(show = showInviteUserDialog, updateShow = update)
         }
         Divider()
         Tile(text = stringResource(R.string.disable_account), onClick = {
@@ -253,22 +279,43 @@ private fun Tile(
         Text(text = text)
         endIcon()
     }
-
 }
 
-
-private class FastClickHandler(val totalTimes: Int = 5, val durationInMills: Int = 2000, val action: SimpleAction): () -> Unit {
-    var firstClickTime = 0L
-    var times = 0
-    override fun invoke() {
-        if (firstClickTime == 0L) firstClickTime = System.currentTimeMillis()
-        times++
-        if (times == totalTimes) {
-            if (System.currentTimeMillis() - firstClickTime < durationInMills) action()
-            else {
-                firstClickTime = 0L
-            }
-            times = 0
-        }
+@Composable
+private fun InvitedUserAlertDialog(
+    show: Boolean,
+    updateShow: (Boolean) -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = { updateShow(false) },
+            title = {
+                Text(text = stringResource(id = R.string.invited_users))
+            },
+            text = {
+                val (state, retry) = rememberRetryableLoadingState(loader = ::loadInvitedUsers)
+                LazyColumn {
+                    loadingList(state, retry, key = { it.uid }) { item ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Uid: " + item.uid)
+                            Text(text = item.register_time)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = { updateShow(false) }) {
+                    Text(text = stringResource(R.string.ok))
+                }
+            },
+        )
     }
 }
+
+private suspend fun loadInvitedUsers() = api(UserUtils.userService::getInviteUsers) ?: emptyList()

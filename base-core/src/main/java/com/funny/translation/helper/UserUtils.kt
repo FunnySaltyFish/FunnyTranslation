@@ -9,14 +9,20 @@ import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.network.CommonData
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.network.api
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.funny.translation.network.apiNoCall
+import kotlinx.serialization.Serializable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+
+@Serializable
+data class InvitedUser(
+    val uid: Int,
+    val register_time: String
+)
 
 interface UserService {
     @POST("user/verify_email")
@@ -64,7 +70,8 @@ interface UserService {
         @Field("password") password: String,
         @Field("password_type") passwordType: String,
         @Field("email") email: String,
-        @Field("phone") phone: String
+        @Field("phone") phone: String,
+        @Field("invite_code") inviteCode: String
     ): CommonData<Unit>
 
     @POST("user/login")
@@ -142,6 +149,13 @@ interface UserService {
         @Field("verify_code") verifyCode: String,
     ): CommonData<Unit>
 
+    // generateInviteCode
+    @POST("user/generate_invite_code")
+    suspend fun generateInviteCode(): CommonData<String>
+
+    // getInviteUsers
+    @POST("user/get_invite_users")
+    suspend fun getInviteUsers(): CommonData<List<InvitedUser>>
 }
 
 object UserUtils {
@@ -176,6 +190,11 @@ object UserUtils {
         return "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d\\[\\]\\.#*]{8,16}\$".toRegex().matches(password)
     }
 
+    // 邀请码，8 位，字母加数字
+    fun isValidInviteCode(inviteCode: String): Boolean {
+        return "^[a-zA-Z0-9]{8}\$".toRegex().matches(inviteCode)
+    }
+
 
     /**
      * 注册
@@ -192,7 +211,7 @@ object UserUtils {
         passwordType: String,
         email: String,
         verifyCode: String
-    ) = api(userService::login, username, password, passwordType, email, "", verifyCode, AppConfig.androidId) {
+    ) = api(userService::login, username, password, passwordType, email, "", verifyCode, AppConfig.androidId, rethrowErr = true) {
         fail {
             throw SignInException(it.displayErrorMsg)
         }
@@ -204,15 +223,21 @@ object UserUtils {
         passwordType: String,
         email: String,
         verifyCode: String,
-        phone: String
-    ) = withContext(Dispatchers.IO){
-        api(userService::verifyEmail, email, verifyCode) {
+        phone: String,
+        inviteCode: String,
+        onSuccess: SimpleAction,
+    ): Unit? {
+        val checkEmail = apiNoCall(userService::verifyEmail, email, verifyCode) {
             fail {
                 throw SignUpException(it.displayErrorMsg)
             }
         }
+        checkEmail.call(true)
 
-        return@withContext api(userService::register, username, password, passwordType, email, phone) {
+        return api(userService::register, username, password, passwordType, email, phone, inviteCode, rethrowErr = true) {
+            addSuccess {
+                onSuccess()
+            }
             fail {
                 throw SignUpException(it.displayErrorMsg)
             }

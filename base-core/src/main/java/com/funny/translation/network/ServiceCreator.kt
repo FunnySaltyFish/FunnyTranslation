@@ -1,6 +1,8 @@
 package com.funny.translation.network
 
 import com.funny.translation.AppConfig
+import com.funny.translation.BaseApplication
+import com.funny.translation.helper.ApplicationUtil
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.JsonX
 import okhttp3.MediaType.Companion.toMediaType
@@ -29,12 +31,12 @@ object ServiceCreator {
     var BASE_URL = if (AppConfig.developerMode.value) DataSaverUtils.readData("BASE_URL", DEFAULT_BASE_URL) else DEFAULT_BASE_URL
         set(value) {
             if (!AppConfig.developerMode.value) return
-            retrofit = retrofit.newBuilder().baseUrl(value).build()
             field = value
+            DataSaverUtils.saveData("BASE_URL", value)
+            ApplicationUtil.restartApp(BaseApplication.ctx)
         }
 
-    private var retrofit = run {
-        val appName = "FunnyTranslation"
+    private val retrofit by lazy {
         val okHttpClient = OkHttpUtils.okHttpClient
         RetrofitBuild(
             url = BASE_URL,

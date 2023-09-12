@@ -28,9 +28,11 @@ class LoginViewModel : ViewModel() {
     var password by mutableStateOf("")
     var email by mutableStateOf("")
     var verifyCode by mutableStateOf("")
+    var inviteCode by mutableStateOf("")
 
     val isValidUsername by derivedStateOf { UserUtils.isValidUsername(username) }
     val isValidEmail by derivedStateOf { UserUtils.isValidEmail(email) }
+    val isValidInviteCode by derivedStateOf { UserUtils.isValidInviteCode(inviteCode) }
 
     var finishSetFingerPrint by mutableStateOf(false)
     var finishValidateFingerPrint by mutableStateOf(false)
@@ -82,17 +84,19 @@ class LoginViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ){
+        val successAction = {
+            onSuccess()
+            clear()
+        }
         viewModelScope.launch {
             try {
                 if (passwordType == PASSWORD_TYPE_FINGERPRINT){
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && BiometricUtils.tempSetUserName != username)
                         throw SignUpException(string(R.string.different_fingerprint))
-                    UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "")
+                    UserUtils.register(username, "${AppConfig.androidId}#$encryptedInfo#$iv", passwordType, email, verifyCode, "", inviteCode, successAction)
                 } else {
-                    UserUtils.register(username, password, passwordType, email, verifyCode, "")
+                    UserUtils.register(username, password, passwordType, email, verifyCode, "", inviteCode, successAction)
                 }
-                onSuccess()
-                clear()
             } catch (e: Exception) {
                 e.printStackTrace()
                 onError(e.displayMsg(string(R.string.register)))

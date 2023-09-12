@@ -1,6 +1,7 @@
 package com.funny.translation.translate.ui.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import com.funny.jetsetting.core.ui.SettingItemCategory
 import com.funny.translation.AppConfig
 import com.funny.translation.WebViewActivity
 import com.funny.translation.helper.openUrl
+import com.funny.translation.helper.rememberFastClickHandler
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.theme.isLight
 import com.funny.translation.translate.BuildConfig
@@ -71,9 +73,14 @@ fun AboutScreen() {
         SettingItemCategory(title = {
             Text(text = stringResource(id = R.string.developer))
         }) {
+            val fastClickHandler = rememberFastClickHandler {
+                AppConfig.developerMode.value = true
+                context.toastOnUi(R.string.open_developer_mode)
+            }
             LargeImageTile(
+                modifier = Modifier.clickable(onClick = fastClickHandler),
                 text = "FunnySaltyFish",
-                description = "独立 Android 开发者",
+                description = stringResource(R.string.my_description),
                 funnyIcon = FunnyIcon(resourceId = R.drawable.ic_developer_avatar)
             )
         }

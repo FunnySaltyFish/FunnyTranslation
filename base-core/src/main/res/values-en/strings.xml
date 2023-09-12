@@ -20,4 +20,5 @@
     <string name="follow_system">Follow System</string>
     <string name="unknown_error">Unknown error</string>
     <string name="failed_unknown_err"> failed, unknown error!</string>
+    <string name="retry">Retry</string>
 </resources>

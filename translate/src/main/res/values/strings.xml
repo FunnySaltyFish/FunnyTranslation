@@ -171,4 +171,11 @@
     <string name="logout">退出登录</string>
     <string name="join_group_tip_p1">其他功能开发中，可以加入内测群</string>
     <string name="join_group_tip_p2">抢先体验开发中功能</string>
+    <string name="my_description">独立 Android 开发者</string>
+    <string name="generate_invite_code">生成邀请码</string>
+    <string name="invite_code">邀请码</string>
+    <string name="invited_users">邀请列表</string>
+    <string name="ok">关闭</string>
+    <string name="retry">重试</string>
+    <string name="copied_to_clipboard">已复制到剪贴板</string>
 </resources>

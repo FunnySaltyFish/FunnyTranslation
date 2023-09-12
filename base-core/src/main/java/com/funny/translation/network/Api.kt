@@ -77,7 +77,7 @@ class Api<T>(
         }
     }
 
-    suspend fun call(): T? = withContext(dispatcher) {
+    suspend fun call(rethrowErr: Boolean = false): T? = withContext(dispatcher) {
         try {
             val resp = if (func.isSuspend) func.callSuspend(*args) else func.call(*args)
             if (resp == null) {
@@ -91,19 +91,28 @@ class Api<T>(
             }
             resp.data
         } catch (e: Exception) {
+            if (rethrowErr) throw e
             errorFunc(e)
             e.printStackTrace()
+            null
         }
-        null
     }
 }
+
+inline fun <reified T : Any?> apiNoCall(
+    func: KFunction<CommonData<T>?>,
+    vararg args: Any?,
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    block: Api<T>.() -> Unit = {},
+) = Api(func, args = args, dispatcher).apply(block)
 
 suspend inline fun <reified T : Any?> api(
     func: KFunction<CommonData<T>?>,
     vararg args: Any?,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    rethrowErr: Boolean = false,
     block: Api<T>.() -> Unit = {},
-) = Api(func, args = args, dispatcher).apply(block).call()
+) = apiNoCall(func, *args, dispatcher = dispatcher, block = block).call(rethrowErr)
 
 //suspend inline fun <reified T> api(
 //    noinline func: (args: Array<out Any>) -> CommonData<T>?,
