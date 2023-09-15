@@ -35,7 +35,7 @@ class ImageTranslationBaidu(): ImageTranslationTask(), ImageTranslationEngine by
                      }
                  }
                  69006 -> throw TranslationException(appCtx.getString(R.string.too_large_image))
-                 else -> throw TranslationException(data.message ?: data.error_msg ?: "未知错误")
+                 else -> throw TranslationException(data.displayErrorMsg)
              }
          }
      }

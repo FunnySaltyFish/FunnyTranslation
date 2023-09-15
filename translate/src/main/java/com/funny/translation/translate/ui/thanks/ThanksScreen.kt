@@ -48,6 +48,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.funny.compose.loading.DefaultFailure
 import com.funny.compose.loading.DefaultLoading
 import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.translation.helper.string
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonPage
@@ -65,10 +66,10 @@ data class SpecialThanksBean(
 )
 
 private val specialThanksList = arrayListOf(
-    SpecialThanksBean("松川吖", "页面设计 & Bug 提交 & 优化建议"),
-    SpecialThanksBean("随风而行lulu", "多次 Bug 提交 & 优化建议"),
-    SpecialThanksBean("Vul_Ghost", "多次 Bug 提交 & 优化建议"),
-    SpecialThanksBean("所有帮助过的小伙伴们", "感谢你们的支持"),
+    SpecialThanksBean("松川吖", string(R.string.ui_bug_advice)),
+    SpecialThanksBean("随风而行lulu", string(R.string.bug_advice)),
+    SpecialThanksBean("Vul_Ghost", string(R.string.bug_advice)),
+    SpecialThanksBean(string(R.string.all_sponsors), string(R.string.thanks_for_support)),
 ).toImmutableList()
 
 @OptIn(ExperimentalFoundationApi::class
@@ -94,7 +95,9 @@ fun ThanksScreen() {
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             stickyHeader {
-                HeadingText(text = stringResource(id = R.string.special_thanks), modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background))
+                HeadingText(text = stringResource(id = R.string.special_thanks), modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background))
             }
             items(specialThanksList){ bean ->
                 SpecialThanksItem(bean = bean)

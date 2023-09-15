@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
+import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.WebViewActivity
 import com.funny.translation.codeeditor.CodeEditorActivity
 import com.funny.translation.helper.readText

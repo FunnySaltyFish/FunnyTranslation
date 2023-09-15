@@ -5,25 +5,29 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.res.stringResource
+import com.funny.jetsetting.core.R
 
 @Composable
 fun SimpleDialog(
-    openDialog: MutableState<Boolean>,
+    openDialog: Boolean,
+    updateOpenDialog: (Boolean) -> Unit,
     title: String? = null,
     message: String = "message",
-    confirmButtonAction: () -> Unit? = {},
-    confirmButtonText : String = "确认",
-    dismissButtonAction: () -> Unit? = {},
-    dismissButtonText : String = "取消",
+    confirmButtonAction: (() -> Unit)? = null,
+    confirmButtonText : String = stringResource(R.string.confirm),
+    dismissButtonAction: (() -> Unit)? = null,
+    dismissButtonText : String = stringResource(R.string.cancel),
+    closeable: Boolean = true
 ) {
-    val emptyAction = {}
-    if (openDialog.value) {
+
+    if (openDialog) {
         AlertDialog(
             onDismissRequest = {
                 // Dismiss the dialog when the user clicks outside the dialog or on the back
                 // button. If you want to disable that functionality, simply use an empty
                 // onCloseRequest.
-                openDialog.value = false
+                if (closeable) updateOpenDialog(false)
             },
             title = {
                 if (title != null) Text(text = title)
@@ -32,25 +36,42 @@ fun SimpleDialog(
                 Text(message)
             },
             confirmButton = {
-                if(confirmButtonAction!=emptyAction)
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                        confirmButtonAction()
-                    }) {
-                    Text(confirmButtonText)
+                if(confirmButtonText.isNotEmpty()) {
+                    Button(
+                        onClick = {
+                            updateOpenDialog(false)
+                            confirmButtonAction?.invoke()
+                        }) {
+                        Text(confirmButtonText)
+                    }
                 }
             },
             dismissButton = {
-                if(dismissButtonText.isNotEmpty())
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                        dismissButtonAction()
-                    }) {
-                    Text(dismissButtonText)
+                if(dismissButtonText.isNotEmpty()) {
+                    Button(
+                        onClick = {
+                            updateOpenDialog(false)
+                            dismissButtonAction?.invoke()
+                        }) {
+                        Text(dismissButtonText)
+                    }
                 }
             }
         )
     }
+}
+
+@Composable
+fun SimpleDialog(
+    openDialogState: MutableState<Boolean>,
+    title: String? = null,
+    message: String = "message",
+    confirmButtonAction: (() -> Unit)? = {},
+    confirmButtonText : String = stringResource(R.string.confirm),
+    dismissButtonAction: (() -> Unit)? = {},
+    dismissButtonText : String = stringResource(R.string.cancel),
+    closeable: Boolean = true
+) {
+    val (openDialog, updateOpenDialog) = openDialogState
+    SimpleDialog(openDialog, updateOpenDialog, title, message, confirmButtonAction, confirmButtonText, dismissButtonAction, dismissButtonText, closeable)
 }

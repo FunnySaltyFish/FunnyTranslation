@@ -232,12 +232,12 @@ private fun TranslateButton(
     ) {
         if (!isTranslating) Icon(
             Icons.Default.Done,
-            contentDescription = "开始翻译",
+            contentDescription = stringResource(R.string.start_translate),
             tint = MaterialTheme.colorScheme.onPrimaryContainer
         )
         else Icon(
             painter = painterResource(id = R.drawable.ic_pause),
-            contentDescription = "停止翻译",
+            contentDescription = stringResource(R.string.stop_translate),
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colorScheme.onPrimaryContainer
         )

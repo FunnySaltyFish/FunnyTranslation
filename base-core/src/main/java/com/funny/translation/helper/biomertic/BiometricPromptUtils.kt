@@ -16,11 +16,12 @@
 
 package com.funny.translation.helper.biomertic
 
-import android.app.Activity
 import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.funny.translation.core.R
+import com.funny.translation.helper.string
 
 // Since we are using the same methods in more than one Activity, better give them their own file.
 object BiometricPromptUtils {
@@ -58,8 +59,8 @@ object BiometricPromptUtils {
 
     fun createPromptInfo(): BiometricPrompt.PromptInfo =
         BiometricPrompt.PromptInfo.Builder()
-            .setTitle("验证指纹")
-            .setSubtitle("请将手指放在指纹传感器上")
-            .setNegativeButtonText("使用密码")
+            .setTitle(string(R.string.validate_fingerprint))
+            .setSubtitle(string(R.string.please_touch_fingerprint))
+            .setNegativeButtonText(string(R.string.use_password))
             .build()
 }

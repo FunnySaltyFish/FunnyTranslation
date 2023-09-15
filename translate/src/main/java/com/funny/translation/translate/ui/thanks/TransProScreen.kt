@@ -340,14 +340,14 @@ fun VipCard(
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(buildAnnotatedString {
-                    append("约 ")
+                    append(stringResource(R.string.nearly))
                     withStyle(
                         style = MaterialTheme.typography.titleLarge.toSpanStyle()
                             .copy(color = LocalTextStyle.current.color)
                     ) {
                         append(vipConfig.getPricePerDay())
                     }
-                    append(" 元/天")
+                    append(stringResource(R.string.price_per_day))
                 }, color = Color.Gray)
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -368,7 +368,7 @@ fun VipCard(
                 if (vipConfig.discount_end_time >= Date())
                     RealTimeCountdown(dueTime = vipConfig.discount_end_time)
                 else
-                    Text(text = "低价促销", color = Color.White, fontSize = 16.sp, modifier = Modifier.padding(horizontal = 4.dp))
+                    Text(text = stringResource(R.string.low_price_promotion), color = Color.White, fontSize = 16.sp, modifier = Modifier.padding(horizontal = 4.dp))
             }
         }
     }

@@ -21,4 +21,20 @@
     <string name="unknown_error">Unknown error</string>
     <string name="failed_unknown_err"> failed, unknown error!</string>
     <string name="retry">Retry</string>
+    <string name="err_no_fingerprint_device">No fingerprint recognition device detected</string>
+    <string name="err_fingerprint_not_enabled">Fingerprint recognition device not enabled</string>
+    <string name="err_no_fingerprint">No fingerprint registered on the device</string>
+    <string name="err_io">IO stream error!</string>
+    <string name="err_parse_json">JSON data parsing error!</string>
+    <string name="err_translate_unknown">Unknown error! Translation failed!</string>
+    <string name="please_choose_browser">Please choose a browser</string>
+    <string name="validate_fingerprint">Validate Fingerprint</string>
+    <string name="please_touch_fingerprint">Please touch the fingerprint sensor with your finger</string>
+    <string name="use_password">Use Password</string>
+    <string name="validate_fingerprint_failed">Fingerprint validation failed</string>
+    <string name="hint">Hint</string>
+    <string name="tip_reset_fingerprint">The fingerprint information saved for the current account (%1$s) on this device seems to have been cleared. Would you like to re-add the fingerprint and send a verification code to verify your email (%2$s)?</string>
+    <string name="cancel">Cancel</string>
+    <string name="unsupported_language">This language is currently not supported</string>
+    <string name="not_registered">It appears that you haven\'t registered before. Please register an account first~</string>
 </resources>

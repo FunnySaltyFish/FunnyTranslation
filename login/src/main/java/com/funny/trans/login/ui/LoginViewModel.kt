@@ -11,9 +11,9 @@ import androidx.lifecycle.viewModelScope
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
-import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.SignUpException
 import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.biomertic.BiometricUtils
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
@@ -171,7 +171,7 @@ class LoginViewModel : ViewModel() {
     fun cancelAccount(onSuccess: () -> Unit){
         viewModelScope.launch {
             api(userService::cancelAccount, verifyCode) {
-                success {
+                addSuccess {
                     onSuccess()
                 }
             }

@@ -47,4 +47,5 @@
     <string name="reset_password_failed">重置密码失败，未知错误！</string>
     <string name="invite_code">邀请码</string>
     <string name="please_input_invite_code">选填，受邀成功后双方均可获得会员天数</string>
+    <string name="confirm_cancel">确认注销</string>
 </resources>

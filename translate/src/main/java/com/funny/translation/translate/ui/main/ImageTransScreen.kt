@@ -42,6 +42,7 @@ import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import cn.qhplus.emo.photo.ui.GestureContent
 import cn.qhplus.emo.photo.ui.GestureContentState
 import com.funny.compose.loading.LoadingState
+import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.toastOnUi
@@ -52,7 +53,6 @@ import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
 import com.funny.translation.translate.ui.widget.CustomCoilProvider
 import com.funny.translation.translate.ui.widget.ExchangeButton
-import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
@@ -381,7 +381,7 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                 contentScale = ContentScale.Fit, //if (scaleByWidth) ContentScale.FillWidth else ContentScale.FillHeight,
                 isContainerDimenExactly = true,
                 onSuccess = {},
-                onError = { context.toastOnUi("加载图片失败") }
+                onError = { context.toastOnUi(R.string.failed_to_load_image) }
             )
 
             if (vm.translateState.isLoading) {
@@ -406,9 +406,12 @@ private fun ResultPart(modifier: Modifier, vm: ImageTransViewModel) {
                             .height(layoutInfo.contentHeight)
                             .align(Alignment.Center)
                             .border(2.dp, color = Color.White)
-                            .offset { IntOffset(0,
-                                (-(lazyListState.firstVisibleItemScrollOffset + lazyListState.firstVisibleItemIndex * layoutInfo.px.containerHeight)).toInt()
-                            ) }
+                            .offset {
+                                IntOffset(
+                                    0,
+                                    (-(lazyListState.firstVisibleItemScrollOffset + lazyListState.firstVisibleItemIndex * layoutInfo.px.containerHeight)).toInt()
+                                )
+                            }
                     ) {
                         val data = (vm.translateState as LoadingState.Success).data
                         data.content.forEach { part ->

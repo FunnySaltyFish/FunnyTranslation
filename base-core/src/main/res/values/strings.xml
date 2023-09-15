@@ -21,4 +21,20 @@
     <string name="unknown_error">未知错误</string>
     <string name="failed_unknown_err">失败，未知错误！</string>
     <string name="retry">重试</string>
+    <string name="err_no_fingerprint_device">未检测到指纹识别设备</string>
+    <string name="err_fingerprint_not_enabled">指纹识别设备未启用</string>
+    <string name="err_no_fingerprint">设备未录入指纹</string>
+    <string name="err_io">IO流错误！</string>
+    <string name="err_parse_json">Json数据解析错误！</string>
+    <string name="err_translate_unknown">未知错误！翻译失败！</string>
+    <string name="please_choose_browser">请选择浏览器</string>
+    <string name="validate_fingerprint">验证指纹</string>
+    <string name="please_touch_fingerprint">请将手指放在指纹传感器上</string>
+    <string name="use_password">使用密码</string>
+    <string name="validate_fingerprint_failed">指纹验证失败</string>
+    <string name="hint">提示</string>
+    <string name="tip_reset_fingerprint">当前账号(%1$s)在本机保存的指纹信息似乎已被清空，是否重新添加指纹并发送验证码以验证您的邮箱(%2$s)？</string>
+    <string name="cancel">取消</string>
+    <string name="unsupported_language">此语种暂不支持</string>
+    <string name="not_registered">您似乎没有注册过，请先注册账号吧~</string>
 </resources>

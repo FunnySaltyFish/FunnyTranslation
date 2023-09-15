@@ -174,7 +174,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
         ) {
             AsyncImage(
                 model = userInfo.avatar_url,
-                contentDescription = "头像",
+                contentDescription = stringResource(id = R.string.avatar),
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape),
@@ -209,7 +209,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
                 context.toastOnUi(R.string.copied_to_clipboard)
             }
         }) {
-            Text(userInfo.invite_code.ifEmpty { "点击生成" })
+            Text(userInfo.invite_code.ifEmpty { stringResource(R.string.click_to_generate) })
         }
         // 查询被邀请人
         val (showInviteUserDialog, update) = remember { mutableStateOf(false) }

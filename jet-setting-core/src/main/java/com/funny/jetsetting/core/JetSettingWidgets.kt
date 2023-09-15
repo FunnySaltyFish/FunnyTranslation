@@ -144,9 +144,9 @@ fun JetSettingDialog(
     text: String,
     dialogTitle: String = stringResource(id = R.string.hint),
     confirmButtonAction: () -> Unit? = EmptyAction,
-    confirmButtonText: String = "确认",
+    confirmButtonText: String = stringResource(id = R.string.confirm),
     dismissButtonAction: () -> Unit? = EmptyAction,
-    dismissButtonText: String = "取消",
+    dismissButtonText: String = stringResource(id = R.string.cancel),
     dialogContent: @Composable () -> Unit
 ) {
     var openDialogState by remember {
@@ -203,9 +203,9 @@ fun <E> JetSettingListDialog(
     selected: E,
     updateSelected: (E) -> Unit,
     confirmButtonAction: () -> Unit? = EmptyAction,
-    confirmButtonText: String = "确认",
+    confirmButtonText: String = stringResource(id = R.string.confirm),
     dismissButtonAction: () -> Unit? = EmptyAction,
-    dismissButtonText: String = "取消",
+    dismissButtonText: String = stringResource(id = R.string.cancel),
 ) {
     JetSettingDialog(
         modifier = modifier,

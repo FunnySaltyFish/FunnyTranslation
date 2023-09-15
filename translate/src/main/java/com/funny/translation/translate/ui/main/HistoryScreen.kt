@@ -124,7 +124,7 @@ private fun TransFavoriteList(
                         IconButton(onClick = {
                             onDeleteHistory(transHistory.sourceString)
                         }) {
-                            Icon(Icons.Default.Delete, "删除此历史记录")
+                            Icon(Icons.Default.Delete, stringResource(R.string.delete_this_history))
                         }
                     }
                 }

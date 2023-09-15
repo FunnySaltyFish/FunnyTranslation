@@ -10,8 +10,8 @@ import com.funny.data_saver.core.LocalDataSaver
 import com.funny.trans.login.ui.LoginNavigation
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseActivity
-import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.biomertic.BiometricUtils
 import com.funny.translation.theme.TransTheme
 
 class LoginActivity : BaseActivity() {

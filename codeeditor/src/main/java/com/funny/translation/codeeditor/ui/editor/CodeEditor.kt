@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.BaseApplication
 import com.funny.translation.codeeditor.R
 import com.funny.translation.codeeditor.ui.base.ComposeSpinner
 import com.funny.translation.codeeditor.ui.base.ExpandableDropdownItem
-import com.funny.translation.codeeditor.ui.base.SimpleDialog
 import com.funny.translation.codeeditor.ui.runner.CodeRunnerText
 import com.funny.translation.codeeditor.ui.runner.CodeRunnerViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
@@ -245,7 +245,7 @@ fun ComposeCodeEditor(
             )
 
             SimpleDialog(
-                openDialog = confirmOpenFile,
+                openDialogState = confirmOpenFile,
                 title = stringResource(R.string.message_hint),
                 message = stringResource(R.string.message_open_while_not_saved),
                 confirmButtonAction = {
@@ -258,7 +258,7 @@ fun ComposeCodeEditor(
             )
 
             SimpleDialog(
-                openDialog = confirmLeave,
+                openDialogState = confirmLeave,
                 title = "提示",
                 message = stringResource(R.string.message_leave_not_saved),
                 confirmButtonAction = {

@@ -11,15 +11,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.funny.translation.AppConfig
-import com.funny.translation.BaseApplication
+import com.funny.translation.helper.ApplicationUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator
@@ -82,7 +89,7 @@ class ErrorDialogActivity : AppCompatActivity() {
         if (showDialog) 
             AlertDialog(
                 title = {
-                    Text("糟糕")    
+                    Text(stringResource(R.string.oops))
                 },
                 text = {
                     Column(modifier = Modifier
@@ -91,22 +98,15 @@ class ErrorDialogActivity : AppCompatActivity() {
                             rememberScrollState()
                         )) {
                         TextField(value = actionDesc, onValueChange = { actionDesc = it}, placeholder = {
-                            Text(text = "（可选）简易描述下您的操作吧~")
+                            Text(text = stringResource(R.string.describe_your_operation))
                         })
                         Spacer(modifier = Modifier.height(4.dp))
                         TextField(value = contact, onValueChange = { contact = it}, placeholder = {
-                            Text(text = "（可选）您的联系方式（如qq xxx）")
+                            Text(text = stringResource(R.string.your_contact))
                         })
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = """
-                                应用程序发生了崩溃，我们建议您在酷安“译站”评论区截图反馈（回复及时）或者发送崩溃报告（处理较慢）。
-                                
-                                为什么需要崩溃报告？
-                                应用崩溃对于使用者和开发者来说都是相当大的灾难，我们都希望将其修复。但是，没有报错原因的崩溃，犹如坏了的无法打开的黑盒子，你只知道出现问题，却不知道是什么问题、问题在哪，难以完成修复。因此，还望您可以提供病症，我们才可以对症下药。
-                                               
-                                具体原因如下:
-                                """.trimLineStart + crashMessage,
+                            text = stringResource(R.string.tip_app_crash) + crashMessage,
                             fontSize = 12.sp,
                             lineHeight = 13.sp
                         )
@@ -145,10 +145,15 @@ class ErrorDialogActivity : AppCompatActivity() {
                 val desc = URLEncoder.encode(actionDesc, "utf-8")
                 val conc = URLEncoder.encode(contact, "utf-8")
                 val url = OkHttpUtils.removeExtraSlashOfUrl("${ServiceCreator.BASE_URL}/api/report_crash")
-                val postData = "contact=$conc&action_desc=$desc&text=${URLEncoder.encode(it,"utf-8")}&version=${BaseApplication.getLocalPackageInfo()?.versionName}(${AppConfig.versionCode})"
+                val postData = hashMapOf(
+                    "contact" to conc,
+                    "action_desc" to desc,
+                    "text" to it.trimLineStart,
+                    "version" to "${ApplicationUtil.getAppVersionName(this)}(${AppConfig.versionCode})"
+                ).map { "${it.key}=${URLEncoder.encode(it.value, "utf-8")}" }.joinToString("&")
                 doPost(url, postData)
             }.onFailure {
-                toastOnUi("发送错误报告失败，请联系开发者提交错误信息")
+                toastOnUi(getString(R.string.err_send_crash_report))
                 it.printStackTrace()
             }
         }

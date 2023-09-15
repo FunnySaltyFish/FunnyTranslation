@@ -93,24 +93,4 @@ public class Pinyin {
         }
         return result;
     }
-
-    public static String getPinyinForWords(String chs) {
-        if (chs.equals("调试输出")) {
-            return "tiaoshishuchu";
-        }
-        String key;
-        String value;
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < chs.length(); i++) {
-            key = chs.substring(i, i + 1);
-            if (key.getBytes().length >= 2) {
-                value = getPinyinForCharacter(key);
-            } else {
-                value = key;
-            }
-            buffer.append(value);
-        }
-        return buffer.toString();
-    }
-
 }

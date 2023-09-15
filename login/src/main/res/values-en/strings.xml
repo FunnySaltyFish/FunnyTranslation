@@ -47,4 +47,5 @@
     <string name="reset_password_failed">Failed to reset password, unknown error!</string>
     <string name="invite_code">Invitation Code</string>
     <string name="please_input_invite_code">Optional, both parties can receive VIP if success</string>
+    <string name="confirm_cancel">Confirm to cancel</string>
 </resources>

@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
-import com.funny.translation.helper.toastOnUi
 import com.funny.translation.ui.MarkdownText
 
 @Composable
@@ -71,13 +70,12 @@ fun CancelAccountPage(
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = {
                 vm.cancelAccount {
-                    context.toastOnUi("账号注销成功")
                     AppConfig.logout()
                     navController.popBackStack() // 账号详情
                     navController.popBackStack() // 主页
                 }
             }, enabled = enable) {
-                Text(text = "确认注销")
+                Text(text = stringResource(R.string.confirm_cancel))
             }
         }
     }

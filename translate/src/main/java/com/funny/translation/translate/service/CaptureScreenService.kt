@@ -143,7 +143,7 @@ class CaptureScreenService : Service() {
                 val height = image.height
                 val planes: Array<Image.Plane> = image.planes
                 if (planes.isEmpty()) {
-                    appCtx.toastOnUi("截图失败")
+                    appCtx.toastOnUi(getString(R.string.screenshot_failed))
                     return
                 }
                 val buffer: ByteBuffer = planes[0].buffer
@@ -170,7 +170,7 @@ class CaptureScreenService : Service() {
                 //保存图片到本地
                 val bytes = BitmapUtil.compressImage(bitmap, FileSize.fromMegabytes(1).size)
                 BitmapUtil.saveBitmap(bytes, TEMP_CAPTURED_IMAGE_PATH)
-                appCtx.toastOnUi("截图保存成功")
+                appCtx.toastOnUi(getString(R.string.save_screenshot_success))
                 startTranslate()
             }
         } catch (throwable: Throwable) {

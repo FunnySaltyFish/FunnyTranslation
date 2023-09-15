@@ -6,6 +6,8 @@ import com.funny.data_saver.core.mutableDataSaverListStateOf
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.get
+import com.funny.translation.helper.string
+import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.TransHistoryDao
 import com.funny.translation.translate.database.appDB
@@ -62,7 +64,7 @@ class AnnualReportViewModel: ViewModel() {
                     shouldLoadLatest = true
                 }
                 if (allHistories.isEmpty()) {
-                    throw Exception("没有数据")
+                    throw Exception(string(R.string.no_data))
                 }
                 totalTranslateTimes = allHistories.size
                 val specialTimes = allHistories.findSpecialTimes()

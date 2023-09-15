@@ -37,8 +37,6 @@ import cn.qhplus.emo.photo.coil.CoilMediaPhotoProviderFactory
 import coil.compose.AsyncImage
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.rememberDataSaverState
-import com.funny.jetsetting.core.JetSettingTile
-import com.funny.jetsetting.core.ui.throttleClick
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.getKeyColors
 import com.funny.translation.helper.toastOnUi
@@ -78,20 +76,20 @@ fun ThemeScreen() {
                 .padding(8.dp),
             contentAlignment = Alignment.Center
         ){
-            LabelText(text = "这里是主题预览", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            LabelText(text = stringResource(R.string.preview_theme_here), color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Spacer(modifier = Modifier.height(12.dp))
-        RadioTile(text = "默认", selected = themeType == ThemeType.StaticDefault) {
+        RadioTile(text = stringResource(R.string.default_str), selected = themeType == ThemeType.StaticDefault) {
             ThemeConfig.updateThemeType(ThemeType.StaticDefault)
         }
-        RadioTile(text = "动态取色", selected = themeType.isDynamic) {
+        RadioTile(text = stringResource(R.string.dynamic_color), selected = themeType.isDynamic) {
             // Android 12以上才选
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S)
                 ThemeConfig.updateThemeType(ThemeType.DynamicNative)
             else
                 ThemeConfig.updateThemeType(ThemeType.DynamicFromImage(MaterialColors.Blue700))
         }
-        RadioTile(text = "自定义", selected = themeType is ThemeType.StaticFromColor) {
+        RadioTile(text = stringResource(R.string.custom), selected = themeType is ThemeType.StaticFromColor) {
             ThemeConfig.updateThemeType(ThemeType.StaticFromColor(ThemeStaticColors.get(selectedColorIndex)))
         }
         Divider()
@@ -147,13 +145,13 @@ private fun SelectDynamicTheme(modifier: Modifier) {
                 }
             }
 
-        RadioTile(text = "原生壁纸取色（Android 12+）", selected = themeType == ThemeType.DynamicNative) {
+        RadioTile(text = stringResource(R.string.wallpaper_color_extraction), selected = themeType == ThemeType.DynamicNative) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S)
                 themeType = ThemeType.DynamicNative
-            else context.toastOnUi("此功能需要Android 12及以上版本！")
+            else context.toastOnUi(R.string.android_12_required)
         }
         Spacer(modifier = Modifier.height(8.dp))
-        ArrowTile(text = "从图片选择") {
+        ArrowTile(text = stringResource(R.string.select_from_image)) {
             if (DefaultVipInterceptor()) {
                 pickLauncher.launch(
                     PhotoPickerActivity.intentOf(

@@ -1,4 +1,4 @@
-package com.funny.translation.helper
+package com.funny.translation.helper.biomertic
 
 import android.content.Context
 import android.os.Build
@@ -9,17 +9,19 @@ import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
+import com.funny.translation.core.R
+import com.funny.translation.helper.UserUtils
+import com.funny.translation.helper.awaitDialog
 import com.funny.translation.helper.biomertic.*
 import com.funny.translation.helper.handler.runOnUI
+import com.funny.translation.helper.string
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.network.api
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-private const val EXTRA_NO_USER = "no_user"
-private const val EXTRA_NEW_DEVICE = "new_device"
 
 @RequiresApi(Build.VERSION_CODES.M)
 object BiometricUtils {
@@ -29,7 +31,7 @@ object BiometricUtils {
     private const val SECRET_KEY = "trans_key"
 
     // 用于注册时临时保存当前的指纹数据
-    var tempSetFingerPrintInfo = FingerPrintInfo()
+    private var tempSetFingerPrintInfo = FingerPrintInfo()
     var tempSetUserName = ""
 
     private val fingerPrintService by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -50,10 +52,10 @@ object BiometricUtils {
         BiometricManager.Authenticators.BIOMETRIC_STRONG
     )) {
         BiometricManager.BIOMETRIC_SUCCESS -> ""
-        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> "未检测到指纹识别设备"
-        BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> "指纹识别设备未启用"
-        BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> "设备未录入指纹"
-        else -> "未知错误"
+        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> string(R.string.err_no_fingerprint_device)
+        BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> string(R.string.err_fingerprint_not_enabled)
+        BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> string(R.string.err_no_fingerprint)
+        else -> string(R.string.unknown_error)
     }
 
     fun init() {
@@ -158,16 +160,20 @@ object BiometricUtils {
             scope.launch(Dispatchers.IO) {
                 val email = api(UserUtils.userService::getUserEmail, username)
                 if (email == null || email == ""){
-                    activity.toastOnUi("您似乎没有注册过，请先注册账号吧~")
+                    activity.toastOnUi(R.string.not_registered)
                     return@launch
                 }
 
                 if (awaitDialog(
                         activity,
-                        "提示",
-                        "当前账号($username)在本机保存的指纹信息似乎已被清空，是否重新添加指纹并发送验证码以验证您的邮箱(${anonymousEmail(email)})？",
-                        "是",
-                        "否",
+                        string(R.string.hint),
+                        string(
+                            R.string.tip_reset_fingerprint,
+                            username,
+                            anonymousEmail(email)
+                        ),
+                        string(R.string.confirm),
+                        string(R.string.cancel),
                     )
                 ) {
                     setFingerPrint(
@@ -179,7 +185,7 @@ object BiometricUtils {
                             onNewFingerPrint(email)
                         },
                         onFail = {
-                            onError(-2, "指纹验证失败")
+                            onError(-2, string(R.string.validate_fingerprint_failed))
                         },
                         onError = onError,
                         onUsePassword = onUsePassword

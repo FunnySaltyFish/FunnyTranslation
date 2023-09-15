@@ -1,12 +1,11 @@
 package com.funny.translation.helper
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.TextView
 import android.widget.Toast
+import com.funny.translation.core.R
 import com.funny.translation.helper.handler.runOnUI
 import com.hjq.toast.ToastUtils
 import java.io.File
@@ -25,38 +24,6 @@ fun Activity.startChooseFile(
     //intent.setType("text/javascript");
     intent.type = type
     this.startActivityForResult(intent, requestCode)
-}
-
-fun Context.showMessageDialog(
-    title: String,
-    message: String,
-    isMarkdown: Boolean = false,
-    positiveAction: () -> Unit = {},
-    positiveText: String? = "确定",
-    negativeAction: () -> Unit = {},
-    negativeText: String? = "取消"
-) {
-    val ctx = this
-    val builder = AlertDialog.Builder(this).apply {
-        val builder = this
-        setTitle(title)
-        if (!isMarkdown) setMessage(message)
-        else {
-            val tv = TextView(ctx).apply {
-                setPadding(16, 24, 16, 8)
-            }
-            val markdown = MarkdownUtils.getDefaultMarkwon(ctx)
-            markdown.setMarkdown(tv, message)
-            builder.setView(tv)
-        }
-        if (!positiveText.isNullOrEmpty()) {
-            builder.setPositiveButton(positiveText) { _, _ -> positiveAction() }
-        }
-        if (!negativeText.isNullOrEmpty()) {
-            builder.setNegativeButton(negativeText) { _, _ -> negativeAction() }
-        }
-    }
-    builder.show()
 }
 
 fun Context.readAssets(fileName: String): String {
@@ -87,7 +54,7 @@ fun Context.openUrl(uri: Uri) {
         startActivity(intent)
     } catch (e: Exception) {
         try {
-            startActivity(Intent.createChooser(intent, "请选择浏览器"))
+            startActivity(Intent.createChooser(intent, getString(R.string.please_choose_browser)))
         } catch (e: Exception) {
             toastOnUi(e.localizedMessage ?: "open url error")
         }

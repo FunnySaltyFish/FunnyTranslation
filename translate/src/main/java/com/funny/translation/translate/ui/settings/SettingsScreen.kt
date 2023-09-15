@@ -55,6 +55,7 @@ import com.funny.jetsetting.core.JetSettingListDialog
 import com.funny.jetsetting.core.JetSettingSwitch
 import com.funny.jetsetting.core.JetSettingTile
 import com.funny.jetsetting.core.ui.SettingItemCategory
+import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.AppLanguage
 import com.funny.translation.helper.DataSaverUtils
@@ -71,7 +72,6 @@ import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
-import com.funny.translation.translate.ui.widget.SimpleDialog
 import com.funny.translation.translate.utils.SortResultUtils
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -162,10 +162,10 @@ fun SettingsScreen() {
                     scope.launch(Dispatchers.IO) {
                         appDB.transHistoryDao.clearAll()
                     }
-                    context.toastOnUi("已清空历史记录")
+                    context.toastOnUi(R.string.clear_histories_success)
                 },
-                dismissButtonText = "残忍删除",
-                confirmButtonText = "我再想想"
+                dismissButtonText = stringResource(R.string.confirm_to_delete),
+                confirmButtonText = stringResource(R.string.no_thanks)
             )
             JetSettingTile(
                 imageVector = Icons.Default.Delete,
@@ -389,7 +389,7 @@ fun SelectLanguage(modifier: Modifier) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_select_all),
-                    contentDescription = "是否全选",
+                    contentDescription = stringResource(R.string.whether_selected_all),
                     tint = tintColor
                 )
             }

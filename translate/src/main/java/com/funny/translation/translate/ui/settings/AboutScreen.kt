@@ -50,6 +50,7 @@ import com.funny.translation.translate.BuildConfig
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
+import com.funny.translation.translate.RegionConfig
 import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
@@ -142,6 +143,18 @@ fun AboutScreen() {
                     "https://api.funnysaltyfish.fun/trans/v1/api/user_agreement"
                 )
             }
+            if (RegionConfig.beianNumber.isNotEmpty()) {
+                JetSettingTile(
+                    resourceId = R.drawable.ic_beian,
+                    text = stringResource(id = R.string.beian),
+                    description = RegionConfig.beianNumber
+                ) {
+                    WebViewActivity.start(
+                        context,
+                        "https://beian.miit.gov.cn/#/Integrated/index"
+                    )
+                }
+            }
         }
     }
 }
@@ -213,7 +226,7 @@ fun OpenSourceLibItem(
                 .weight(1f), onClick = {
                 WebViewActivity.start(context, info.url)
             }) {
-                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "打开网页")
+                Icon(Icons.Default.KeyboardArrowRight, contentDescription = stringResource(R.string.browser_url))
             }
         }
     }

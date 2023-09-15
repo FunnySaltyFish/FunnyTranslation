@@ -103,7 +103,7 @@
             android:name=".service.OpenFloatWindowTileService"
             android:exported="true"
             android:icon="@drawable/ic_float_window"
-            android:label="译站悬浮球"
+            android:label="@string/transtation_floating_window"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             >
             <intent-filter>

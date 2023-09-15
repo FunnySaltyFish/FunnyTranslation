@@ -16,6 +16,7 @@ import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.activity.StartCaptureScreenActivity
@@ -42,7 +43,7 @@ object EasyFloatUtils {
 
     private const val TAG = "EasyFloat"
     private var vibrating = false
-    var initTransWindow = false
+    private var initTransWindow = false
     var initFloatBall = false
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -163,7 +164,7 @@ object EasyFloatUtils {
                 val txt = resultText.text
                 if (txt.isNotEmpty()){
                     AudioPlayer.playOrPause(txt.toString(), findLanguageById(spinnerTarget.selectedItemPosition)){
-                        context.toastOnUi("朗读错误")
+                        context.toastOnUi(context.getString(R.string.err_speaking))
                     }
                 }
             }
@@ -173,7 +174,7 @@ object EasyFloatUtils {
                 val txt = resultText.text
                 if (txt.isNotEmpty()){
                     ClipBoardUtil.copy(context, txt)
-                    context.toastOnUi("已复制到剪贴板")
+                    context.toastOnUi(R.string.copied_to_clipboard)
                 }
             }
         }
@@ -205,7 +206,7 @@ object EasyFloatUtils {
                         }
 
                         withContext(Dispatchers.Main) {
-                            resultText.text = "正在翻译……"
+                            resultText.text = string(R.string.translating)
                         }
                         task.translate()
                         withContext(Dispatchers.Main) {
@@ -332,7 +333,9 @@ object EasyFloatUtils {
                             override fun touchInRange(inRange: Boolean, view: BaseSwitchView) {
                                 setVibrator(inRange)
                                 view.findViewById<TextView>(com.lzf.easyfloat.R.id.tv_delete).text =
-                                    if (inRange) "松手删除" else "删除浮窗"
+                                    if (inRange) string(R.string.release_to_delete) else string(
+                                        R.string.remove_float_window
+                                    )
 
                                 view.findViewById<ImageView>(com.lzf.easyfloat.R.id.iv_delete)
                                     .setImageResource(
@@ -361,15 +364,15 @@ object EasyFloatUtils {
     fun showFloatBall(activity : Activity){
         if(!PermissionUtils.checkPermission(FunnyApplication.ctx)) {
             AlertDialog.Builder(activity)
-                .setMessage("使用浮窗功能，需要您授权悬浮窗权限。")
-                .setPositiveButton("去开启") { _, _ ->
+                .setMessage(string(R.string.tip_grant_float_window_permission))
+                .setPositiveButton(string(R.string.go_to_grant)) { _, _ ->
                     PermissionUtils.requestPermission(activity, object : OnPermissionResult {
                         override fun permissionResult(isOpen: Boolean) {
                             showFloatBall(activity)
                         }
                     })
                 }
-                .setNegativeButton("取消") { _, _ -> }
+                .setNegativeButton(string(R.string.cancel)) { _, _ -> }
                 .show()
         }else{
             _showFloatBall()

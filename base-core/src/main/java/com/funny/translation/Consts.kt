@@ -1,5 +1,8 @@
 package com.funny.translation
 
+import com.funny.translation.core.R
+import com.funny.translation.helper.string
+
 object Consts {
 
 
@@ -21,15 +24,12 @@ object Consts {
     const val EXTRA_USER_INFO = "extra_user_info"
 
     //错误常量
-    const val ERROR_UNKNOWN = "未知错误！翻译失败！"
-    const val ERROR_JSON = "Json数据解析错误！"
-    const val ERROR_UNSUPPORT_LANGUAGE = "暂不支持的语言翻译形式"
-    const val ERROR_DATED_ENGINE = "当前方法已过期！请反馈！"
-    const val ERROR_POST = "发送POST请求异常！请检查网络连接！"
-    const val ERROR_IO = "IO流错误！"
+    val ERROR_UNKNOWN = string(R.string.err_translate_unknown)
+    val ERROR_JSON    = string(R.string.err_parse_json)
+    val ERROR_IO      = string(R.string.err_io)
     const val ERROR_ILLEGAL_DATA = "数据不合法！"
     const val ERROR_ONLY_CHINESE_SUPPORT = "当前翻译模式仅支持中文！"
-    const val ERROR_NO_BV_OR_AV = "未检测到有效的Bv号或Av号"
+    val ERROR_NO_BV_OR_AV = "未检测到有效的Bv号或Av号"
 
     const val MODE_EACH_LINE = 1
 

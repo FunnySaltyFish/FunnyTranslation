@@ -1,5 +1,7 @@
 package com.funny.translation.translate
 
+import com.funny.translation.core.R
+import com.funny.translation.helper.string
 import kotlinx.serialization.SerialName
 
 @kotlinx.serialization.Serializable
@@ -29,7 +31,7 @@ abstract class ImageTranslationTask(
     @Throws(TranslationException::class)
     open suspend fun translate(){
         if (!supportLanguages.contains(sourceLanguage) || !supportLanguages.contains(targetLanguage)){
-            throw TranslationException("此语种暂不支持")
+            throw TranslationException(string(R.string.unsupported_language))
         }
         if (sourceLanguage == targetLanguage) return
     }

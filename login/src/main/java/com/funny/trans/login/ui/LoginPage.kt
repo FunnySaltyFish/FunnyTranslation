@@ -35,9 +35,9 @@ import androidx.navigation.NavController
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
-import com.funny.translation.helper.BiometricUtils
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.VibratorUtils
+import com.funny.translation.helper.biomertic.BiometricUtils
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.api

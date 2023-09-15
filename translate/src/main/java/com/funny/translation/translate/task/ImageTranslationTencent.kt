@@ -1,7 +1,6 @@
 package com.funny.translation.translate.task
 
 import android.util.Log
-import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.ImageTranslationTask
 import com.funny.translation.translate.TranslationException
 import com.funny.translation.translate.engine.ImageTranslationEngine
@@ -33,7 +32,7 @@ class ImageTranslationTencent(): ImageTranslationTask(), ImageTranslationEngine 
                      Log.d("ImgTransBaidu", "translate result: $it")
                  }
              } else {
-                 throw TranslationException(data.message ?: data.error_msg ?: "未知错误")
+                 throw TranslationException(data.displayErrorMsg)
              }
          }
      }
