@@ -168,6 +168,16 @@ dependencies {
 
 afterEvaluate {
     // debug 和 release 时执行加密代码
-    tasks.assembleDebug.dependsOn(":base-core:encryptFunnyJs")
-    tasks.assembleRelease.dependsOn(":base-core:encryptFunnyJs")
+    var signApkTask = project(":base-core").tasks.named("signApk")
+    tasks.findAll {
+        it.name.startsWith("assemble") && !it.name.endsWith("Test")
+    }.forEach { task ->
+//        println("find task name: " + task.name)
+        // 打包前先加密下 Js
+        task.dependsOn(":base-core:encryptFunnyJs")
+        // 结束后签个名
+        task.finalizedBy(signApkTask)
+    }
 }
+
+

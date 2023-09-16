@@ -109,6 +109,18 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
+// 定义函数，用于输出 Hello, FunnyTranslation Open Source
+static def printHello(Exec exec) {
+    // just print FunnyTranslation OpenSource
+    // windows: cmd /c echo FunnyTranslation OpenSource
+    // linux: sh -c echo FunnyTranslation OpenSource
+    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        exec.commandLine "cmd", "/c", "echo", "Hello FunnyTranslation-OpenSource"
+    } else {
+        exec.commandLine "sh", "-c", "echo", "Hello FunnyTranslation-OpenSource"
+    }
+}
+
 tasks.register('encryptFunnyJs', Exec) {
     // 如果 funny_sign_v1_release 存在，则用它
     def release = new File(rootDir, "funny_sign_v1_release_template.js")
@@ -120,18 +132,20 @@ tasks.register('encryptFunnyJs', Exec) {
         def versionCode = Versions.versionCode
         commandLine "node", rootProject.file("encrypt_funny_js.js"), filePath, targetFilePath, versionCode
     } else {
-        // just print FunnyTranslation OpenSource
-        // windows: cmd /c echo FunnyTranslation OpenSource
-        // linux: sh -c echo FunnyTranslation OpenSource
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            commandLine "cmd", "/c", "echo", "FunnyTranslation-OpenSource"
-        } else {
-            commandLine "sh", "-c", "echo", "FunnyTranslation-OpenSource"
-        }
+        printHello(it)
     }
     standardOutput = new ByteArrayOutputStream()
     doLast {
-        println('doLast encryptFunnyJs')
         println standardOutput.toString()
+    }
+}
+
+tasks.register("signApk", Exec) { exec ->
+    // 执行根目录下的 sign_new_key.py
+    def signNewKey = rootProject.file("sign_new_key.py")
+    if (signNewKey.exists()) {
+        exec.commandLine "python", signNewKey.path, rootDir.path
+    } else {
+        printHello(exec)
     }
 }

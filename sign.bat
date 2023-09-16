@@ -1,1 +1,0 @@
-apksigner sign --ks "D:\projects\mykey.keystore" --next-signer --ks "D:\projects\funny_key_new.jks" --lineage "D:\projects\key_lineage" "D:\projects\AppProjects\Mine\FunnyTranslation\translate\build\outputs\apk\common\debug\translate-common-debug.apk"

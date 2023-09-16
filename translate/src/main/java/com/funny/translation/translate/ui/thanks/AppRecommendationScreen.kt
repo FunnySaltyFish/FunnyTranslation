@@ -40,7 +40,7 @@ fun AppRecommendationScreen() {
     val context = LocalContext.current
     CommonPage(title = stringResource(id = R.string.recommendation_app)) {
         val (recommendAppListState, retry) = rememberRetryableLoadingState(loader = ::getRecommendApp)
-        LazyColumn() {
+        LazyColumn {
             loadingList(recommendAppListState, retry, key = { it.name }) { app ->
                 ListItem(
                     headlineContent = { Text(app.name) },
