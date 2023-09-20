@@ -34,10 +34,22 @@ If you find it helpful, **welcome to star**!
 
 #### Running Screenshot
 
-| 图片                                                         | 图片                                                         |
+UI v4：
+|          |          |          |
+| -------- | -------- | -------- |
+| ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c45fc7f.jpg) | ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c4ba96a.jpg) | ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c5125af.jpg) |
+| ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c5635f2.jpg) | ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c5a8511.jpg) | ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c5f17ef.jpg) |
+| ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c6446e8.jpg) | ![](http://img.funnysaltyfish.fun/i/2023/05/29/647492c68366e.jpg) |          |
+
+
+<details>
+<summary>Old UI v3</summary>
+
+| Screenshot                                                       |Screenshot                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | <img src="./screenshot/1.png" alt="Screenshot_2021-11-07-22-37-33-814_com.funny.tran" style="zoom:33%;" /> | <img src="./screenshot/2.png" alt="Screenshot_2021-11-07-22-39-18-201_com.funny.tran" style="zoom:33%;" /> |
 | <img src="./screenshot/3.png" alt="Screenshot_2021-11-07-22-40-16-339_com.funny.tran" style="zoom:33%;" /> | <img src="./screenshot/4.png" alt="IMG_20211107_223720" style="zoom:33%;" /> |
+</details>
 
 
 
@@ -45,13 +57,20 @@ If you find it helpful, **welcome to star**!
 
 As an open-source project, you can learn about it from the following aspects:
 
+#### Code Style
+In terms of code organization, the code here doesn't strictly follow Google's best practices. If you want to pursue elegant code, you can refer to Google's official [NowInAndroid project](https://github.com/android/nowinandroid). However, in terms of actual usage, that project's pursuit of unified data flow has led to suboptimal user experience (for example, in the version I experienced, clicking on "Favorite" in any list item would trigger an upstream flow update, refreshing the entire list. This would cause the list to scroll back to the top when you click a favorite button, which clearly doesn't align with the actual user experience).
+
+The code is written following this rule: Composable + ViewModel. Simple logic is implemented directly in Composable, while more complex logic is implemented in ViewModel. For the sake of convenience, the State inside the ViewModel has not adopted the "internal MutableState + externally exposed State" strategy. Instead, all States are mutable, and some are directly accessed through `vm.xxx`.
+
+However, there are still some basic cleanliness aspects, such as naming conventions, code indentation, and Kotlin-style programming. The main ViewModel files and Composable pages, under AS inspection, achieve full green for the most part, with the majority of yellow Lint warnings ranging from 1 to 5, mostly relating to unused TAG variables or unused functions.
+
 #### Modules
 
 - **translate: the main translation page**
 - **base-core: the basic module, defining basic Beans, and introducing third-party modules in API form for use by other parts**
 - **codeeditor: the code editor page**
 - **login: the login and registration page**
-- **jet_setting_core: the basic component of the settings page**
+- **jet-setting-core: the basic component of the settings page**
 - editor, language-base, language-universal: code editor View from the open-source project [sora-editor](https://github.com/Rosemoe/sora-editor)
 - buildSrc: dependency version management
 
@@ -59,9 +78,9 @@ You can refer to [this document(Chinese)](https://chat.openai.com/chat/detail_in
 
 #### Preparation Before Running
 
-- You need to use [Android Studio](https://developer.android.com/studio/) version **2020.3.1 or higher**
+- You need to use [Android Studio](https://developer.android.com/studio/) version **Flamingo or higher**, the newest stable version is highly recommended.
 
-- For security reasons, the open-source part does not include the `signing.properties` file containing signature information. If you need to build a Release package, please complete this file yourself.
+- For security reasons, the open-source part does not include the `signing.properties` file containing signature information. If you need to build a Release package, please add this file yourself.
 
   - **signing.properties**
 
@@ -77,10 +96,12 @@ You can refer to [this document(Chinese)](https://chat.openai.com/chat/detail_in
      */
     ```
 
+If you are unable to run it on the latest stable version of Android Studio and the correct Gradle version, and you have confirmed that it is not due to your own issues, feel free to open an issue and ask. It's possible that I missed some files when committing to Git. I will respond as soon as I see it.
+
 ### Acknowledgments
 
-- Page design referenced from 酷安@江戸川コナン (authorized)
-- Promotional graphics from 酷安@松川吖
+- UI design (v3) referenced from 酷安@江戸川コナン (authorized)
+- UI design (V4) and promotional graphics from 酷安@松川吖
 - Thank you to all the friends who have sponsored the project!
 - Thank you to all the contributors!
 
