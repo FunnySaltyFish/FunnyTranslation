@@ -7,6 +7,7 @@ import androidx.annotation.Keep
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.core.BuildConfig
 import com.funny.translation.helper.DataSaverUtils
@@ -45,6 +46,8 @@ object AppConfig {
     val sHideBottomNavBar = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_CRASH_MSG, false)
     val sAutoFocus = mutableDataSaverStateOf(DataSaverUtils, "KEY_AUTO_FOCUS", false)
     val sShowFloatWindow = mutableDataSaverStateOf(DataSaverUtils, Consts.KEY_SHOW_FLOAT_WINDOW, false)
+    val sDefaultSourceLanguage = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEFAULT_SOURCE_LANGUAGE", Language.AUTO)
+    val sDefaultTargetLanguage = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEFAULT_TARGET_LANGUAGE", Language.CHINESE)
 
     // 以下为Pro专享
     val sParallelTrans = mutableDataSaverStateOf(DataSaverUtils, "KEY_PARALLEL_TRANS", false)
@@ -89,8 +92,7 @@ object AppConfig {
     }
 }
 
-object GlobalTranslationConfig {
-    var sourceLanguage : Language = Language.AUTO
-    var targetLanguage : Language = Language.ENGLISH
-    var sourceString : String = ""
-}
+val GlobalTranslationConfig = TranslationConfig()
+// 外部 intent 导致，表示待会儿需要做翻译
+// 不用 DeepLink
+val NeedToTransConfig = TranslationConfig()

@@ -25,9 +25,9 @@
         tools:targetApi="33">
 
         <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5597677676259249~6423381816" />
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+<!--            android:value="ca-app-pub-5597677676259249~6423381816" />-->
 
         <activity
             android:name=".TransActivity"
@@ -40,25 +40,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="translation"
-                    android:scheme="funny"
-                    android:pathPattern="/translate"
-                    />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/plain" />
-            </intent-filter>
             <!-- funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}" -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -66,6 +48,16 @@
                 <data android:scheme="funny"
                     android:host="translation"
                     android:pathPattern="/image_translate"
+                    />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="translation"
+                    android:scheme="funny"
+                    android:pathPattern="/translate"
                     />
             </intent-filter>
 
@@ -84,6 +76,11 @@
             android:theme="@style/AppTheme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>

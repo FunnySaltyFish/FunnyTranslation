@@ -18,6 +18,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseActivity
 import com.funny.translation.Consts
@@ -25,9 +26,11 @@ import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.NetworkReceiver
+import com.funny.translation.translate.utils.DeepLinkManager
 import com.funny.translation.translate.utils.EasyFloatUtils
 import com.funny.translation.translate.utils.UpdateUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -47,6 +50,7 @@ class TransActivity : BaseActivity() {
     private lateinit var activityViewModel: ActivityViewModel
     private lateinit var context: Context
     private lateinit var netWorkReceiver: NetworkReceiver
+
     // 保存 NavController，不太优雅，但是为了跳转方便，先这样吧
     internal var navController: NavHostController? = null
 
@@ -55,7 +59,11 @@ class TransActivity : BaseActivity() {
         var initialized = false
     }
 
-    @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+    @OptIn(
+        ExperimentalComposeUiApi::class,
+        ExperimentalAnimationApi::class,
+        ExperimentalMaterialApi::class
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Debug.addTarget(DefaultDebugTarget)
@@ -71,9 +79,10 @@ class TransActivity : BaseActivity() {
         setContent {
             // 此处通过这种方式传递 Activity 级别的 ViewModel，以确保获取到的都是同一个实例
             CompositionLocalProvider(LocalActivityVM provides activityViewModel) {
-                AppNavigation(exitAppAction = {
-                    this.finish()
-                })
+                AppNavigation(
+                    navController = rememberNavController().also { this@TransActivity.navController = it },
+                    exitAppAction = { this.finish() }
+                )
             }
         }
 
@@ -145,49 +154,175 @@ class TransActivity : BaseActivity() {
     private fun getIntentData(intent: Intent?) {
         val action: String? = intent?.action
         Log.d(TAG, "getIntentData: action:$action, data:${intent?.data}")
-        // 这里处理以 url 形式传递的文本
-        if (Intent.ACTION_VIEW == action) {
-            val data: Uri? = intent.data
-            // Log.d(TAG, "getIntentData: data:$data")
-            if (data != null && data.scheme == "funny" && data.host == "translation") {
-               navigateToTextTrans(
-                   data.getQueryParameter("text") ?: "",
-                   findLanguageById(data.getQueryParameter("sourceId")?.toInt() ?: 0),
-                   findLanguageById(data.getQueryParameter("targetId")?.toInt() ?: 1)
-               )
-            }
-        }
-        // 这里处理的是外部分享过来的文本
-        else if (Intent.ACTION_SEND == action && "text/plain" == intent.type) {
-            val text = intent.getStringExtra(Intent.EXTRA_TEXT)?.trim() ?: ""
-            if (text != "") {
-                Log.d(TAG, "获取到其他应用传来的文本: $text")
-                navigateToTextTrans(text, Language.AUTO, Language.CHINESE)
-            }
-        }
-        // 这里是处理输入法选中后的菜单
-        else if (Intent.ACTION_PROCESS_TEXT == action && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val text = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.trim() ?: ""
-            if (text != "") {
-                Log.d(TAG, "获取到输入法菜单传来的文本: $text")
-                navigateToTextTrans(text, Language.AUTO, Language.CHINESE)
-                // shouldJumpToMainScreen.value = true
-            }
-        }
-        // 图片
-        // "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
-         else if (intent?.data?.scheme == "funny" && intent.data?.host == "translation") {
-            val data = intent.data
-            if (data != null) {
-                // 图片翻译，手动跳转
-                if (data.path == "/image_translate") {
-                    navController?.navigate(data)
+        val transActivityIntent = TransActivityIntent.fromIntent(intent)
+        // 处理从应用其他地方传过来的 Url
+        if (transActivityIntent != null) {
+            Log.d(TAG, "getIntentData: parsed transActivityIntent: $transActivityIntent")
+            when (transActivityIntent) {
+                is TransActivityIntent.TranslateText -> {
+                    if (transActivityIntent.byFloatWindow) {
+                        EasyFloatUtils.showFloatBall(this)
+                        EasyFloatUtils.showTransWindow()
+                        EasyFloatUtils.startTranslate(
+                            transActivityIntent.text,
+                            transActivityIntent.sourceLanguage
+                                ?: AppConfig.sDefaultSourceLanguage.value,
+                            transActivityIntent.targetLanguage
+                                ?: AppConfig.sDefaultTargetLanguage.value
+                        )
+                    } else {
+                        navigateToTextTrans(
+                            transActivityIntent.text,
+                            transActivityIntent.sourceLanguage,
+                            transActivityIntent.targetLanguage
+                        )
+                    }
+                }
+
+                is TransActivityIntent.TranslateImage -> {
+                    navController?.navigate(transActivityIntent.imageUri)
+                }
+
+                is TransActivityIntent.OpenFloatWindow -> {
+                    EasyFloatUtils.showFloatBall(this)
                 }
             }
+        } else {
+            Log.d(TAG, "getIntentData: 走到了 else, intent: $intent")
+//            // 这里处理以 url 形式传递的文本
+//            if (Intent.ACTION_VIEW == action) {
+//                val data: Uri? = intent.data
+//                // Log.d(TAG, "getIntentData: data:$data")
+//                if (data != null && data.scheme == "funny" && data.host == "translation") {
+//                    if (data.path == "/translate") {
+//                        if ()
+//                        navigateToTextTrans(
+//                            data.getQueryParameter("text") ?: "",
+//                            Language.fromId(data.getQueryParameter("sourceId")),
+//                            Language.fromId(data.getQueryParameter("targetId"))
+//                        )
+//                    }
+//                    navigateToTextTrans(
+//                        data.getQueryParameter("text") ?: "",
+//                        Language.fromId(data.getQueryParameter("sourceId")),
+//                        Language.fromId(data.getQueryParameter("targetId"))
+//                    )
+//                }
+//            }
+//
+            // 这里是处理输入法选中后的菜单
+            if (Intent.ACTION_PROCESS_TEXT == action && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val text = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.trim() ?: ""
+                if (text != "") {
+                    Log.d(TAG, "获取到输入法菜单传来的文本: $text")
+                    navigateToTextTrans(text)
+                }
+            }
+//            // 图片
+//            // "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
+//            else if (intent?.data?.scheme == "funny" && intent.data?.host == "translation") {
+//                val data = intent.data
+//                if (data != null) {
+//                    // 图片翻译，手动跳转
+//                    if (data.path == "/image_translate") {
+//                        navController?.navigate(data)
+//                    }
+//                }
+//            }
         }
     }
 
-    fun navigateToTextTrans(sourceText: String, sourceLanguage: Language, targetLanguage: Language) {
-        navController?.navigateToTextTrans(sourceText, sourceLanguage, targetLanguage)
+    private fun navigateToTextTrans(
+        sourceText: String,
+        sourceLanguage: Language? = null,
+        targetLanguage: Language? = null
+    ) {
+        lifecycleScope.launch {
+            while (navController == null) {
+                delay(50)
+            }
+            navController?.navigateToTextTrans(
+                sourceText,
+                sourceLanguage ?: AppConfig.sDefaultSourceLanguage.value,
+                targetLanguage ?: AppConfig.sDefaultTargetLanguage.value
+            )
+        }
+    }
+}
+
+// 统一处理 intent
+sealed class TransActivityIntent() {
+    fun asIntent(): Intent {
+        return when (this) {
+            is TranslateText -> Intent(Intent.ACTION_VIEW).apply {
+                data = DeepLinkManager.buildTextTransUri(
+                    text,
+                    sourceLanguage,
+                    targetLanguage,
+                    byFloatWindow)
+            }
+
+            is TranslateImage -> Intent(Intent.ACTION_VIEW).apply {
+                data = DeepLinkManager.buildImageTransUri(imageUri)
+            }
+
+            is OpenFloatWindow -> Intent().apply {
+                action = Consts.INTENT_ACTION_CLICK_FLOAT_WINDOW_TILE
+                putExtra(Consts.INTENT_EXTRA_OPEN_FLOAT_WINDOW, true)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }.apply {
+            setClass(appCtx, TransActivity::class.java)
+            // 带到前台
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+    }
+
+    data class TranslateText(
+        val text: String,
+        val sourceLanguage: Language?,
+        val targetLanguage: Language?,
+        val byFloatWindow: Boolean = false
+    ) : TransActivityIntent()
+
+    data class TranslateImage(val imageUri: Uri) : TransActivityIntent()
+
+    object OpenFloatWindow: TransActivityIntent()
+
+    companion object {
+        fun fromIntent(intent: Intent?): TransActivityIntent? {
+            intent ?: return null
+
+            if (intent.action == Consts.INTENT_ACTION_CLICK_FLOAT_WINDOW_TILE) {
+                return if (intent.getBooleanExtra(Consts.INTENT_EXTRA_OPEN_FLOAT_WINDOW, false)) OpenFloatWindow else null
+            }
+
+            val data = intent.data
+            data ?: return null
+
+            if (data.scheme == "funny" && data.host == "translation") {
+                return when (data.path) {
+                    "/translate" -> kotlin.run {
+                        val text = data.getQueryParameter("text") ?: ""
+                        val sourceId = data.getQueryParameter("sourceId")
+                        val targetId = data.getQueryParameter("targetId")
+                        val byFloatWindow =
+                            data.getQueryParameter("byFloatWindow")?.toBoolean() ?: false
+                        TranslateText(
+                            text,
+                            Language.fromId(sourceId),
+                            Language.fromId(targetId),
+                            byFloatWindow
+                        )
+                    }
+                    "/translate_image" ->  {
+                        val imageUri = intent.getStringExtra("imageUri") ?: return null
+                        TranslateImage(Uri.parse(imageUri))
+                    }
+                    else -> null
+                }
+            }
+            return null
+        }
     }
 }

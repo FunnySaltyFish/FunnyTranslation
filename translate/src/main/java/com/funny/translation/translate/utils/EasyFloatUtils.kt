@@ -13,6 +13,7 @@ import android.widget.*
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.GlobalTranslationConfig
+import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
@@ -20,7 +21,6 @@ import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.activity.StartCaptureScreenActivity
-import com.funny.translation.translate.bean.TranslationConfig
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.service.CaptureScreenService
 import com.lzf.easyfloat.EasyFloat

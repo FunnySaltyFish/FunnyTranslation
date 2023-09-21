@@ -350,11 +350,12 @@ private fun rememberFavoriteState(
     val state = remember { mutableStateOf(false) }
     LaunchedEffect(key1 = Unit) {
         withContext(Dispatchers.IO) {
+            if (!GlobalTranslationConfig.isValid()) return@withContext
             state.value = appDB.transFavoriteDao.count(
-                GlobalTranslationConfig.sourceString,
+                GlobalTranslationConfig.sourceString!!,
                 result.basicResult.trans,
-                GlobalTranslationConfig.sourceLanguage.id,
-                GlobalTranslationConfig.targetLanguage.id,
+                GlobalTranslationConfig.sourceLanguage!!.id,
+                GlobalTranslationConfig.targetLanguage!!.id,
                 result.engineName
             ) > 0
         }

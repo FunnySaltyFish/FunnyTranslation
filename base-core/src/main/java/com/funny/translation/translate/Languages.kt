@@ -30,13 +30,19 @@ enum class Language(val id : Int,var displayText : String = "") {
     val selectedKey get() = this.name + "_selected"
     val imgSelectedKey get() = this.name + "_img_selected"
 
+    companion object {
+        fun fromId(id: String?) = id?.toIntOrNull()?.let { findLanguageById(it) }
+
+    }
+
 }
 
-fun findLanguageById(id : Int) = if(id in allLanguages.indices) {
+fun findLanguageById(id : Int, default: Language = Language.AUTO) = if(id in allLanguages.indices) {
     allLanguages[id]
 } else {
-    Language.AUTO
+    default
 }
+
 
 val allLanguages = Language.values().asList()
 val enabledLanguages = MutableStateFlow(allLanguages.filter { DataSaverUtils.readData(it.selectedKey, true) })

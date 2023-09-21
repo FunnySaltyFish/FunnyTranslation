@@ -1,14 +1,11 @@
 package com.funny.translation.translate.service
 
-import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.funny.translation.Consts
-import com.funny.translation.translate.FunnyApplication
-import com.funny.translation.translate.activity.ShareActivity
+import com.funny.translation.translate.TransActivityIntent
 import com.funny.translation.translate.utils.EasyFloatUtils
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -42,12 +39,7 @@ class OpenFloatWindowTileService: TileService() {
             }
             Tile.STATE_INACTIVE -> kotlin.run {
                 qsTile.state = Tile.STATE_ACTIVE
-                Intent().apply {
-                    setClass(FunnyApplication.ctx, ShareActivity::class.java)
-                    action = Consts.INTENT_ACTION_CLICK_FLOAT_WINDOW_TILE
-                    putExtra(Consts.INTENT_EXTRA_OPEN_FLOAT_WINDOW, true)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }.let {
+                TransActivityIntent.OpenFloatWindow.asIntent().let {
                     startActivityAndCollapse(it)
                 }
             }

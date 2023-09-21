@@ -1,7 +1,6 @@
 package com.funny.translation.translate
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -19,11 +18,11 @@ import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.funny.data_saver.core.LocalDataSaver
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
+import com.funny.translation.NeedToTransConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
@@ -57,9 +56,9 @@ val LocalActivityVM = staticCompositionLocalOf<ActivityViewModel> {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AppNavigation(
+    navController: NavHostController,
     exitAppAction: () -> Unit
 ) {
-    val navController = rememberNavController()
     val context = LocalContext.current
 
     LaunchedEffect(key1 = navController) {
@@ -112,27 +111,8 @@ fun AppNavigation(
                 ) {
                     composable(
                         TranslateScreen.MainScreen.route,
-                        deepLinks = listOf(
-                            navDeepLink {
-                                uriPattern =
-                                    "funny://translation/translate?text={text}&sourceId={sourceId}&targetId={targetId}"
-                            }
-                        ),
-                        arguments = listOf(
-                            navArgument("text") { },
-                            navArgument("sourceId") {
-                                type = NavType.IntType; defaultValue = Language.AUTO.id
-                            },
-                            navArgument("targetId") {
-                                type = NavType.IntType; defaultValue = Language.CHINESE.id
-                            }
-                        )
                     ) {
-                        MainScreen(
-                            sourceText = it.arguments?.getString("text"),
-                            sourceId = it.arguments?.getInt("sourceId"),
-                            targetId = it.arguments?.getInt("targetId")
-                        )
+                        MainScreen()
                     }
                     animateComposable(
                         TranslateScreen.ImageTranslateScreen.route,
@@ -280,17 +260,19 @@ fun NavHostController.navigateToTextTrans(
     sourceLanguage: Language,
     targetLanguage: Language
 ) {
-    val text = Uri.encode(sourceText)
+    if (sourceText?.isNotBlank() == true) {
+        NeedToTransConfig.sourceString = sourceText
+        NeedToTransConfig.sourceLanguage = sourceLanguage
+        NeedToTransConfig.targetLanguage = targetLanguage
+    }
     this.navigate(
-        NavDeepLinkRequest.Builder
-            .fromUri(Uri.parse("funny://translation/translate?text=$text&sourceId=${sourceLanguage.id}&targetId=${targetLanguage.id}"))
-            .build(),
-        navOptions = NavOptions.Builder()
-            .setPopUpTo(TranslateScreen.MainScreen.route, true)
-            .setLaunchSingleTop(true)
-//             .setRestoreState(true)
-            .build()
-    )
+        route = TranslateScreen.MainScreen.route,
+        navOptions {
+            launchSingleTop = true
+            popUpTo(TranslateScreen.MainScreen.route) {
+                inclusive = false
+            }
+        })
 }
 
 // 下面这个方法是配合底部导航栏使用的，但是新版去除了底部导航栏

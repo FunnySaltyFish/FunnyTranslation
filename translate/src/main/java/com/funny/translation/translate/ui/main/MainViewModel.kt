@@ -137,7 +137,7 @@ class MainViewModel : ViewModel() {
     // 收藏与取消收藏，参数 favourited 为 false 时收藏，为 true 时取消收藏
     fun doFavorite(favourited: Boolean, result: TranslationResult){
         viewModelScope.launch(Dispatchers.IO) {
-            val favoriteBean = TransFavoriteBean.fromTransResult(result, GlobalTranslationConfig.sourceString, sourceLanguage.id)
+            val favoriteBean = TransFavoriteBean.fromTransResult(result, translateText, sourceLanguage.id)
             if(favourited){
                 appDB.transFavoriteDao.deleteTransFavorite(favoriteBean)
             }else{

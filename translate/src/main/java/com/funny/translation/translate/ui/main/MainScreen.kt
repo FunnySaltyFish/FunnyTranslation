@@ -2,7 +2,6 @@
 
 package com.funny.translation.translate.ui.main
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
-import com.funny.translation.GlobalTranslationConfig
+import com.funny.translation.NeedToTransConfig
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.network.api
@@ -62,22 +61,15 @@ enum class MainScreenState {
 )
 @Composable
 fun MainScreen(
-    sourceText: String?,
-    sourceId: Int?,
-    targetId: Int?
 ) {
-     TextTransScreen(sourceText, sourceId?.let { findLanguageById(it) }, targetId?.let { findLanguageById(it) })
+    TextTransScreen()
 }
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
-fun TextTransScreen(
-    sourceText: String?,
-    sourceLanguage: Language?,
-    targetLanguage: Language?
-) {
+fun TextTransScreen() {
     val vm: MainViewModel = viewModel()
 
     // 内置引擎
@@ -91,22 +83,17 @@ fun TextTransScreen(
     val snackbarHostState = LocalSnackbarState.current
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(key1 = Unit) {
-        if (sourceText.isNullOrBlank() || sourceLanguage == null || targetLanguage == null)
-            return@LaunchedEffect
-        val last = GlobalTranslationConfig
+    LaunchedEffect(key1 = NeedToTransConfig) {
+        if (!NeedToTransConfig.isValid()) return@LaunchedEffect
         // 防止回退到此页面时仍然触发翻译
         // 也就是：通过 deeplink 打开 MainScreen -> 跳转到其他页面 -> 返回后仍然触发翻译
         // 这个实现无疑并不优雅，但是目前我还没有想到更好的办法
         // 如果您有更好的办法，欢迎提出 PR 或者 issue 讨论
-        if (last.sourceString == sourceText && last.sourceLanguage == sourceLanguage && last.targetLanguage == targetLanguage) {
-            Log.d(TAG, "TextTransScreen: last translation config is same, skip translate")
-            return@LaunchedEffect
-        }
-        vm.translateText = sourceText
-        vm.sourceLanguage = sourceLanguage
-        vm.targetLanguage = targetLanguage
+        vm.translateText = NeedToTransConfig.sourceString!!
+        vm.sourceLanguage = NeedToTransConfig.sourceLanguage!!
+        vm.targetLanguage = NeedToTransConfig.targetLanguage!!
         vm.translate()
+        NeedToTransConfig.clear()
     }
 
     DisposableEffect(key1 = softwareKeyboardController){
