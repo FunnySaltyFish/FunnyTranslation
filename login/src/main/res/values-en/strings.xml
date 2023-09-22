@@ -48,4 +48,6 @@
     <string name="invite_code">Invitation Code</string>
     <string name="please_input_invite_code">Optional, both parties can receive VIP if success</string>
     <string name="confirm_cancel">Confirm to cancel</string>
+    <string name="click_to_show_password">Click to show password</string>
+    <string name="click_to_hide_password">Click to hide password</string>
 </resources>

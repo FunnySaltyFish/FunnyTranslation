@@ -48,4 +48,6 @@
     <string name="invite_code">邀请码</string>
     <string name="please_input_invite_code">选填，受邀成功后双方均可获得会员天数</string>
     <string name="confirm_cancel">确认注销</string>
+    <string name="click_to_show_password">点击显示密码</string>
+    <string name="click_to_hide_password">点击隐藏密码</string>
 </resources>
