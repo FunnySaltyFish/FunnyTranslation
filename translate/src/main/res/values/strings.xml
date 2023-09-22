@@ -225,4 +225,7 @@
     <string name="buy_vip_success">会员购买成功！</string>
     <string name="vip_soon_expire_tip">您的会员将于 %1$s 到期，请及时续费</string>
     <string name="day_hour_min_sec">%d天%02d时%02d分%02d秒</string>
+    <string name="upload_avatar_success">头像上传成功！</string>
+    <string name="upload_avatar_failed">头像上传失败！</string>
+    <string name="invite_user_content">很高兴邀请您体验译站，一款简洁、无广、轻量而强大的开源翻译软件，用我的邀请码【%1$s】注册，双方均可得会员，快来下载体验：\nhttps://www.funnysaltyfish.fun/trans</string>
 </resources>

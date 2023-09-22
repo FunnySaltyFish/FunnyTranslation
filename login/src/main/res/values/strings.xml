@@ -50,4 +50,5 @@
     <string name="confirm_cancel">确认注销</string>
     <string name="click_to_show_password">点击显示密码</string>
     <string name="click_to_hide_password">点击隐藏密码</string>
+    <string name="validate_fingerprint_success">指纹认证成功</string>
 </resources>

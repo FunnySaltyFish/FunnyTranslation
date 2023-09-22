@@ -1,7 +1,6 @@
 package com.funny.translation.translate.ui.thanks
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -408,7 +407,6 @@ fun RealTimeCountdown(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun VipExpireTip(user: UserInfoBean) {
     NoticeBar(

@@ -120,10 +120,10 @@ fun UserProfileSettings(navHostController: NavHostController) {
                     val avatarUrl = UserUtils.uploadUserAvatar(context, img.uri, photoName, img.width, img.height, activityVM.uid)
                     if (avatarUrl != ""){
                         activityVM.userInfo = activityVM.userInfo.copy(avatar_url = avatarUrl)
-                        context.toastOnUi("头像上传成功！")
+                        context.toastOnUi(R.string.upload_avatar_success)
                         avatarPickResult.value = null
                     } else {
-                        context.toastOnUi("头像上传失败！")
+                        context.toastOnUi(R.string.upload_avatar_failed)
                     }
                 }
             }
@@ -205,7 +205,8 @@ fun UserProfileSettings(navHostController: NavHostController) {
                     }
                 }
             } else {
-                ClipBoardUtil.copy(context, userInfo.invite_code)
+                val txt = string(R.string.invite_user_content, userInfo.invite_code)
+                ClipBoardUtil.copy(context, txt)
                 context.toastOnUi(R.string.copied_to_clipboard)
             }
         }) {

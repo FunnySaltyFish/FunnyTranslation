@@ -199,14 +199,16 @@ private fun LoginForm(
                         username = vm.username,
                         did = AppConfig.androidId,
                         onNotSupport = { msg: String -> context.toastOnUi(msg) },
-                        onFail = { context.toastOnUi("认证失败！") },
+                        onFail = { context.toastOnUi(R.string.validate_fingerprint_failed_unknown_reason) },
                         onSuccess = { encryptedInfo, iv ->
-                            context.toastOnUi("指纹认证成功！")
+                            context.toastOnUi(R.string.validate_fingerprint_success)
                             vm.finishValidateFingerPrint = true
                             vm.encryptedInfo = encryptedInfo
                             vm.iv = iv
                         },
-                        onError = { errorCode, errorMsg -> context.toastOnUi("认证失败！（$errorCode: $errorMsg）") },
+                        onError = { errorCode, errorMsg ->
+                            context.toastOnUi(string(R.string.validate_fingerprint_failed_with_msg, errorCode, errorMsg))
+                        },
                         onNewFingerPrint = { email ->
                             if (email.isNotEmpty()) {
                                 try {
