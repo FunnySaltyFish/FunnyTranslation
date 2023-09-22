@@ -205,9 +205,11 @@ private fun MainPart(
 
     SimpleNavigation(
         currentScreen = vm.currentState,
-        modifier = modifier.statusBarsPadding().then(
-            if (isScreenHorizontal) Modifier.navigationBarsPadding() else Modifier
-        )
+        modifier = modifier
+            .statusBarsPadding()
+            .then(
+                if (isScreenHorizontal) Modifier.navigationBarsPadding() else Modifier
+            )
     ) { state ->
         when (state) {
             MainScreenState.Normal -> MainPartNormal(
@@ -311,7 +313,13 @@ private fun Drawer(
             tint = MaterialTheme.colorScheme.primary
         )
     }
-    val drawerItem = @Composable { iconId: Int, targetScreen: TranslateScreen ->
+
+    @Composable
+    fun drawerItem(
+        iconId: Int,
+        targetScreen: TranslateScreen,
+        badge: (@Composable () -> Unit)? = null
+    ) {
         NavigationDrawerItem(
             icon = {
                 drawerItemIcon(
@@ -319,14 +327,17 @@ private fun Drawer(
                     stringResource(id = targetScreen.titleId)
                 )
             },
-            label = { Text(text = stringResource(id = targetScreen.titleId), modifier = Modifier.padding(start = 12.dp)) },
+            label = {
+                Text(text = stringResource(id = targetScreen.titleId), modifier = Modifier.padding(start = 12.dp))
+            },
             selected = false,
             onClick = {
                 navController.navigateSingleTop(targetScreen.route)
             },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = Color.Unspecified
-            )
+            ),
+            badge = badge
         )
     }
 
@@ -365,7 +376,15 @@ private fun Drawer(
         ) {
             UserInfoPanel(navHostController = navController)
             Spacer(modifier = Modifier.height(8.dp))
-            drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen)
+            drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen) {
+                if (!AppConfig.userInfo.value.isSoonExpire()) return@drawerItem
+                Badge(
+                    modifier = Modifier.padding(start = 4.dp),
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Text(text = stringResource(R.string.soon_expire))
+                }
+            }
             divider()
             drawerItem(R.drawable.ic_settings, TranslateScreen.SettingScreen)
             drawerItem(R.drawable.ic_float_window, TranslateScreen.FloatWindowScreen)

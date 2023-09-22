@@ -221,4 +221,8 @@
     <string name="wallpaper_color_extraction">From Wallpaper(Android 12+)</string>
     <string name="android_12_required">This feature requires Android 12 or higher!</string>
     <string name="select_from_image">Select from Image</string>
+    <string name="soon_expire">Soon to expire</string>
+    <string name="buy_vip_success">Membership purchase successful!</string>
+    <string name="vip_soon_expire_tip">Your membership will expire on %1$s, please renew in time</string>
+    <string name="day_hour_min_sec">%d days %02d : %02d : %02d</string>
 </resources>

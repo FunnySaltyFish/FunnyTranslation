@@ -210,10 +210,7 @@ private fun Notice(modifier: Modifier) {
                     RoundedCornerShape(8.dp)
                 )
                 .padding(8.dp)
-                .animateContentSize()
-                .apply {
-                    if (singleLine) this.basicMarquee()
-                },
+                .animateContentSize(),
             text = it.message,
             singleLine = singleLine,
             showClose = true,

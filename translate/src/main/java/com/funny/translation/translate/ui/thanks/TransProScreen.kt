@@ -1,6 +1,7 @@
 package com.funny.translation.translate.ui.thanks
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,6 +36,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -62,13 +64,17 @@ import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.translation.AppConfig
 import com.funny.translation.WebViewActivity
+import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.readAssets
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.VipConfig
+import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.translate.ui.widget.NoticeBar
 import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.translate.ui.widget.TextFlashCanvas
 import com.funny.translation.translate.ui.widget.TextFlashCanvasState
@@ -116,12 +122,11 @@ fun TransProScreen(){
 
 @Composable
 fun TransProContent() {
-    Column(
+    CommonPage(
         Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(start = 12.dp, end = 12.dp, top = 40.dp, bottom = 12.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 8.dp)
+            .verticalScroll(rememberScrollState()),
+        title = stringResource(id = R.string.trans_pro)
     ) {
         val (state, retry) = rememberRetryableLoadingState(loader = VipUtils::getVipConfigs)
         val context = LocalContext.current
@@ -129,9 +134,10 @@ fun TransProContent() {
             context.readAssets("vip_tip.md").format(1.99f)
         }
         var selectedId by remember {
-            mutableStateOf(-1)
+            mutableIntStateOf(-1)
         }
-        var buyNumber by remember { mutableStateOf(1) }
+        val user by AppConfig.userInfo
+        var buyNumber by remember { mutableIntStateOf(1) }
         var payMethod by remember {
             mutableStateOf(PayMethod.Alipay)
         }
@@ -158,7 +164,7 @@ fun TransProContent() {
                             if (it == "TRADE_SUCCESS") {
                                 activityVM.refreshUserInfo()
                                 AppConfig.enableVipFeatures()
-                                context.toastOnUi("会员购买成功！")
+                                context.toastOnUi(R.string.buy_vip_success)
                             }
                             navHostController.popBackStack()
                         })
@@ -171,6 +177,10 @@ fun TransProContent() {
         }
         BackHandler(enabled = tradeNo != null) {
             VipUtils.updateOrderStatus(tradeNo!!, VipUtils.STATUS_CANCEL_OR_FINISHED)
+        }
+        if (user.isSoonExpire()) {
+            VipExpireTip(user = user)
+            Spacer(modifier = Modifier.height(12.dp))
         }
         LazyRow(
             Modifier.fillMaxWidth(),
@@ -259,7 +269,7 @@ private fun PayMethodTile(
 }
 
 @Composable
-fun BuyNumberTile(
+private fun BuyNumberTile(
     number: Int,
     updateNumber: (Int) -> Unit
 ) {
@@ -286,7 +296,7 @@ fun BuyNumberTile(
 }
 
 @Composable
-fun VipCard(
+private fun VipCard(
     modifier: Modifier = Modifier,
     vipConfig: VipConfig,
     selectedProvider: () -> Boolean,
@@ -383,7 +393,7 @@ fun RealTimeCountdown(
         while (true) {
             remainingTime =
                 ((dueTime.time - System.currentTimeMillis()).milliseconds).toComponents { days, hours, minutes, seconds, _ ->
-                    "%d天%02d时%02d分%02d秒".format(days, hours, minutes, seconds)
+                    string(R.string.day_hour_min_sec).format(days, hours, minutes, seconds)
                 }
             delay(1000)
         }
@@ -395,5 +405,22 @@ fun RealTimeCountdown(
         textSize = 12.sp,
         textColor = Color.White,
         textPadding = PaddingValues(horizontal = (0.5).dp, vertical = 4.dp)
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun VipExpireTip(user: UserInfoBean) {
+    NoticeBar(
+        modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .background(
+                MaterialTheme.colorScheme.primaryContainer,
+                RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp),
+        text = stringResource(R.string.vip_soon_expire_tip, user.vipEndTimeStr()),
+        singleLine = true,
+        showClose = true,
     )
 }

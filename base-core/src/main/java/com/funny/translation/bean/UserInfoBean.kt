@@ -9,21 +9,21 @@ import kotlin.time.Duration.Companion.days
 
 /**
  * class User:
-        uid: int
-        username: str
-        password: str
-        email: str
-        phone: str
-        # 密码类型
-        # 1 - 指纹
-        # 2 - 普通密码
-        password_type: int = 2
-        avatar_url: str = ""
-        # vip相关信息
-        vip_level = 0,
-        vip_start_time = -1
-        # 单位为天
-        vip_duration = -1
+uid: int
+username: str
+password: str
+email: str
+phone: str
+# 密码类型
+# 1 - 指纹
+# 2 - 普通密码
+password_type: int = 2
+avatar_url: str = ""
+# vip相关信息
+vip_level = 0,
+vip_start_time = -1
+# 单位为天
+vip_duration = -1
  */
 @Keep
 @Serializable
@@ -43,17 +43,21 @@ data class UserInfoBean(
     @Serializable(with = DateSerializerType1::class) val lastChangeUsernameTime: Date? = null,
     val invite_code: String = "",
     val inviter_uid: Int = -1,
-){
+) {
     fun isValid() = uid >= 0 && jwt_token != ""
     fun isValidVip() =
         isValid() && (vip_level > 0) && vip_start_time?.time != null
                 && vip_start_time.time + vip_duration * 86400 * 1000 > System.currentTimeMillis()
+
     fun vipEndTimeStr() = if (isValidVip()) {
         val endTime = vip_start_time!!.time + vip_duration * 86400 * 1000
         TimeUtils.formatTime(endTime)
     } else {
         "--"
     }
+
+    fun isSoonExpire() =
+        isValidVip() && vip_start_time!!.time + vip_duration * 86400 * 1000 - System.currentTimeMillis() < 5.days.inWholeMilliseconds
 
     fun canChangeUsername() =
         lastChangeUsernameTime?.time == null || System.currentTimeMillis() - lastChangeUsernameTime.time > 30.days.inWholeMilliseconds

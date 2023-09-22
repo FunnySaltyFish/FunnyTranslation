@@ -221,4 +221,8 @@
     <string name="wallpaper_color_extraction">原生壁纸取色（Android 12+）</string>
     <string name="android_12_required">此功能需要Android 12及以上版本！</string>
     <string name="select_from_image">从图片选择</string>
+    <string name="soon_expire">快到期</string>
+    <string name="buy_vip_success">会员购买成功！</string>
+    <string name="vip_soon_expire_tip">您的会员将于 %1$s 到期，请及时续费</string>
+    <string name="day_hour_min_sec">%d天%02d时%02d分%02d秒</string>
 </resources>
