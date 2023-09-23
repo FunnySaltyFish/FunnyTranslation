@@ -64,7 +64,7 @@ object OkHttpUtils {
                 }
             }
             // 对所有向本项目请求的域名均加上应用名称
-            if (newUrl.host.contains(ServiceCreator.API_HOST)){
+            if (newUrl.toString().startsWith(ServiceCreator.BASE_URL)){
                 builder.addHeader("Referer", "FunnyTranslation")
                 builder.addHeader("User-Agent", "FunnyTranslation/${AppConfig.versionCode}")
                 builder.addHeader("App-Build-Type", BuildConfig.BUILD_TYPE)

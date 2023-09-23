@@ -24,9 +24,8 @@ import java.lang.reflect.Type
  */
 
 object ServiceCreator {
-    const val API_HOST = "https://api.funnysaltyfish.fun"
-    const val TRANS_PATH = "/trans/v1/"
-    private val DEFAULT_BASE_URL = OkHttpUtils.removeExtraSlashOfUrl("$API_HOST/$TRANS_PATH")
+    var TRANS_PATH = "/trans/v1"
+    private val DEFAULT_BASE_URL = OkHttpUtils.removeExtraSlashOfUrl("https://api.funnysaltyfish.fun/trans/v1")
 
     var BASE_URL = if (AppConfig.developerMode.value) DataSaverUtils.readData("BASE_URL", DEFAULT_BASE_URL) else DEFAULT_BASE_URL
         set(value) {
