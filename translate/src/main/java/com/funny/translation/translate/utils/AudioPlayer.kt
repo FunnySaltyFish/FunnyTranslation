@@ -7,9 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.funny.translation.helper.DeviceUtils
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.translate.Language
 import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.Language
+import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.engine.TextTranslationEngines
 import java.io.IOException
@@ -31,16 +33,17 @@ object AudioPlayer {
     fun playOrPause(
         word : String,
         language: Language,
+        onStartPlay: () -> Unit = {},
         onComplete : ()->Unit = {},
         onInterrupt: ()->Unit = {},
         onError : (Exception)->Unit,
     ){
         if (language == Language.AUTO) {
-            appCtx.toastOnUi("当前设置的语言为自动选择，请手动指定语言")
+            appCtx.toastOnUi(string(R.string.speak_language_auto_not_supported))
             return
         }
         if (DeviceUtils.isMute()) {
-            appCtx.toastOnUi("当前设备似乎在静音，请调整音量")
+            appCtx.toastOnUi(string(R.string.speak_device_mute_tip))
         }
         val url = getUrl(word, language)
         Log.d(TAG, "play: url:$url")
@@ -54,10 +57,14 @@ object AudioPlayer {
                 currentPlayingText = ""
                 onComplete()
             }
+            mediaPlayer.setOnPreparedListener {
+                it.start()
+                onStartPlay()
+            }
             if(mediaPlayer.isPlaying) {
                 // 点两次当做暂停
                 if (currentPlayingText == word) {
-                    appCtx.toastOnUi("已停止当前朗读~")
+                    appCtx.toastOnUi(string(R.string.speak_stopped))
                     mediaPlayer.pause()
                     currentPlayingText = ""
                     onComplete()

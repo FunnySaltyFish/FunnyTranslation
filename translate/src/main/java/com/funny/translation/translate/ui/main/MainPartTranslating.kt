@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.main
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -15,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CopyAll
 import androidx.compose.material.icons.filled.Favorite
@@ -34,10 +34,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
@@ -46,6 +48,7 @@ import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
@@ -111,6 +114,7 @@ private fun TranslateProgress(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SourceTextPart(
     modifier: Modifier,
@@ -118,6 +122,8 @@ private fun SourceTextPart(
     sourceLanguage: Language,
 ) {
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        val state = rememberSwipeableState(2)
+        val scope = rememberCoroutineScope()
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 modifier = Modifier.weight(1f),
@@ -126,11 +132,16 @@ private fun SourceTextPart(
             SpeakButton(
                 text = sourceText,
                 language = sourceLanguage,
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onBackground,
+                onStartPlay = {
+                    scope.launch {
+                        state.animateTo(100)
+                    }
+                }
             )
             CopyButton(text = sourceText, tint = MaterialTheme.colorScheme.onBackground)
         }
-        SwipeableText(text = sourceText, modifier = Modifier.fillMaxWidth())
+        SwipeableText(text = sourceText, modifier = Modifier.fillMaxWidth(), state = state)
     }
 }
 
@@ -141,11 +152,8 @@ private fun SourceTextPart(
 private fun SwipeableText(
     text: String,
     modifier: Modifier,
+    state: SwipeableState<Int> = rememberSwipeableState(2)
 ) {
-    val state = rememberSwipeableState(2)
-    LaunchedEffect(key1 = state.currentValue) {
-        Log.d("SwipeableText", "SwipeableText: state.currentValue: ${state.currentValue}")
-    }
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = text,
@@ -153,13 +161,13 @@ private fun SwipeableText(
                 .fillMaxWidth(0.94f)
                 .swipeable(
                     state = state,
-                    anchors = mapOf(0f to 2, 100f to 8),
+                    anchors = mapOf(0f to 2, 100f to 100),
                     orientation = Orientation.Vertical,
                     thresholds = { _, _ -> FractionalThreshold(0.3f) },
                 )
                 .animateContentSize(),
             overflow = TextOverflow.Ellipsis,
-            maxLines = state.currentValue
+            maxLines = lerp( 2, 100, (state.offset.value / 100f).coerceIn(0f, 1f))
         )
         Spacer(modifier = Modifier.height(8.dp))
         Box(
@@ -178,7 +186,8 @@ internal fun SpeakButton(
     modifier: Modifier = Modifier,
     text: String,
     language: Language,
-    tint: Color = MaterialTheme.colorScheme.primary
+    tint: Color = MaterialTheme.colorScheme.primary,
+    onStartPlay: SimpleAction? = null
 ) {
     val speakerState = rememberFrameAnimIconState(
         listOf(R.drawable.ic_speaker_2, R.drawable.ic_speaker_1),
@@ -196,7 +205,6 @@ internal fun SpeakButton(
                 speakerState.reset()
                 AudioPlayer.pause()
             } else {
-                speakerState.play()
                 AudioPlayer.playOrPause(
                     text,
                     language,
@@ -205,6 +213,10 @@ internal fun SpeakButton(
                     },
                     onComplete = {
                         speakerState.reset()
+                    },
+                    onStartPlay = {
+                        speakerState.play()
+                        onStartPlay?.invoke()
                     }
                 )
             }
