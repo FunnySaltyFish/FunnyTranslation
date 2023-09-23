@@ -228,4 +228,5 @@
     <string name="upload_avatar_success">Avatar uploaded successfully!</string>
     <string name="upload_avatar_failed">Failed to upload avatar!</string>
     <string name="invite_user_content">I\'m delighted to invite you to experience Transtation, a simple, ad-free, lightweight, and powerful open-source translation software. Both of us can get a membership by using my invite code [%1$s]. Come and download it for an amazing experience:\nhttps://www.funnysaltyfish.fun/trans</string>
+    <string name="expand_detail_by_default">Always Expand Detail</string>
 </resources>

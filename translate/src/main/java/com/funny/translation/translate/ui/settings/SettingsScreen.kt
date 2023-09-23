@@ -217,6 +217,11 @@ fun SettingsScreen() {
                 description = stringResource(id = R.string.show_detail_result_desc),
                 resourceId = R.drawable.ic_detail
             )
+            ProJetSettingCheckbox(
+                state = AppConfig.sExpandDetailByDefault,
+                text = stringResource(id = R.string.expand_detail_by_default),
+                resourceId = R.drawable.ic_detail
+            )
             JetSettingTile(
                 resourceId = R.drawable.ic_theme,
                 text = stringResource(id = R.string.theme)
@@ -261,7 +266,6 @@ private fun DevSetBaseUrl() {
         text = stringResource(id = R.string.setting_base_url),
         confirmButtonAction = {
             ServiceCreator.BASE_URL = text
-            Unit
         }) {
         TextField(value = text, onValueChange = { text = it })
     }

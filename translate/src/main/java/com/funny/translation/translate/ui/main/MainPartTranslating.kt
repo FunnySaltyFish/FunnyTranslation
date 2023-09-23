@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.jetsetting.core.ui.SimpleDialog
+import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.toastOnUi
@@ -281,8 +282,8 @@ private fun ResultItem(
             .padding(start = 20.dp, end = 20.dp, bottom = 16.dp, top = 4.dp)
             .animateContentSize()
     ) {
-        var expandDetail by rememberSaveable {
-            mutableStateOf(false)
+        var expandDetail by rememberSaveable(key = AppConfig.sExpandDetailByDefault.value.toString()) {
+            mutableStateOf(!result.detailText.isNullOrEmpty() && AppConfig.sExpandDetailByDefault.value)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

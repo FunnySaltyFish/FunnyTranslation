@@ -52,6 +52,7 @@ object AppConfig {
     // 以下为Pro专享
     val sParallelTrans = mutableDataSaverStateOf(DataSaverUtils, "KEY_PARALLEL_TRANS", false)
     val sShowDetailResult = mutableDataSaverStateOf(DataSaverUtils, "KEY_SHOW_DETAIL_RESULT", false)
+    val sExpandDetailByDefault = mutableDataSaverStateOf(DataSaverUtils, "KEY_EXPAND_DETAIL_BY_DEFAULT", false)
 
     //
     var developerMode = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEVELOPER_MODE", false)

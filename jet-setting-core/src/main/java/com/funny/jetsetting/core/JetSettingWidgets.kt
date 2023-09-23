@@ -1,7 +1,6 @@
 package com.funny.jetsetting.core
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -27,9 +26,6 @@ import com.funny.jetsetting.core.ui.IconWidget
 import com.funny.jetsetting.core.ui.SettingBaseItem
 import kotlinx.collections.immutable.ImmutableList
 
-private val DefaultJetSettingModifier = Modifier
-    .fillMaxWidth()
-    .padding(horizontal = 24.dp, vertical = 12.dp)
 
 private val EmptyAction = {}
 
@@ -143,9 +139,9 @@ fun JetSettingDialog(
     resourceId: Int? = null,
     text: String,
     dialogTitle: String = stringResource(id = R.string.hint),
-    confirmButtonAction: () -> Unit? = EmptyAction,
+    confirmButtonAction: (() -> Unit)? = EmptyAction,
     confirmButtonText: String = stringResource(id = R.string.confirm),
-    dismissButtonAction: () -> Unit? = EmptyAction,
+    dismissButtonAction: (() -> Unit)? = EmptyAction,
     dismissButtonText: String = stringResource(id = R.string.cancel),
     dialogContent: @Composable () -> Unit
 ) {
@@ -164,7 +160,7 @@ fun JetSettingDialog(
                     Button(
                         onClick = {
                             openDialogState = false
-                            confirmButtonAction()
+                            confirmButtonAction?.invoke()
                         }) {
                         Text(confirmButtonText)
                     }
@@ -174,7 +170,7 @@ fun JetSettingDialog(
                     Button(
                         onClick = {
                             openDialogState = false
-                            dismissButtonAction()
+                            dismissButtonAction?.invoke()
                         }) {
                         Text(dismissButtonText)
                     }
@@ -202,9 +198,9 @@ fun <E> JetSettingListDialog(
     resourceId: Int? = null,
     selected: E,
     updateSelected: (E) -> Unit,
-    confirmButtonAction: () -> Unit? = EmptyAction,
+    confirmButtonAction: (() -> Unit)? = EmptyAction,
     confirmButtonText: String = stringResource(id = R.string.confirm),
-    dismissButtonAction: () -> Unit? = EmptyAction,
+    dismissButtonAction: (() -> Unit)? = EmptyAction,
     dismissButtonText: String = stringResource(id = R.string.cancel),
 ) {
     JetSettingDialog(
