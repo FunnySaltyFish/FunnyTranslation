@@ -22,7 +22,8 @@ The application gradually adapts to Android13, including:
 You can get the latest version from the following ways:
 
 - [Coolapk](https://www.coolapk.com/apk/com.funny.translation)
-- [This repository](https://chat.openai.com/translate/release/translate-release.apk)
+- [This repository - for Chinese Mainland](/translate/common/release/commonRelease.apk)
+- [This repository - for GooglePlay(WIP)](/translate/google/release)
 
 Considering that the number of stars for this application is gradually increasing, and it is used as a learning project to a certain extent, I have also been strengthening its attribute as "a referenceable open-source project".
 

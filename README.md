@@ -21,7 +21,8 @@
 
 您可以在以下途径获取最新版本：
 - [官网](https://www.funnysaltyfish.fun/trans/?source=github)
-- [此仓库](/translate/release/translate-release.apk)
+- [此仓库-中国大陆渠道](/translate/common/release/commonRelease.apk)
+- [此仓库-GooglePlay渠道（未完成）](/translate/google/release)
 
 考虑到本应用的Star逐渐增多，且在某些地方一定程度上作为学习的项目，我最近也在加强它“一个可参考的开源项目”的属性。  
 

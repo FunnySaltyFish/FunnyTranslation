@@ -64,6 +64,27 @@ android {
         }
     }
 
+    applicationVariants.configureEach { variant ->
+//        def provider = variant.getPackageApplicationProvider().get()
+//        provider.outputDirectory = new File("${rootDir}/output/${variant.flavorName}/")
+
+        variant.outputs.configureEach { output ->
+            output.outputFileName = "${variant.name}.apk"
+        }
+
+//        variant.assemble.doLast {
+//            File out = new File("${rootDir}/output/${variant.buildType.name}/")
+//            copy {
+//                variant.outputs.forEach { file ->
+//                    copy {
+//                        from file.outputFile
+//                        into out
+//                    }
+//                }
+//            }
+//        }
+    }
+
     buildTypes {
         release {
             //临时可调式

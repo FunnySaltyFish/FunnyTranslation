@@ -48,7 +48,7 @@ def execute_command(command):
 if __name__ == '__main__':
     path_list = []
     translate_dir = os.path.join(sys.argv[1], "translate")
-    subdirs = ["release", "build/outputs/apk"]
+    subdirs = ["common", "google", "build/outputs/apk", "build/intermediates/apk"]
     for each in subdirs:
         path_list.append(translate_dir + "/" + each)
     print("path_list:", path_list)

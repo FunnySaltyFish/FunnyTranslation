@@ -24,10 +24,10 @@ import java.lang.reflect.Type
  */
 
 object ServiceCreator {
-    var TRANS_PATH = "/trans/v1"
-    private val DEFAULT_BASE_URL = OkHttpUtils.removeExtraSlashOfUrl("https://api.funnysaltyfish.fun/trans/v1")
+    var TRANS_PATH = "/trans/v1/"
+    private const val DEFAULT_BASE_URL = "https://api.funnysaltyfish.fun/trans/v1/"
 
-    var BASE_URL = if (AppConfig.developerMode.value) DataSaverUtils.readData("BASE_URL", DEFAULT_BASE_URL) else DEFAULT_BASE_URL
+    var BASE_URL = readBaseURL()
         set(value) {
             if (!AppConfig.developerMode.value) return
             field = value
@@ -41,6 +41,12 @@ object ServiceCreator {
             url = BASE_URL,
             client = okHttpClient,
         ).retrofit
+    }
+
+    private fun readBaseURL(): String {
+        var url = if (AppConfig.developerMode.value) DataSaverUtils.readData("BASE_URL", DEFAULT_BASE_URL) else DEFAULT_BASE_URL
+        if (!url.endsWith("/")) url += "/"
+        return url
     }
 
     /**

@@ -19,7 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
+# 禁用混淆
+-dontobfuscate
 
 #有关JS全部保留
 -keep class javax.script.** {*;}
@@ -78,6 +79,19 @@
     public static <1> INSTANCE;
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+-keep class retrofit2.http.** { *; }
+## keep 被 @POST, @GET 等修饰的 retrofit 接口
+#-keep class * {
+#    @retrofit2.http.FormUrlEncoded <methods>;
+#    @retrofit2.http.POST <methods>;
+#    @retrofit2.http.GET <methods>;
+#    @retrofit2.http.PUT <methods>;
+#    @retrofit2.http.DELETE <methods>;
+#}
+
+-keep class com.funny.translation.translate.network.service.** { *; }
+-keep class com.funny.translation.network.service.** { *; }
 
 # @Serializable and @Polymorphic are used at runtime for polymorphic serialization.
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault
