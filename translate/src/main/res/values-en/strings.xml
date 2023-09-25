@@ -232,4 +232,17 @@
     <string name="speak_language_auto_not_supported">The language is currently set to automatic selection. Please manually specify the language.</string>
     <string name="speak_device_mute_tip">The device seems to be on mute. Please adjust the volume.</string>
     <string name="speak_stopped">The current reading has been stopped.</string>
+    <string name="more_image_point">Image translation points x3</string>
+    <string name="more_image_point_desc">Enjoy triple the image translation points per month</string>
+    <string name="more_engine">More engines</string>
+    <string name="more_engine_desc">Allow you select more engines at one time</string>
+    <string name="more_engine_detail">More detailed translation results</string>
+    <string name="more_engine_detail_desc">Translating words is no longer just one result</string>
+    <string name="parallel_translate">Parallel translation</string>
+    <string name="parallel_translate_desc">Translate with all selected engines simultaneously, greatly improving translation speed</string>
+    <string name="custom_theme">Custom themes</string>
+    <string name="custom_theme_desc">Highly customizable themes, define your own Transtation</string>
+    <string name="exclusive_engine">Exclusive engines</string>
+    <string name="exclusive_engine_desc">Use engines exclusively available to members</string>
+    <string name="markdown_agree_vip_privacy">Purchasing membership indicates that you have read and agreed to the [Transtation Membership Agreement]()</string>
 </resources>

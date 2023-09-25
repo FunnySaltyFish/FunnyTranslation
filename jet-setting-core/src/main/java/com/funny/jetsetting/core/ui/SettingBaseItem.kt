@@ -66,7 +66,7 @@ internal fun SettingBaseItem(
                     MaterialTheme.typography.bodySmall.copy(
                         fontSize = 14.sp,
                         lineHeight = 16.sp,
-                        fontWeight = FontWeight.Light,
+                        fontWeight = FontWeight.W400,
                         color = LocalContentColor.current.copy(alpha = 0.8f)
                     )
                 ) {

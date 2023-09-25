@@ -232,4 +232,17 @@
     <string name="speak_language_auto_not_supported">当前设置的语言为自动选择，请手动指定语言</string>
     <string name="speak_device_mute_tip">当前设备似乎在静音，请调整音量</string>
     <string name="speak_stopped">已停止当前朗读~</string>
+    <string name="more_image_point">图片翻译每月配额x3</string>
+    <string name="more_image_point_desc">每月享有三倍的图片翻译点数</string>
+    <string name="more_engine">更高的引擎选择数</string>
+    <string name="more_engine_desc">所有引擎，火力全开</string>
+    <string name="more_engine_detail">更多引擎的详细翻译结果</string>
+    <string name="more_engine_detail_desc">翻译单词时不再仅仅是一个结果</string>
+    <string name="parallel_translate">并行翻译</string>
+    <string name="parallel_translate_desc">所有已选引擎同时翻译，大幅提升翻译速度</string>
+    <string name="custom_theme">自定义主题</string>
+    <string name="custom_theme_desc">高度自定义主题，你的译站由你定义</string>
+    <string name="exclusive_engine">专享引擎</string>
+    <string name="exclusive_engine_desc">使用部分会员专享的引擎</string>
+    <string name="markdown_agree_vip_privacy">购买会员即代表您已阅读并同意 [译站会员购买协议]()</string>
 </resources>
