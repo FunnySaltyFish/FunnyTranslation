@@ -91,6 +91,7 @@ import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Date
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -244,8 +245,8 @@ fun TransProContent() {
                     Icon(Icons.Default.ShoppingCart, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     NumberChangeAnimatedText(
-                        text = selectedVipConfig?.getRealPrice()?.toBigDecimalOrNull()?.times(
-                            BigDecimal(buyNumber))?.setScale(2)?.toString() ?: "0.0",
+                        text = selectedVipConfig?.getRealPrice()?.times(
+                            BigDecimal(buyNumber))?.setScale(2, RoundingMode.HALF_UP)?.toString() ?: "0.0",
                         textColor = LocalContentColor.current,
                         textSize = LocalTextStyle.current.fontSize,
                         textPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp)
@@ -405,7 +406,7 @@ private fun VipCard(
         trailingContent = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "￥${vipConfig.getRealPrice()}",
+                    text = "￥${vipConfig.getRealPriceStr()}",
                     modifier = Modifier,
                     fontSize = 18.sp, fontWeight = FontWeight.Bold,
                 )
