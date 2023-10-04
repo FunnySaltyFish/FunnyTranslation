@@ -11,11 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -201,46 +197,4 @@ private fun InputPart(
             translateAction = startTranslateActon
         )
     }
-}
-
-// 这个 Composable 会在圆形按钮上绘制进度条
-// 现在被弃用，可以下载 v2.6.1 版本的 apk 来看效果
-@Composable
-private fun TranslateButton(
-    progress: Int = 100,
-    isTranslating: Boolean = false,
-    onClick: () -> Unit
-) {
-    val borderColor = MaterialTheme.colorScheme.secondary
-    val density = LocalDensity.current
-    val size48dp = remember { with(density) { 48.dp.toPx() } }
-    val size12dp = remember { with(density) { 12.dp.toPx() } }
-
-    IconButton(
-        modifier =
-        Modifier.drawBehind {
-            if (progress < 100) drawArc(
-                borderColor,
-                startAngle = -90f,
-                360f * progress / 100,
-                false,
-                style = Stroke(width = 4f),
-                topLeft = Offset(size12dp / 2, size12dp / 2),
-                size = size.copy(size48dp - size12dp, size48dp - size12dp)
-            )
-        }, onClick = onClick
-    ) {
-        if (!isTranslating) Icon(
-            Icons.Default.Done,
-            contentDescription = stringResource(R.string.start_translate),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-        else Icon(
-            painter = painterResource(id = R.drawable.ic_pause),
-            contentDescription = stringResource(R.string.stop_translate),
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
-
 }

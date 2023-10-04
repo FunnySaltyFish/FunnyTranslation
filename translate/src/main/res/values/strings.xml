@@ -245,4 +245,5 @@
     <string name="exclusive_engine">专享引擎</string>
     <string name="exclusive_engine_desc">使用部分会员专享的引擎</string>
     <string name="markdown_agree_vip_privacy">购买会员即代表您已阅读并同意 [译站会员购买协议]()</string>
+    <string name="long_text_trans">长文翻译</string>
 </resources>

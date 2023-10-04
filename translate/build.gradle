@@ -145,6 +145,9 @@ dependencies {
     // If you want to additionally use the CameraX Lifecycle library
     implementation("androidx.camera:camera-lifecycle:${camerax_version}")
 
+    implementation "androidx.documentfile:documentfile:1.0.1"
+
+
 
     implementation 'com.github.princekin-f:EasyFloat:2.0.4'
     implementation 'com.github.thomhurst:RoundImageView:1.0.2'

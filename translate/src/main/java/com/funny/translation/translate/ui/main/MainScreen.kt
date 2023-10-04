@@ -2,6 +2,7 @@
 
 package com.funny.translation.translate.ui.main
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
@@ -32,6 +33,7 @@ import com.funny.translation.network.api
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
+import com.funny.translation.translate.ui.ai.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import kotlinx.coroutines.delay
@@ -62,7 +64,8 @@ enum class MainScreenState {
 @Composable
 fun MainScreen(
 ) {
-    TextTransScreen()
+//    TextTransScreen()
+    LongTextTransDetailScreen(inputFileUri = Uri.EMPTY)
 }
 
 @ExperimentalComposeUiApi
