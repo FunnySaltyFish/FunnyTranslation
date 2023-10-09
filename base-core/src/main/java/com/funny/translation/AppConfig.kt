@@ -96,4 +96,4 @@ object AppConfig {
 val GlobalTranslationConfig = TranslationConfig()
 // 外部 intent 导致，表示待会儿需要做翻译
 // 不用 DeepLink
-val NeedToTransConfig = TranslationConfig()
+var NeedToTransConfig = TranslationConfig()

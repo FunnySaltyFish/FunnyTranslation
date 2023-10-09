@@ -24,6 +24,7 @@ import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
 import com.funny.translation.NeedToTransConfig
+import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
@@ -267,9 +268,7 @@ fun NavHostController.navigateToTextTrans(
     targetLanguage: Language
 ) {
     if (sourceText?.isNotBlank() == true) {
-        NeedToTransConfig.sourceString = sourceText
-        NeedToTransConfig.sourceLanguage = sourceLanguage
-        NeedToTransConfig.targetLanguage = targetLanguage
+        NeedToTransConfig = TranslationConfig(sourceText, sourceLanguage, targetLanguage)
     }
     this.navigate(
         route = TranslateScreen.MainScreen.route,
