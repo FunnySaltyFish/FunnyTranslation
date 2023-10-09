@@ -1,6 +1,5 @@
 package com.funny.translation.translate.utils
 
-import android.graphics.Point
 import android.graphics.Rect
 import android.util.Log
 import android.view.Gravity
@@ -8,7 +7,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import androidx.core.graphics.plus
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.handler.runOnUI
@@ -35,6 +33,7 @@ import kotlin.math.roundToInt
 object FloatScreenCaptureUtils {
     private const val TAG = "FloatScreenCaptureUtils"
     private const val TAG_SCREEN_CAPTURE_WINDOW = "screen_capture_window"
+    private const val SLEEP_TIME = 1500L
     private var initScreenCaptureWindow = false
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -74,7 +73,7 @@ object FloatScreenCaptureUtils {
             if (abs(viewLeftTop.first - lastX) > 10 || abs(viewLeftTop.second - lastY) > 10) {
                 startRecordScreenJob?.cancel()
                 startRecordScreenJob = coroutineScope.launch(Dispatchers.Default) {
-                    delay(2000)
+                    delay(SLEEP_TIME)
                     startRecordScreenJob = null
                     VibratorUtils.vibrate(100)
                     withContext(Dispatchers.Main) {

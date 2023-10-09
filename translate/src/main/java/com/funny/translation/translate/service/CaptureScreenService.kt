@@ -26,6 +26,7 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.activity.StartCaptureScreenActivity.Companion.ACTION_CAPTURE
 import com.funny.translation.translate.activity.StartCaptureScreenActivity.Companion.ACTION_INIT
 import com.funny.translation.translate.bean.FileSize
+import com.funny.translation.translate.utils.DeepLinkManager
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.*
@@ -171,7 +172,8 @@ class CaptureScreenService : Service() {
                 val bytes = BitmapUtil.compressImage(bitmap, FileSize.fromMegabytes(1).size)
                 BitmapUtil.saveBitmap(bytes, TEMP_CAPTURED_IMAGE_PATH)
                 appCtx.toastOnUi(getString(R.string.save_screenshot_success))
-                startTranslate()
+                // 如果是全屏翻译，先裁剪一下
+                startTranslate(doClip = (mRect == WHOLE_SCREEN_RECT))
             }
         } catch (throwable: Throwable) {
             showError(R.string.failed_to_save_screenshot, throwable)
@@ -183,15 +185,13 @@ class CaptureScreenService : Service() {
         }
     }
 
-    private fun startTranslate(){
-        // "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
-        val intent = Intent(this, TransActivity::class.java)
-        // 已经存在，就带到前台
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+    private fun startTranslate(doClip: Boolean){
         val fileUri = Uri.fromFile(File(TEMP_CAPTURED_IMAGE_PATH))
-        intent.data = Uri.parse("funny://translation/image_translate?imageUri=${fileUri}&doClip=true")
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
+        TransActivityIntent.TranslateImage(DeepLinkManager.buildImageTransUri(imageUri = fileUri, doClip = doClip)).asIntent().let {
+            // 已经存在，就带到前台
+            it.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(it)
+        }
     }
 
     private fun showError(@StringRes messageId: Int, throwable: Throwable) {

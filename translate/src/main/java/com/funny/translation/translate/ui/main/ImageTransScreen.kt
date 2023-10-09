@@ -293,7 +293,7 @@ private fun ImageTranslationPart(
     LaunchedEffect(vm.imageUri, vm.sourceLanguage, vm.targetLanguage, vm.translateEngine) {
         vm.translate()
     }
-    Column(Modifier.fillMaxWidth()) {
+    Column(Modifier.fillMaxSize().statusBarsPadding()) {
         Row(
             Modifier
                 .fillMaxWidth()

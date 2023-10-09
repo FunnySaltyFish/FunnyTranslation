@@ -9,14 +9,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material3.AlertDialog
@@ -76,6 +77,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.QQUtils
 import kotlinx.coroutines.launch
 
@@ -147,115 +149,122 @@ fun UserProfileSettings(navHostController: NavHostController) {
             }
         }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(top = 24.dp, start = 12.dp, end = 12.dp),
-        horizontalAlignment = CenterHorizontally
+    val userInfo = AppConfig.userInfo.value
+    CommonPage(
+        title = stringResource(id = R.string.user_profile) + "(${userInfo.username})"
     ) {
-        val userInfo = AppConfig.userInfo.value
-        Tile(
-            text = stringResource(id = R.string.avatar),
-            onClick = {
-                pickLauncher.launch(
-                    PhotoPickerActivity.intentOf(
-                        context,
-                        CoilMediaPhotoProviderFactory::class.java,
-                        CustomPhotoPickerActivity::class.java,
-                        pickedItems = arrayListOf<Uri>().apply {
-                            avatarPickResult.value?.list?.mapTo(
-                                this
-                            ) { it.uri }
-                        },
-                        pickLimitCount = 1,
+        Column(
+            Modifier
+                .padding(horizontal = 8.dp)
+                .verticalScroll(rememberScrollState())) {
+            Tile(
+                text = stringResource(id = R.string.avatar),
+                onClick = {
+                    pickLauncher.launch(
+                        PhotoPickerActivity.intentOf(
+                            context,
+                            CoilMediaPhotoProviderFactory::class.java,
+                            CustomPhotoPickerActivity::class.java,
+                            pickedItems = arrayListOf<Uri>().apply {
+                                avatarPickResult.value?.list?.mapTo(
+                                    this
+                                ) { it.uri }
+                            },
+                            pickLimitCount = 1,
+                        )
                     )
+                }
+            ) {
+                AsyncImage(
+                    model = userInfo.avatar_url,
+                    contentDescription = stringResource(id = R.string.avatar),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
+                    placeholder = painterResource(R.drawable.ic_loading)
                 )
             }
-        ) {
-            AsyncImage(
-                model = userInfo.avatar_url,
-                contentDescription = stringResource(id = R.string.avatar),
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape),
-                placeholder = painterResource(R.drawable.ic_loading)
-            )
-        }
-        Tile(text = stringResource(R.string.change_username), onClick =  {
-            navHostController.navigateSingleTop(LoginRoute.ChangeUsernamePage.route)
-        })
-        Tile(text = stringResource(R.string.modify_password), onClick = {
-            navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
-        })
-        Tile(text = stringResource(R.string.img_remaining_points)){
-            Text(text = userInfo.img_remain_points.toString())
-        }
-        Tile(text = stringResource(R.string.vip_end_time)){
-            Text(text = userInfo.vipEndTimeStr())
-        }
-        Divider()
-        // 生成邀请码
-        Tile(text = stringResource(R.string.invite_code), onClick = {
-            if (userInfo.invite_code.isBlank()) {
-                scope.launch {
-                    api(UserUtils.userService::generateInviteCode) {
-                        addSuccess {
-                            AppConfig.userInfo.value = userInfo.copy(invite_code = it.data ?: "")
+            Tile(text = stringResource(R.string.change_username), onClick = {
+                navHostController.navigateSingleTop(LoginRoute.ChangeUsernamePage.route)
+            })
+            Tile(text = stringResource(R.string.modify_password), onClick = {
+                navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
+            })
+            Tile(text = stringResource(R.string.img_remaining_points)) {
+                Text(text = userInfo.img_remain_points.toString())
+            }
+            Tile(text = stringResource(R.string.vip_end_time)) {
+                Text(text = userInfo.vipEndTimeStr())
+            }
+            Divider()
+            // 生成邀请码
+            Tile(text = stringResource(R.string.invite_code), onClick = {
+                if (userInfo.invite_code.isBlank()) {
+                    scope.launch {
+                        api(UserUtils.userService::generateInviteCode) {
+                            addSuccess {
+                                AppConfig.userInfo.value =
+                                    userInfo.copy(invite_code = it.data ?: "")
+                            }
                         }
                     }
+                } else {
+                    val txt = string(R.string.invite_user_content, userInfo.invite_code)
+                    ClipBoardUtil.copy(context, txt)
+                    context.toastOnUi(R.string.copied_to_clipboard)
                 }
-            } else {
-                val txt = string(R.string.invite_user_content, userInfo.invite_code)
-                ClipBoardUtil.copy(context, txt)
-                context.toastOnUi(R.string.copied_to_clipboard)
+            }) {
+                Text(userInfo.invite_code.ifEmpty { stringResource(R.string.click_to_generate) })
             }
-        }) {
-            Text(userInfo.invite_code.ifEmpty { stringResource(R.string.click_to_generate) })
-        }
-        // 查询被邀请人
-        val (showInviteUserDialog, update) = remember { mutableStateOf(false) }
-        Tile(text = stringResource(R.string.invited_users), onClick = {
-            update(true)
-        }) {
-            InvitedUserAlertDialog(show = showInviteUserDialog, updateShow = update)
-        }
-        Divider()
-        Tile(text = stringResource(R.string.disable_account), onClick = {
-            navHostController.navigateSingleTop(LoginRoute.CancelAccountPage.route)
-        })
-        Divider()
-        Spacer(modifier = Modifier.height(64.dp))
-        Button(modifier = Modifier.align(CenterHorizontally), onClick = {
-            AppConfig.logout()
-            navHostController.popBackStack()
-        }) {
-            Text(text = stringResource(R.string.logout))
-        }
+            // 查询被邀请人
+            val (showInviteUserDialog, update) = remember { mutableStateOf(false) }
+            Tile(text = stringResource(R.string.invited_users), onClick = {
+                update(true)
+            }) {
+                InvitedUserAlertDialog(show = showInviteUserDialog, updateShow = update)
+            }
+            Divider()
+            Tile(text = stringResource(R.string.disable_account), onClick = {
+                navHostController.navigateSingleTop(LoginRoute.CancelAccountPage.route)
+            })
+            Divider()
+            Spacer(modifier = Modifier.height(64.dp))
+            Button(modifier = Modifier.align(CenterHorizontally), onClick = {
+                AppConfig.logout()
+                navHostController.popBackStack()
+            }) {
+                Text(text = stringResource(R.string.logout))
+            }
 
-        val text = remember {
-            buildAnnotatedString {
-                append(string(R.string.join_group_tip_p1))
-                pushStringAnnotation(
-                    tag = "url",
-                    annotation = "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D"
-                )
-                withStyle(style = SpanStyle(color = MaterialColors.BlueA700)) {
-                    append(" 857362450 ")
+            val text = remember {
+                buildAnnotatedString {
+                    append(string(R.string.join_group_tip_p1))
+                    pushStringAnnotation(
+                        tag = "url",
+                        annotation = "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D"
+                    )
+                    withStyle(style = SpanStyle(color = MaterialColors.BlueA700)) {
+                        append(" 857362450 ")
+                    }
+                    pop()
+                    append(string(R.string.join_group_tip_p2))
                 }
-                pop()
-                append(string(R.string.join_group_tip_p2))
             }
-        }
-        ClickableText(
-            text = text,
-            modifier = Modifier.fillMaxWidth(0.9f),
-            style = TextStyle(color = Color.Gray, textAlign = TextAlign.Center, fontSize = 14.sp)
-        ) { index ->
-            // 根据tag取出annotation并打印
-            text.getStringAnnotations(tag = "url", start = index, end = index).firstOrNull()
-                ?.let {
-                    QQUtils.joinQQGroup(context, "mlEwPbkeUQMuwoyp44lROPeD938exo56")
-                }
+            ClickableText(
+                text = text,
+                modifier = Modifier.fillMaxWidth(0.9f),
+                style = TextStyle(
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp
+                )
+            ) { index ->
+                // 根据tag取出annotation并打印
+                text.getStringAnnotations(tag = "url", start = index, end = index).firstOrNull()
+                    ?.let {
+                        QQUtils.joinQQGroup(context, "mlEwPbkeUQMuwoyp44lROPeD938exo56")
+                    }
+            }
         }
     }
 }

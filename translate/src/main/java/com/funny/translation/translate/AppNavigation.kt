@@ -38,6 +38,7 @@ import com.funny.translation.translate.ui.thanks.AppRecommendationScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
+import com.funny.translation.translate.utils.DeepLinkManager
 import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.launch
 
@@ -121,7 +122,7 @@ fun AppNavigation(
                         deepLinks = listOf(
                             navDeepLink {
                                 uriPattern =
-                                    "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}&doClip={doClip}"
+                                    "${DeepLinkManager.PREFIX}${DeepLinkManager.IMAGE_TRANS_PATH}?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}&doClip={doClip}"
                             }
                         ),
                         arguments = listOf(

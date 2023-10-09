@@ -180,7 +180,7 @@ class TransActivity : BaseActivity() {
                 }
 
                 is TransActivityIntent.TranslateImage -> {
-                    navController?.navigate(transActivityIntent.imageUri)
+                    navController?.navigate(transActivityIntent.deepLinkUri)
                 }
 
                 is TransActivityIntent.OpenFloatWindow -> {
@@ -189,27 +189,6 @@ class TransActivity : BaseActivity() {
             }
         } else {
             Log.d(TAG, "getIntentData: 走到了 else, intent: $intent")
-//            // 这里处理以 url 形式传递的文本
-//            if (Intent.ACTION_VIEW == action) {
-//                val data: Uri? = intent.data
-//                // Log.d(TAG, "getIntentData: data:$data")
-//                if (data != null && data.scheme == "funny" && data.host == "translation") {
-//                    if (data.path == "/translate") {
-//                        if ()
-//                        navigateToTextTrans(
-//                            data.getQueryParameter("text") ?: "",
-//                            Language.fromId(data.getQueryParameter("sourceId")),
-//                            Language.fromId(data.getQueryParameter("targetId"))
-//                        )
-//                    }
-//                    navigateToTextTrans(
-//                        data.getQueryParameter("text") ?: "",
-//                        Language.fromId(data.getQueryParameter("sourceId")),
-//                        Language.fromId(data.getQueryParameter("targetId"))
-//                    )
-//                }
-//            }
-//
             // 这里是处理输入法选中后的菜单
             if (Intent.ACTION_PROCESS_TEXT == action && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val text = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)?.trim() ?: ""
@@ -218,17 +197,6 @@ class TransActivity : BaseActivity() {
                     navigateToTextTrans(text)
                 }
             }
-//            // 图片
-//            // "funny://translation/image_translate?imageUri={imageUri}&sourceId={sourceId}&targetId={targetId}"
-//            else if (intent?.data?.scheme == "funny" && intent.data?.host == "translation") {
-//                val data = intent.data
-//                if (data != null) {
-//                    // 图片翻译，手动跳转
-//                    if (data.path == "/image_translate") {
-//                        navController?.navigate(data)
-//                    }
-//                }
-//            }
         }
     }
 
@@ -263,7 +231,7 @@ sealed class TransActivityIntent() {
             }
 
             is TranslateImage -> Intent(Intent.ACTION_VIEW).apply {
-                data = DeepLinkManager.buildImageTransUri(imageUri)
+                data = deepLinkUri
             }
 
             is OpenFloatWindow -> Intent().apply {
@@ -285,7 +253,7 @@ sealed class TransActivityIntent() {
         val byFloatWindow: Boolean = false
     ) : TransActivityIntent()
 
-    data class TranslateImage(val imageUri: Uri) : TransActivityIntent()
+    data class TranslateImage(val deepLinkUri: Uri) : TransActivityIntent()
 
     object OpenFloatWindow: TransActivityIntent()
 
@@ -302,7 +270,7 @@ sealed class TransActivityIntent() {
 
             if (data.scheme == "funny" && data.host == "translation") {
                 return when (data.path) {
-                    "/translate" -> kotlin.run {
+                    DeepLinkManager.TEXT_TRANS_PATH -> kotlin.run {
                         val text = data.getQueryParameter("text") ?: ""
                         val sourceId = data.getQueryParameter("sourceId")
                         val targetId = data.getQueryParameter("targetId")
@@ -315,9 +283,8 @@ sealed class TransActivityIntent() {
                             byFloatWindow
                         )
                     }
-                    "/translate_image" ->  {
-                        val imageUri = intent.getStringExtra("imageUri") ?: return null
-                        TranslateImage(Uri.parse(imageUri))
+                    DeepLinkManager.IMAGE_TRANS_PATH ->  {
+                        TranslateImage(data)
                     }
                     else -> null
                 }
