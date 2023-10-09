@@ -1,11 +1,13 @@
 package com.funny.translation.translate.ui.ai
 
 import android.net.Uri
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -31,15 +32,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.main.LanguageSelectRow
 import com.funny.translation.translate.ui.widget.CommonPage
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import java.util.UUID
 
 @Composable
 fun LongTextTransDetailScreen(
     id: String = UUID.randomUUID().toString(),
     totalLength: Int = 0,
-    inputFileUri: Uri
+    inputFileUri: Uri,
+    sourceTextKey: String
 ) {
     val vm: LongTextTransViewModel = viewModel()
     CommonPage(
@@ -52,29 +52,56 @@ fun LongTextTransDetailScreen(
     ) {
         // 传入参数时，先初始化各类型
         LaunchedEffect(key1 = id){
-            vm.initArgs(id, totalLength, inputFileUri)
+            vm.initArgs(id, totalLength, inputFileUri, sourceTextKey)
         }
 
-        // 翻译结果
-        Text(text = vm.resultText)
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp)) {
+            Category(title = stringResource(id = R.string.source_text)) {
+                Text(text = vm.sourceString)
+            }
 
-        // 当前术语
-        AllCorpusList(
-            modifier = Modifier.heightIn(0.dp, 300.dp),
-            corpus = vm.allCorpus.toImmutableList(),
-            addTerm = vm::addTerm,
-            removeTerm = vm::removeTerm,
-            modifyTerm = vm::modifyTerm
-        )
+            Category(title = stringResource(R.string.translate_result)) {
+                // 翻译结果
+                Text(text = vm.resultText)
+            }
 
-        FunctionRow(modifier = Modifier.fillMaxSize().wrapContentHeight(Alignment.Bottom), vm = vm)
+            Category(title = stringResource(id = R.string.all_corpus)) {
+                // 当前术语
+                CorpusList(
+                    modifier = Modifier.heightIn(0.dp, 300.dp),
+                    corpus = vm.allCorpus,
+                    addTerm = vm::addTerm,
+                    removeTerm = vm::removeTerm,
+                    modifyTerm = vm::modifyTerm
+                )
+            }
+
+            Category(title = stringResource(id = R.string.current_corpus)) {
+                // 当前术语
+                CorpusList(
+                    modifier = Modifier.heightIn(0.dp, 300.dp),
+                    corpus = vm.currentCorpus,
+                    addTerm = vm::addTerm,
+                    removeTerm = vm::removeTerm,
+                    modifyTerm = vm::modifyTerm
+                )
+            }
+
+
+        }
+
+        FunctionRow(modifier = Modifier, vm = vm)
     }
 }
 
 @Composable
-private fun AllCorpusList(
+private fun CorpusList(
     modifier: Modifier = Modifier,
-    corpus: ImmutableList<Term>,
+    corpus: List<Term>,
     addTerm: (Term) -> Unit,
     removeTerm: (Term) -> Unit,
     modifyTerm: (Term, Term) -> Unit,
@@ -91,6 +118,21 @@ private fun AllCorpusList(
             )
         }
     }
+}
+
+@Composable
+private fun ColumnScope.Category(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleSmall,
+        modifier = Modifier
+            .padding(vertical = 8.dp),
+        color = MaterialTheme.colorScheme.primary
+    )
+    content()
 }
 
 @Composable

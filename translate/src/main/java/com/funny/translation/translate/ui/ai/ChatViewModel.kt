@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.funny.compose.ai.ChatBot
 import com.funny.compose.ai.TestChatBot
 import com.funny.compose.ai.TestServerChatBot
-import com.funny.compose.ai.bean.ChatMemoryFixedLength
+import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.compose.ai.bean.SENDER_ME
@@ -24,7 +24,7 @@ class ChatViewModel: ViewModel() {
     val currentMessage: MutableState<ChatMessage?> = mutableStateOf(null)
     val convId: MutableState<String?> = mutableStateOf(null)
     val systemPrompt = mutableDataSaverStateOf(DataSaverUtils, "key_chat_base_prompt", BASE_PROMPT)
-    val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedLength(2))
+    val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedMsgLength(2))
     
     init {
         chatBot.value = TestServerChatBot()

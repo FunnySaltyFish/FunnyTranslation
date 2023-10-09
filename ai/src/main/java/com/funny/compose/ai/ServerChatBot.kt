@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.onStart
 abstract class ServerChatBot(
     private val verbose: Boolean = BuildConfig.DEBUG,
 ) : ChatBot() {
-    abstract var args: Map<String, Any?>
+    abstract var args: HashMap<String, Any?>
 
     abstract suspend fun sendRequest(
         formattedText: String,
@@ -41,7 +41,7 @@ abstract class ServerChatBot(
     ): Flow<StreamMessage> {
         val includedMessages = memory.getIncludedMessages(messages)
         val text = getFormattedText(systemPrompt, includedMessages)
-        log("formattedText: $text")
+        log("formattedText: \n$text")
         return sendRequest(text, args).map {
             when {
                 it.startsWith("<<error>") -> StreamMessage.Error(it.removePrefix("<<error>"))

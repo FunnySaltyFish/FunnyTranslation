@@ -15,7 +15,7 @@ abstract class ChatMemory {
     companion object {
         val Saver = { chatMemory: ChatMemory ->
             when(chatMemory) {
-                is ChatMemoryFixedLength -> "chat_memory#fixed_length#${chatMemory.length}"
+                is ChatMemoryFixedMsgLength -> "chat_memory#fixed_length#${chatMemory.length}"
                 is ChatMemoryFixedDuration -> "chat_memory#fixed_duration#${chatMemory.duration.inWholeMilliseconds}"
                 else -> ""
             }
@@ -27,7 +27,7 @@ abstract class ChatMemory {
                 return@lambda DEFAULT_CHAT_MEMORY
             }
             when(parts[1]) {
-                "fixed_length" -> ChatMemoryFixedLength(parts[2].toInt())
+                "fixed_length" -> ChatMemoryFixedMsgLength(parts[2].toInt())
                 "fixed_duration" -> ChatMemoryFixedDuration(parts[2].toLong().milliseconds)
                 else -> DEFAULT_CHAT_MEMORY
             }
@@ -35,7 +35,7 @@ abstract class ChatMemory {
     }
 }
 
-class ChatMemoryFixedLength(val length: Int) : ChatMemory() {
+class ChatMemoryFixedMsgLength(val length: Int) : ChatMemory() {
     override fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
         return list.takeLast(length)
     }
@@ -53,4 +53,17 @@ class ChatMemoryFixedDuration(val duration: Duration) : ChatMemory() {
     }
 }
 
-private val DEFAULT_CHAT_MEMORY = ChatMemoryFixedLength(2)
+class ChatMemoryMaxContextSize(var maxContextSize: Int, var systemPrompt: String): ChatMemory() {
+    override fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
+        var idx = list.size - 1
+        var curLength = systemPrompt.length
+        while (curLength < maxContextSize && idx >= 0) {
+            curLength += list[idx].content.length
+            idx--
+        }
+        return list.subList(idx + 1, list.size)
+    }
+
+}
+
+private val DEFAULT_CHAT_MEMORY = ChatMemoryFixedMsgLength(2)

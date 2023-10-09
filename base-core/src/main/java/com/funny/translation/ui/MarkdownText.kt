@@ -4,6 +4,10 @@ package com.funny.translation.ui
  * https://github.com/jeziellago/compose-markdown
  */
 
+// TODO Change it to
+// to get more customized
+// https://github.com/takahirom/jetpack-compose-markdown/blob/master/app/src/main/java/com/github/takahirom/jetpackcomposemarkdown/Markdown.kt
+
 import android.content.Context
 import android.graphics.Paint
 import android.util.TypedValue

@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class TestServerChatBot: ServerChatBot() {
-    override var args: Map<String, Any?> = emptyMap()
+    override var args: HashMap<String, Any?> = hashMapOf()
 
     override suspend fun sendRequest(formattedText: String, args: Map<String, Any?>): Flow<String> {
         return flow {

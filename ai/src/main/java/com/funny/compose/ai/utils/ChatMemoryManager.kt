@@ -1,10 +1,10 @@
 package com.funny.compose.ai.utils
 
 import com.funny.compose.ai.bean.ChatMemory
-import com.funny.compose.ai.bean.ChatMemoryFixedLength
+import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 
 object ChatMemoryManager {
     fun getChatMemory(): ChatMemory {
-        return ChatMemoryFixedLength(2)
+        return ChatMemoryFixedMsgLength(2)
     }
 }
