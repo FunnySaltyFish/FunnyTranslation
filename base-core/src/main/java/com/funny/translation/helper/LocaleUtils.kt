@@ -7,7 +7,9 @@ import com.funny.translation.bean.AppLanguage
 import java.util.Locale
 
 object LocaleUtils {
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var appLanguage: AppLanguage
+
     fun init(context: Context) {
         sharedPreferences = context.getSharedPreferences("shared_pref", Context.MODE_PRIVATE)
     }
@@ -19,13 +21,17 @@ object LocaleUtils {
     }
 
     fun saveAppLanguage(appLanguage: AppLanguage) {
+        this.appLanguage = appLanguage
         sharedPreferences.edit().putInt(Consts.KEY_APP_LANGUAGE, appLanguage.ordinal).apply()
     }
 
     fun getAppLanguage(): AppLanguage {
-        return kotlin.runCatching {
-            AppLanguage.values()[sharedPreferences.getInt(Consts.KEY_APP_LANGUAGE, 0)]
-        }.onFailure { it.printStackTrace() }.getOrDefault(AppLanguage.FOLLOW_SYSTEM)
+        if (!this::appLanguage.isInitialized) {
+            appLanguage = kotlin.runCatching {
+                AppLanguage.values()[sharedPreferences.getInt(Consts.KEY_APP_LANGUAGE, 0)]
+            }.onFailure { it.printStackTrace() }.getOrDefault(AppLanguage.FOLLOW_SYSTEM)
+        }
+        return this.appLanguage
     }
 
     // 不经过获取 AppLanguage -> Locale 的过程，直接获取 Locale

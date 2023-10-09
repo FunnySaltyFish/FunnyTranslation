@@ -391,7 +391,7 @@ private fun Drawer(
                 Badge(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Text(text = "施工中")
+                    Text(text = stringResource(R.string.work_in_progress))
                 }
             }
             drawerItem(R.drawable.ic_float_window, TranslateScreen.FloatWindowScreen)

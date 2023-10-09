@@ -244,9 +244,13 @@
     <string name="custom_theme_desc">高度自定义主题，你的译站由你定义</string>
     <string name="exclusive_engine">专享引擎</string>
     <string name="exclusive_engine_desc">使用部分会员专享的引擎</string>
-    <string name="markdown_agree_vip_privacy">购买会员即代表您已阅读并同意 [译站会员购买协议]()</string>
+    <string name="markdown_agree_vip_privacy">购买会员即代表您已阅读并同意 [译站会员购买协议](https://api.funnysaltyfish.fun/trans/v1/api/vip_agreement)</string>
     <string name="long_text_trans">长文翻译</string>
     <string name="translate_result">翻译结果</string>
     <string name="all_corpus">所有术语</string>
     <string name="current_corpus">当前术语</string>
+    <string name="work_in_progress">施工中</string>
+    <string name="vip_only_tip">此设置为会员专享功能，请先开通后再使用~</string>
+    <string name="opened_enter_to_trans_tip">已开启回车翻译，部分输入法可能无效，敬请谅解~</string>
+    <string name="early_preview_tip">此页面处于非常早期的阶段，不具备任何参考性</string>
 </resources>

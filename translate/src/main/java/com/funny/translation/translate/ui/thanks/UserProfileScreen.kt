@@ -156,7 +156,9 @@ fun UserProfileSettings(navHostController: NavHostController) {
         Column(
             Modifier
                 .padding(horizontal = 8.dp)
-                .verticalScroll(rememberScrollState())) {
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = CenterHorizontally
+        ) {
             Tile(
                 text = stringResource(id = R.string.avatar),
                 onClick = {

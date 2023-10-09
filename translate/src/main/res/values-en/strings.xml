@@ -74,7 +74,7 @@
     <string name="not_agree">Deny</string>
     <string name="select_language">Select Language</string>
     <string name="agree">Agree</string>
-    <string name="tip_privacy_policy">Please read and agree [Privacy Policy](https://api.funnysaltyfish.fun/trans/v1/api/privacy) before using the application.</string>
+    <string name="tip_privacy_policy">Please read and agree [Privacy Policy](https://api.funnysaltyfish.fun/trans/v1/api/privacy?locale=en) before using the application.</string>
     <string name="action_expand_or_close_select_engines">Click to %s the engine-selecting page</string>
     <string name="action_see_notice_detail">Show detail of the announcement</string>
     <string name="des_current_source_lang">Current selected source language is </string>
@@ -244,5 +244,13 @@
     <string name="custom_theme_desc">Highly customizable themes, define your own Transtation</string>
     <string name="exclusive_engine">Exclusive engines</string>
     <string name="exclusive_engine_desc">Use engines exclusively available to members</string>
-    <string name="markdown_agree_vip_privacy">Purchasing membership indicates that you have read and agreed to the [Transtation Membership Agreement]()</string>
+    <string name="markdown_agree_vip_privacy">Purchasing membership indicates that you have read and agreed to the [Transtation Membership Agreement](https://api.funnysaltyfish.fun/trans/v1/api/vip_agreement?locale=en)</string>
+    <string name="long_text_trans">Long Text Translation</string>
+    <string name="translate_result">Translation Result</string>
+    <string name="all_corpus">All Terms</string>
+    <string name="current_corpus">Current Terms</string>
+    <string name="work_in_progress">WIP</string>
+    <string name="vip_only_tip">This feature is exclusive to members. Please subscribe to use it~</string>
+    <string name="opened_enter_to_trans_tip">Some input methods may not be supported. We apologize for the inconvenience~</string>
+    <string name="early_preview_tip">This page is in a very early stage and is not intended for reference</string>
 </resources>

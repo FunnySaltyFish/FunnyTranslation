@@ -15,11 +15,10 @@
  */
 
 package com.funny.translation.ui
+
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import android.webkit.*
@@ -30,8 +29,9 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.viewinterop.AndroidView
+import com.funny.translation.helper.LocaleUtils
 import com.funny.translation.helper.openUrl
-import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.ServiceCreator
 import com.funny.translation.ui.WebViewLoadingState.Finished
 import com.funny.translation.ui.WebViewLoadingState.Loading
 import kotlinx.coroutines.CoroutineScope
@@ -262,6 +262,18 @@ open class AccompanistWebViewClient : WebViewClient() {
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         Log.d(TAG, "shouldOverrideUrlLoading: url: $url")
         return super.shouldOverrideUrlLoading(view, url)
+    }
+
+    override fun shouldInterceptRequest(
+        view: WebView?,
+        request: WebResourceRequest?
+    ): WebResourceResponse? {
+        if (request?.url.toString().startsWith(ServiceCreator.BASE_URL)) {
+            request?.requestHeaders?.set(
+                "Accept-Language", LocaleUtils.getAppLanguage().toLocale().language
+            )
+        }
+        return super.shouldInterceptRequest(view, request)
     }
 }
 

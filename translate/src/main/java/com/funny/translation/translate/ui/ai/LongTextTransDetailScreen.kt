@@ -68,7 +68,7 @@ fun LongTextTransDetailScreen(
                     RoundedCornerShape(8.dp)
                 )
                 .padding(8.dp),
-            text = "此页面处于非常早期的阶段，不具备任何参考性",
+            text = stringResource(R.string.early_preview_tip),
             singleLine = false,
             showClose = false,
         )
@@ -109,7 +109,6 @@ fun LongTextTransDetailScreen(
                     modifyTerm = vm::modifyTerm
                 )
             }
-
 
         }
 

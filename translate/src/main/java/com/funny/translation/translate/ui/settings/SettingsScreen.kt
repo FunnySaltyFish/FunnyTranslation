@@ -61,6 +61,7 @@ import com.funny.translation.bean.AppLanguage
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.LocaleUtils
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.Language
@@ -123,7 +124,7 @@ fun SettingsScreen() {
                 resourceId = R.drawable.ic_enter,
                 text = stringResource(R.string.setting_enter_to_translate)
             ) {
-                if (it) context.toastOnUi("已开启回车翻译，部分输入法可能无效，敬请谅解~")
+                if (it) context.toastOnUi(R.string.opened_enter_to_trans_tip)
             }
             JetSettingSwitch(
                 state = AppConfig.sAutoFocus,
@@ -203,7 +204,6 @@ fun SettingsScreen() {
                 ItemHeading(text = stringResource(id = R.string.trans_pro))
             }
         ) {
-
             // 并行翻译
             ProJetSettingCheckbox(
                 state = AppConfig.sParallelTrans,
@@ -273,7 +273,7 @@ private fun DevSetBaseUrl() {
 
 internal val DefaultVipInterceptor = {
     if (!AppConfig.isVip()) {
-        appCtx.toastOnUi("此设置为会员专享功能，请先开通后再使用~")
+        appCtx.toastOnUi(string(R.string.vip_only_tip))
         false
     } else {
         true
@@ -414,7 +414,6 @@ fun SelectLanguage(modifier: Modifier) {
             modifier = modifier,
             contentPadding = PaddingValues(12.dp)
         ) {
-
             itemsIndexed(data, { i, _ -> i }) { i, selected ->
                 Row(
                     Modifier.fillMaxWidth(),
