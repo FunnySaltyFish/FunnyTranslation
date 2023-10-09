@@ -2,7 +2,6 @@
 
 package com.funny.translation.translate.ui.main
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
@@ -33,7 +32,6 @@ import com.funny.translation.network.api
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
-import com.funny.translation.translate.ui.ai.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import kotlinx.coroutines.delay
@@ -64,8 +62,8 @@ enum class MainScreenState {
 @Composable
 fun MainScreen(
 ) {
-//    TextTransScreen()
-    LongTextTransDetailScreen(inputFileUri = Uri.EMPTY, sourceTextKey = "")
+    TextTransScreen()
+//    LongTextTransDetailScreen(inputFileUri = Uri.EMPTY, sourceTextKey = "")
 }
 
 @ExperimentalComposeUiApi
@@ -382,7 +380,6 @@ private fun Drawer(
             drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen) {
                 if (!AppConfig.userInfo.value.isSoonExpire()) return@drawerItem
                 Badge(
-                    modifier = Modifier.padding(start = 4.dp),
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(text = stringResource(R.string.soon_expire))
@@ -390,6 +387,13 @@ private fun Drawer(
             }
             divider()
             drawerItem(R.drawable.ic_settings, TranslateScreen.SettingScreen)
+            drawerItem(R.drawable.ic_long_text, TranslateScreen.LongTextTransScreen) {
+                Badge(
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Text(text = "施工中")
+                }
+            }
             drawerItem(R.drawable.ic_float_window, TranslateScreen.FloatWindowScreen)
             divider()
             drawerItem(R.drawable.ic_about, TranslateScreen.AboutScreen)

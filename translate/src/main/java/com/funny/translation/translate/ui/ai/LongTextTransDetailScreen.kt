@@ -1,15 +1,19 @@
 package com.funny.translation.translate.ui.ai
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
@@ -32,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.main.LanguageSelectRow
 import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.translate.ui.widget.NoticeBar
 import java.util.UUID
 
 @Composable
@@ -54,6 +59,20 @@ fun LongTextTransDetailScreen(
         LaunchedEffect(key1 = id){
             vm.initArgs(id, totalLength, inputFileUri, sourceTextKey)
         }
+
+        NoticeBar(
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .background(
+                    MaterialTheme.colorScheme.primaryContainer,
+                    RoundedCornerShape(8.dp)
+                )
+                .padding(8.dp),
+            text = "此页面处于非常早期的阶段，不具备任何参考性",
+            singleLine = false,
+            showClose = false,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
 
         Column(
             Modifier

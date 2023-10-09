@@ -209,8 +209,6 @@ fun TransTheme(
                     if (darkTheme) SystemBarStyle.dark(transparent)
                     else SystemBarStyle.light(transparent, c),
             )
-            context.window.navigationBarDividerColor = transparent
-
             onDispose {}
         }
         content()
