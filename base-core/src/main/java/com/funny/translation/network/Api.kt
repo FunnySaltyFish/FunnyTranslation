@@ -81,18 +81,26 @@ class Api<T>(
         try {
             val resp = if (func.isSuspend) func.callSuspend(*args) else func.call(*args)
             if (resp == null) {
-                respNullFunc()
+                withContext(Dispatchers.Main) {
+                    respNullFunc()
+                }
                 return@withContext null
             }
             if (resp.code == CODE_SUCCESS) {
-                successFunc(resp)
+                withContext(Dispatchers.Main) {
+                    successFunc(resp)
+                }
             } else {
-                failFunc(resp)
+                withContext(Dispatchers.Main) {
+                    failFunc(resp)
+                }
             }
             resp.data
         } catch (e: Exception) {
             if (rethrowErr) throw e
-            errorFunc(e)
+            withContext(Dispatchers.Main) {
+                errorFunc(e)
+            }
             e.printStackTrace()
             null
         }
