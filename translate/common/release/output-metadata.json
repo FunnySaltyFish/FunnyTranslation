@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.funny.translation",
+  "variantName": "commonRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 60,
+      "versionName": "2.6.9",
+      "outputFile": "commonRelease.apk"
+    }
+  ],
+  "elementType": "File"
+}

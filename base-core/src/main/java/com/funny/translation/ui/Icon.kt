@@ -5,6 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,3 +37,23 @@ fun FixedSizeIcon(
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) = Icon(imageVector, contentDescription, modifier, tint)
+
+private fun Modifier.defaultSizeFor(painter: Painter) =
+    this.then(
+        if (painter.intrinsicSize == Size.Unspecified || painter.intrinsicSize.isInfinite()) {
+            DefaultIconSizeModifier
+        } else {
+            // if we haven't set a size, we give it a default size
+            if (this.all {
+                // replace with `it !is SizeElement`, I use reflection here because it's private
+                it.javaClass.simpleName != "SizeElement"
+            }) {
+                DefaultIconSizeModifier
+            } else Modifier
+        }
+    )
+
+private fun Size.isInfinite() = width.isInfinite() && height.isInfinite()
+
+// Default icon size, for icons with no intrinsic size information
+private val DefaultIconSizeModifier = Modifier.size(24.dp)
