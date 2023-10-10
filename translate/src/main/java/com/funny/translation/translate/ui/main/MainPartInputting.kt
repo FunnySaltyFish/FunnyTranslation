@@ -23,6 +23,7 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.InputText
 import com.funny.translation.translate.ui.widget.UpperPartBackground
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.SubcomposeBottomFirstLayout
 import kotlinx.coroutines.delay
 
@@ -138,7 +139,7 @@ private fun MainTopBarInputting(
         title = {},
         navigationIcon = {
             IconButton(onClick = navigateBackAction) {
-                Icon(
+                FixedSizeIcon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(id = R.string.back)
                 )
@@ -146,7 +147,7 @@ private fun MainTopBarInputting(
         },
         actions = {
             IconButton(onClick = showEngineSelectAction) {
-                Icon(
+                FixedSizeIcon(
                     painterResource(id = R.drawable.ic_translate),
                     contentDescription = stringResource(id = R.string.engine_select),
                     modifier = Modifier.size(24.dp)

@@ -9,11 +9,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -22,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.translation.translate.R
+import com.funny.translation.ui.FixedSizeIcon
 
 @Composable
 fun RoundCornerButton(
@@ -87,7 +95,7 @@ fun ExchangeButton(
                 rotationZ = rotateValue
             }
     ) {
-        Icon(
+        FixedSizeIcon(
             painterResource(id = R.drawable.ic_exchange), tint = tint,
             contentDescription = stringResource(R.string.exchange),
             modifier = Modifier.size(24.dp)
@@ -109,7 +117,7 @@ fun ExpandMoreButton(
     IconButton(onClick = {
         onClick(!expand)
     }, modifier = modifier) {
-        Icon(
+        FixedSizeIcon(
             Icons.Default.ArrowDropDown,
             stringResource(id = R.string.expand),
             modifier = Modifier.graphicsLayer {

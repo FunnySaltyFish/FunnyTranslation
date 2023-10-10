@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.ViewColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
@@ -86,6 +85,7 @@ import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.translate.ui.widget.TextFlashCanvas
 import com.funny.translation.translate.ui.widget.TextFlashCanvasState
 import com.funny.translation.translate.utils.VipUtils
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.delay
@@ -242,7 +242,7 @@ fun TransProContent() {
                         .fillMaxWidth(),
                     onClick = startBuy,
                 ) {
-                    Icon(Icons.Default.ShoppingCart, contentDescription = null)
+                    FixedSizeIcon(Icons.Default.ShoppingCart, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     NumberChangeAnimatedText(
                         text = selectedVipConfig?.getRealPrice()?.times(
@@ -276,7 +276,7 @@ fun TransProContent() {
                         Text(text = stringResource(id = it.desc))
                     },
                     leadingContent = {
-                        Icon(it.icon, contentDescription = null)
+                        FixedSizeIcon(it.icon, contentDescription = null)
                     }
                 )
             }
@@ -297,7 +297,7 @@ private fun PayMethodTile(
             .clickable { updatePayMethod(payMethod) }
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        Icon(
+        FixedSizeIcon(
             modifier = Modifier.size(48.dp),
             painter = painterResource(id = payMethod.iconRes),
             contentDescription = stringResource(id = payMethod.titleRes),
@@ -367,7 +367,7 @@ private fun VipCard(
             trailingIconColor = contentColor
         ),
         leadingContent = {
-            Icon(
+            FixedSizeIcon(
                 Icons.Filled.Verified,
                 modifier = Modifier
                     .size(48.dp)

@@ -28,6 +28,7 @@ import com.funny.compose.ai.utils.getColorAtProgress
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.ai.componets.ChatInputTextField
 import com.funny.translation.translate.ui.ai.componets.MessageItem
+import com.funny.translation.ui.FixedSizeIcon
 
 // Modified From https://github.com/prafullmishra/JetComposer/tree/master
 
@@ -247,7 +248,7 @@ fun ReceivedMessage(
                 modifier = Modifier.size(28.dp),
                 shape = CircleShape,
             ) {
-                Icon(
+                FixedSizeIcon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_round_android_24),
                     contentDescription = null,
                     tint = Color.White,

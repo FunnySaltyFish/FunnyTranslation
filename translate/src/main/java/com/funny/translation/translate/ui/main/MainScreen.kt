@@ -34,6 +34,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -307,7 +308,7 @@ private fun Drawer(
     val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
     val drawerItemIcon = @Composable { resId: Int, contentDescription: String ->
-        Icon(
+        FixedSizeIcon(
             painter = painterResource(id = resId),
             contentDescription = contentDescription,
             modifier = Modifier.size(24.dp),

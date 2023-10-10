@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -74,6 +73,7 @@ import com.funny.translation.translate.enabledLanguages
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.SortResultUtils
+import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -332,7 +332,7 @@ fun SortResult(
                 ) {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Spacer(modifier = Modifier.width(24.dp))
-                        Icon(painterResource(id = R.drawable.ic_drag), "Drag to sort")
+                        FixedSizeIcon(painterResource(id = R.drawable.ic_drag), "Drag to sort")
                         Text(
                             text = item,
                             modifier = Modifier.padding(16.dp)
@@ -391,7 +391,7 @@ fun SelectLanguage(modifier: Modifier) {
                     setAllState(selectAll)
                 }
             ) {
-                Icon(
+                FixedSizeIcon(
                     painter = painterResource(id = R.drawable.ic_select_all),
                     contentDescription = stringResource(R.string.whether_selected_all),
                     tint = tintColor

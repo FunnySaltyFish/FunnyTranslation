@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -48,6 +47,7 @@ import com.funny.translation.translate.activity.CustomPhotoPickerActivity
 import com.funny.translation.translate.ui.widget.ArrowTile
 import com.funny.translation.translate.ui.widget.HeadingText
 import com.funny.translation.translate.ui.widget.RadioTile
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
 import kotlinx.collections.immutable.ImmutableList
 
@@ -210,7 +210,7 @@ private fun SelectColorTheme(modifier: Modifier, colors: ImmutableList<Color>, s
                 }, contentAlignment = Alignment.Center
             ) {
                 if (i == selectedId) {
-                    Icon(
+                    FixedSizeIcon(
                         Icons.Filled.Check,
                         contentDescription = null,
                         modifier = Modifier

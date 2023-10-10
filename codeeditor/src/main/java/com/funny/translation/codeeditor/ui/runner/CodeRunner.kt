@@ -22,6 +22,7 @@ import com.funny.translation.codeeditor.R
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
+import com.funny.translation.ui.FixedSizeIcon
 
 private const val TAG = "CodeRunner"
 
@@ -70,7 +71,7 @@ fun CodeRunnerTopBar(
         },
         navigationIcon = {
             IconButton(onClick = backAction) {
-                Icon(Icons.Filled.ArrowBack,"Back")
+                FixedSizeIcon(Icons.Filled.ArrowBack,"Back")
             }
         }
     )

@@ -1,12 +1,12 @@
 package com.funny.translation.translate.ui.widget
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.jetsetting.core.ui.throttleClick
+import com.funny.translation.ui.FixedSizeIcon
 
 @Composable
 fun RadioTile(
@@ -65,6 +66,6 @@ fun ArrowTile(
             modifier = Modifier.weight(1f),
             color = textColor
         )
-        Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = textColor)
+        FixedSizeIcon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = textColor)
     }
 }

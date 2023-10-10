@@ -29,6 +29,7 @@ import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonNavBackIcon
 import com.funny.translation.translate.ui.widget.CommonTopBar
 import com.funny.translation.translate.ui.widget.UpperPartBackground
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
 
 
@@ -116,7 +117,7 @@ private fun TransFavoriteList(
                                 transHistory.sourceString
                             )
                         }) {
-                            Icon(
+                            FixedSizeIcon(
                                 painterResource(id = R.drawable.ic_copy_content),
                                 stringResource(R.string.copy_content)
                             )
@@ -124,7 +125,7 @@ private fun TransFavoriteList(
                         IconButton(onClick = {
                             onDeleteHistory(transHistory.sourceString)
                         }) {
-                            Icon(Icons.Default.Delete, stringResource(R.string.delete_this_history))
+                            FixedSizeIcon(Icons.Default.Delete, stringResource(R.string.delete_this_history))
                         }
                     }
                 }

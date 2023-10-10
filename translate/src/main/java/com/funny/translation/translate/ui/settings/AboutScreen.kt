@@ -16,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +54,7 @@ import com.funny.translation.translate.bean.OpenSourceLibraryInfo
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.ShadowedRoundImage
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
 
 @Composable
@@ -226,7 +226,7 @@ fun OpenSourceLibItem(
                 .weight(1f), onClick = {
                 WebViewActivity.start(context, info.url)
             }) {
-                Icon(Icons.Default.KeyboardArrowRight, contentDescription = stringResource(R.string.browser_url))
+                FixedSizeIcon(Icons.Default.KeyboardArrowRight, contentDescription = stringResource(R.string.browser_url))
             }
         }
     }

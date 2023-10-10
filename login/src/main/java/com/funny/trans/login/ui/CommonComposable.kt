@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.funny.trans.login.R
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.UserUtils
+import com.funny.translation.ui.FixedSizeIcon
 
 @Composable
 fun InputUsername(
@@ -103,7 +103,7 @@ fun ConcealableTextField(
         trailingIcon = {
             AnimatedContent(hiddenInput, label = "hidden_input_icon") {
                 if (it) {
-                    Icon(
+                    FixedSizeIcon(
                         painterResource(id = R.drawable.ic_hidden_password),
                         contentDescription = stringResource(R.string.click_to_show_password),
                         modifier = Modifier
@@ -112,7 +112,7 @@ fun ConcealableTextField(
                         tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
-                    Icon(
+                    FixedSizeIcon(
                         painterResource(id = R.drawable.ic_show_password),
                         contentDescription = stringResource(R.string.click_to_hide_password),
                         modifier = Modifier
@@ -140,7 +140,7 @@ fun CompletableButton(
 ) {
     OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) {
         text()
-        if (completed) Icon(
+        if (completed) FixedSizeIcon(
             painterResource(id = R.drawable.ic_finish),
             contentDescription = stringResource(R.string.finished),
             modifier = Modifier.padding(start = 4.dp),

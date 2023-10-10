@@ -42,6 +42,7 @@ import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
@@ -166,7 +167,7 @@ fun PluginScreen() {
         title = stringResource(id = R.string.manage_plugins),
         actions = {
             IconButton(onClick = { updateShowAddPluginMenu(true) }) {
-                Icon(
+                FixedSizeIcon(
                     Icons.Default.AddCircle,
                     tint = MaterialTheme.colorScheme.onBackground,
                     contentDescription = "Add plugins"

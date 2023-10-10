@@ -49,7 +49,7 @@ dependencies {
 
     // Material Design Color
     api "com.github.FunnySaltyFish:CMaterialColors:1.0.21"
-    api 'com.github.FunnySaltyFish:ComposeLoading:v1.0.1'
+    api 'com.github.FunnySaltyFish:ComposeLoading:v1.0.4'
 
     api "androidx.biometric:biometric:1.2.0-alpha05"
 

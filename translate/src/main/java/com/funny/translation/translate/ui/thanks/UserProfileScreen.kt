@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -79,6 +78,7 @@ import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.QQUtils
+import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.launch
 
 private const val TAG = "UserProfileScreen"
@@ -276,7 +276,7 @@ private fun Tile(
     text: String,
     onClick: () -> Unit = {},
     endIcon: @Composable () -> Unit = {
-        Icon(imageVector = Icons.Default.ArrowRight, "")
+        FixedSizeIcon(imageVector = Icons.Default.ArrowRight, "")
     }
 ) {
     Row(

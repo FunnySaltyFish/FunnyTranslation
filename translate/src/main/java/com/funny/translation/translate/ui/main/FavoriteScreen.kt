@@ -32,6 +32,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransFavoriteBean
 import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.ui.FixedSizeIcon
 
 @Composable
 fun FavoriteScreen(
@@ -202,7 +203,7 @@ fun SwipeToDismissItem(
                     .padding(horizontal = 20.dp),
                 contentAlignment = alignment
             ) {
-                Icon(
+                FixedSizeIcon(
                     icon,
                     contentDescription = "Localized description",
                     modifier = Modifier.scale(scale)

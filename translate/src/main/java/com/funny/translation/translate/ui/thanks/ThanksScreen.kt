@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +52,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.HeadingText
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
 import kotlinx.collections.immutable.toImmutableList
 
@@ -186,7 +186,7 @@ private fun SortSponsor(
     IconButton(onClick = {
         expanded = true
     }) {
-        Icon(Icons.Default.Sort, contentDescription = stringResource(id = R.string.sort))
+        FixedSizeIcon(Icons.Default.Sort, contentDescription = stringResource(id = R.string.sort))
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = {
@@ -204,7 +204,7 @@ private fun SortSponsor(
                 Text(text = stringResource(id = R.string.sort_by_date_asc))
             }, trailingIcon = {
                 if(sortType == SponsorSortType.Date && sortOrder == 1){
-                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_date_asc))
+                    FixedSizeIcon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_date_asc))
                 }
             })
             DropdownMenuItem(onClick = {
@@ -215,7 +215,7 @@ private fun SortSponsor(
                 Text(text = stringResource(id = R.string.sort_by_date_desc))
             }, trailingIcon = {
                 if(sortType == SponsorSortType.Date && sortOrder == -1){
-                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_date_desc))
+                    FixedSizeIcon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_date_desc))
                 }
             })
             DropdownMenuItem(onClick = {
@@ -226,7 +226,7 @@ private fun SortSponsor(
                 Text(text = stringResource(id = R.string.sort_by_money_asc))
             }, trailingIcon = {
                 if(sortType == SponsorSortType.Money && sortOrder == 1){
-                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_money_asc))
+                    FixedSizeIcon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_money_asc))
                 }
             })
             DropdownMenuItem(onClick = {
@@ -237,7 +237,7 @@ private fun SortSponsor(
                 Text(text = stringResource(id = R.string.sort_by_money_desc))
             }, trailingIcon = {
                 if(sortType == SponsorSortType.Money && sortOrder == -1){
-                    Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_money_desc))
+                    FixedSizeIcon(Icons.Default.Check, contentDescription = stringResource(id = R.string.sort_by_money_desc))
                 }
             })
         }

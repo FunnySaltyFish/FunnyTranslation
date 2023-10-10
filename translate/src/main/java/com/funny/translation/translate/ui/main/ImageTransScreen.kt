@@ -53,6 +53,7 @@ import com.funny.translation.translate.engine.ImageTranslationEngine
 import com.funny.translation.translate.ui.widget.AutoResizedText
 import com.funny.translation.translate.ui.widget.CustomCoilProvider
 import com.funny.translation.translate.ui.widget.ExchangeButton
+import com.funny.translation.ui.FixedSizeIcon
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
@@ -301,7 +302,7 @@ private fun ImageTranslationPart(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(onClick = goBack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                FixedSizeIcon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
             }
             LanguageSelectRow(
                 modifier = Modifier,

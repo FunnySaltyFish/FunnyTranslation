@@ -46,6 +46,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.translate.utils.AudioPlayer
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -244,7 +245,7 @@ internal fun CopyButton(
         },
         modifier = modifier.size(48.dp)
     ) {
-        Icon(
+        FixedSizeIcon(
             Icons.Default.CopyAll,
             contentDescription = stringResource(id = R.string.copy_content),
             tint = tint,
@@ -318,7 +319,7 @@ private fun ResultItem(
                 doFavorite(favorite, result)
                 favorite = !favorite
             }, modifier = Modifier.offset(x = 16.dp)) {
-                Icon(
+                FixedSizeIcon(
                     imageVector = if (favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = stringResource(id = R.string.favorite),
                     tint = MaterialTheme.colorScheme.primary,

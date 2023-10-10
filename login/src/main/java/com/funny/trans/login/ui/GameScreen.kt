@@ -11,7 +11,6 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +36,7 @@ import com.funny.trans.login.R
 import com.funny.trans.login.bean.GameStatus
 import com.funny.trans.login.bean.IGameListener
 import com.funny.trans.login.bean.MemoryNumberGame
+import com.funny.translation.ui.FixedSizeIcon
 
 /**
  * @author  FunnySaltyFish
@@ -150,7 +150,7 @@ fun InputContainer(modifier: Modifier, showTip: ()->Unit = {}) {
                 fontSize = 12.sp
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Icon(painterResource(R.drawable.ic_help), "Help", tint = Color.Gray, modifier = Modifier
+            FixedSizeIcon(painterResource(R.drawable.ic_help), "Help", tint = Color.Gray, modifier = Modifier
                 .size(24.dp)
                 .clickable { showTip() })
         }

@@ -112,7 +112,7 @@ fun JetSettingTile(
             Text(text = text)
         },
         action = {
-           // Icon(Icons.Default.KeyboardArrowRight, "Goto", )
+           // FixedSizeIcon(Icons.Default.KeyboardArrowRight, "Goto", )
         },
         icon = {
             val icon = FunnyIcon(imageVector, resourceId)

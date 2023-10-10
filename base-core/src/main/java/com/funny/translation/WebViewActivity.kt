@@ -102,7 +102,7 @@ fun WebViewPage(url: String) {
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End)
                 .offset(x = (-8).dp)) {
-                Icon(painter = painterResource(id = R.drawable.ic_jump_out), contentDescription = "open in browser")
+                FixedSizeIcon(painter = painterResource(id = R.drawable.ic_jump_out), contentDescription = "open in browser")
             }
         }
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.funny.translation.ui.FixedSizeIcon
 
 // 改自 https://github.com/yangqi1024/jetpack-compose-ui/
 
@@ -50,7 +50,7 @@ fun NoticeBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             prefixIcon?.let {
-                Icon(
+                FixedSizeIcon(
                     it,
                     contentDescription = null,
                     tint = color,
@@ -72,7 +72,7 @@ fun NoticeBar(
                 style = style
             )
             if (showClose) {
-                Icon(
+                FixedSizeIcon(
                     Icons.Default.Close,
                     contentDescription = null,
                     tint = color,

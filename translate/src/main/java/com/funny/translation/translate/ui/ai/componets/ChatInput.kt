@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.funny.translation.translate.R
+import com.funny.translation.ui.FixedSizeIcon
 
 @Composable
 fun ChatInputTextField(
@@ -64,19 +64,19 @@ fun ChatInputTextField(
                 Row {
                     if (visible) {
                         IconButton(onClick = { onValueChange("") }) {
-                            Icon(
+                            FixedSizeIcon(
                                 imageVector = Icons.Filled.Clear,
                                 contentDescription = stringResource(id = R.string.clear_content)
                             )
                         }
                         IconButton(onClick = sendAction) {
-                            Icon(
+                            FixedSizeIcon(
                                 imageVector = Icons.Default.Send,
                                 contentDescription = stringResource(id = R.string.send)
                             )
                         }
                     } else {
-                        Icon(
+                        FixedSizeIcon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_mic),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface,
@@ -84,7 +84,7 @@ fun ChatInputTextField(
                                 .size(40.dp)
                                 .padding(8.dp)
                         )
-                        Icon(
+                        FixedSizeIcon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_image),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface,

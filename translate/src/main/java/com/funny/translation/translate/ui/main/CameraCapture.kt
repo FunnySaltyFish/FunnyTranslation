@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashlightOff
@@ -52,6 +51,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.utils.executor
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.Permission
 import com.funny.translation.ui.touchToScale
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -122,7 +122,7 @@ fun CameraCapture(
                             }
                         }
                     )
-                    Icon(
+                    FixedSizeIcon(
                         painter = painterResource(id = R.drawable.ic_album),
                         contentDescription = stringResource(R.string.album),
                         tint = Color.Unspecified,
@@ -246,7 +246,7 @@ private fun FlashlightButton(
             cameraControl?.enableTorch(it)
         }
     ) {
-        Icon(if (flashlightEnabled) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff,
+        FixedSizeIcon(if (flashlightEnabled) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff,
             stringResource(R.string.flashlight), modifier = Modifier.size(36.dp), tint = Color.White)
     }
 }

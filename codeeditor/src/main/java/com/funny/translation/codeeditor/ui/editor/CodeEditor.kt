@@ -46,6 +46,7 @@ import com.funny.translation.helper.writeText
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.translate.allLanguages
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.SubcomposeBottomFirstLayout
 import io.github.rosemoe.editor.interfaces.EditorEventListener
 import io.github.rosemoe.editor.text.Content
@@ -339,13 +340,13 @@ fun CodeEditorTopBar(
             .background(MaterialTheme.colorScheme.primaryContainer),
         actions = {
             IconButton(onClick = debugAction) {
-                Icon(painterResource(id = R.drawable.ic_debug), contentDescription = "Debug")
+                FixedSizeIcon(painterResource(id = R.drawable.ic_debug), contentDescription = "Debug")
             }
             IconButton(onClick = saveAction) {
-                Icon(painterResource(id = R.drawable.ic_save), contentDescription = "Save")
+                FixedSizeIcon(painterResource(id = R.drawable.ic_save), contentDescription = "Save")
             }
             IconButton(onClick = { expanded = true }) {
-                Icon(
+                FixedSizeIcon(
                     Icons.Filled.MoreVert,
                     contentDescription = "More"
                 )

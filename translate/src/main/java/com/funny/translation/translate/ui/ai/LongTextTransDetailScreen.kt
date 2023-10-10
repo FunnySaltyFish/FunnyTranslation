@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +36,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.main.LanguageSelectRow
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.NoticeBar
+import com.funny.translation.ui.FixedSizeIcon
 import java.util.UUID
 
 @Composable
@@ -178,12 +178,12 @@ private fun TranslateButton(
             )
         }, onClick = onClick
     ) {
-        if (!isTranslating) Icon(
+        if (!isTranslating) FixedSizeIcon(
             Icons.Default.Done,
             contentDescription = stringResource(R.string.start_translate),
             tint = MaterialTheme.colorScheme.onPrimaryContainer
         )
-        else Icon(
+        else FixedSizeIcon(
             painter = painterResource(id = R.drawable.ic_pause),
             contentDescription = stringResource(R.string.stop_translate),
             modifier = Modifier.size(24.dp),

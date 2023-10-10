@@ -49,6 +49,7 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -262,7 +263,7 @@ private fun FunctionIconItem(
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
-            Icon(
+            FixedSizeIcon(
                 painter = painterResource(id = iconId),
                 contentDescription = text,
                 tint = MaterialTheme.colorScheme.onPrimary
@@ -366,7 +367,7 @@ private fun MainTopBarNormal(
     ) {
         if (showDrawerAction != null) {
             IconButton(onClick = showDrawerAction) {
-                Icon(
+                FixedSizeIcon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = stringResource(id = R.string.menu)
                 )
@@ -379,7 +380,7 @@ private fun MainTopBarNormal(
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End)
         ) {
-            Icon(
+            FixedSizeIcon(
                 painterResource(id = R.drawable.ic_plugin),
                 contentDescription = stringResource(id = R.string.manage_plugins)
             )
@@ -472,8 +473,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
                         contentDescription = stringResource(id = R.string.avatar)
                     )
                     if (userBean.isValidVip()) {
-                        Icon(
-
+                        FixedSizeIcon(
                             modifier = Modifier
                                 .size(32.dp)
                                 .offset(70.dp, 70.dp),

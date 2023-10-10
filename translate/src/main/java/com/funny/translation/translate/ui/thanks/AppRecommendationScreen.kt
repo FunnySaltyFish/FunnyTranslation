@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.RecommendApp
 import com.funny.translation.translate.network.TransNetwork
 import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -51,7 +51,7 @@ fun AppRecommendationScreen() {
                         }
                     },
                     trailingContent = {
-                        Icon(Icons.Default.ArrowRight, contentDescription = "detail")
+                        FixedSizeIcon(Icons.Default.ArrowRight, contentDescription = "detail")
                     },
                     modifier = Modifier.throttleClick {
                         context.openUrl(app.detailUrl)

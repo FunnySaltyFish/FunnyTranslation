@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
+import com.funny.translation.ui.FixedSizeIcon
 
 /**
  * CommonPage，有一个 TopBar 以及剩余内容，被 Column 包裹
@@ -86,7 +86,7 @@ fun CommonNavBackIcon(
     navigateBackAction: SimpleAction = { navController.popBackStack() }
 ) {
     IconButton(onClick = navigateBackAction) {
-        Icon(
+        FixedSizeIcon(
             Icons.Default.ArrowBack,
             contentDescription = stringResource(id = R.string.back)
         )

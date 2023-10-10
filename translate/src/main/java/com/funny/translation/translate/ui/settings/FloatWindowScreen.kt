@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.EasyFloatUtils
+import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
 
 @Composable
@@ -49,7 +49,7 @@ fun FloatWindowScreen() {
                 .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(20.dp))
                 .padding(16.dp)
         ) {
-            Icon(Icons.Default.Info, contentDescription = null)
+            FixedSizeIcon(Icons.Default.Info, contentDescription = null)
             Text(text = stringResource(id = R.string.float_window_tip), modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp))
