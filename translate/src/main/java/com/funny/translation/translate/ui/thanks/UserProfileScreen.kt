@@ -307,7 +307,13 @@ private fun InvitedUserAlertDialog(
             text = {
                 val (state, retry) = rememberRetryableLoadingState(loader = ::loadInvitedUsers)
                 LazyColumn {
-                    loadingList(state, retry, key = { it.uid }) { item ->
+                    loadingList(state, retry, key = { it.uid }, empty = {
+                        Text(
+                            text = stringResource(id = R.string.empty_invited_users),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }) { item ->
                         Row(
                             Modifier
                                 .fillMaxWidth()

@@ -253,4 +253,5 @@
     <string name="vip_only_tip">此设置为会员专享功能，请先开通后再使用~</string>
     <string name="opened_enter_to_trans_tip">已开启回车翻译，部分输入法可能无效，敬请谅解~</string>
     <string name="early_preview_tip">此页面处于非常早期的阶段，不具备任何参考性</string>
+    <string name="empty_invited_users">还没有呢，快去邀请试试吧~</string>
 </resources>

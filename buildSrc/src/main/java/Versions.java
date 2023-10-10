@@ -23,7 +23,7 @@ public final class Versions {
 
     public static final String kotlinVersion = "1.8.10";
     public static final String composeCompilerVersion = "1.4.4";
-    public static final String composeBomVersion = "2023.08.00";
+    public static final String composeBomVersion = "2023.10.00";
 
     public static final String vasDollyVersion = "3.0.6";
 
