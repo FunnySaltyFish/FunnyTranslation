@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -64,7 +63,8 @@ fun ResetPasswordPage(
             Spacer(modifier = Modifier.height(8.dp))
             InputPassword(
                 passwordProvider = vm::password,
-                updatePassword = vm::updatePassword
+                updatePassword = vm::updatePassword,
+                labelText = stringResource(id = R.string.new_password)
             )
             // 重复密码
             var repeatPassword by remember { mutableStateOf("") }
@@ -73,7 +73,7 @@ fun ResetPasswordPage(
                 derivedStateOf { vm.password != repeatPassword }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
+            ConcealableTextField(
                 value = repeatPassword,
                 onValueChange = { repeatPassword = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -86,7 +86,6 @@ fun ResetPasswordPage(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-
             val enable by remember {
                 derivedStateOf {
                     vm.isValidUsername && vm.isValidEmail && vm.verifyCode.length == 6 && UserUtils.isValidPassword(
