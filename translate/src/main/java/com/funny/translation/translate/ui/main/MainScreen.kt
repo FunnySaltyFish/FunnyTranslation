@@ -64,7 +64,7 @@ enum class MainScreenState {
 fun MainScreen(
 ) {
     TextTransScreen()
-//    LongTextTransDetailScreen(inputFileUri = Uri.EMPTY, sourceTextKey = "")
+//     LongTextTransDetailScreen(id = "244", sourceTextKey = "")
 }
 
 @ExperimentalComposeUiApi

@@ -1,28 +1,30 @@
-package com.funny.translation.translate.ui.ai
+package com.funny.translation.translate.ui.long_text
 
-import android.net.Uri
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SaveAlt
+import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -33,6 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.translation.translate.R
+import com.funny.translation.translate.ui.long_text.components.ResultTextPart
+import com.funny.translation.translate.ui.long_text.components.SourceTextPart
+import com.funny.translation.translate.ui.long_text.components.TwoProgressIndicator
 import com.funny.translation.translate.ui.main.LanguageSelectRow
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.NoticeBar
@@ -42,22 +47,20 @@ import java.util.UUID
 @Composable
 fun LongTextTransDetailScreen(
     id: String = UUID.randomUUID().toString(),
-    totalLength: Int = 0,
-    inputFileUri: Uri,
     sourceTextKey: String
 ) {
     val vm: LongTextTransViewModel = viewModel()
     CommonPage(
         title = stringResource(id = R.string.long_text_trans),
         actions = {
-            Row {
-                TranslateButton(progress = vm.progress, onClick = vm::startTranslate )
-            }
+//            Row {
+//                TranslateButton(progress = vm.progress, onClick = vm::startTranslate )
+//            }
         }
     ) {
         // 传入参数时，先初始化各类型
         LaunchedEffect(key1 = id){
-            vm.initArgs(id, totalLength, inputFileUri, sourceTextKey)
+            vm.initArgs(id, sourceTextKey)
         }
 
         NoticeBar(
@@ -73,85 +76,79 @@ fun LongTextTransDetailScreen(
             showClose = false,
         )
         Spacer(modifier = Modifier.height(4.dp))
+        AnimatedVisibility (vm.screenState == ScreenState.Translating) {
+            TwoProgressIndicator(startedProgress = vm.startedProgress, finishedProgress = vm.progress)
+        }
 
         Column(
             Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 16.dp)) {
-            Category(title = stringResource(id = R.string.source_text)) {
-                Text(text = vm.sourceString)
-            }
-
-            Category(title = stringResource(R.string.translate_result)) {
-                // 翻译结果
-                Text(text = vm.resultText)
-            }
-
-            Category(title = stringResource(id = R.string.all_corpus)) {
-                // 当前术语
-                CorpusList(
-                    modifier = Modifier.heightIn(0.dp, 300.dp),
-                    corpus = vm.allCorpus,
-                    addTerm = vm::addTerm,
-                    removeTerm = vm::removeTerm,
-                    modifyTerm = vm::modifyTerm
-                )
-            }
-
-            Category(title = stringResource(id = R.string.current_corpus)) {
-                // 当前术语
-                CorpusList(
-                    modifier = Modifier.heightIn(0.dp, 300.dp),
-                    corpus = vm.currentCorpus,
-                    addTerm = vm::addTerm,
-                    removeTerm = vm::removeTerm,
-                    modifyTerm = vm::modifyTerm
-                )
-            }
-
+            DetailContent(screenState = vm.screenState, vm = vm)
         }
 
-        FunctionRow(modifier = Modifier, vm = vm)
     }
 }
 
 @Composable
-private fun CorpusList(
-    modifier: Modifier = Modifier,
-    corpus: List<Term>,
-    addTerm: (Term) -> Unit,
-    removeTerm: (Term) -> Unit,
-    modifyTerm: (Term, Term) -> Unit,
+private fun ColumnScope.DetailContent(
+    screenState: ScreenState,
+    vm: LongTextTransViewModel
 ) {
-    LazyColumn(modifier) {
-        items(corpus, key = { it.first }) { term ->
-            ListItem(
-                headlineContent = {
-                    Text(text = term.first)
-                },
-                trailingContent = {
-                    Text(text = term.second)
+    AnimatedContent(targetState = screenState, label = "DetailContent") {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            when (it) {
+                ScreenState.Init -> {
+                    SourceTextPart(text = vm.sourceString, screenState = vm.screenState)
+                    PromptPart(vm.prompt, vm::updatePrompt)
+                    Category(title = stringResource(id = R.string.all_corpus)) {
+                        CorpusList(
+                            modifier = Modifier.heightIn(0.dp, 300.dp),
+                            corpus = vm.allCorpus,
+                            addTerm = vm::addTerm,
+                            removeTerm = vm::removeTerm,
+                            modifyTerm = vm::modifyTerm
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { vm.startTranslate() }) {
+                        FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = stringResource(id = R.string.start_translate))
+                    }
                 }
-            )
+                ScreenState.Translating -> {
+                    SourceTextPart(
+                        text = vm.sourceString,
+                        screenState = vm.screenState,
+                        currentTransStartOffset = vm.translatedLength,
+                        currentTransLength = vm.currentTransPartLength
+                    )
+
+                    ResultTextPart(
+                        text = vm.resultText,
+                        screenState = vm.screenState,
+                        currentResultStartOffset = vm.currentResultStartOffset
+                    )
+                    CorpusListPart(vm = vm)
+                }
+                ScreenState.Result -> {
+                    ResultTextPart(text = vm.resultText, screenState = vm.screenState)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { /*TODO*/ }) {
+                        FixedSizeIcon(Icons.Default.SaveAlt, contentDescription = "export")
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = stringResource(id = R.string.export_result))
+                    }
+                }
+            }
         }
     }
 }
 
-@Composable
-private fun ColumnScope.Category(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleSmall,
-        modifier = Modifier
-            .padding(vertical = 8.dp),
-        color = MaterialTheme.colorScheme.primary
-    )
-    content()
-}
+
+
 
 @Composable
 private fun TranslateButton(

@@ -254,4 +254,10 @@
     <string name="opened_enter_to_trans_tip">已开启回车翻译，部分输入法可能无效，敬请谅解~</string>
     <string name="early_preview_tip">此页面处于非常早期的阶段，不具备任何参考性</string>
     <string name="empty_invited_users">还没有呢，快去邀请试试吧~</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    <string name="target_text">翻译后文本</string>
+    <string name="task_prompt">任务 Prompt</string>
+    <string name="corpus">术语库</string>
+    <string name="export_result">导出</string>
 </resources>

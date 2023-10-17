@@ -1,12 +1,13 @@
 package com.funny.compose.ai
 
 import com.funny.compose.ai.bean.ChatMessage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.json.JSONArray
 import org.json.JSONObject
 
-const val LONG_TEXT_TRANS_PROMPT = """你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文，并找出可能存在的新术语，以JSON的形式返回（如果没有，请返回[]）。
+const val LONG_TEXT_TRANS_PROMPT = """"你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文，并找出可能存在的新术语，以JSON的形式返回（如果没有，请返回[]）。
 示例输入：{"text":"XiaoHong and XiaoMing are studying DB class.","keywords":[["DB","数据库"],["XiaoHong","萧红"]]}
 示例输出：{"text":"萧红和晓明正在学习数据库课程","keywords":[["XiaoMing","晓明"]]}。
 你的输出必须为JSON格式"""
@@ -16,7 +17,15 @@ class TestLongTextChatBot: ServerChatBot() {
 
     override suspend fun sendRequest(formattedText: String, args: Map<String, Any?>): Flow<String> {
         return flow {
-            emit("{\"text\":\"晓明告诉萧红，这个班级里最优秀的学生是晓张。\",\"keywords\":[[\"XiaoZhang\",\"晓张\"]]}")
+            // emit("{\"text\":\"晓明告诉萧红，这个班级里最优秀的学生是晓张。\",\"keywords\":[[\"XiaoZhang\",\"晓张\"]]}")
+            // 分几次 emit，每次 emit json 的一小部分
+            emit("{\"text")
+            delay(500)
+            emit("\":\"晓明告诉萧红")
+            delay(500)
+            emit("这个班级里最优秀的学生是晓张。\",")
+            delay(500)
+            emit("\"keywords\":[[\"XiaoZhang\",\"晓张\"]]}")
         }
     }
 

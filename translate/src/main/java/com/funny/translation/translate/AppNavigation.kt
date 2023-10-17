@@ -1,7 +1,6 @@
 package com.funny.translation.translate
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -28,7 +27,7 @@ import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
-import com.funny.translation.translate.ui.ai.LongTextTransDetailScreen
+import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
@@ -172,7 +171,7 @@ fun AppNavigation(
                         AppRecommendationScreen()
                     }
                     animateComposable(TranslateScreen.LongTextTransScreen.route) {
-                        LongTextTransDetailScreen(id = "233",inputFileUri = Uri.EMPTY, sourceTextKey = "")
+                        LongTextTransDetailScreen(id = "233", sourceTextKey = "")
                     }
                     addSettingsNavigation()
                     addUserProfileRoutes(

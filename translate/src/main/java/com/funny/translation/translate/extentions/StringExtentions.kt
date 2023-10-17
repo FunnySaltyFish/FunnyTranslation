@@ -25,3 +25,5 @@ val String.md5: String
 
 val String.trimLineStart
     get() = this.splitToSequence("\n").map { it.trim() }.joinToString("\n")
+
+inline fun String.safeSubstring(start: Int, end: Int = length) = substring(start, minOf(end, length))

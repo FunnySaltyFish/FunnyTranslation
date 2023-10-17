@@ -254,4 +254,11 @@
     <string name="opened_enter_to_trans_tip">Some input methods may not be supported. We apologize for the inconvenience~</string>
     <string name="early_preview_tip">This page is in a very early stage and is not intended for reference</string>
     <string name="empty_invited_users">No one till now, start inviting right now~</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="target_text">Result Text</string>
+    <string name="task_prompt">Task Prompt</string>
+    <string name="corpus">Term List</string>
+    <string name="export_result">Export Result</string>
+
 </resources>
