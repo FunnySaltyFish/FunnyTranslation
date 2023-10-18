@@ -75,7 +75,7 @@ import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
 import com.funny.translation.translate.navigateSingleTop
-import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.QQUtils
 import com.funny.translation.ui.FixedSizeIcon

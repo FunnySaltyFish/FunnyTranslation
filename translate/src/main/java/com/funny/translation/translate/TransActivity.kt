@@ -24,7 +24,6 @@ import com.funny.translation.BaseActivity
 import com.funny.translation.Consts
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
-import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.network.NetworkReceiver
 import com.funny.translation.translate.utils.DeepLinkManager
 import com.funny.translation.translate.utils.EasyFloatUtils
@@ -126,7 +125,6 @@ class TransActivity : BaseActivity() {
         EasyFloatUtils.dismissAll()
         lifecycle.removeObserver(activityViewModel)
         unregisterReceiver(netWorkReceiver)
-        DataSaverUtils.remove(Consts.KEY_APP_CURRENT_SCREEN)
         super.onDestroy()
     }
 

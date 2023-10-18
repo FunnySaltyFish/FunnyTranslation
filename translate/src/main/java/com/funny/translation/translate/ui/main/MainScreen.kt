@@ -8,6 +8,14 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PictureInPicture
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -17,8 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.unit.dp
@@ -32,7 +40,7 @@ import com.funny.translation.network.api
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
-import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
@@ -307,9 +315,9 @@ private fun Drawer(
 ) {
     val scope = rememberCoroutineScope()
     val navController = LocalNavController.current
-    val drawerItemIcon = @Composable { resId: Int, contentDescription: String ->
+    val drawerItemIcon = @Composable { icon: ImageVector, contentDescription: String ->
         FixedSizeIcon(
-            painter = painterResource(id = resId),
+            imageVector = icon,
             contentDescription = contentDescription,
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colorScheme.primary
@@ -318,14 +326,14 @@ private fun Drawer(
 
     @Composable
     fun drawerItem(
-        iconId: Int,
+        icon: ImageVector,
         targetScreen: TranslateScreen,
         badge: (@Composable () -> Unit)? = null
     ) {
         NavigationDrawerItem(
             icon = {
                 drawerItemIcon(
-                    iconId,
+                    icon,
                     stringResource(id = targetScreen.titleId)
                 )
             },
@@ -378,7 +386,7 @@ private fun Drawer(
         ) {
             UserInfoPanel(navHostController = navController)
             Spacer(modifier = Modifier.height(8.dp))
-            drawerItem(R.drawable.ic_vip, TranslateScreen.TransProScreen) {
+            drawerItem(Icons.Filled.Verified, TranslateScreen.TransProScreen) {
                 if (!AppConfig.userInfo.value.isSoonExpire()) return@drawerItem
                 Badge(
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -387,20 +395,20 @@ private fun Drawer(
                 }
             }
             divider()
-            drawerItem(R.drawable.ic_settings, TranslateScreen.SettingScreen)
-            drawerItem(R.drawable.ic_long_text, TranslateScreen.LongTextTransScreen) {
+            drawerItem(Icons.Default.Settings, TranslateScreen.SettingScreen)
+            drawerItem(Icons.Default.Article, TranslateScreen.LongTextTransScreen) {
                 Badge(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     Text(text = stringResource(R.string.work_in_progress))
                 }
             }
-            drawerItem(R.drawable.ic_float_window, TranslateScreen.FloatWindowScreen)
+            drawerItem(Icons.Default.PictureInPicture, TranslateScreen.FloatWindowScreen)
             divider()
-            drawerItem(R.drawable.ic_about, TranslateScreen.AboutScreen)
-            drawerItem(R.drawable.ic_thanks, TranslateScreen.ThanksScreen)
+            drawerItem(Icons.Default.Info, TranslateScreen.AboutScreen)
+            drawerItem(Icons.Default.Favorite, TranslateScreen.ThanksScreen)
             divider()
-            drawerItem(R.drawable.ic_app, TranslateScreen.AppRecommendationScreen)
+            drawerItem(Icons.Default.Apps, TranslateScreen.AppRecommendationScreen)
         }
         PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }

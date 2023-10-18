@@ -27,12 +27,12 @@ import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
+import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
-import com.funny.translation.translate.ui.screen.TranslateScreen
 import com.funny.translation.translate.ui.settings.*
 import com.funny.translation.translate.ui.thanks.AppRecommendationScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen

@@ -47,7 +47,7 @@ import com.funny.translation.WebViewActivity
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.translate.*
 import com.funny.translation.translate.R
-import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,7 +42,6 @@ internal fun ColumnScope.SourceTextPart(
     modifier: Modifier = Modifier,
     currentTransStartOffset: Int = -1,
     currentTransLength: Int = 0,
-    translatedTextColor: Color = LocalContentColor.current.copy(alpha = 0.8f),
     translatingTextColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Category(title = stringResource(id = R.string.source_text)) { expanded ->
@@ -95,7 +93,6 @@ internal fun ColumnScope.ResultTextPart(
     screenState: ScreenState,
     modifier: Modifier = Modifier,
     currentResultStartOffset: Int = -1,
-    translatedTextColor: Color = LocalContentColor.current.copy(alpha = 0.8f),
     translatingTextColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Category(title = stringResource(id = R.string.translate_result)) { expanded ->
@@ -147,7 +144,8 @@ private fun AutoScrollHighlightedText(
     LaunchedEffect(key1 = highlightStartOffset) {
         if (highlightStartOffset >= 0) {
             val offset = layoutResult?.getLineForOffset(highlightStartOffset)?.let {
-                lineHeightInPx * it
+//                lineHeightInPx * it
+                layoutResult?.getLineTop(it)
             } ?: return@LaunchedEffect
             scope.launch {
                 Log.d("AutoScrollHighlightText", "animateScrollTo: $offset")

@@ -70,7 +70,7 @@ import com.funny.translation.translate.allLanguages
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.enabledLanguages
-import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.utils.SortResultUtils
 import com.funny.translation.ui.FixedSizeIcon

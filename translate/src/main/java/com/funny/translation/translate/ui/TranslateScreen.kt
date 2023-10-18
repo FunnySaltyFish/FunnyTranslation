@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.screen
+package com.funny.translation.translate.ui
 
 import com.funny.translation.translate.R
 

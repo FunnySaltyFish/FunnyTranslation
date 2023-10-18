@@ -18,7 +18,7 @@ import com.funny.translation.helper.DeviceUtils
 import com.funny.translation.helper.JsonX
 import com.funny.translation.sign.SignUtils
 import com.funny.translation.theme.ThemeType
-import com.funny.translation.translate.ui.screen.TranslateScreen
+import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.thanks.SponsorSortType
 import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
 import com.funny.translation.translate.utils.SortResultUtils
