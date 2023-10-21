@@ -2,22 +2,30 @@ package com.funny.translation.translate.ui.long_text
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -87,7 +95,28 @@ fun LongTextTransDetailScreen(
                 .padding(horizontal = 16.dp)) {
             DetailContent(screenState = vm.screenState, vm = vm)
         }
+    }
 
+    AnimatedVisibility(
+        visible = vm.screenState == ScreenState.Translating,
+        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+    ) {
+        FloatingActionButton(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.BottomEnd)
+                .offset(x = (-40).dp, y = (-40).dp),
+            onClick = vm::toggleIsPausing
+        ) {
+            AnimatedContent(targetState = vm.isPausing, label = "TogglePause") { pausing ->
+                if (pausing) {
+                    FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = "Click To Play")
+                } else {
+                    FixedSizeIcon(Icons.Default.Pause, contentDescription = "Click To Pause")
+                }
+            }
+        }
     }
 }
 
@@ -103,13 +132,7 @@ private fun ColumnScope.DetailContent(
                     SourceTextPart(text = vm.sourceString, screenState = vm.screenState)
                     PromptPart(vm.prompt, vm::updatePrompt)
                     Category(title = stringResource(id = R.string.all_corpus)) {
-                        CorpusList(
-                            modifier = Modifier.heightIn(0.dp, 300.dp),
-                            corpus = vm.allCorpus,
-                            addTerm = vm::addTerm,
-                            removeTerm = vm::removeTerm,
-                            modifyTerm = vm::modifyTerm
-                        )
+                        AllCorpusList(vm = vm)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = { vm.startTranslate() }) {

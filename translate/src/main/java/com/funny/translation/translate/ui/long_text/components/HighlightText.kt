@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.long_text.components
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -138,18 +137,16 @@ private fun AutoScrollHighlightedText(
     var layoutResult: TextLayoutResult? by rememberStateOf(value = null)
     val lineHeight = LocalTextStyle.current.lineHeight
     val density = LocalDensity.current
-    val lineHeightInPx = remember(density) { with(density) { lineHeight.toPx() } }
     val lineHeightInDp = remember(density) { with(density) { lineHeight.toDp()  } }
 
     LaunchedEffect(key1 = highlightStartOffset) {
         if (highlightStartOffset >= 0) {
             val offset = layoutResult?.getLineForOffset(highlightStartOffset)?.let {
-//                lineHeightInPx * it
                 layoutResult?.getLineTop(it)
             } ?: return@LaunchedEffect
             scope.launch {
-                Log.d("AutoScrollHighlightText", "animateScrollTo: $offset")
-                 scrollState.animateScrollTo(offset.toInt())
+                // Log.d("AutoScrollHighlightText", "animateScrollTo: $offset")
+                scrollState.animateScrollTo(offset.toInt())
             }
         }
     }

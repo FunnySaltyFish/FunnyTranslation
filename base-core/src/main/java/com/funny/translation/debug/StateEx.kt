@@ -24,3 +24,8 @@ inline fun <reified T> rememberStateOf(value: T): MutableState<T> = remember {
         else -> mutableStateOf(value)
     } as MutableState<T>
 }
+
+@Composable
+fun <T> rememberUpdatedMutableState(newValue: T): MutableState<T> = remember {
+    mutableStateOf(newValue)
+}.apply { value = newValue }

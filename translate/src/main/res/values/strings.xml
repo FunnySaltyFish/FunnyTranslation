@@ -260,4 +260,8 @@
     <string name="task_prompt">任务 Prompt</string>
     <string name="corpus">术语库</string>
     <string name="export_result">导出</string>
+    <string name="message_remove_from_all_corpus">同时将全部术语库中的此项移除？</string>
+    <string name="message_modify_all_corpus">同时修改全部术语库中的此项？</string>
+    <string name="paused_due_to_editting">当前正在编辑，已帮您自动暂停</string>
+    <string name="paused_tip">当前部分翻译完成后将自动暂停~</string>
 </resources>

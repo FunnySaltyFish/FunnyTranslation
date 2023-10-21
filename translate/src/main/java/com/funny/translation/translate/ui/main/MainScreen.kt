@@ -41,6 +41,7 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
@@ -71,8 +72,8 @@ enum class MainScreenState {
 @Composable
 fun MainScreen(
 ) {
-    TextTransScreen()
-//     LongTextTransDetailScreen(id = "244", sourceTextKey = "")
+//    TextTransScreen()
+     LongTextTransDetailScreen(id = "244", sourceTextKey = "")
 }
 
 @ExperimentalComposeUiApi

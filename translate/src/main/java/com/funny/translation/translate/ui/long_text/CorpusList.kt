@@ -23,13 +23,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,8 +43,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.SimpleAction
+import com.funny.translation.helper.string
+import com.funny.translation.translate.LocalSnackbarState
 import com.funny.translation.translate.R
 import com.funny.translation.ui.FixedSizeIcon
+import com.funny.translation.ui.showSnackbar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -98,12 +105,16 @@ internal fun ColumnScope.CorpusListPart(
 internal fun AllCorpusList(
     vm: LongTextTransViewModel,
 ) {
+    val corpus = vm.allCorpus
     CorpusList(
         modifier = Modifier.heightIn(0.dp, 300.dp),
-        corpus = vm.allCorpus,
-        addTerm = vm::addTerm,
-        removeTerm = vm::removeTerm,
-        modifyTerm = vm::modifyTerm
+        corpus = corpus.list,
+        addTerm = corpus::add,
+        removeTerm = corpus::remove,
+        modifyTerm = { origin, target ->
+            corpus.modify(origin, target)
+        },
+        onDialogShowUpdate = vm::updateEditingTermState
     )
 }
 
@@ -111,13 +122,55 @@ internal fun AllCorpusList(
 internal fun CurrentCorpusList(
     vm: LongTextTransViewModel,
 ) {
+    val corpus = vm.currentCorpus
+    val allCorpus = vm.allCorpus
+    val snackbar = LocalSnackbarState.current
+    val scope = rememberCoroutineScope()
+    val askForOther = remember {
+        AskForModifyingOther(scope, snackbar)
+    }
     CorpusList(
         modifier = Modifier.heightIn(0.dp, 300.dp),
-        corpus = vm.currentCorpus,
-        addTerm = vm::addTerm,
-        removeTerm = vm::removeTerm,
-        modifyTerm = vm::modifyTerm
+        corpus = corpus.list,
+        addTerm = {
+            corpus.add(it)
+            allCorpus.add(it)
+        },
+        removeTerm = {
+            corpus.remove(it)
+            askForOther.ask(
+                message = string(R.string.message_remove_from_all_corpus),
+                action = {
+                    allCorpus.remove(it)
+                }
+            )
+        },
+        modifyTerm = { origin, target ->
+            corpus.modify(origin, target)
+            askForOther.ask(
+                message = string(R.string.message_modify_all_corpus),
+                action = {
+                    allCorpus.modify(origin, target)
+                }
+            )
+        },
+        onDialogShowUpdate = vm::updateEditingTermState
     )
+}
+
+private class AskForModifyingOther(
+    val coroutineScope: CoroutineScope,
+    val snackHostState: SnackbarHostState
+) {
+    fun ask(message: String, action: SimpleAction) {
+        coroutineScope.launch {
+            snackHostState.showSnackbar(
+                message = message,
+                actionLabel = string(R.string.message_confirm),
+                onClick = action
+            )
+        }
+    }
 }
 
 @Composable
@@ -127,6 +180,7 @@ internal fun CorpusList(
     addTerm: (Term) -> Unit,
     removeTerm: (Term) -> Unit,
     modifyTerm: (Term, Term) -> Unit,
+    onDialogShowUpdate: (Boolean) -> Unit = {}
 ) {
     LazyColumn(modifier) {
         items(corpus, key = { it.first }) { term ->
@@ -135,7 +189,10 @@ internal fun CorpusList(
             var target by rememberStateOf(value = term.second)
             TermDialog(
                 show = showEditDialog,
-                updateShow = { showEditDialog = it },
+                updateShow = {
+                    showEditDialog = it
+                    onDialogShowUpdate(it)
+                },
                 source = source,
                 updateSource = { source = it },
                 target = target,
@@ -147,6 +204,7 @@ internal fun CorpusList(
             ListItem(
                 modifier = Modifier.clickable {
                     showEditDialog = true
+                    onDialogShowUpdate(true)
                 },
                 headlineContent = {
                     Text(text = term.first)
@@ -172,7 +230,10 @@ internal fun CorpusList(
             var show by rememberStateOf(value = false)
             TermDialog(
                 show = show,
-                updateShow = { show = it },
+                updateShow = {
+                    show = it
+                    onDialogShowUpdate(it)
+                },
                 source = source,
                 updateSource = { source = it },
                 target = target,
@@ -180,7 +241,10 @@ internal fun CorpusList(
             ) {
                 addTerm(source to target)
             }
-            IconButton(onClick = { show = true }) {
+            IconButton(onClick = {
+                show = true
+                onDialogShowUpdate(true)
+            }) {
                 Icon(Icons.Default.Add, contentDescription = "Add", modifier = Modifier)
             }
         }
@@ -198,13 +262,16 @@ private fun TermDialog(
     confirmAction: SimpleAction
 ) {
     if (show) {
+        val isSourceErr by remember(source) { derivedStateOf { source.isBlank() } }
+        val isTargetErr by remember(target) { derivedStateOf { target.isBlank() } }
+
         AlertDialog(
             onDismissRequest = { updateShow(false) },
             confirmButton = {
                 TextButton(onClick = {
                     confirmAction()
                     updateShow(false)
-                }) {
+                }, enabled = !isSourceErr && !isTargetErr) {
                     Text(text = stringResource(id = R.string.message_confirm))
                 }
             },
@@ -223,7 +290,8 @@ private fun TermDialog(
                             Text(text = stringResource(id = R.string.source_text))
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                        singleLine = true
+                        singleLine = true,
+                        isError = isSourceErr
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     TextField(
@@ -232,7 +300,8 @@ private fun TermDialog(
                         label = {
                             Text(text = stringResource(id = R.string.target_text))
                         },
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        isError = isTargetErr
                     )
                 }
             }

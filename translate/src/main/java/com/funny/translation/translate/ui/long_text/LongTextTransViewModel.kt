@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,11 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.PartialJsonParser
 import com.funny.translation.helper.TextSplitter
+import com.funny.translation.helper.string
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.Language
+import com.funny.translation.translate.R
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.utils.DataHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -39,8 +42,6 @@ const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语，以J
 
 private val DEFAULT_PROMPT = EditablePrompt(DEFAULT_PROMPT_PREFIX, DEFAULT_PROMPT_SUFFIX)
 
-// 单个术语，源文本：对应翻译
-typealias Term = Pair<String, String>
 
 @Serializable
 private data class Answer(val text: String? = null, var keywords: List<List<String>>? = null)
@@ -60,18 +61,24 @@ class LongTextTransViewModel: ViewModel() {
     val startedProgress by derivedStateOf {  if (translatedLength == 0) 0f else ((translatedLength + currentTransPartLength).toFloat() / totalLength).coerceIn(0f, 1f) }
 
     private var translateJob: Job? = null
+    // 是否正在编辑术语，是的话暂停一下翻译
+    private var isEditingTerm: Boolean = false
+    // 是否暂停
+    var isPausing by mutableStateOf(false)
 
     var transId by mutableStateOf(UUID.randomUUID().toString())
     var histories = mutableListOf<ChatMessage>()
     internal var prompt by mutableStateOf(DEFAULT_PROMPT)
     var memory = ChatMemoryMaxContextSize(1024, prompt.toPrompt())
-    val allCorpus = mutableStateListOf<Term>()
-    val currentCorpus = mutableStateListOf<Term>()
+    val allCorpus = TermList()
+    val currentCorpus = TermList()
 
     var sourceString by mutableStateOf("")
     var sourceLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_source_lang", Language.ENGLISH)
     var targetLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_target_lang", Language.CHINESE)
     var resultText by mutableStateOf("")
+
+    // 当前 part 翻译得到的结果
     private var resultJsonPart = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
     private var lastResultText = ""
@@ -92,23 +99,6 @@ class LongTextTransViewModel: ViewModel() {
         this.totalLength = this.sourceString.length
     }
 
-    fun addTerm(term: Term) {
-        if (term in allCorpus) return
-        allCorpus.add(term)
-    }
-
-    fun removeTerm(term: Term) {
-        allCorpus.remove(term)
-        currentCorpus.remove(term)
-    }
-
-    fun modifyTerm(origin: Term, target: Term) {
-        allCorpus.remove(origin)
-        allCorpus.add(target)
-        currentCorpus.remove(origin)
-        currentCorpus.add(target)
-    }
-
     fun startTranslate() {
         Log.d(TAG, "startTranslate: args: totalLength: $totalLength, sourceLanguage: $sourceLanguage, targetLanguage: $targetLanguage")
         screenState = ScreenState.Translating
@@ -117,6 +107,11 @@ class LongTextTransViewModel: ViewModel() {
                 val part = getNextPart()
                 Log.d(TAG, "startTranslate: nextPart: $part")
                 if (part == "") break
+                if (isEditingTerm) {
+                    isPausing = true
+                    appCtx.toastOnUi(string(R.string.paused_due_to_editting))
+                }
+                while (isPausing) { delay(100) }
                 translatePart(part)
             }
             delay(500)
@@ -149,14 +144,14 @@ class LongTextTransViewModel: ViewModel() {
         // TODO 改成更合理的方式，比如基于 NLP 的分词
         currentCorpus.clear()
         val needToAddTerms = mutableSetOf<Term>()
-        allCorpus.forEach {
+        allCorpus.list.forEach {
             if (part.contains(it.first)) {
                 needToAddTerms.add(it)
             }
         }
         currentCorpus.addAll(needToAddTerms)
         chatBot.args["keywords"] = currentCorpus.toList()
-        Log.d(TAG, "translatePart: allCorpus: ${allCorpus.joinToString()}, currentCorpus: ${currentCorpus.joinToString()}")
+        Log.d(TAG, "translatePart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
         currentTransPartLength = part.length
         chatBot.chat(transId, part, histories, prompt.toPrompt(), memory).collect { streamMsg ->
             when(streamMsg) {
@@ -167,7 +162,7 @@ class LongTextTransViewModel: ViewModel() {
                     if (ans != null) {
                         resultText = lastResultText + (ans.text ?: "")
                         ans.keywords?.forEach {
-                            addTerm(it[0] to it[1])
+                            allCorpus.add(it[0] to it[1])
                         }
                     }
                 }
@@ -209,6 +204,11 @@ class LongTextTransViewModel: ViewModel() {
     fun updateSourceLanguage(language: Language) { sourceLanguage = language }
     fun updateTargetLanguage(language: Language) { targetLanguage = language }
     fun updatePrompt(prefix: String) { prompt.prefix = prefix }
+    fun updateEditingTermState(isEditing: Boolean) { isEditingTerm = isEditing }
+    fun toggleIsPausing() {
+        isPausing = !isPausing
+        if (isPausing) appCtx.toastOnUi(string(R.string.paused_tip))
+    }
 
     companion object {
         private const val TAG = "LongTextTransViewModel"
