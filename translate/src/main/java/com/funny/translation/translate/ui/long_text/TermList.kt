@@ -2,6 +2,10 @@ package com.funny.translation.translate.ui.long_text
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
+import com.funny.translation.helper.string
+import com.funny.translation.helper.toastOnUi
+import com.funny.translation.translate.R
+import com.funny.translation.translate.appCtx
 
 // 单个术语，源文本：对应翻译
 typealias Term = Pair<String, String>
@@ -18,17 +22,23 @@ class TermList {
      * 添加一个术语，如果对应的Key已经存在，则不添加
      * @param term Pair<String, String>
      */
-    fun add(term: Term) {
-        if (term.first in map) return
+    fun add(term: Term, alert: Boolean = false) {
+        if (term.first in map) {
+            if (alert) appCtx.toastOnUi(string(R.string.existed_term_tip, term.first))
+            return
+        }
         map[term.first] = term.second
         list.add(term)
     }
 
-    fun modify(origin: Term, target: Term) {
+    fun modify(origin: Term, target: Term, alert: Boolean = false) {
         // if (origin.first != target.first) return
 //        Log.d(TAG, "modify: $origin -> $target")
 //        Log.d(TAG, "before: $this")
-        if (target.first in map) return
+        if (target.first in map) {
+            if (alert) appCtx.toastOnUi(string(R.string.existed_term_tip, target.first))
+            return
+        }
         map[origin.first] = target.second
         list.remove(origin)
         list.add(target)

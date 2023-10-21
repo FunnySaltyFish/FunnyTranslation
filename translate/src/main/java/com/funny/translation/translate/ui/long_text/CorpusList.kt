@@ -109,10 +109,10 @@ internal fun AllCorpusList(
     CorpusList(
         modifier = Modifier.heightIn(0.dp, 300.dp),
         corpus = corpus.list,
-        addTerm = corpus::add,
+        addTerm = { corpus.add(it, alert = true) },
         removeTerm = corpus::remove,
         modifyTerm = { origin, target ->
-            corpus.modify(origin, target)
+            corpus.modify(origin, target, alert = true)
         },
         onDialogShowUpdate = vm::updateEditingTermState
     )
@@ -133,8 +133,8 @@ internal fun CurrentCorpusList(
         modifier = Modifier.heightIn(0.dp, 300.dp),
         corpus = corpus.list,
         addTerm = {
-            corpus.add(it)
-            allCorpus.add(it)
+            corpus.add(it, alert = true)
+            allCorpus.add(it, alert = true)
         },
         removeTerm = {
             corpus.remove(it)
@@ -146,11 +146,11 @@ internal fun CurrentCorpusList(
             )
         },
         modifyTerm = { origin, target ->
-            corpus.modify(origin, target)
+            corpus.modify(origin, target, alert = true)
             askForOther.ask(
                 message = string(R.string.message_modify_all_corpus),
                 action = {
-                    allCorpus.modify(origin, target)
+                    allCorpus.modify(origin, target, alert = true)
                 }
             )
         },

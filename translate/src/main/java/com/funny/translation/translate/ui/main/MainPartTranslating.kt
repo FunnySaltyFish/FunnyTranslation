@@ -83,7 +83,7 @@ fun MainPartTranslating(vm: MainViewModel) {
             CommonNavBackIcon(navigateBackAction = goBack)
         }
     ) {
-        TranslateProgress(progress = vm.progress)
+        TranslateProgress(startedProgress = vm.startedProgress, finishedProgress = vm.finishedProgress)
         SourceTextPart(
             modifier = Modifier.fillMaxWidth(0.88f),
             sourceText = vm.translateText,
@@ -102,15 +102,15 @@ fun MainPartTranslating(vm: MainViewModel) {
 
 @Composable
 private fun TranslateProgress(
-    progress: Float
+    startedProgress: Float,
+    finishedProgress: Float
 ) {
-    // 这个 99 （而不是 100） 是为了解决浮点数累加导致的问题，比如 33.3 + 33.3 + 33.3 = 99.9 != 100
-    // >= 99 就认为是翻译完了
-    AnimatedVisibility(visible = progress < 99) {
-        LinearProgressIndicator(
-            progress = progress / 100,
+    // 这个 0.99 （而不是 1） 是为了解决浮点数累加导致的问题
+    AnimatedVisibility(visible = finishedProgress < 0.99) {
+        TwoProgressIndicator(
+            startedProgress = startedProgress,
+            finishedProgress = finishedProgress,
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.primary
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.long_text.components
+package com.funny.translation.translate.ui.widget
 
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Canvas
@@ -29,7 +29,6 @@ fun TwoProgressIndicator(
     Canvas(modifier = modifier
         .fillMaxWidth()
         .height(4.dp)) {
-        val w = size.width
         val strokeWidth = size.height
         // 先画背景
         drawLinearIndicator(0f, 1f, trackColor, strokeWidth, strokeCap)

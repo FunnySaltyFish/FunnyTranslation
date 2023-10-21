@@ -45,10 +45,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.components.ResultTextPart
 import com.funny.translation.translate.ui.long_text.components.SourceTextPart
-import com.funny.translation.translate.ui.long_text.components.TwoProgressIndicator
 import com.funny.translation.translate.ui.main.LanguageSelectRow
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.NoticeBar
+import com.funny.translation.translate.ui.widget.TwoProgressIndicator
 import com.funny.translation.ui.FixedSizeIcon
 import java.util.UUID
 

@@ -78,6 +78,11 @@ class LongTextTransViewModel: ViewModel() {
     var targetLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_target_lang", Language.CHINESE)
     var resultText by mutableStateOf("")
 
+    // 源文本翻译时的每一段结束位置，每一个值为该段的最后一个字符的索引
+    val sourceStringSegments = mutableListOf<Int>()
+    // 翻译结果的每一段结束位置，每一个值为该段的最后一个字符的索引
+    val resultTextSegments = mutableListOf<Int>()
+
     // 当前 part 翻译得到的结果
     private var resultJsonPart = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
@@ -116,6 +121,7 @@ class LongTextTransViewModel: ViewModel() {
             }
             delay(500)
             screenState = ScreenState.Result
+            Log.d(TAG, "finishTranslate, sourceStringSegments: $sourceStringSegments, resultTextSegments: $resultTextSegments")
         }
     }
 
@@ -155,6 +161,9 @@ class LongTextTransViewModel: ViewModel() {
         currentTransPartLength = part.length
         chatBot.chat(transId, part, histories, prompt.toPrompt(), memory).collect { streamMsg ->
             when(streamMsg) {
+                is StreamMessage.Start -> {
+//                    sourceStringSegments.add(translatedLength)
+                }
                 is StreamMessage.Part -> {
                     resultJsonPart.append(streamMsg.part)
                     val ans = parseStreamedJson(resultJsonPart.toString())
@@ -169,6 +178,9 @@ class LongTextTransViewModel: ViewModel() {
                 is StreamMessage.End -> {
                     translatedLength += part.length
                     lastResultText = resultText
+
+                    sourceStringSegments.add(translatedLength - 1)
+                    resultTextSegments.add(lastResultText.length - 1)
                 }
                 else -> Unit
             }

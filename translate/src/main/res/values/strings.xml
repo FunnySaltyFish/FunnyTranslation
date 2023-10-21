@@ -264,4 +264,5 @@
     <string name="message_modify_all_corpus">同时修改全部术语库中的此项？</string>
     <string name="paused_due_to_editting">当前正在编辑，已帮您自动暂停</string>
     <string name="paused_tip">当前部分翻译完成后将自动暂停~</string>
+    <string name="existed_term_tip">术语 %1$s 已存在，请直接编辑</string>
 </resources>

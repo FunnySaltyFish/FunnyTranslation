@@ -4,6 +4,7 @@ package com.funny.translation.translate.ui.main
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -42,7 +43,8 @@ class MainViewModel : ViewModel() {
     var sourceLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_source_lang", Language.ENGLISH)
     var targetLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_target_lang", Language.CHINESE)
     val resultList = mutableStateListOf<TranslationResult>()
-    var progress by mutableStateOf(100f)
+    var startedProgress by mutableFloatStateOf(1f)
+    var finishedProgress by mutableFloatStateOf(1f)
     var selectedEngines: HashSet<TranslationEngine> = hashSetOf()
 
     // 一些私有变量
@@ -157,7 +159,8 @@ class MainViewModel : ViewModel() {
 
     fun cancel() {
         translateJob?.cancel()
-        progress = 100f
+        finishedProgress = 1f
+        startedProgress = 1f
     }
 
     fun isTranslating(): Boolean = translateJob?.isActive ?: false
@@ -167,7 +170,8 @@ class MainViewModel : ViewModel() {
         if (actualTransText.isEmpty()) return
 
         resultList.clear()
-        progress = 0f
+        finishedProgress = 0f
+        startedProgress = 0f
         addTransHistory(actualTransText, sourceLanguage, targetLanguage)
         updateMainScreenState(MainScreenState.Translating)
         translateJob = viewModelScope.launch {
@@ -206,12 +210,13 @@ class MainViewModel : ViewModel() {
         createFlow().buffer().collect { task ->
             try {
                 task.result.targetLanguage = targetLanguage
+                startedProgress += 1f / totalProgress
                 withContext(Dispatchers.IO) {
                     task.translate()
                 }
 
                 updateTranslateResult(task.result)
-                Log.d(TAG, "translate : $progress ${task.result}")
+                Log.d(TAG, "translate : $finishedProgress ${task.result}")
             } catch (e: TranslationException) {
                 e.printStackTrace()
                 with(task.result) {
@@ -237,12 +242,13 @@ class MainViewModel : ViewModel() {
                 try {
                     mutex.withLock {
                         task.result.targetLanguage = targetLanguage
+                        startedProgress += 1f / totalProgress
                     }
                     withContext(Dispatchers.IO) {
                         task.translate()
                     }
                     updateTranslateResultWithMutex(task.result)
-                    Log.d(TAG, "translate : $progress ${task.result}")
+                    Log.d(TAG, "translate : $finishedProgress ${task.result}")
                 } catch (e: TranslationException) {
                     e.printStackTrace()
                     mutex.withLock {
@@ -316,7 +322,7 @@ class MainViewModel : ViewModel() {
         }
 
     private fun updateTranslateResult(result: TranslationResult) {
-        progress += 100f / totalProgress
+        finishedProgress += 1f / totalProgress
         resultList.let {
             val currentKey = it.find { r -> r.engineName == result.engineName }
             // 绝大多数情况下应该是没有的
