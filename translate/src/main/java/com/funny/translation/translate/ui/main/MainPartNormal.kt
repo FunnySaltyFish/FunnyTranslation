@@ -122,7 +122,10 @@ internal fun MainPartNormal(
                 MainTopBarNormal(showDrawerAction = openDrawerAction)
                 Notice(Modifier.fillMaxWidth(0.9f))
                 Spacer(modifier = Modifier.height(8.dp))
-                HintText(onClick = { vm.updateMainScreenState(MainScreenState.Inputting) })
+                HintText(
+                    onClick = { vm.updateMainScreenState(MainScreenState.Inputting) },
+                    onLongClick = vm::tryToPasteAndTranslate
+                )
             }
         },
         mainLower = {
@@ -169,9 +172,11 @@ internal fun MainPartNormal(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HintText(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Text(
@@ -184,10 +189,11 @@ private fun HintText(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 28.dp)
-            .clickable(
+            .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
     )
 }

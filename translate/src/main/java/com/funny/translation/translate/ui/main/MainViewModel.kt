@@ -16,6 +16,7 @@ import androidx.paging.cachedIn
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
+import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTaskText
@@ -114,6 +115,15 @@ class MainViewModel : ViewModel() {
     fun updateSourceLanguage(language: Language) { sourceLanguage = language }
     fun updateTargetLanguage(language: Language) { targetLanguage = language }
     fun updateMainScreenState(state: MainScreenState) { currentState = state }
+
+    fun tryToPasteAndTranslate() {
+        if (translateText.isNotEmpty()) return
+        val clipboardText = ClipBoardUtil.read(appCtx)
+        if (clipboardText.isNotEmpty()) {
+            translateText = clipboardText
+            translate()
+        }
+    }
 
     // 下面是各种函数
 
