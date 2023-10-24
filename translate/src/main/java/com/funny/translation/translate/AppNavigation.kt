@@ -29,6 +29,7 @@ import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
+import com.funny.translation.translate.ui.long_text.LongTextTransListScreen
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
@@ -41,6 +42,7 @@ import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
 import com.funny.translation.translate.utils.DeepLinkManager
 import com.funny.translation.ui.MarkdownText
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 private const val TAG = "AppNav"
 val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -170,8 +172,19 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.AppRecommendationScreen.route) {
                         AppRecommendationScreen()
                     }
-                    animateComposable(TranslateScreen.LongTextTransScreen.route) {
-                        LongTextTransDetailScreen(id = "233", sourceTextKey = "")
+                    animateComposable(TranslateScreen.LongTextTransListScreen.route) {
+                        LongTextTransListScreen()
+                    }
+                    animateComposable(
+                        TranslateScreen.LongTextTransDetailScreen.route,
+                        arguments = listOf(
+                            navArgument("id") {
+                                type = NavType.StringType; defaultValue = null; nullable = true
+                            }
+                        )
+                    ) {
+                        val id = it.arguments?.getString("id")
+                        LongTextTransDetailScreen(id = id ?: UUID.randomUUID().toString())
                     }
                     addSettingsNavigation()
                     addUserProfileRoutes(

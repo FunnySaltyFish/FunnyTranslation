@@ -14,16 +14,15 @@ import com.funny.compose.ai.bean.ChatMemoryMaxContextSize
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
-import com.funny.data_saver.core.mutableDataSaverStateOf
-import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.PartialJsonParser
 import com.funny.translation.helper.TextSplitter
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.translate.Language
 import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
+import com.funny.translation.translate.database.LongTextTransTask
+import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.utils.DataHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -51,6 +50,9 @@ internal enum class ScreenState {
 }
 
 class LongTextTransViewModel: ViewModel() {
+    private val dao = appDB.longTextTransDao
+    private var task: LongTextTransTask? = null
+
     internal var screenState by mutableStateOf(ScreenState.Init)
 
     val chatBot: ServerChatBot = TestLongTextChatBot()
@@ -61,25 +63,26 @@ class LongTextTransViewModel: ViewModel() {
     val startedProgress by derivedStateOf {  if (translatedLength == 0) 0f else ((translatedLength + currentTransPartLength).toFloat() / totalLength).coerceIn(0f, 1f) }
 
     private var translateJob: Job? = null
+    private var dbJob: Job? = null
     // 是否正在编辑术语，是的话暂停一下翻译
     private var isEditingTerm: Boolean = false
     // 是否暂停
     var isPausing by mutableStateOf(false)
 
-    var transId by mutableStateOf(UUID.randomUUID().toString())
-    var histories = mutableListOf<ChatMessage>()
+    private var transId = UUID.randomUUID().toString()
+    private var histories = mutableListOf<ChatMessage>()
     internal var prompt by mutableStateOf(DEFAULT_PROMPT)
-    var memory = ChatMemoryMaxContextSize(1024, prompt.toPrompt())
+    private var memory = ChatMemoryMaxContextSize(1024, prompt.toPrompt())
+
     val allCorpus = TermList()
     val currentCorpus = TermList()
-
-    var sourceString by mutableStateOf("")
-    var sourceLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_source_lang", Language.ENGLISH)
-    var targetLanguage by mutableDataSaverStateOf(DataSaverUtils, "key_target_lang", Language.CHINESE)
+    var sourceText by mutableStateOf("")
     var resultText by mutableStateOf("")
+    var currentTransPartLength = 0 // 当前翻译的长度
+    val currentResultStartOffset get() = lastResultText.length
 
     // 源文本翻译时的每一段结束位置，每一个值为该段的最后一个字符的索引
-    val sourceStringSegments = mutableListOf<Int>()
+    val sourceTextSegments = mutableListOf<Int>()
     // 翻译结果的每一段结束位置，每一个值为该段的最后一个字符的索引
     val resultTextSegments = mutableListOf<Int>()
 
@@ -87,25 +90,49 @@ class LongTextTransViewModel: ViewModel() {
     private var resultJsonPart = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
     private var lastResultText = ""
-    var currentTransPartLength = 0 // 当前翻译的长度
-    val currentResultStartOffset get() = lastResultText.length
 
-    fun initArgs(id:String, sourceStringKey: String) {
+    fun initArgs(id:String) {
         this.transId = id
 
-        val v = DataHolder.get<String>(sourceStringKey)
+        val v = DataHolder.get<String>(id)
         // TODO only for test
         if (v.isNullOrBlank()) {
-            this.sourceString = List(100) { "(${it}) XiaoMing told XiaoHong, the best student in this class is XiaoZhang." }.joinToString(separator = " ")
-            this.allCorpus.addAll(arrayOf("XiaoHong" to "萧红", "XiaoMing" to "晓明"))
+            // 如果没有传，那么从数据库中加载
+            viewModelScope.launch(Dispatchers.IO) {
+                task = dao.getById(id)
+                task?.let {
+                    sourceText = it.sourceText
+                    resultText = it.resultText
+                    translatedLength = it.translatedLength
+                    prompt = it.prompt
+                    totalLength = it.sourceText.length
+                    // TODO chatBot 选择
+                    allCorpus.addAll(it.allCorpus)
+                    sourceTextSegments.addAll(it.sourceTextSegments)
+                    resultTextSegments.addAll(it.resultTextSegments)
+
+                    if (translatedLength > 0) {
+                        if (translatedLength == totalLength) {
+                            screenState = ScreenState.Result
+                        } else {
+                            screenState = ScreenState.Translating
+                            isPausing = true
+                            lastResultText = resultText
+                        }
+                    }
+                }
+            }
+//            this.sourceText = List(100) { "(${it}) XiaoMing told XiaoHong, the best student in this class is XiaoZhang." }.joinToString(separator = " ")
+//            this.allCorpus.addAll(arrayOf("XiaoHong" to "萧红", "XiaoMing" to "晓明"))
         } else {
-            this.sourceString = v
+            this.sourceText = v
+            this.totalLength = this.sourceText.length
+            DataHolder.remove(id)
         }
-        this.totalLength = this.sourceString.length
+
     }
 
     fun startTranslate() {
-        Log.d(TAG, "startTranslate: args: totalLength: $totalLength, sourceLanguage: $sourceLanguage, targetLanguage: $targetLanguage")
         screenState = ScreenState.Translating
         translateJob = viewModelScope.launch(Dispatchers.IO) {
             while (isActive && translatedLength < totalLength) {
@@ -121,7 +148,7 @@ class LongTextTransViewModel: ViewModel() {
             }
             delay(500)
             screenState = ScreenState.Result
-            Log.d(TAG, "finishTranslate, sourceStringSegments: $sourceStringSegments, resultTextSegments: $resultTextSegments")
+            Log.d(TAG, "finishTranslate, sourceStringSegments: $sourceTextSegments, resultTextSegments: $resultTextSegments")
         }
     }
 
@@ -137,7 +164,7 @@ class LongTextTransViewModel: ViewModel() {
         val systemPrompt = prompt.toPrompt()
         val remainLength = maxLength - systemPrompt.length - 1 // 换行符
         val splitText = TextSplitter.splitTextNaturally(
-            sourceString.substring(translatedLength, minOf(translatedLength + maxLength, totalLength)),
+            sourceText.substring(translatedLength, minOf(translatedLength + maxLength, totalLength)),
             remainLength
         )
         return splitText
@@ -173,17 +200,50 @@ class LongTextTransViewModel: ViewModel() {
                         ans.keywords?.forEach {
                             allCorpus.add(it[0] to it[1])
                         }
+                        saveAllCorpusToDB()
                     }
                 }
                 is StreamMessage.End -> {
                     translatedLength += part.length
                     lastResultText = resultText
 
-                    sourceStringSegments.add(translatedLength - 1)
+                    sourceTextSegments.add(translatedLength - 1)
                     resultTextSegments.add(lastResultText.length - 1)
+
+                    saveToDB()
                 }
                 else -> Unit
             }
+        }
+    }
+
+    private fun saveToDB() {
+        dbAction {
+            task = LongTextTransTask(
+                id = transId,
+                chatBotId = chatBot.id,
+                sourceText = sourceText,
+                resultText = resultText,
+                prompt = prompt,
+                allCorpus = allCorpus.toList(),
+                sourceTextSegments = sourceTextSegments,
+                resultTextSegments = resultTextSegments,
+                translatedLength = translatedLength
+            )
+            dao.upsert(task!!)
+        }
+    }
+
+    private fun saveAllCorpusToDB() {
+        dbAction {
+            dao.updateAllCorpus(transId, allCorpus.toList())
+        }
+    }
+
+    private inline fun dbAction(crossinline action: () -> Unit) {
+        dbJob?.cancel()
+        dbJob = viewModelScope.launch(Dispatchers.IO) {
+            action()
         }
     }
 
@@ -213,13 +273,15 @@ class LongTextTransViewModel: ViewModel() {
         return ChatMessage(UUID.randomUUID().toString(), chatBot.id, transId, SENDER_ME, msg)
     }
 
-    fun updateSourceLanguage(language: Language) { sourceLanguage = language }
-    fun updateTargetLanguage(language: Language) { targetLanguage = language }
     fun updatePrompt(prefix: String) { prompt.prefix = prefix }
     fun updateEditingTermState(isEditing: Boolean) { isEditingTerm = isEditing }
     fun toggleIsPausing() {
         isPausing = !isPausing
         if (isPausing) appCtx.toastOnUi(string(R.string.paused_tip))
+        else if (translateJob == null) {
+            // 如果没有开始翻译（从外部加载进来的状态），那么开始翻译
+            startTranslate()
+        }
     }
 
     companion object {

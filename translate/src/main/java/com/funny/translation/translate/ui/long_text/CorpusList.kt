@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 internal fun ColumnScope.CorpusListPart(
     vm: LongTextTransViewModel
 ) {
-    Category(title = stringResource(id = R.string.corpus)) {
+    Category(title = stringResource(id = R.string.corpus), expandable = false) {
         val pagerState = rememberPagerState(pageCount = { 2 })
         val scope = rememberCoroutineScope()
         fun changePage(index: Int) = scope.launch {

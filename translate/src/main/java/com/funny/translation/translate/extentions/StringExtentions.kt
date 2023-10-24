@@ -26,4 +26,12 @@ val String.md5: String
 val String.trimLineStart
     get() = this.splitToSequence("\n").map { it.trim() }.joinToString("\n")
 
-inline fun String.safeSubstring(start: Int, end: Int = length) = substring(start, minOf(end, length))
+fun String.safeSubstring(start: Int, end: Int = length) = substring(start, minOf(end, length))
+
+fun String.formatBraceStyle(vararg items: Pair<String, Any>): String {
+    var txt = this
+    items.forEach {
+        txt = txt.replace("{${it.first}}", it.second.toString())
+    }
+    return txt
+}

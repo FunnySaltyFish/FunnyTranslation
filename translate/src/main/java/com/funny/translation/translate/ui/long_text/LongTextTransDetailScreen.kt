@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.long_text
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -10,14 +11,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -31,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,22 +41,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.jetsetting.core.ui.SimpleDialog
+import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.components.ResultTextPart
 import com.funny.translation.translate.ui.long_text.components.SourceTextPart
-import com.funny.translation.translate.ui.main.LanguageSelectRow
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.NoticeBar
 import com.funny.translation.translate.ui.widget.TwoProgressIndicator
 import com.funny.translation.ui.FixedSizeIcon
+import com.funny.translation.ui.floatingActionBarModifier
 import java.util.UUID
 
 @Composable
 fun LongTextTransDetailScreen(
     id: String = UUID.randomUUID().toString(),
-    sourceTextKey: String
 ) {
     val vm: LongTextTransViewModel = viewModel()
+    val navController = LocalNavController.current
     CommonPage(
         title = stringResource(id = R.string.long_text_trans),
         actions = {
@@ -68,7 +69,21 @@ fun LongTextTransDetailScreen(
     ) {
         // 传入参数时，先初始化各类型
         LaunchedEffect(key1 = id){
-            vm.initArgs(id, sourceTextKey)
+            vm.initArgs(id)
+        }
+
+        val quitAlertDialog = remember { mutableStateOf(false) }
+        SimpleDialog(
+            openDialogState = quitAlertDialog,
+            title = stringResource(id = R.string.tip),
+            message = stringResource(id = R.string.quit_translating_alert),
+            confirmButtonAction = {
+                navController.navigateUp()
+            }
+        )
+
+        BackHandler(enabled = (vm.screenState == ScreenState.Translating && !vm.isPausing)) {
+            quitAlertDialog.value = true
         }
 
         NoticeBar(
@@ -103,10 +118,7 @@ fun LongTextTransDetailScreen(
         exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
     ) {
         FloatingActionButton(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.BottomEnd)
-                .offset(x = (-40).dp, y = (-40).dp),
+            modifier = Modifier.floatingActionBarModifier(),
             onClick = vm::toggleIsPausing
         ) {
             AnimatedContent(targetState = vm.isPausing, label = "TogglePause") { pausing ->
@@ -129,9 +141,9 @@ private fun ColumnScope.DetailContent(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             when (it) {
                 ScreenState.Init -> {
-                    SourceTextPart(text = vm.sourceString, screenState = vm.screenState)
+                    SourceTextPart(text = vm.sourceText, screenState = vm.screenState)
                     PromptPart(vm.prompt, vm::updatePrompt)
-                    Category(title = stringResource(id = R.string.all_corpus)) {
+                    Category(title = stringResource(id = R.string.all_corpus), expandable = false) {
                         AllCorpusList(vm = vm)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -143,7 +155,7 @@ private fun ColumnScope.DetailContent(
                 }
                 ScreenState.Translating -> {
                     SourceTextPart(
-                        text = vm.sourceString,
+                        text = vm.sourceText,
                         screenState = vm.screenState,
                         currentTransStartOffset = vm.translatedLength,
                         currentTransLength = vm.currentTransPartLength
@@ -212,17 +224,3 @@ private fun TranslateButton(
     }
 
 }
-
-@Composable
-private fun FunctionRow(modifier: Modifier, vm: LongTextTransViewModel) {
-//    Row(modifier) {
-        LanguageSelectRow(
-            modifier = modifier,
-            sourceLanguage = vm.sourceLanguage,
-            updateSourceLanguage = vm::updateSourceLanguage,
-            targetLanguage = vm.targetLanguage,
-            updateTargetLanguage = vm::updateTargetLanguage
-        )
-//    }
-}
-

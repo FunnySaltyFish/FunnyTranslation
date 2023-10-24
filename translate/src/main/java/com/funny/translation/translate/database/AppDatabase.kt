@@ -1,6 +1,9 @@
 package com.funny.translation.translate.database
 
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.funny.translation.js.JsDao
@@ -12,12 +15,21 @@ val appDB by lazy{
     AppDatabase.createDatabase()
 }
 
-@Database(entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class], version = 6, autoMigrations = [])
-@TypeConverters(LanguageListConverter::class, StringListConverter::class)
+@Database(
+    entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class, LongTextTransTask::class],
+    version = 7,
+    autoMigrations = []
+)
+@TypeConverters(
+    LanguageListConverter::class, StringListConverter::class,
+    TermListConverter::class, EditablePromptConverter::class,
+    IntListConverter::class
+)
 abstract class AppDatabase : RoomDatabase(){
     abstract val jsDao : JsDao
     abstract val transHistoryDao: TransHistoryDao
     abstract val transFavoriteDao: TransFavoriteDao
+    abstract val longTextTransDao: LongTextTransDao
 
     companion object{
         fun createDatabase() =
@@ -28,6 +40,7 @@ abstract class AppDatabase : RoomDatabase(){
                 .addMigrations(MIGRATION_3_4)
                 .addMigrations(MIGRATION_4_5)
                 .addMigrations(MIGRATION_5_6)
+                .addMigrations(MIGRATION_6_7)
                 .build()
 
         /**
@@ -37,6 +50,7 @@ abstract class AppDatabase : RoomDatabase(){
          * 3->4:新增表 table_trans_history
          * 4->5:去除无用的主键 id，解决一些id重复导致的bug
          * 5-6:新增表 table_trans_favorite
+         * 6-7:新增表 table_long_text_trans_tasks
          */
         private val MIGRATION_1_2 = object : Migration(1,2){
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -83,6 +97,19 @@ abstract class AppDatabase : RoomDatabase(){
                     |targetLanguageId integer not null default 0,
                     |engineName text not null default '未知引擎',
                     |time integer not null)""".trimMargin())
+            }
+        }
+
+        // create table_long_text_trans_tasks
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `table_long_text_trans_tasks` " +
+                            "(`id` TEXT PRIMARY KEY NOT NULL, `chatBotId` INTEGER NOT NULL, `sourceText` TEXT NOT NULL, " +
+                            "`resultText` TEXT NOT NULL, `prompt` TEXT NOT NULL, `allCorpus` TEXT NOT NULL, " +
+                            "`sourceTextSegments` TEXT NOT NULL, `resultTextSegments` TEXT NOT NULL, " +
+                            "`translatedLength` INTEGER NOT NULL)"
+                )
             }
         }
 

@@ -19,8 +19,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.translate.R
+import kotlinx.serialization.Serializable
 
-internal class EditablePrompt(var prefix: String, val suffix: String) {
+@Serializable
+class EditablePrompt(var prefix: String, val suffix: String) {
     fun toPrompt(): String {
         return prefix + suffix
     }

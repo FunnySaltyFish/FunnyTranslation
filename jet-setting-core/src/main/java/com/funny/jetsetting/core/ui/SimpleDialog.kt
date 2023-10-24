@@ -20,7 +20,6 @@ fun SimpleDialog(
     dismissButtonText : String = stringResource(R.string.cancel),
     closeable: Boolean = true
 ) {
-
     if (openDialog) {
         AlertDialog(
             onDismissRequest = {

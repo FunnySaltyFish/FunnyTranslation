@@ -265,4 +265,11 @@
     <string name="paused_due_to_editting">当前正在编辑，已帮您自动暂停</string>
     <string name="paused_tip">当前部分翻译完成后将自动暂停~</string>
     <string name="existed_term_tip">术语 %1$s 已存在，请直接编辑</string>
+    <string name="from_editable_text">输入文本</string>
+    <string name="from_clipboard">从剪切板创建</string>
+    <string name="from_file">从文件创建</string>
+    <string name="clipboard_empty">剪切板内容为空~</string>
+    <string name="please_input">请输入</string>
+    <string name="file_read_error">打开文件失败！</string>
+    <string name="file_empty">文件内容为空！</string>
 </resources>

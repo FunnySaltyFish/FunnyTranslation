@@ -72,7 +72,8 @@ enum class MainScreenState {
 fun MainScreen(
 ) {
     TextTransScreen()
-//     LongTextTransDetailScreen(id = "244", sourceTextKey = "")
+     // LongTextTransDetailScreen(id = "244", sourceTextKey = "")
+//    LongTextTransListScreen()
 }
 
 @ExperimentalComposeUiApi
@@ -396,7 +397,7 @@ private fun Drawer(
             }
             divider()
             drawerItem(Icons.Default.Settings, TranslateScreen.SettingScreen)
-            drawerItem(Icons.Default.Article, TranslateScreen.LongTextTransScreen) {
+            drawerItem(Icons.Default.Article, TranslateScreen.LongTextTransListScreen) {
                 Badge(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
