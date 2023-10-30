@@ -152,6 +152,28 @@ class LongTextTransViewModel: ViewModel() {
         }
     }
 
+    fun generateBothExportedText(): String {
+        // 根据两个 Segments，生成源文本、翻译结果对照的文本
+        if (sourceTextSegments.size != resultTextSegments.size) {
+            Log.e(TAG, "generateBothExportedText: sourceTextSegments.size != resultTextSegments.size")
+            return ""
+        }
+        return buildString {
+            var lastSourceIndex = 0
+            var lastResultIndex = 0
+            for (i in sourceTextSegments.indices) {
+                val sourceIndex = sourceTextSegments[i]
+                val resultIndex = resultTextSegments[i]
+                append(sourceText.substring(lastSourceIndex, sourceIndex + 1))
+                append("\n")
+                append(resultText.substring(lastResultIndex, resultIndex + 1))
+                append("\n\n")
+                lastSourceIndex = sourceIndex + 1
+                lastResultIndex = resultIndex + 1
+            }
+        }
+    }
+
     /**
      * 获取下一次要翻译的部分
      * 规则：

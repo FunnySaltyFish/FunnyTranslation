@@ -28,8 +28,11 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.long_text.DraftScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransListScreen
+import com.funny.translation.translate.ui.long_text.LongTextTransScreen
+import com.funny.translation.translate.ui.long_text.TextEditorScreen
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
@@ -172,20 +175,7 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.AppRecommendationScreen.route) {
                         AppRecommendationScreen()
                     }
-                    animateComposable(TranslateScreen.LongTextTransListScreen.route) {
-                        LongTextTransListScreen()
-                    }
-                    animateComposable(
-                        TranslateScreen.LongTextTransDetailScreen.route,
-                        arguments = listOf(
-                            navArgument("id") {
-                                type = NavType.StringType; defaultValue = null; nullable = true
-                            }
-                        )
-                    ) {
-                        val id = it.arguments?.getString("id")
-                        LongTextTransDetailScreen(id = id ?: UUID.randomUUID().toString())
-                    }
+                    addLongTextTransNavigation()
                     addSettingsNavigation()
                     addUserProfileRoutes(
                         navHostController = navController
@@ -221,6 +211,52 @@ fun AppNavigation(
         }
     }
 
+}
+
+
+private fun NavGraphBuilder.addLongTextTransNavigation() {
+    navigation(
+        startDestination = TranslateScreen.LongTextTransScreen.route,
+        route = "nav_1_long_text_trans"
+    ) {
+        animateComposable(TranslateScreen.LongTextTransScreen.route) {
+            LongTextTransScreen()
+        }
+        animateComposable(TranslateScreen.LongTextTransListScreen.route) {
+            LongTextTransListScreen()
+        }
+        animateComposable(
+            TranslateScreen.LongTextTransDetailScreen.route,
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType; defaultValue = null; nullable = true
+                }
+            )
+        ) {
+            val id = it.arguments?.getString("id")
+            LongTextTransDetailScreen(id = id ?: UUID.randomUUID().toString())
+        }
+        animateComposable(
+            TranslateScreen.TextEditorScreen.route,
+            arguments = listOf(
+                navArgument("text") {
+                    type = NavType.StringType; defaultValue = ""; nullable = false
+                },
+                navArgument("draftId") {
+                    type = NavType.StringType; defaultValue = null; nullable = true
+                }
+            )
+        ) {
+            val text = it.arguments?.getString("text")
+            val draftId = it.arguments?.getString("draftId")?.toInt()
+            TextEditorScreen(initialText = text ?: "", draftId = draftId)
+        }
+        animateComposable(
+            TranslateScreen.DraftScreen.route
+        ) {
+            DraftScreen()
+        }
+    }
 }
 
 @ExperimentalAnimationApi

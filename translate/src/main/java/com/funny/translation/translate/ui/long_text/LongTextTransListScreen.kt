@@ -1,12 +1,11 @@
 package com.funny.translation.translate.ui.long_text
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -28,26 +27,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.loading.DefaultEmpty
+import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
-import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.SimpleAction
-import com.funny.translation.helper.readText
 import com.funny.translation.helper.string
-import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
-import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.LongTextTransTask
-import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.extentions.formatBraceStyle
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.main.SwipeToDismissItem
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.MultiFabItem
-import com.funny.translation.translate.ui.widget.MultiFloatingActionButton
 import com.funny.translation.translate.utils.DataHolder
 import com.funny.translation.ui.FixedSizeIcon
-import com.funny.translation.ui.floatingActionBarModifier
 import okhttp3.internal.immutableListOf
 import java.util.UUID
 
@@ -59,6 +54,7 @@ private val floatingActionItems = immutableListOf(
     MultiFabItem(id = 2, icon = Icons.Default.FileOpen, label = string(id = R.string.from_file)),
 )
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LongTextTransListScreen() {
     val navController = LocalNavController.current
@@ -74,15 +70,19 @@ fun LongTextTransListScreen() {
             }
         }
     }
+    val vm: LongTextTransListViewModel = viewModel()
     CommonPage(title = stringResource(id = R.string.long_text_trans)) {
-        val list by appDB.longTextTransDao.getAll().collectAsState(initial = emptyList())
+        val list by vm.taskList.collectAsState(initial = emptyList())
 
         LazyColumn {
             if (list.isNotEmpty()) {
                 items(list, key = { it.id }) {
-                    LongTextTransItem(it, onClick = {
-                        navigateToDetailPage(it.id, null)
-                    })
+                    LongTextTransItem(
+                        modifier = Modifier.animateItemPlacement(),
+                        task = it,
+                        onClick = { navigateToDetailPage(it.id, null) },
+                        deleteTaskAction = vm::deleteTask
+                    )
                 }
             } else {
                 item {
@@ -124,73 +124,79 @@ fun LongTextTransListScreen() {
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val filePickerLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) {
-        it ?: return@rememberLauncherForActivityResult
-        try {
-            val text = it.readText(context)
-            if (text.isNotBlank()) {
-                navigateToDetailPage(null, text)
-            } else {
-                context.toastOnUi(string(id = R.string.file_empty))
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            context.toastOnUi(string(id = R.string.file_read_error))
-        }
-    }
+
     
-    MultiFloatingActionButton(
-        modifier = Modifier.floatingActionBarModifier(),
-        srcIcon = Icons.Default.Add,
-        items = floatingActionItems,
-        onFabItemClicked = { item ->
-            when(item.id) {
-                0 -> {
-                    showInputDialog = true
-                }
-                1 -> {
-                    // 从剪切板
-                    val text = ClipBoardUtil.read(appCtx)
-                    if (text.isBlank()) {
-                        appCtx.toastOnUi(string(id = R.string.clipboard_empty))
-                    } else {
-                        navigateToDetailPage(null, text)
-                    }
-                }
-                2 -> {
-                    // 从文件，仅限于各类文本文件和 JSON 文件
-                    filePickerLauncher.launch(arrayOf("text/*", "application/json"))
-                }
-            }
-        }
-    )
+//    MultiFloatingActionButton(
+//        modifier = Modifier.floatingActionBarModifier(),
+//        srcIcon = Icons.Default.Add,
+//        items = floatingActionItems,
+//        onFabItemClicked = { item ->
+//            when(item.id) {
+//                0 -> {
+//                    showInputDialog = true
+//                }
+//                1 -> {
+//                    // 从剪切板
+//                    val text = ClipBoardUtil.read(appCtx)
+//                    if (text.isBlank()) {
+//                        appCtx.toastOnUi(string(id = R.string.clipboard_empty))
+//                    } else {
+//                        navigateToDetailPage(null, text)
+//                    }
+//                }
+//                2 -> {
+//
+//                }
+//            }
+//        }
+//    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LongTextTransItem(
+    modifier: Modifier = Modifier,
     task: LongTextTransTask,
-    onClick: SimpleAction
+    onClick: SimpleAction,
+    deleteTaskAction: (LongTextTransTask) -> Unit
 ) {
     val oneLineText = @Composable { text: String ->
         Text(text = text, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
-    ListItem(
-        modifier = Modifier.clickable(onClick = onClick),
-        headlineContent = {
-            oneLineText(task.sourceText)
-        },
-        supportingContent = {
-            oneLineText(task.resultText)
-        },
-        trailingContent = {
-            if (task.finishTranslating) {
-                FixedSizeIcon(Icons.Filled.Done, contentDescription = "Translated")
-            } else {
-                CircularProgressIndicator(progress = task.translatedProgress)
-            }
+    val showDialog = rememberStateOf(value = false)
+    SimpleDialog(
+        openDialogState = showDialog,
+        title = stringResource(id = R.string.confirm_to_delete),
+        message = stringResource(id = R.string.long_text_trans_task_not_finished_tip),
+        confirmButtonAction = {
+            deleteTaskAction(task)
         }
     )
+    SwipeToDismissItem(
+        modifier = modifier.fillMaxWidth(),
+        onDismissed = {
+            if (task.finishTranslating) {
+                deleteTaskAction(task)
+            } else {
+                showDialog.value = true
+            }
+        }
+    ) {
+        ListItem(
+            modifier = Modifier.clickable(onClick = onClick),
+            headlineContent = {
+                oneLineText(task.sourceText)
+            },
+            supportingContent = {
+                oneLineText(task.resultText)
+            },
+            trailingContent = {
+                if (task.finishTranslating) {
+                    FixedSizeIcon(Icons.Filled.Done, contentDescription = "Translated")
+                } else {
+                    CircularProgressIndicator(progress = task.translatedProgress)
+                }
+            }
+        )
+    }
 }

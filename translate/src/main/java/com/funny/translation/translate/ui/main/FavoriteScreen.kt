@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.main
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -17,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -163,7 +161,7 @@ private fun FavoriteItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeToDismissItem(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onDismissed: () -> Unit,
     dismissContent: @Composable RowScope.() -> Unit
 ) {
@@ -181,25 +179,18 @@ fun SwipeToDismissItem(
         // "背景 "，即原来显示的内容被划走一部分时显示什么
         background = {
             val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-            val color by animateColorAsState(
-                when (dismissState.targetValue) {
-                    DismissValue.Default -> Color.LightGray
-                    DismissValue.DismissedToEnd, DismissValue.DismissedToStart -> MaterialTheme.colorScheme.errorContainer
-                }
-            )
             val alignment = when (direction) {
                 DismissDirection.StartToEnd -> Alignment.CenterStart
                 DismissDirection.EndToStart -> Alignment.CenterEnd
             }
             val icon = Icons.Default.Delete
             val scale by animateFloatAsState(
-                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
+                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f, label = ""
             )
 
             Box(
                 Modifier
                     .fillMaxSize()
-                    .background(color)
                     .padding(horizontal = 20.dp),
                 contentAlignment = alignment
             ) {

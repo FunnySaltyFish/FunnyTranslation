@@ -38,6 +38,9 @@ data class LongTextTransTask(
     val resultTextSegments: List<Int>,
     @ColumnInfo
     val translatedLength: Int = 0,
+
+    @ColumnInfo
+    val remark: String = ""
 ) {
     val finishTranslating: Boolean
         get() = translatedLength == sourceText.length

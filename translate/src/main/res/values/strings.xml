@@ -272,4 +272,23 @@
     <string name="please_input">请输入</string>
     <string name="file_read_error">打开文件失败！</string>
     <string name="file_empty">文件内容为空！</string>
+    <string name="long_text_trans_task_not_finished_tip">当前任务还没有完成，确认删除吗？</string>
+    <string name="export_only_result">仅结果</string>
+    <string name="export_both_source_and_result">原文/结果对照</string>
+    <string name="export_text_empty">导出的文本为空</string>
+    <string name="export_success">导出成功！</string>
+    <string name="export_watermark">此结果由【译站】App【长文翻译】功能生成，所得结果仅供参考</string>
+    <string name="from_editable_text_description">创建一篇文章，然后开始您的创作之旅。随后按下翻译按钮，见证文本从头到尾逐渐变化</string>
+    <string name="from_file_description">选择一个文本文件，以其内容创建翻译任务。当前仅支持纯文本文件（PDF、Word文档、PPT等暂未支持）</string>
+    <string name="drafts">草稿箱</string>
+    <string name="drafts_description">未输入完的内容会放在这里啦~</string>
+    <string name="close">关闭</string>
+    <string name="create_task">创建任务</string>
+    <string name="view_all_trans_histories">查看所有历史翻译任务</string>
+    <string name="save_draft">保存为草稿？</string>
+    <string name="save">保存并退出</string>
+    <string name="exit">直接退出</string>
+    <string name="edit_text">编辑文本</string>
+    <string name="input_text_hint">开始你的创作之旅吧</string>
+    <string name="update_draft">更新草稿？</string>
 </resources>

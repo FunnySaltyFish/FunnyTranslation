@@ -1,6 +1,8 @@
 package com.funny.translation.translate.ui.long_text
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -23,25 +25,34 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.jetsetting.core.ui.SimpleDialog
+import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.string
+import com.funny.translation.helper.toastOnUi
+import com.funny.translation.helper.writeText
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.components.ResultTextPart
@@ -171,11 +182,10 @@ private fun ColumnScope.DetailContent(
                 ScreenState.Result -> {
                     ResultTextPart(text = vm.resultText, screenState = vm.screenState)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = { /*TODO*/ }) {
-                        FixedSizeIcon(Icons.Default.SaveAlt, contentDescription = "export")
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = stringResource(id = R.string.export_result))
-                    }
+                    ExportButton(
+                        exportOnlyResultProvider = vm::resultText,
+                        exportBothSourceAndResultProvider = vm::generateBothExportedText
+                    )
                 }
             }
         }
@@ -183,6 +193,54 @@ private fun ColumnScope.DetailContent(
 }
 
 
+/**
+ * Provider： 返回生成结果的函数
+ * @param exportOnlyResultProvider Function0<String>
+ * @param exportBothSourceAndResultProvider Function0<Pair<String, String>>
+ */
+@Composable
+private fun ExportButton(
+    exportOnlyResultProvider: () -> String,
+    exportBothSourceAndResultProvider: () -> String,
+) {
+    var needToExportTextProvider by rememberStateOf(value = { "" })
+    val context = LocalContext.current
+    val exportFileLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("plain/text")
+    ) { uri ->
+        val text = needToExportTextProvider.invoke()
+        if (text.isBlank()) {
+            context.toastOnUi(string(id = R.string.export_text_empty))
+            return@rememberLauncherForActivityResult
+        }
+        val watermark = string(id = R.string.export_watermark)
+        uri?.writeText(context, "$text\n\n${"-".repeat(20)}\n$watermark")
+        context.toastOnUi(string(id = R.string.export_success))
+    }
+    var expand by rememberStateOf(value = false)
+    Button(onClick = { expand = true }) {
+        FixedSizeIcon(Icons.Default.SaveAlt, contentDescription = "export")
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = stringResource(id = R.string.export_result))
+        DropdownMenu(expanded = expand, onDismissRequest = { expand = false }) {
+            DropdownMenuItem(
+                text = { Text(text = stringResource(id = R.string.export_only_result)) },
+                onClick = {
+                    needToExportTextProvider = exportOnlyResultProvider
+                    exportFileLauncher.launch("result.txt")
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(text = stringResource(id = R.string.export_both_source_and_result)) },
+                onClick = {
+                    needToExportTextProvider = exportBothSourceAndResultProvider
+                    exportFileLauncher.launch("source_and_result.txt")
+                }
+            )
+        }
+    }
+
+}
 
 
 @Composable

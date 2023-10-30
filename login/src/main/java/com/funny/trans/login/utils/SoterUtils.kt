@@ -77,7 +77,6 @@ package com.funny.trans.login.utils
 //                }
 //
 //                override fun onAuthenticationError(errorCode: Int, errorString: CharSequence?) {
-//                    // TODO("Not yet implemented")
 //                    Log.d(TAG, "onAuthenticationError: $errorCode, $errorString")
 //                }
 //

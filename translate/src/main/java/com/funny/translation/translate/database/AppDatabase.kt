@@ -16,8 +16,8 @@ val appDB by lazy{
 }
 
 @Database(
-    entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class, LongTextTransTask::class],
-    version = 7,
+    entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class, LongTextTransTask::class, Draft::class],
+    version = 8,
     autoMigrations = []
 )
 @TypeConverters(
@@ -30,6 +30,7 @@ abstract class AppDatabase : RoomDatabase(){
     abstract val transHistoryDao: TransHistoryDao
     abstract val transFavoriteDao: TransFavoriteDao
     abstract val longTextTransDao: LongTextTransDao
+    abstract val draftDao: DraftDao
 
     companion object{
         fun createDatabase() =
@@ -41,6 +42,7 @@ abstract class AppDatabase : RoomDatabase(){
                 .addMigrations(MIGRATION_4_5)
                 .addMigrations(MIGRATION_5_6)
                 .addMigrations(MIGRATION_6_7)
+                .addMigrations(MIGRATION_7_8)
                 .build()
 
         /**
@@ -51,6 +53,7 @@ abstract class AppDatabase : RoomDatabase(){
          * 4->5:去除无用的主键 id，解决一些id重复导致的bug
          * 5-6:新增表 table_trans_favorite
          * 6-7:新增表 table_long_text_trans_tasks
+         * 7-8:新增表 table_draft，为 table_long_text_trans_tasks 添加一列 “备注”
          */
         private val MIGRATION_1_2 = object : Migration(1,2){
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -110,6 +113,18 @@ abstract class AppDatabase : RoomDatabase(){
                             "`sourceTextSegments` TEXT NOT NULL, `resultTextSegments` TEXT NOT NULL, " +
                             "`translatedLength` INTEGER NOT NULL)"
                 )
+            }
+        }
+
+        // create table_draft
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `table_drafts` " +
+                            "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `content` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `remark` TEXT NOT NULL DEFAULT '')"
+                )
+                // 为 table_long_text_trans_tasks 添加一列 “备注”
+                database.execSQL("ALTER TABLE table_long_text_trans_tasks ADD COLUMN `remark` TEXT NOT NULL DEFAULT ''")
             }
         }
 

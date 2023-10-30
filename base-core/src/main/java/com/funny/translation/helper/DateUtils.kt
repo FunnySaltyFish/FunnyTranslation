@@ -3,7 +3,9 @@ package com.funny.translation.helper
 import android.os.Build
 import android.util.Log
 import java.time.ZoneId
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 
 data class FunnyDate(var year: Int = 0, var month: Int = 0, var day: Int = 0)
 object DateUtils {
@@ -43,4 +45,19 @@ object DateUtils {
         }
     }
 
+    /**
+     * 2021-01-01 02:03:04
+     * @return String
+     */
+    fun getNowStr(): String {
+        val date = Calendar.getInstance(TimeZone.getDefault())
+        val year = date.get(Calendar.YEAR)
+        val month = date.get(Calendar.MONTH) + 1
+        val day = date.get(Calendar.DATE)
+        val hour = date.get(Calendar.HOUR_OF_DAY)
+        val minute = date.get(Calendar.MINUTE)
+        val second = date.get(Calendar.SECOND)
+
+        return "%4d-%02d-%02d %02d:%02d:%02d".format(year, month, day, hour, minute, second)
+    }
 }

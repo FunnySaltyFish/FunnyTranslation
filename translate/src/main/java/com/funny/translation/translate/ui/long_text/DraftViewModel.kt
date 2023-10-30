@@ -2,19 +2,18 @@ package com.funny.translation.translate.ui.long_text
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.translation.translate.database.LongTextTransTask
+import com.funny.translation.translate.database.Draft
 import com.funny.translation.translate.database.appDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LongTextTransListViewModel: ViewModel() {
-    private val dao = appDB.longTextTransDao
+class DraftViewModel: ViewModel() {
+    private val dao = appDB.draftDao
+    val draftList = appDB.draftDao.getAll()
 
-    val taskList = appDB.longTextTransDao.getAll()
-
-    fun deleteTask(task: LongTextTransTask) {
+    fun deleteDraft(draft: Draft) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.delete(task)
+            dao.delete(draft)
         }
     }
 }

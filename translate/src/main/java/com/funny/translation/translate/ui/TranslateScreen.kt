@@ -18,8 +18,12 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
     object ThemeScreen : TranslateScreen(R.string.theme, "nav_trans_theme")
     object FloatWindowScreen: TranslateScreen(R.string.float_window, "nav_trans_float_window_screen")
     object AppRecommendationScreen: TranslateScreen(R.string.recommendation_app, "nav_app_recommendation")
+    object LongTextTransScreen: TranslateScreen(R.string.long_text_trans, "nav_long_text_trans")
+
     object LongTextTransListScreen: TranslateScreen(R.string.long_text_trans, "nav_long_text_trans_list")
     object LongTextTransDetailScreen: TranslateScreen(R.string.long_text_trans, "nav_long_text_trans_detail/{id}")
+    object TextEditorScreen: TranslateScreen(R.string.edit_text, "nav_text_editor?text={text}&draftId={draftId}")
+    object DraftScreen: TranslateScreen(R.string.drafts, "nav_drafts")
 
     companion object {
         val Saver = { screen: TranslateScreen ->

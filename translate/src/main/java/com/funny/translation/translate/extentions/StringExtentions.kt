@@ -35,3 +35,11 @@ fun String.formatBraceStyle(vararg items: Pair<String, Any>): String {
     }
     return txt
 }
+
+fun String.formatQueryStyle(vararg items: Pair<String, Any>): String {
+    var txt = this
+    items.forEach {
+        txt = txt.replace("{${it.first}}", it.second.toString())
+    }
+    return txt
+}
