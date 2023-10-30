@@ -75,6 +75,9 @@ fun AboutScreen() {
             Text(text = stringResource(id = R.string.developer))
         }) {
             val fastClickHandler = rememberFastClickHandler {
+                // 非 Debug 模式下不可开启开发者模式
+                if (!BuildConfig.DEBUG) return@rememberFastClickHandler
+
                 AppConfig.developerMode.value = true
                 context.toastOnUi(R.string.open_developer_mode)
             }

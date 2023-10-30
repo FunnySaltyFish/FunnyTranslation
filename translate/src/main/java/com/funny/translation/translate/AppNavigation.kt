@@ -115,7 +115,7 @@ fun AppNavigation(
                 NavHost(
                     navController = navController,
                     startDestination = TranslateScreen.MainScreen.route,
-                    modifier = Modifier
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     composable(
                         TranslateScreen.MainScreen.route,

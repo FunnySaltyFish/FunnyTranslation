@@ -41,7 +41,6 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.ui.TranslateScreen
-import com.funny.translation.translate.ui.long_text.LongTextTransScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
@@ -72,10 +71,10 @@ enum class MainScreenState {
 @Composable
 fun MainScreen(
 ) {
-//    TextTransScreen()
+    TextTransScreen()
      // LongTextTransDetailScreen(id = "244", sourceTextKey = "")
 //    LongTextTransListScreen()
-    LongTextTransScreen()
+//    LongTextTransScreen()
 }
 
 @ExperimentalComposeUiApi
@@ -399,7 +398,7 @@ private fun Drawer(
             }
             divider()
             drawerItem(Icons.Default.Settings, TranslateScreen.SettingScreen)
-            drawerItem(Icons.Default.Article, TranslateScreen.LongTextTransListScreen) {
+            drawerItem(Icons.Default.Article, TranslateScreen.LongTextTransScreen) {
                 Badge(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {

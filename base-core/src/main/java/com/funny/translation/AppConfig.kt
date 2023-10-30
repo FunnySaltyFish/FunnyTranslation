@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.bean.UserInfoBean
-import com.funny.translation.core.BuildConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
@@ -55,11 +54,7 @@ object AppConfig {
     val sExpandDetailByDefault = mutableDataSaverStateOf(DataSaverUtils, "KEY_EXPAND_DETAIL_BY_DEFAULT", false)
 
     //
-    var developerMode = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEVELOPER_MODE", false)
-        set(newState) {
-            if (!BuildConfig.DEBUG && newState.value) return
-            field = newState
-        }
+    val developerMode = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEVELOPER_MODE", false)
 
     fun updateJwtToken(newToken: String) {
         userInfo.value = userInfo.value.copy(jwt_token = newToken)
