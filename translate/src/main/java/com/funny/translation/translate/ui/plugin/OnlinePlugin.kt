@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -60,12 +61,13 @@ internal fun OnlinePluginItem(
     }
     val flatButton = @Composable { title: String, color: Color, onClick: SimpleAction ->
         Button(
+            modifier = Modifier.width(120.dp),
             shape = CircleShape,
             colors = buttonColors(
                 contentColor = Color.White,
                 containerColor = color
             ),
-            contentPadding = PaddingValues(horizontal = 40.dp, vertical = 0.dp),
+            contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
             onClick = onClick
         ) {
             Text(title)

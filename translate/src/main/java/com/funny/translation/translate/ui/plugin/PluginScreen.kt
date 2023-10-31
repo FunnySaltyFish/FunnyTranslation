@@ -193,7 +193,8 @@ fun PluginScreen() {
                     })
                 }
             }
-        }
+        },
+        addNavPadding = false
     ) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
             if (maxWidth > 720.dp) { //宽屏
@@ -227,13 +228,11 @@ fun PluginScreen() {
                 val lazyListState = rememberSaveable(saver = LazyListState.Saver) {
                     LazyListState()
                 }
-
                 LazyColumn(
                     Modifier
-                        .fillMaxSize()
-                        .padding(start = 20.dp, end = 20.dp),
+                        .fillMaxSize(),
                     verticalArrangement = spacedBy(8.dp),
-                    contentPadding = PaddingValues(bottom = 8.dp),
+                    contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
                     state = lazyListState
                 ) {
                     localPluginPartWrapper()
@@ -241,6 +240,9 @@ fun PluginScreen() {
                         Divider()
                     }
                     onlinePluginListWrapper()
+                    item {
+                        NavPaddingItem()
+                    }
                 }
             }
         }

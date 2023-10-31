@@ -4,11 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +43,7 @@ import com.funny.translation.ui.FixedSizeIcon
 fun CommonPage(
     modifier: Modifier = Modifier,
     title: String? = null,
+    addNavPadding: Boolean = true,
     navController: NavHostController = LocalNavController.current,
     navigationIcon: @Composable () -> Unit = { CommonNavBackIcon(navController) },
     actions: @Composable RowScope.() -> Unit = { },
@@ -52,7 +57,9 @@ fun CommonPage(
     ) {
         CommonTopBar(title = title, navigationIcon = navigationIcon, navController = navController, actions = actions)
         content()
-        Spacer(modifier = Modifier.navigationBarsPadding())
+        if (addNavPadding) {
+            NavPaddingItem()
+        }
     }
 }
 
@@ -91,4 +98,14 @@ fun CommonNavBackIcon(
             contentDescription = stringResource(id = R.string.back)
         )
     }
+}
+
+/**
+ * 纵向的空白，高度为底部导航栏的高度
+ */
+@Composable
+fun NavPaddingItem() {
+    Spacer(modifier = Modifier.windowInsetsPadding(
+        WindowInsets.navigationBars.only(WindowInsetsSides.Vertical))
+    )
 }
