@@ -466,7 +466,7 @@ fun UserInfoPanel(navHostController: NavHostController) {
             }
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
             .padding(vertical = 12.dp),
         loader = { activityVM.userInfo }
     ) { userBean ->
