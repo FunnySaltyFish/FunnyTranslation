@@ -37,4 +37,5 @@
     <string name="cancel">取消</string>
     <string name="unsupported_language">此语种暂不支持</string>
     <string name="not_registered">您似乎没有注册过，请先注册账号吧~</string>
+    <string name="err_write_text">写入文件时发生错误</string>
 </resources>

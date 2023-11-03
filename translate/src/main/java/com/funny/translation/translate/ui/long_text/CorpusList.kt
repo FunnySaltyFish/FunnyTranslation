@@ -56,7 +56,11 @@ import kotlinx.coroutines.launch
 internal fun ColumnScope.CorpusListPart(
     vm: LongTextTransViewModel
 ) {
-    Category(title = stringResource(id = R.string.corpus), expandable = false) {
+    Category(
+        title = stringResource(id = R.string.corpus),
+        helpText = stringResource(id = R.string.corpus_help),
+        expandable = false
+    ) {
         val pagerState = rememberPagerState(pageCount = { 2 })
         val scope = rememberCoroutineScope()
         fun changePage(index: Int) = scope.launch {
@@ -287,7 +291,7 @@ private fun TermDialog(
                         value = source,
                         onValueChange = updateSource,
                         label = {
-                            Text(text = stringResource(id = R.string.source_text))
+                            Text(text = stringResource(id = R.string.term))
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         singleLine = true,

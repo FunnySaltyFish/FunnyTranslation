@@ -59,7 +59,6 @@ import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.extentions.formatBraceStyle
-import com.funny.translation.translate.extentions.formatQueryStyle
 import com.funny.translation.translate.extentions.safeSubstring
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
@@ -109,7 +108,15 @@ fun LongTextTransScreen() {
                 if (it == Lifecycle.Event.ON_RESUME) {
                     delay(500) // Android 高版本仅在获取到焦点后才能读取剪切板
                     clipboardText = ClipBoardUtil.read(context)
-                    Log.d(TAG, "LongTextTransScreen: onResume, clipboardText = ${clipboardText.safeSubstring(0, 10)}")
+                    Log.d(
+                        TAG,
+                        "LongTextTransScreen: onResume, clipboardText = ${
+                            clipboardText.safeSubstring(
+                                0,
+                                10
+                            )
+                        }"
+                    )
                     showClipboardCard = clipboardText.isNotBlank()
                 }
             }
@@ -152,7 +159,9 @@ fun LongTextTransScreen() {
             title = stringResource(id = R.string.from_editable_text),
             description = stringResource(id = R.string.from_editable_text_description),
             onClick = {
-                navController.navigate(TranslateScreen.TextEditorScreen.route.formatQueryStyle("text" to ""))
+                navController.navigateToTextEdit(
+                    TextEditorAction.NewDraft("")
+                )
             }
         )
         ItemCard(
@@ -175,9 +184,13 @@ fun LongTextTransScreen() {
         Spacer(modifier = Modifier.heightIn(12.dp))
         Text(
             text = stringResource(id = R.string.view_all_trans_histories),
-            modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally).clickable {
-                navController.navigate(TranslateScreen.LongTextTransListScreen.route)
-            }.padding(4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.CenterHorizontally)
+                .clickable {
+                    navController.navigate(TranslateScreen.LongTextTransListScreen.route)
+                }
+                .padding(4.dp),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -204,9 +217,11 @@ private fun ItemCard(
     extraContent: (@Composable () -> Unit)? = null
 ) {
     wrapper {
-        Column(modifier = Modifier
-            .clickable(onClick = onClick)
-            .padding(16.dp))
+        Column(
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .padding(16.dp)
+        )
         {
             Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 FixedSizeIcon(
@@ -268,8 +283,14 @@ internal fun navigateToLongTextTransDetailPage(
     if (id == null) {
         val newId = UUID.randomUUID().toString()
         DataHolder.put(newId, text)
-        navController.navigate(TranslateScreen.LongTextTransDetailScreen.route.formatBraceStyle("id" to newId), navOptions)
+        navController.navigate(
+            TranslateScreen.LongTextTransDetailScreen.route.formatBraceStyle("id" to newId),
+            navOptions
+        )
     } else {
-        navController.navigate(TranslateScreen.LongTextTransDetailScreen.route.formatBraceStyle("id" to id), navOptions)
+        navController.navigate(
+            TranslateScreen.LongTextTransDetailScreen.route.formatBraceStyle("id" to id),
+            navOptions
+        )
     }
 }

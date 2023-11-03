@@ -16,8 +16,6 @@ import com.funny.compose.loading.DefaultEmpty
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.Draft
-import com.funny.translation.translate.extentions.formatQueryStyle
-import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.main.SwipeToDismissItem
 import com.funny.translation.translate.ui.widget.CommonPage
 
@@ -33,11 +31,8 @@ fun DraftScreen() {
             if (list.isNotEmpty()) {
                 items(list, key = { it.id }) { draft ->
                     DraftItem(task = draft, onClick = {
-                         navController.navigate(
-                             TranslateScreen.TextEditorScreen.route.formatQueryStyle(
-                                 "text" to draft.content,
-                                 "draftId" to draft.id
-                             )
+                         navController.navigateToTextEdit(
+                             TextEditorAction.UpdateDraft(draft.id, draft.content)
                          )
                     }, deleteTaskAction = vm::deleteDraft)
                 }

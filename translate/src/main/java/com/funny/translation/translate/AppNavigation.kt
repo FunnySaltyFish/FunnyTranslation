@@ -32,6 +32,7 @@ import com.funny.translation.translate.ui.long_text.DraftScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransListScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransScreen
+import com.funny.translation.translate.ui.long_text.TextEditorAction
 import com.funny.translation.translate.ui.long_text.TextEditorScreen
 import com.funny.translation.translate.ui.main.FavoriteScreen
 import com.funny.translation.translate.ui.main.ImageTransScreen
@@ -239,17 +240,15 @@ private fun NavGraphBuilder.addLongTextTransNavigation() {
         animateComposable(
             TranslateScreen.TextEditorScreen.route,
             arguments = listOf(
-                navArgument("text") {
-                    type = NavType.StringType; defaultValue = ""; nullable = false
-                },
-                navArgument("draftId") {
-                    type = NavType.StringType; defaultValue = null; nullable = true
+                navArgument("action") {
+                    type = NavType.StringType
                 }
             )
         ) {
-            val text = it.arguments?.getString("text")
-            val draftId = it.arguments?.getString("draftId")?.toInt()
-            TextEditorScreen(initialText = text ?: "", draftId = draftId)
+            val action = kotlin.runCatching {
+                TextEditorAction.fromString(it.arguments?.getString("action") ?: "")
+            }.getOrNull()
+            TextEditorScreen(action)
         }
         animateComposable(
             TranslateScreen.DraftScreen.route

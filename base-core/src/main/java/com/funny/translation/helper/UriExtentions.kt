@@ -3,8 +3,7 @@ package com.funny.translation.helper
 import android.content.Context
 import android.content.res.AssetFileDescriptor
 import android.net.Uri
-import android.os.ParcelFileDescriptor
-import android.util.Log
+import com.funny.translation.core.R
 import java.io.*
 
 private const val TAG = "UriExtensions"
@@ -47,17 +46,15 @@ fun Uri.writeText(context: Context, text: String) {
 
 //    Log.d(TAG, "writeText: $text")
     if (pfd != null) {
-        synchronized(pfd) {
-            val fileWriter = FileWriter(pfd.fileDescriptor)
-            fileWriter.write(text)
-            try {
-                fileWriter.close()
-                pfd.close()
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
+        val fileWriter = FileWriter(pfd.fileDescriptor)
+        fileWriter.write(text)
+        try {
+            fileWriter.close()
+            pfd.close()
+        }catch (e:Exception) {
+            context.toastOnUi(string(R.string.err_write_text))
+            e.printStackTrace()
         }
-
     }
 //    FileUtils.
 }

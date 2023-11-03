@@ -1,11 +1,15 @@
 package com.funny.translation.translate.ui.long_text.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,27 +33,55 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.ResultEffect
+import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.Category
+import com.funny.translation.translate.ui.long_text.KEY_EDITED_SOURCE_TEXT
 import com.funny.translation.translate.ui.long_text.ScreenState
+import com.funny.translation.translate.ui.long_text.TextEditorAction
+import com.funny.translation.translate.ui.long_text.navigateToTextEdit
+import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun ColumnScope.SourceTextPart(
-    text: String,
-    screenState: ScreenState,
     modifier: Modifier = Modifier,
+    text: String,
+    // updateSourceText 实际还包括对数据库的修改，因此只在弹出对话框按下确定后，才应该执行
+    updateSourceText: (String) -> Unit = {},
+    screenState: ScreenState,
     currentTransStartOffset: Int = -1,
     currentTransLength: Int = 0,
     translatingTextColor: Color = MaterialTheme.colorScheme.primary
 ) {
-    Category(title = stringResource(id = R.string.source_text)) { expanded ->
+    val navController = LocalNavController.current
+    Category(
+        title = stringResource(id = R.string.source_text),
+        helpText = stringResource(id = R.string.source_text_help),
+        extraRowContent = {
+            if (screenState == ScreenState.Init) {
+                ResultEffect<String>(navController = navController, resultKey = KEY_EDITED_SOURCE_TEXT) {
+                    if (it.isNotBlank()) {
+                        updateSourceText(it)
+                    }
+                }
+                FixedSizeIcon(Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier
+                    .size(16.dp)
+                    .clickable {
+                        navController.navigateToTextEdit(
+                            TextEditorAction.UpdateSourceText(text)
+                        )
+                    })
+            }
+        }
+    ) { expanded ->
         var maxLines by rememberStateOf(value = 8)
         LaunchedEffect(key1 = screenState) {
             maxLines = when (screenState) {
                 ScreenState.Init -> 8
                 ScreenState.Translating -> 8
-                ScreenState.Result -> 2
+                ScreenState.Result -> 8
             }
         }
         val textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, lineHeight = (14).sp)
@@ -94,7 +126,10 @@ internal fun ColumnScope.ResultTextPart(
     currentResultStartOffset: Int = -1,
     translatingTextColor: Color = MaterialTheme.colorScheme.primary
 ) {
-    Category(title = stringResource(id = R.string.translate_result)) { expanded ->
+    Category(
+        title = stringResource(id = R.string.translate_result),
+        helpText = stringResource(id = R.string.translate_result_help)
+    ) { expanded ->
         var maxLines by rememberStateOf(value = 8)
         LaunchedEffect(key1 = screenState) {
             maxLines = when (screenState) {

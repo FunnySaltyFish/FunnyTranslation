@@ -291,4 +291,12 @@
     <string name="edit_text">编辑文本</string>
     <string name="input_text_hint">开始你的创作之旅吧</string>
     <string name="update_draft">更新草稿？</string>
+    <string name="update_source_text">更新源文本？</string>
+    <string name="illegal_action">请用正确的参数打开此页面</string>
+    <string name="term">专有术语</string>
+    <string name="source_text_help">此次翻译任务的源文本，目前建议为纯文本格式</string>
+    <string name="translate_result_help">由引擎翻译得到的结果，一定程度上能保证上下文语义的一致性</string>
+    <string name="task_prompt_help">输入给模型的目标，可以在此指定翻译的语种、语言风格等，其中后半段是限制输出格式的内容，不可更改。Prompt可以很大程度上影响翻译效果，请仔细斟酌。不建议输入太长的文本，一是会增加字符导致更贵，二是会挤占正文内容的长度，可能影响段落之间的关联性</string>
+    <string name="corpus_help">术语即“专有词语”，如特定的地名、人名、领域名词等，添加自定义术语能帮助程序更准确的完成翻译。“全部术语”即为当前出现过的所有术语，“当前术语”即为当前翻译的这个片段中可能出现的术语。</string>
+    <string name="exporting">正在导出，请稍等……</string>
 </resources>

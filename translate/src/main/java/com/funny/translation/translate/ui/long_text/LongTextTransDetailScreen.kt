@@ -152,9 +152,17 @@ private fun ColumnScope.DetailContent(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             when (it) {
                 ScreenState.Init -> {
-                    SourceTextPart(text = vm.sourceText, screenState = vm.screenState)
+                    SourceTextPart(
+                        text = vm.sourceText,
+                        updateSourceText = vm::updateSourceText,
+                        screenState = vm.screenState
+                    )
                     PromptPart(vm.prompt, vm::updatePrompt)
-                    Category(title = stringResource(id = R.string.all_corpus), expandable = false) {
+                    Category(
+                        title = stringResource(id = R.string.all_corpus),
+                        helpText = string(R.string.corpus_help),
+                        expandable = false
+                    ) {
                         AllCorpusList(vm = vm)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -169,9 +177,8 @@ private fun ColumnScope.DetailContent(
                         text = vm.sourceText,
                         screenState = vm.screenState,
                         currentTransStartOffset = vm.translatedLength,
-                        currentTransLength = vm.currentTransPartLength
+                        currentTransLength = vm.currentTransPartLength,
                     )
-
                     ResultTextPart(
                         text = vm.resultText,
                         screenState = vm.screenState,
@@ -180,6 +187,7 @@ private fun ColumnScope.DetailContent(
                     CorpusListPart(vm = vm)
                 }
                 ScreenState.Result -> {
+                    SourceTextPart(text = vm.sourceText, screenState = vm.screenState)
                     ResultTextPart(text = vm.resultText, screenState = vm.screenState)
                     Spacer(modifier = Modifier.height(8.dp))
                     ExportButton(
@@ -208,18 +216,20 @@ private fun ExportButton(
     val exportFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("plain/text")
     ) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
         val text = needToExportTextProvider.invoke()
         if (text.isBlank()) {
             context.toastOnUi(string(id = R.string.export_text_empty))
             return@rememberLauncherForActivityResult
         }
         val watermark = string(id = R.string.export_watermark)
-        uri?.writeText(context, "$text\n\n${"-".repeat(20)}\n$watermark")
+        context.toastOnUi(string(id = R.string.exporting))
+        uri.writeText(context, "$text\n\n${"-".repeat(20)}\n$watermark")
         context.toastOnUi(string(id = R.string.export_success))
     }
     var expand by rememberStateOf(value = false)
     Button(onClick = { expand = true }) {
-        FixedSizeIcon(Icons.Default.SaveAlt, contentDescription = "export")
+        FixedSizeIcon(Icons.Default.SaveAlt, contentDescription = null)
         Spacer(modifier = Modifier.width(4.dp))
         Text(text = stringResource(id = R.string.export_result))
         DropdownMenu(expanded = expand, onDismissRequest = { expand = false }) {
@@ -227,14 +237,14 @@ private fun ExportButton(
                 text = { Text(text = stringResource(id = R.string.export_only_result)) },
                 onClick = {
                     needToExportTextProvider = exportOnlyResultProvider
-                    exportFileLauncher.launch("result.txt")
+                    exportFileLauncher.launch("result_${System.currentTimeMillis()}.txt")
                 }
             )
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.export_both_source_and_result)) },
                 onClick = {
                     needToExportTextProvider = exportBothSourceAndResultProvider
-                    exportFileLauncher.launch("source_and_result.txt")
+                    exportFileLauncher.launch("source_and_result_${System.currentTimeMillis()}.txt")
                 }
             )
         }

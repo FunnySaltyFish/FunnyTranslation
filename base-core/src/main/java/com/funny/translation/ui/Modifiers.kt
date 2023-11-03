@@ -17,7 +17,7 @@ import com.funny.translation.debug.rememberSaveableStateOf
 
 @Stable
 fun Modifier.floatingActionBarModifier(
-    initialOffset: Offset = Offset(-12f, -100f)
+    initialOffset: Offset = Offset(-64f, -100f)
 ) = composed {
     var offset by rememberSaveableStateOf(
         value = initialOffset,

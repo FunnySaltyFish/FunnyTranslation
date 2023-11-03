@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
@@ -21,20 +22,24 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import com.funny.jetsetting.core.ui.SimpleDialog
-import com.funny.translation.debug.rememberSaveableStateOf
 import com.funny.translation.debug.rememberStateOf
-import com.funny.translation.helper.DateUtils
+import com.funny.translation.helper.TimeUtils
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.database.Draft
 import com.funny.translation.translate.database.appDB
+import com.funny.translation.translate.extentions.formatQueryStyle
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.ui.FixedSizeIcon
@@ -43,28 +48,94 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URLDecoder
+import java.net.URLEncoder
+
+internal const val KEY_EDITED_SOURCE_TEXT = "KEY_EDITED_SOURCE_TEXT"
+sealed class TextEditorAction(val text: String) {
+    class NewDraft(text: String) : TextEditorAction(text) {
+        override fun toString(): String {
+            return "NewDraft$SEPARATOR${URLEncoder.encode(text, "UTF-8")}"
+        }
+    }
+    class UpdateDraft(val draftId: Int, text: String) : TextEditorAction(text) {
+        override fun toString(): String {
+            return "UpdateDraft$SEPARATOR$draftId$SEPARATOR${URLEncoder.encode(text, "UTF-8")}"
+        }
+    }
+    class UpdateSourceText(text: String) : TextEditorAction(text) {
+        override fun toString(): String {
+            return "UpdateSourceText$SEPARATOR${URLEncoder.encode(text, "UTF-8")}"
+        }
+    }
+
+    companion object {
+        private const val SEPARATOR = " "
+        fun fromString(string: String): TextEditorAction {
+            return when {
+                string.startsWith("NewDraft") -> {
+                    val split = string.split(SEPARATOR)
+                    NewDraft(split[1].let { URLDecoder.decode(it, "UTF-8") })
+                }
+                string.startsWith("UpdateDraft") -> {
+                    val split = string.split(SEPARATOR)
+                    UpdateDraft(split[1].toInt(), split[2].let { URLDecoder.decode(it, "UTF-8")  })
+                }
+                string.startsWith("UpdateSourceText") -> {
+                    val split = string.split(SEPARATOR)
+                    UpdateSourceText(split[1].let { URLDecoder.decode(it, "UTF-8") })
+                }
+                else -> throw IllegalArgumentException("Unknown TextEditorAction: $string")
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TextEditorScreen(
-    draftId: Int? = null,
-    initialText: String = ""
+    action: TextEditorAction?
 ) {
+    if (action == null) {
+        Text(
+            text = stringResource(id = R.string.illegal_action),
+            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)
+        )
+        return
+    }
     val showDialog = rememberStateOf(value = false)
     val navController = LocalNavController.current
-    var text by rememberSaveableStateOf(initialText)
-    val textEmpty by remember { derivedStateOf { text == "" } }
+    val initialText = action.text
+    var textFieldValue by rememberStateOf(value = TextFieldValue(
+        initialText, TextRange(initialText.length)
+    ))
+    val text by remember { derivedStateOf { textFieldValue.text } }
+    val textEmpty by remember { derivedStateOf { textFieldValue.text == "" } }
 
     SimpleDialog(
         openDialogState = showDialog,
         title = stringResource(id = R.string.tip),
-        message = if (draftId == null) stringResource(id = R.string.save_draft) else stringResource(id = R.string.update_draft),
+        message = when (action) {
+            is TextEditorAction.NewDraft -> stringResource(id = R.string.save_draft)
+            is TextEditorAction.UpdateDraft -> stringResource(id = R.string.update_draft)
+            is TextEditorAction.UpdateSourceText -> stringResource(id = R.string.update_source_text)
+        },
         confirmButtonText = stringResource(id = R.string.save),
         confirmButtonAction = {
             // 保存或者更新草稿
-            CoroutineScope(Dispatchers.IO).launch {
-                appDB.draftDao.upsert(Draft(content = text, remark = DateUtils.getNowStr(), id = draftId ?: 0))
-                withContext(Dispatchers.Main) {
+            when (action) {
+                is TextEditorAction.NewDraft, is TextEditorAction.UpdateDraft -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        appDB.draftDao.upsert(
+                            Draft(content = textFieldValue.text, remark = TimeUtils.getNowStr(), id = (action as? TextEditorAction.UpdateDraft)?.draftId ?: 0)
+                        )
+                        withContext(Dispatchers.Main) {
+                            navController.popBackStack()
+                        }
+                    }
+                }
+                is TextEditorAction.UpdateSourceText -> {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(KEY_EDITED_SOURCE_TEXT, text)
                     navController.popBackStack()
                 }
             }
@@ -84,17 +155,19 @@ fun TextEditorScreen(
     }
     CommonPage(
         actions = {
-            AnimatedVisibility(visible = !textEmpty) {
-                IconButton(onClick = {
-                    navigateToLongTextTransDetailPage(
-                        navController = navController,
-                        id = null,
-                        text = text,
-                        navOptions = navOptions {
-                            popUpTo(TranslateScreen.LongTextTransScreen.route)
-                        })
-                }) {
-                    FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = "Start")
+            if (action is TextEditorAction.NewDraft || action is TextEditorAction.UpdateDraft) {
+                AnimatedVisibility(visible = !textEmpty) {
+                    IconButton(onClick = {
+                        navigateToLongTextTransDetailPage(
+                            navController = navController,
+                            id = null,
+                            text = text,
+                            navOptions = navOptions {
+                                popUpTo(TranslateScreen.LongTextTransScreen.route)
+                            })
+                    }) {
+                        FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = "Start")
+                    }
                 }
             }
         }
@@ -113,8 +186,8 @@ fun TextEditorScreen(
                     .imePadding()
                     .focusable(true)
                     .focusRequester(focusRequester),
-                value = text,
-                onValueChange = { text = it },
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
                 textStyle = textStyle,
             ) {
                 if (textEmpty) {
@@ -128,4 +201,14 @@ fun TextEditorScreen(
             }
         }
     }
+}
+
+internal fun NavController.navigateToTextEdit(
+    action: TextEditorAction
+) {
+    navigate(
+        TranslateScreen.TextEditorScreen.route.formatQueryStyle(
+            "action" to action.toString()
+        )
+    )
 }

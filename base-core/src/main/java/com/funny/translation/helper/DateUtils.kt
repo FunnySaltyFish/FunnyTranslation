@@ -44,20 +44,4 @@ object DateUtils {
             year = date.get(Calendar.YEAR)
         }
     }
-
-    /**
-     * 2021-01-01 02:03:04
-     * @return String
-     */
-    fun getNowStr(): String {
-        val date = Calendar.getInstance(TimeZone.getDefault())
-        val year = date.get(Calendar.YEAR)
-        val month = date.get(Calendar.MONTH) + 1
-        val day = date.get(Calendar.DATE)
-        val hour = date.get(Calendar.HOUR_OF_DAY)
-        val minute = date.get(Calendar.MINUTE)
-        val second = date.get(Calendar.SECOND)
-
-        return "%4d-%02d-%02d %02d:%02d:%02d".format(year, month, day, hour, minute, second)
-    }
 }

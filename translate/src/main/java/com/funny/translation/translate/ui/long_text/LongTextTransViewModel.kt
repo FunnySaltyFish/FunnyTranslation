@@ -69,7 +69,7 @@ class LongTextTransViewModel: ViewModel() {
     // 是否暂停
     var isPausing by mutableStateOf(false)
 
-    private var transId = UUID.randomUUID().toString()
+    var transId = UUID.randomUUID().toString()
     private var histories = mutableListOf<ChatMessage>()
     internal var prompt by mutableStateOf(DEFAULT_PROMPT)
     private var memory = ChatMemoryMaxContextSize(1024, prompt.toPrompt())
@@ -297,13 +297,18 @@ class LongTextTransViewModel: ViewModel() {
 
     fun updatePrompt(prefix: String) { prompt.prefix = prefix }
     fun updateEditingTermState(isEditing: Boolean) { isEditingTerm = isEditing }
+    fun updateSourceText(text: String) {
+        sourceText = text
+        totalLength = text.length
+    }
     fun toggleIsPausing() {
         isPausing = !isPausing
         if (isPausing) appCtx.toastOnUi(string(R.string.paused_tip))
-        else if (translateJob == null) {
-            // 如果没有开始翻译（从外部加载进来的状态），那么开始翻译
-            startTranslate()
-        }
+        else
+            if (translateJob == null) {
+                // 如果没有开始翻译（从外部加载进来的状态），那么开始翻译
+                startTranslate()
+            }
     }
 
     companion object {

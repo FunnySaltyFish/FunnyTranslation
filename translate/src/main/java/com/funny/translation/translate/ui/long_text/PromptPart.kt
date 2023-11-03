@@ -33,7 +33,10 @@ internal fun ColumnScope.PromptPart(
     initialPrompt: EditablePrompt,
     onPrefixUpdate: (String) -> Unit
 ) {
-    Category(title = stringResource(id = R.string.task_prompt)) { expanded: Boolean ->
+    Category(
+        title = stringResource(id = R.string.task_prompt),
+        helpText = stringResource(id = R.string.task_prompt_help),
+    ) { expanded: Boolean ->
         Column {
             var prefix by rememberStateOf(initialPrompt.prefix)
             var textLayoutResult: TextLayoutResult? by rememberStateOf(null)

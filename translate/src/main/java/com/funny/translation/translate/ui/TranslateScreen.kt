@@ -22,7 +22,7 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
 
     object LongTextTransListScreen: TranslateScreen(R.string.long_text_trans, "nav_long_text_trans_list")
     object LongTextTransDetailScreen: TranslateScreen(R.string.long_text_trans, "nav_long_text_trans_detail/{id}")
-    object TextEditorScreen: TranslateScreen(R.string.edit_text, "nav_text_editor?text={text}&draftId={draftId}")
+    object TextEditorScreen: TranslateScreen(R.string.edit_text, "nav_text_editor?action={action}")
     object DraftScreen: TranslateScreen(R.string.drafts, "nav_drafts")
 
     companion object {

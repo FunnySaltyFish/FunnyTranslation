@@ -69,6 +69,9 @@ interface LongTextTransDao {
     // updateAllCorpus
     @Query("update table_long_text_trans_tasks set allCorpus = :allCorpus where id = :id")
     fun updateAllCorpus(id: String, allCorpus: List<Pair<String, String>>)
+
+    @Query("update table_long_text_trans_tasks set sourceText = :text where id = :id")
+    fun updateSourceText(id: String, text: String)
 }
 
 class TermListConverter {
