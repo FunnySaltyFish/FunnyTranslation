@@ -27,3 +27,13 @@ data class Conversation(
     val id: String,
     var messages: List<StreamMessage>? = null
 )
+
+object ChatBots {
+    private val chatBots: Array<ServerChatBot> = arrayOf(
+        TestLongTextChatBot()
+    )
+
+    private val map = chatBots.associateBy { it.id }
+
+    fun findById(id: Int) = map[id] ?: chatBots[0]
+}

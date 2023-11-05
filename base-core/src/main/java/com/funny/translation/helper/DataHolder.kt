@@ -1,4 +1,4 @@
-package com.funny.translation.translate.utils
+package com.funny.translation.helper
 
 import java.lang.ref.WeakReference
 
@@ -17,5 +17,9 @@ object DataHolder {
 
     fun remove(key: String) {
         map.remove(key)
+    }
+
+    fun contains(key: String): Boolean {
+        return map.containsKey(key)
     }
 }

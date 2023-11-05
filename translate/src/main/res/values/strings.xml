@@ -299,4 +299,10 @@
     <string name="task_prompt_help">输入给模型的目标，可以在此指定翻译的语种、语言风格等，其中后半段是限制输出格式的内容，不可更改。Prompt可以很大程度上影响翻译效果，请仔细斟酌。不建议输入太长的文本，一是会增加字符导致更贵，二是会挤占正文内容的长度，可能影响段落之间的关联性</string>
     <string name="corpus_help">术语即“专有词语”，如特定的地名、人名、领域名词等，添加自定义术语能帮助程序更准确的完成翻译。“全部术语”即为当前出现过的所有术语，“当前术语”即为当前翻译的这个片段中可能出现的术语。</string>
     <string name="exporting">正在导出，请稍等……</string>
+    <string name="model_select">模型选择</string>
+    <string name="model_select_help">不同的模型拥有不同的上下文长度，且有着不同的单价，越好的模型单价越高，请按需选择。</string>
+    <string name="currency_symbol">¥</string>
+    <string name="kilo_char">千字符</string>
+    <string name="translate_failed_too_many_retries">重试次数已达上限，翻译失败</string>
+    <string name="attemp_to_retry">当前段落因模型不稳定性翻译失败，自动尝试重试（当前重试次数：%d）</string>
 </resources>

@@ -13,7 +13,7 @@ fun SimpleDialog(
     openDialog: Boolean,
     updateOpenDialog: (Boolean) -> Unit,
     title: String? = null,
-    message: String = "message",
+    content: (@Composable () -> Unit)? = null,
     confirmButtonAction: (() -> Unit)? = null,
     confirmButtonText : String = stringResource(R.string.confirm),
     dismissButtonAction: (() -> Unit)? = null,
@@ -23,17 +23,12 @@ fun SimpleDialog(
     if (openDialog) {
         AlertDialog(
             onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onCloseRequest.
                 if (closeable) updateOpenDialog(false)
             },
             title = {
                 if (title != null) Text(text = title)
             },
-            text = {
-                Text(message)
-            },
+            text = content,
             confirmButton = {
                 if(confirmButtonText.isNotEmpty()) {
                     TextButton(
@@ -73,4 +68,19 @@ fun SimpleDialog(
 ) {
     val (openDialog, updateOpenDialog) = openDialogState
     SimpleDialog(openDialog, updateOpenDialog, title, message, confirmButtonAction, confirmButtonText, dismissButtonAction, dismissButtonText, closeable)
+}
+
+@Composable
+fun SimpleDialog(
+    openDialog: Boolean,
+    updateOpenDialog: (Boolean) -> Unit,
+    title: String? = null,
+    message: String = "message",
+    confirmButtonAction: (() -> Unit)? = null,
+    confirmButtonText : String = stringResource(R.string.confirm),
+    dismissButtonAction: (() -> Unit)? = null,
+    dismissButtonText : String = stringResource(R.string.cancel),
+    closeable: Boolean = true
+) {
+    SimpleDialog(openDialog, updateOpenDialog, title, content = { Text(text = message)}, confirmButtonAction, confirmButtonText, dismissButtonAction, dismissButtonText, closeable)
 }

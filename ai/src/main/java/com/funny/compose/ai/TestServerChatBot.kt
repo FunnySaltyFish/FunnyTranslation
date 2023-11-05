@@ -6,10 +6,14 @@ import kotlinx.coroutines.flow.flow
 class TestServerChatBot: ServerChatBot() {
     override var args: HashMap<String, Any?> = hashMapOf()
 
-    override suspend fun sendRequest(formattedText: String, args: Map<String, Any?>): Flow<String> {
+    override suspend fun sendRequest(
+        prompt: String,
+        messages: List<ChatMessageReq>,
+        args: Map<String, Any?>
+    ): Flow<String> {
         return flow {
             emit("Hello, I'm $name.\n")
-            emit("currentMessage: $formattedText\n")
+            emit("currentMessage: $prompt\n")
         }
     }
 

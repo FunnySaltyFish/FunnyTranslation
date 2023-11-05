@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.loading.DefaultEmpty
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.string
 import com.funny.translation.translate.LocalNavController
@@ -41,7 +42,6 @@ import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.main.SwipeToDismissItem
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.MultiFabItem
-import com.funny.translation.translate.utils.DataHolder
 import com.funny.translation.ui.FixedSizeIcon
 import okhttp3.internal.immutableListOf
 import java.util.UUID

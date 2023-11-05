@@ -9,7 +9,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -18,9 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SaveAlt
@@ -48,8 +49,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.assetsStringLocalized
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.helper.writeText
@@ -58,9 +61,9 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.components.ResultTextPart
 import com.funny.translation.translate.ui.long_text.components.SourceTextPart
 import com.funny.translation.translate.ui.widget.CommonPage
-import com.funny.translation.translate.ui.widget.NoticeBar
 import com.funny.translation.translate.ui.widget.TwoProgressIndicator
 import com.funny.translation.ui.FixedSizeIcon
+import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.floatingActionBarModifier
 import java.util.UUID
 
@@ -70,12 +73,24 @@ fun LongTextTransDetailScreen(
 ) {
     val vm: LongTextTransViewModel = viewModel()
     val navController = LocalNavController.current
+    
+    var showHelpDialog by rememberDataSaverState(key = "show_long_trans_tip", default = true) 
+    if (showHelpDialog) {
+        SimpleDialog(
+            openDialog = showHelpDialog,
+            updateOpenDialog = { showHelpDialog = it },
+            content = {
+                MarkdownText(markdown = assetsStringLocalized(name = "long_text_trans_help.md"))
+            }
+        )
+    }
+    
     CommonPage(
         title = stringResource(id = R.string.long_text_trans),
         actions = {
-//            Row {
-//                TranslateButton(progress = vm.progress, onClick = vm::startTranslate )
-//            }
+            IconButton(onClick = { showHelpDialog = true }) {
+                FixedSizeIcon(Icons.Default.Help, contentDescription = "Help")
+            }
         }
     ) {
         // 传入参数时，先初始化各类型
@@ -97,19 +112,19 @@ fun LongTextTransDetailScreen(
             quitAlertDialog.value = true
         }
 
-        NoticeBar(
-            modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .background(
-                    MaterialTheme.colorScheme.primaryContainer,
-                    RoundedCornerShape(8.dp)
-                )
-                .padding(8.dp),
-            text = stringResource(R.string.early_preview_tip),
-            singleLine = false,
-            showClose = false,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
+//        NoticeBar(
+//            modifier = Modifier
+//                .fillMaxWidth(0.95f)
+//                .background(
+//                    MaterialTheme.colorScheme.primaryContainer,
+//                    RoundedCornerShape(8.dp)
+//                )
+//                .padding(8.dp),
+//            text = stringResource(R.string.early_preview_tip),
+//            singleLine = false,
+//            showClose = false,
+//        )
+//        Spacer(modifier = Modifier.height(4.dp))
         AnimatedVisibility (vm.screenState == ScreenState.Translating) {
             TwoProgressIndicator(startedProgress = vm.startedProgress, finishedProgress = vm.progress)
         }
@@ -149,7 +164,10 @@ private fun ColumnScope.DetailContent(
     vm: LongTextTransViewModel
 ) {
     AnimatedContent(targetState = screenState, label = "DetailContent") {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             when (it) {
                 ScreenState.Init -> {
                     SourceTextPart(
@@ -161,10 +179,10 @@ private fun ColumnScope.DetailContent(
                     Category(
                         title = stringResource(id = R.string.all_corpus),
                         helpText = string(R.string.corpus_help),
-                        expandable = false
-                    ) {
-                        AllCorpusList(vm = vm)
+                    ) { expanded ->
+                        AllCorpusList(vm = vm, expanded = expanded)
                     }
+                    ModelListPart(onBotSelected = vm::updateBot)
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = { vm.startTranslate() }) {
                         FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = null)

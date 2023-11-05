@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.readText
 import com.funny.translation.helper.string
@@ -62,7 +63,6 @@ import com.funny.translation.translate.extentions.formatBraceStyle
 import com.funny.translation.translate.extentions.safeSubstring
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
-import com.funny.translation.translate.utils.DataHolder
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
 import java.util.UUID

@@ -8,28 +8,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.funny.compose.ai.ChatBots
 import com.funny.compose.ai.ServerChatBot
 import com.funny.compose.ai.TestLongTextChatBot
 import com.funny.compose.ai.bean.ChatMemoryMaxContextSize
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
+import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.PartialJsonParser
 import com.funny.translation.helper.TextSplitter
+import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.LongTextTransTask
 import com.funny.translation.translate.database.appDB
-import com.funny.translation.translate.utils.DataHolder
+import com.funny.translation.translate.ui.long_text.bean.TermList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import java.util.UUID
 
 
@@ -55,7 +59,7 @@ class LongTextTransViewModel: ViewModel() {
 
     internal var screenState by mutableStateOf(ScreenState.Init)
 
-    val chatBot: ServerChatBot = TestLongTextChatBot()
+    var chatBot: ServerChatBot = TestLongTextChatBot()
     var totalLength = 0
     var translatedLength by mutableIntStateOf(0)
 
@@ -90,6 +94,7 @@ class LongTextTransViewModel: ViewModel() {
     private var resultJsonPart = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
     private var lastResultText = ""
+    // 因各种问题导致的重试
 
     fun initArgs(id:String) {
         this.transId = id
@@ -135,20 +140,25 @@ class LongTextTransViewModel: ViewModel() {
     fun startTranslate() {
         screenState = ScreenState.Translating
         translateJob = viewModelScope.launch(Dispatchers.IO) {
-            while (isActive && translatedLength < totalLength) {
-                val part = getNextPart()
-                Log.d(TAG, "startTranslate: nextPart: $part")
-                if (part == "") break
-                if (isEditingTerm) {
-                    isPausing = true
-                    appCtx.toastOnUi(string(R.string.paused_due_to_editting))
+            try {
+                while (isActive && translatedLength < totalLength) {
+                    val part = getNextPart()
+                    Log.d(TAG, "startTranslate: nextPart: $part")
+                    if (part == "") break
+                    if (isEditingTerm) {
+                        isPausing = true
+                        appCtx.toastOnUi(string(R.string.paused_due_to_editting))
+                    }
+                    while (isPausing) { delay(100) }
+                    translatePart(part)
                 }
-                while (isPausing) { delay(100) }
-                translatePart(part)
+                delay(500)
+                screenState = ScreenState.Result
+                Log.d(TAG, "finishTranslate, sourceStringSegments: $sourceTextSegments, resultTextSegments: $resultTextSegments")
+            } catch (e: Exception) {
+                Log.e(TAG, "startTranslate: ", e)
+                appCtx.toastOnUi(e.displayMsg(string(R.string.translate)))
             }
-            delay(500)
-            screenState = ScreenState.Result
-            Log.d(TAG, "finishTranslate, sourceStringSegments: $sourceTextSegments, resultTextSegments: $resultTextSegments")
         }
     }
 
@@ -192,7 +202,10 @@ class LongTextTransViewModel: ViewModel() {
         return splitText
     }
 
-    private suspend fun translatePart(part: String) {
+    private suspend fun translatePart(part: String, retryTimes: Int = 0) {
+        if (retryTimes >= 3) {
+            throw Exception(string(R.string.translate_failed_too_many_retries))
+        }
         resultJsonPart.clear()
         histories.add(newChatMessage(part))
         // 寻找当前的 corpus
@@ -214,15 +227,20 @@ class LongTextTransViewModel: ViewModel() {
 //                    sourceStringSegments.add(translatedLength)
                 }
                 is StreamMessage.Part -> {
-                    resultJsonPart.append(streamMsg.part)
-                    val ans = parseStreamedJson(resultJsonPart.toString())
-                    Log.d(TAG, "translatePart: ans: $ans")
-                    if (ans != null) {
+                    try {
+                        resultJsonPart.append(streamMsg.part)
+                        val ans = parseStreamedJson(resultJsonPart.toString())
+                        Log.d(TAG, "translatePart: ans: $ans")
                         resultText = lastResultText + (ans.text ?: "")
                         ans.keywords?.forEach {
                             allCorpus.add(it[0] to it[1])
                         }
                         saveAllCorpusToDB()
+                    } catch (e: SerializationException) {
+                        // JSON 数据解析失败了，重新尝试这一段，如果错误达到三次，则停止
+                        appCtx.toastOnUi(string(R.string.attemp_to_retry, retryTimes + 1))
+                        delay(500)
+                        translatePart(part, retryTimes + 1)
                     }
                 }
                 is StreamMessage.End -> {
@@ -274,21 +292,15 @@ class LongTextTransViewModel: ViewModel() {
      * 尝试解析流式的 JSON 数据
      * @param part String
      */
-    private fun parseStreamedJson(text: String): Answer? {
-        try {
-            val completeJson = PartialJsonParser.completePartialJson(text)
-            Log.d(TAG, "parseStreamedJson: --- origin: $text\n--- parsed: $completeJson")
-            val ans: Answer = JsonX.fromJson(completeJson)
-            // 由于解析得到的 keywords 不一定满足要求（比如每一项长度为 2），这里处理一下
-            if (ans.keywords != null) {
-                ans.keywords = ans.keywords!!.filter { it.size == 2 }
-            }
-            return ans
-        } catch (e: Exception) {
-            // 处理异常
-            Log.e(TAG, "parseStreamedJson: ", e)
+    private fun parseStreamedJson(text: String): Answer {
+        val completeJson = PartialJsonParser.completePartialJson(text)
+        Log.d(TAG, "parseStreamedJson: --- origin: $text\n--- parsed: $completeJson")
+        val ans: Answer = JsonX.fromJson(completeJson)
+        // 由于解析得到的 keywords 不一定满足要求（比如每一项长度为 2），这里处理一下
+        if (ans.keywords != null) {
+            ans.keywords = ans.keywords!!.filter { it.size == 2 }
         }
-        return null
+        return ans
     }
 
     private fun newChatMessage(msg: String): ChatMessage {
@@ -297,10 +309,11 @@ class LongTextTransViewModel: ViewModel() {
 
     fun updatePrompt(prefix: String) { prompt.prefix = prefix }
     fun updateEditingTermState(isEditing: Boolean) { isEditingTerm = isEditing }
-    fun updateSourceText(text: String) {
-        sourceText = text
-        totalLength = text.length
+    fun updateSourceText(text: String) { sourceText = text; totalLength = text.length }
+    fun updateBot(id: Int) {
+        ChatBots.findById(id)?.let { this.chatBot = it }
     }
+
     fun toggleIsPausing() {
         isPausing = !isPausing
         if (isPausing) appCtx.toastOnUi(string(R.string.paused_tip))
@@ -310,6 +323,8 @@ class LongTextTransViewModel: ViewModel() {
                 startTranslate()
             }
     }
+
+
 
     companion object {
         private const val TAG = "LongTextTransViewModel"

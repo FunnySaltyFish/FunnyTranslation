@@ -1,5 +1,6 @@
 package com.funny.translation.translate.ui.long_text
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,8 +60,7 @@ internal fun ColumnScope.CorpusListPart(
     Category(
         title = stringResource(id = R.string.corpus),
         helpText = stringResource(id = R.string.corpus_help),
-        expandable = false
-    ) {
+    ) { expanded ->
         val pagerState = rememberPagerState(pageCount = { 2 })
         val scope = rememberCoroutineScope()
         fun changePage(index: Int) = scope.launch {
@@ -95,10 +95,10 @@ internal fun ColumnScope.CorpusListPart(
         ) { page ->
             when(page) {
                 0 -> {
-                    CurrentCorpusList(vm = vm)
+                    CurrentCorpusList(vm = vm, expanded = expanded)
                 }
                 1 -> {
-                    AllCorpusList(vm = vm)
+                    AllCorpusList(vm = vm, expanded = expanded)
                 }
             }
         }
@@ -108,10 +108,12 @@ internal fun ColumnScope.CorpusListPart(
 @Composable
 internal fun AllCorpusList(
     vm: LongTextTransViewModel,
+    expanded: Boolean
 ) {
     val corpus = vm.allCorpus
+    val height by animateDpAsState(targetValue = if (expanded) 400.dp else 200.dp, label = "height")
     CorpusList(
-        modifier = Modifier.heightIn(0.dp, 300.dp),
+        modifier = Modifier.heightIn(0.dp, height),
         corpus = corpus.list,
         addTerm = { corpus.add(it, alert = true) },
         removeTerm = corpus::remove,
@@ -125,6 +127,7 @@ internal fun AllCorpusList(
 @Composable
 internal fun CurrentCorpusList(
     vm: LongTextTransViewModel,
+    expanded: Boolean
 ) {
     val corpus = vm.currentCorpus
     val allCorpus = vm.allCorpus
@@ -133,8 +136,9 @@ internal fun CurrentCorpusList(
     val askForOther = remember {
         AskForModifyingOther(scope, snackbar)
     }
+    val height by animateDpAsState(targetValue = if (expanded) 400.dp else 200.dp, label = "height")
     CorpusList(
-        modifier = Modifier.heightIn(0.dp, 300.dp),
+        modifier = Modifier.heightIn(0.dp, height),
         corpus = corpus.list,
         addTerm = {
             corpus.add(it, alert = true)

@@ -10,7 +10,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.serialization.Serializable
 
+@Serializable
+data class ChatMessageReq(
+    val role: String,
+    val content: String,
+)
 
 abstract class ServerChatBot(
     private val verbose: Boolean = BuildConfig.DEBUG,
@@ -18,19 +24,10 @@ abstract class ServerChatBot(
     abstract var args: HashMap<String, Any?>
 
     abstract suspend fun sendRequest(
-        formattedText: String,
+        prompt: String,
+        messages: List<ChatMessageReq>,
         args: Map<String, Any?>
     ): Flow<String>
-
-    open fun getFormattedText(systemPrompt: String, includedMessages: List<ChatMessage>)  = buildString {
-        append(systemPrompt)
-        append("\n")
-        includedMessages.forEach {
-            append(it.formatAsSendText())
-            append("\n")
-        }
-        append("AI:")
-    }
 
     override suspend fun chat(
         conversationId: String?,
@@ -40,11 +37,20 @@ abstract class ServerChatBot(
         memory: ChatMemory,
     ): Flow<StreamMessage> {
         val includedMessages = memory.getIncludedMessages(messages)
-        val text = getFormattedText(systemPrompt, includedMessages)
-        log("formattedText: \n$text")
-        return sendRequest(text, args).map {
+//        val text = getFormattedText(systemPrompt, includedMessages)
+//        log("formattedText: \n$text")
+        val chatMessageReqList = includedMessages.map {
+            ChatMessageReq(
+                role = if (it.sendByMe) "User" else "AI",
+                content = it.content
+            )
+        }
+        return sendRequest(systemPrompt, chatMessageReqList, args).map {
             when {
-                it.startsWith("<<error>") -> StreamMessage.Error(it.removePrefix("<<error>"))
+                it.startsWith("<<error>") -> {
+                    val remaining = it.removePrefix("<<error>")
+                    StreamMessage.Error(remaining)
+                }
                 it.startsWith("<<start>>") -> StreamMessage.Start
                 else -> StreamMessage.Part(it)
             }

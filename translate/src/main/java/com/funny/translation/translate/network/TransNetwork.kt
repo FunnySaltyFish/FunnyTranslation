@@ -1,6 +1,7 @@
 package com.funny.translation.translate.network
 
 import com.funny.translation.network.ServiceCreator
+import com.funny.translation.translate.network.service.AIService
 import com.funny.translation.translate.network.service.AppRecommendationService
 import com.funny.translation.translate.network.service.AppUpdateService
 import com.funny.translation.translate.network.service.ImageTranslateService
@@ -36,5 +37,9 @@ object TransNetwork {
 
     val appRecommendationService by lazy {
         ServiceCreator.create(AppRecommendationService::class.java)
+    }
+
+    val aiService by lazy {
+        ServiceCreator.create(AIService::class.java)
     }
 }
