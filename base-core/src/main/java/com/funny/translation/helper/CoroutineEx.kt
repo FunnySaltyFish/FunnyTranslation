@@ -2,7 +2,7 @@ package com.funny.translation.helper
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 /*
@@ -13,7 +13,7 @@ import kotlinx.coroutines.async
 * @param block 加载代码跨
 * @return Lazy<Deferred<T>>
 */
-fun <T> lazyPromise(scope: CoroutineScope = MainScope(), block: suspend CoroutineScope.() -> T) =
+fun <T> lazyPromise(scope: CoroutineScope = CoroutineScope(Dispatchers.IO), block: suspend CoroutineScope.() -> T) =
     lazy {
         scope.async(start = CoroutineStart.LAZY) {
             block.invoke(this)

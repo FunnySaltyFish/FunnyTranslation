@@ -1,14 +1,18 @@
-package com.funny.compose.ai
+package com.funny.compose.ai.chat
 
 import com.funny.compose.ai.bean.ChatMemory
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.StreamMessage
+import com.funny.compose.ai.token.TokenCounter
+import com.funny.compose.ai.token.TokenCounters
 import kotlinx.coroutines.flow.Flow
 
 abstract class ChatBot {
     abstract val id: Int
     abstract val name: String
     abstract val avatar: String
+    open val tokenCounter: TokenCounter = TokenCounters.defaultTokenCounter
+
 
     /**
      * 单次接收文本的最大长度

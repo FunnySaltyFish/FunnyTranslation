@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
+import com.funny.compose.ai.token.TokenCounters
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.TimeUtils
@@ -41,6 +42,7 @@ import com.funny.translation.translate.database.Draft
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.extentions.formatQueryStyle
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.long_text.components.TokenNum
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.CoroutineScope
@@ -99,7 +101,9 @@ fun TextEditorScreen(
     if (action == null) {
         Text(
             text = stringResource(id = R.string.illegal_action),
-            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center)
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
         )
         return
     }
@@ -155,6 +159,8 @@ fun TextEditorScreen(
     }
     CommonPage(
         actions = {
+            Text(text = "Token: ")
+            TokenNum(tokenCounter = TokenCounters.findById(1), text = text)
             if (action is TextEditorAction.NewDraft || action is TextEditorAction.UpdateDraft) {
                 AnimatedVisibility(visible = !textEmpty) {
                     IconButton(onClick = {

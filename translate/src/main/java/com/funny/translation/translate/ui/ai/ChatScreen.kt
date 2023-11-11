@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.funny.compose.ai.ChatBot
 import com.funny.compose.ai.bean.ChatMessage
+import com.funny.compose.ai.chat.ChatBot
 import com.funny.compose.ai.utils.getColorAtProgress
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.ai.componets.ChatInputTextField

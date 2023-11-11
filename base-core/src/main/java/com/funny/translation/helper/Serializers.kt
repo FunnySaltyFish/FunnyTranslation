@@ -6,6 +6,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.json.JSONObject
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -61,6 +62,20 @@ object BigDecimalSerializer: KSerializer<BigDecimal> {
     }
 
     override fun serialize(encoder: Encoder, value: BigDecimal) {
+        return encoder.encodeString(value.toString())
+    }
+}
+
+// JSONObject
+object JSONObjectSerializer: KSerializer<JSONObject> {
+    override val descriptor: SerialDescriptor
+            = PrimitiveSerialDescriptor("JSONObject", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): JSONObject {
+        return JSONObject(decoder.decodeString())
+    }
+
+    override fun serialize(encoder: Encoder, value: JSONObject) {
         return encoder.encodeString(value.toString())
     }
 }

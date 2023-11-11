@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.long_text.bean
+package com.funny.compose.ai.bean
 
 import androidx.annotation.Keep
 import androidx.compose.runtime.Stable
@@ -20,5 +20,11 @@ data class Model (
     @Serializable(with = BigDecimalSerializer::class)
     @SerialName("cost_1k_chars")
     val cost1kChars: BigDecimal,
+    val name: String,
     val description: String,
+    @SerialName("max_context_tokens")
+    // 最大上下文长度，单位 token
+    val maxContextTokens: Int,
+    @SerialName("token_counter_id")
+    val tokenCounterId: Int,
 )

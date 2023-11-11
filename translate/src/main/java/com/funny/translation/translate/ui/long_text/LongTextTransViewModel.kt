@@ -8,13 +8,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.compose.ai.ChatBots
-import com.funny.compose.ai.ServerChatBot
-import com.funny.compose.ai.TestLongTextChatBot
 import com.funny.compose.ai.bean.ChatMemoryMaxContextSize
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
+import com.funny.compose.ai.chat.ChatBots
+import com.funny.compose.ai.chat.ServerChatBot
+import com.funny.compose.ai.chat.TestLongTextChatBot
 import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.PartialJsonParser
@@ -59,7 +59,7 @@ class LongTextTransViewModel: ViewModel() {
 
     internal var screenState by mutableStateOf(ScreenState.Init)
 
-    var chatBot: ServerChatBot = TestLongTextChatBot()
+    var chatBot: ServerChatBot by mutableStateOf(TestLongTextChatBot())
     var totalLength = 0
     var translatedLength by mutableIntStateOf(0)
 
@@ -82,6 +82,7 @@ class LongTextTransViewModel: ViewModel() {
     val currentCorpus = TermList()
     var sourceText by mutableStateOf("")
     var resultText by mutableStateOf("")
+
     var currentTransPartLength = 0 // 当前翻译的长度
     val currentResultStartOffset get() = lastResultText.length
 

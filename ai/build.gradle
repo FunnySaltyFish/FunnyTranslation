@@ -12,10 +12,18 @@ android {
         buildConfig true
     }
     namespace 'com.funny.translation.ai'
+
+    // 其他配置...
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
 }
 
 dependencies {
     implementation (project(':base-core'))
+    implementation 'com.knuddels:jtokkit:0.6.1'
 
     debugImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -248,8 +248,6 @@ fun TransProContent() {
                         text = selectedVipConfig?.getRealPrice()?.times(
                             BigDecimal(buyNumber))?.setScale(2, RoundingMode.HALF_UP)?.toString() ?: "0.0",
                         textColor = LocalContentColor.current,
-                        textSize = LocalTextStyle.current.fontSize,
-                        textPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -458,7 +456,6 @@ private fun RealTimeCountdown(
         text = remainingTime,
         textSize = 12.sp,
         textColor = Color.White,
-        textPadding = PaddingValues(horizontal = (0.5).dp, vertical = 4.dp)
     )
 }
 

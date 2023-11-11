@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -13,12 +14,12 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
@@ -41,11 +42,17 @@ fun HeadingText(
 fun NumberChangeAnimatedText(
     modifier: Modifier = Modifier,
     text: String,
-    textPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
-    textSize: TextUnit = 24.sp,
-    textColor: Color = Color.Black,
-    textWeight: FontWeight = FontWeight.Normal,
+    textSpacing: TextUnit = LocalTextStyle.current.letterSpacing,
+    textSize: TextUnit = LocalTextStyle.current.fontSize,
+    textColor: Color = LocalTextStyle.current.color,
+    textWeight: FontWeight = LocalTextStyle.current.fontWeight ?: FontWeight.Normal,
 ) {
+    val density = LocalDensity.current
+    val textPadding = remember(textSpacing) {
+        PaddingValues(
+            horizontal = with(density) { textSpacing.toDp() },
+        )
+    }
     Row(modifier = modifier) {
         text.forEach {
             AnimatedContent(
@@ -80,10 +87,10 @@ fun AutoIncreaseAnimatedNumber(
     startAnim: Boolean = true,
     number: Int,
     durationMills: Int = 10000,
-    textPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 12.dp),
-    textSize: TextUnit = 24.sp,
-    textColor: Color = Color.Black,
-    textWeight: FontWeight = FontWeight.Normal
+    textSpacing: TextUnit = LocalTextStyle.current.letterSpacing,
+    textSize: TextUnit = LocalTextStyle.current.fontSize,
+    textColor: Color = LocalTextStyle.current.color,
+    textWeight: FontWeight = LocalTextStyle.current.fontWeight ?: FontWeight.Normal,
 ) {
     // 动画，Animatable 相关介绍可以见 https://compose.funnysaltyfish.fun/docs/design/animation/animatable?source=trans
     val animatedNumber = remember {
@@ -106,7 +113,7 @@ fun AutoIncreaseAnimatedNumber(
     NumberChangeAnimatedText(
         modifier = modifier,
         text = "%0${l}d".format(animatedNumber.value.roundToInt()),
-        textPadding = textPadding,
+        textSpacing = textSpacing,
         textColor = textColor,
         textSize = textSize,
         textWeight = textWeight

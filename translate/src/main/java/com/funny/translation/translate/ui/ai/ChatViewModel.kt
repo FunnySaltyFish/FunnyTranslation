@@ -4,14 +4,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.compose.ai.ChatBot
-import com.funny.compose.ai.TestChatBot
-import com.funny.compose.ai.TestServerChatBot
 import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
+import com.funny.compose.ai.chat.ChatBot
+import com.funny.compose.ai.chat.TestChatBot
+import com.funny.compose.ai.chat.TestServerChatBot
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.helper.DataSaverUtils
 import kotlinx.coroutines.launch

@@ -1,9 +1,8 @@
-package com.funny.compose.ai
+package com.funny.compose.ai.chat
 
 import android.util.Log
 import com.funny.compose.ai.bean.ChatMemory
 import com.funny.compose.ai.bean.ChatMessage
-import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.compose.ai.bean.StreamMessage
 import com.funny.translation.core.BuildConfig
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +20,7 @@ data class ChatMessageReq(
 abstract class ServerChatBot(
     private val verbose: Boolean = BuildConfig.DEBUG,
 ) : ChatBot() {
-    abstract var args: HashMap<String, Any?>
+    abstract val args: HashMap<String, Any?>
 
     abstract suspend fun sendRequest(
         prompt: String,
@@ -70,13 +69,4 @@ abstract class ServerChatBot(
             Log.d(name, msg.toString())
         }
     }
-}
-
-fun ChatMessage.formatAsSendText(): String {
-    val sender = if(sendByMe) "User" else "AI"
-    val msg = when(type) {
-        ChatMessageTypes.TEXT -> content
-        else -> content
-    }
-    return "$sender: $msg"
 }
