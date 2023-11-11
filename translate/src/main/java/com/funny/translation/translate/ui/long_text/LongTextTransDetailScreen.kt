@@ -173,9 +173,10 @@ private fun ColumnScope.DetailContent(
                     SourceTextPart(
                         text = vm.sourceText,
                         updateSourceText = vm::updateSourceText,
-                        screenState = vm.screenState
+                        screenState = vm.screenState,
+                        tokenCounter = vm.chatBot.tokenCounter
                     )
-                    PromptPart(vm.prompt, vm::updatePrompt)
+                    PromptPart(vm.prompt, vm.chatBot.tokenCounter, vm::updatePrompt)
                     Category(
                         title = stringResource(id = R.string.all_corpus),
                         helpText = string(R.string.corpus_help),
@@ -196,17 +197,19 @@ private fun ColumnScope.DetailContent(
                         screenState = vm.screenState,
                         currentTransStartOffset = vm.translatedLength,
                         currentTransLength = vm.currentTransPartLength,
+                        tokenCounter = vm.chatBot.tokenCounter
                     )
                     ResultTextPart(
                         text = vm.resultText,
                         screenState = vm.screenState,
-                        currentResultStartOffset = vm.currentResultStartOffset
+                        currentResultStartOffset = vm.currentResultStartOffset,
+                        tokenCounter = vm.chatBot.tokenCounter
                     )
                     CorpusListPart(vm = vm)
                 }
                 ScreenState.Result -> {
-                    SourceTextPart(text = vm.sourceText, screenState = vm.screenState)
-                    ResultTextPart(text = vm.resultText, screenState = vm.screenState)
+                    SourceTextPart(text = vm.sourceText, screenState = vm.screenState, tokenCounter = vm.chatBot.tokenCounter)
+                    ResultTextPart(text = vm.resultText, screenState = vm.screenState, tokenCounter = vm.chatBot.tokenCounter)
                     Spacer(modifier = Modifier.height(8.dp))
                     ExportButton(
                         exportOnlyResultProvider = vm::resultText,

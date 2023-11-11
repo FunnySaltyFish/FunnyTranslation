@@ -42,7 +42,7 @@ import com.funny.translation.translate.database.Draft
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.extentions.formatQueryStyle
 import com.funny.translation.translate.ui.TranslateScreen
-import com.funny.translation.translate.ui.long_text.components.TokenNum
+import com.funny.translation.translate.ui.long_text.components.TokenNumRow
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.CoroutineScope
@@ -159,8 +159,7 @@ fun TextEditorScreen(
     }
     CommonPage(
         actions = {
-            Text(text = "Token: ")
-            TokenNum(tokenCounter = TokenCounters.findById(1), text = text)
+            TokenNumRow(tokenCounter = TokenCounters.findById(1), text = text)
             if (action is TextEditorAction.NewDraft || action is TextEditorAction.UpdateDraft) {
                 AnimatedVisibility(visible = !textEmpty) {
                     IconButton(onClick = {

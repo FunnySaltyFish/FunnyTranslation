@@ -4,22 +4,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltipBox
 import androidx.compose.material3.RichTooltipState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -71,7 +71,9 @@ internal fun ColumnScope.Category(
             tooltipState = tooltipState,
             action = {
                 // Close
-                TextButton(modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.End), onClick = {
+                TextButton(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.End), onClick = {
                     scope.launch {
                         tooltipState.dismiss()
                     }
@@ -88,14 +90,19 @@ internal fun ColumnScope.Category(
                     .tooltipAnchor()
             )
         }
-        if (extraRowContent != null) {
-            Spacer(modifier = Modifier.width(4.dp))
-            extraRowContent()
+        Row(modifier = Modifier
+            .weight(1f)
+            .padding(start = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (extraRowContent != null) {
+                CompositionLocalProvider(
+                    LocalTextStyle provides MaterialTheme.typography.labelSmall
+                ) {
+                    extraRowContent()
+                }
+            }
         }
         if (expandable) {
-            ExpandMoreButton(modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(Alignment.End),expand = expand, onClick = {
+            ExpandMoreButton(modifier = Modifier,expand = expand, onClick = {
                 expand = !expand
             })
         }

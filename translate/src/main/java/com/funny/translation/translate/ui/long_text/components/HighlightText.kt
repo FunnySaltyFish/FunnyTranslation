@@ -1,18 +1,17 @@
 package com.funny.translation.translate.ui.long_text.components
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -20,18 +19,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
+import com.funny.compose.ai.token.TokenCounter
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.ResultEffect
 import com.funny.translation.translate.LocalNavController
@@ -53,6 +52,7 @@ internal fun ColumnScope.SourceTextPart(
     screenState: ScreenState,
     currentTransStartOffset: Int = -1,
     currentTransLength: Int = 0,
+    tokenCounter: TokenCounter,
     translatingTextColor: Color = MaterialTheme.colorScheme.primary
 ) {
     val navController = LocalNavController.current
@@ -74,6 +74,9 @@ internal fun ColumnScope.SourceTextPart(
                         )
                     })
             }
+            TokenNum(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End), tokenCounter = tokenCounter, text = text)
         }
     ) { expanded ->
         var maxLines by rememberStateOf(value = 8)
@@ -89,29 +92,31 @@ internal fun ColumnScope.SourceTextPart(
 
         CompositionLocalProvider(LocalTextStyle provides textStyle) {
             AutoScrollHighlightedText(
-                text = buildAnnotatedString {
-                    if (currentTransStartOffset >= 0 && currentTransLength > 0) {
-                        append(text.substring(0, currentTransStartOffset))
-                        val end = currentTransStartOffset + currentTransLength
-                        if (end < text.length) {
-                            withStyle(style = translatingStyle) {
-                                append(
-                                    text.substring(currentTransStartOffset, end)
-                                )
+                textProvider = {
+                    buildAnnotatedString {
+                        if (currentTransStartOffset >= 0 && currentTransLength > 0) {
+                            append(text.substring(0, currentTransStartOffset))
+                            val end = currentTransStartOffset + currentTransLength
+                            if (end < text.length) {
+                                withStyle(style = translatingStyle) {
+                                    append(
+                                        text.substring(currentTransStartOffset, end)
+                                    )
+                                }
+                                append(text.substring(end))
+                            } else {
+                                withStyle(style = translatingStyle) {
+                                    append(
+                                        text.substring(currentTransStartOffset)
+                                    )
+                                }
                             }
-                            append(text.substring(end))
                         } else {
-                            withStyle(style = translatingStyle) {
-                                append(
-                                    text.substring(currentTransStartOffset)
-                                )
-                            }
+                            append(text)
                         }
-                    } else {
-                        append(text)
                     }
                 },
-                highlightStartOffset = currentTransStartOffset,
+                highlightStartOffsetProvider = { currentTransStartOffset },
                 maxLines = if (expanded) 2 * maxLines else maxLines
             )
         }
@@ -124,11 +129,17 @@ internal fun ColumnScope.ResultTextPart(
     screenState: ScreenState,
     modifier: Modifier = Modifier,
     currentResultStartOffset: Int = -1,
+    tokenCounter: TokenCounter,
     translatingTextColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Category(
         title = stringResource(id = R.string.translate_result),
-        helpText = stringResource(id = R.string.translate_result_help)
+        helpText = stringResource(id = R.string.translate_result_help),
+        extraRowContent = {
+            TokenNum(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End), tokenCounter = tokenCounter, text = text)
+        }
     ) { expanded ->
         var maxLines by rememberStateOf(value = 8)
         LaunchedEffect(key1 = screenState) {
@@ -142,19 +153,21 @@ internal fun ColumnScope.ResultTextPart(
         val highlightStyle = remember(textStyle) { textStyle.copy(color = translatingTextColor, fontWeight = FontWeight.Bold).toSpanStyle() }
         CompositionLocalProvider(LocalTextStyle provides textStyle) {
             AutoScrollHighlightedText(
-                text = buildAnnotatedString {
-                    if (currentResultStartOffset >= 0) {
-                        append(text.substring(0, currentResultStartOffset))
-                        withStyle(style = highlightStyle) {
-                            append(
-                                text.substring(currentResultStartOffset)
-                            )
+                textProvider = {
+                    buildAnnotatedString {
+                        if (currentResultStartOffset >= 0) {
+                            append(text.substring(0, currentResultStartOffset))
+                            withStyle(style = highlightStyle) {
+                                append(
+                                    text.substring(currentResultStartOffset)
+                                )
+                            }
+                        } else {
+                            append(text)
                         }
-                    } else {
-                        append(text)
                     }
                 },
-                highlightStartOffset = currentResultStartOffset,
+                highlightStartOffsetProvider = { currentResultStartOffset },
                 maxLines = if (expanded) 2 * maxLines else maxLines
             )
         }
@@ -163,38 +176,33 @@ internal fun ColumnScope.ResultTextPart(
 
 @Composable
 private fun AutoScrollHighlightedText(
-    text: AnnotatedString,
-    highlightStartOffset: Int,
+    textProvider: () -> AnnotatedString,
+    highlightStartOffsetProvider: () -> Int,
     maxLines: Int,
 ) {
-    val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
-    var layoutResult: TextLayoutResult? by rememberStateOf(value = null)
     val lineHeight = LocalTextStyle.current.lineHeight
     val density = LocalDensity.current
     val lineHeightInDp = remember(density) { with(density) { lineHeight.toDp()  } }
-
+    val text = textProvider()
+    val longTextState = rememberLongTextState(text = text, lazyListState = rememberLazyListState())
+    val highlightStartOffset = highlightStartOffsetProvider()
+    val heightAnim = remember {
+        Animatable(maxLines * lineHeightInDp.value)
+    }
+    LaunchedEffect(key1 = maxLines) {
+        heightAnim.animateTo(maxLines * lineHeightInDp.value)
+    }
     LaunchedEffect(key1 = highlightStartOffset) {
         if (highlightStartOffset >= 0) {
-            val offset = layoutResult?.getLineForOffset(highlightStartOffset)?.let {
-                layoutResult?.getLineTop(it)
-            } ?: return@LaunchedEffect
             scope.launch {
-                // Log.d("AutoScrollHighlightText", "animateScrollTo: $offset")
-                scrollState.animateScrollTo(offset.toInt())
+                longTextState.scrollToIndex(highlightStartOffset)
             }
         }
     }
-
-    Text(
-        text = text,
+    LongText(
         modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(0.dp, maxLines * lineHeightInDp)
-            .animateContentSize()
-            .verticalScroll(scrollState),
-        onTextLayout = {
-            layoutResult = it
-        }
+            .heightIn(0.dp, heightAnim.value.dp),
+        state = longTextState
     )
 }

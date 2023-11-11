@@ -76,6 +76,7 @@ fun MainScreen(
      // LongTextTransDetailScreen(id = "244", sourceTextKey = "")
 //    LongTextTransListScreen()
     LongTextTransScreen()
+//    LongTextTest()
 }
 
 @ExperimentalComposeUiApi
