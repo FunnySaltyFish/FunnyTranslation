@@ -23,7 +23,7 @@ val appDB by lazy{
 @TypeConverters(
     LanguageListConverter::class, StringListConverter::class,
     TermListConverter::class, EditablePromptConverter::class,
-    IntListConverter::class
+    IntListConverter::class,
 )
 abstract class AppDatabase : RoomDatabase(){
     abstract val jsDao : JsDao
@@ -43,6 +43,7 @@ abstract class AppDatabase : RoomDatabase(){
                 .addMigrations(MIGRATION_5_6)
                 .addMigrations(MIGRATION_6_7)
                 .addMigrations(MIGRATION_7_8)
+                .addMigrations(MIGRATION_8_9)
                 .build()
 
         /**
@@ -54,6 +55,7 @@ abstract class AppDatabase : RoomDatabase(){
          * 5-6:新增表 table_trans_favorite
          * 6-7:新增表 table_long_text_trans_tasks
          * 7-8:新增表 table_draft，为 table_long_text_trans_tasks 添加一列 “备注”
+         * 8-9:为 table_long_text_trans_tasks 添加 createTime 和 updateTime
          */
         private val MIGRATION_1_2 = object : Migration(1,2){
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -125,6 +127,30 @@ abstract class AppDatabase : RoomDatabase(){
                 )
                 // 为 table_long_text_trans_tasks 添加一列 “备注”
                 database.execSQL("ALTER TABLE table_long_text_trans_tasks ADD COLUMN `remark` TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        // 为 table_long_text_trans_tasks 添加 createTime 和 updateTime
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // 由于新增列无法设置默认值，所以先创建列，再更新值，再创建触发器
+                val now = "CAST(strftime('%s', 'now') AS INTEGER) * 1000"
+                database.execSQL(
+                    "ALTER TABLE table_long_text_trans_tasks ADD COLUMN `createTime` INTEGER NOT NULL DEFAULT 0"
+                )
+                database.execSQL(
+                    "ALTER TABLE table_long_text_trans_tasks ADD COLUMN `updateTime` INTEGER NOT NULL DEFAULT 0"
+                )
+                database.execSQL(
+                    "UPDATE table_long_text_trans_tasks SET createTime = $now, updateTime = $now"
+                )
+                database.execSQL("""
+                    -- 创建触发器
+                    CREATE TRIGGER update_long_trans_tasks_trigger AFTER UPDATE OF chatBotId, sourceText, resultText, prompt, allCorpus, sourceTextSegments, resultTextSegments, remark ON table_long_text_trans_tasks
+                    BEGIN
+                        UPDATE table_long_text_trans_tasks SET updateTime = $now WHERE id = NEW.id;
+                    END;
+                """.trimIndent())
             }
         }
 
