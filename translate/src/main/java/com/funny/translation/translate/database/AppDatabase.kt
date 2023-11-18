@@ -1,5 +1,6 @@
 package com.funny.translation.translate.database
 
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -17,7 +18,7 @@ val appDB by lazy{
 
 @Database(
     entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class, LongTextTransTask::class, Draft::class],
-    version = 8,
+    version = 9,
     autoMigrations = []
 )
 @TypeConverters(
@@ -33,6 +34,10 @@ abstract class AppDatabase : RoomDatabase(){
     abstract val draftDao: DraftDao
 
     companion object{
+        // 获取当前时间，以毫秒为单位
+        private const val now = "CAST(strftime('%s', 'now') AS INTEGER) * 1000"
+        private const val TAG = "AppDatabase"
+
         fun createDatabase() =
             Room.databaseBuilder(FunnyApplication.ctx, AppDatabase::class.java,"app_db.db")
                 .addCallback(callback)
@@ -46,6 +51,12 @@ abstract class AppDatabase : RoomDatabase(){
                 .addMigrations(MIGRATION_8_9)
                 .build()
 
+        abstract class CustomMigration(startVersion: Int, endVersion: Int): Migration(startVersion, endVersion) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                Log.d(TAG, "migrate: try to migrate from $startVersion to $endVersion")
+            }
+        }
+
         /**
          * 迁移记录：
          * 1->2:更新Google翻译插件
@@ -57,21 +68,24 @@ abstract class AppDatabase : RoomDatabase(){
          * 7-8:新增表 table_draft，为 table_long_text_trans_tasks 添加一列 “备注”
          * 8-9:为 table_long_text_trans_tasks 添加 createTime 和 updateTime
          */
-        private val MIGRATION_1_2 = object : Migration(1,2){
+        private val MIGRATION_1_2 = object : CustomMigration(1,2){
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL("delete from table_js")
             }
         }
 
-        private val MIGRATION_2_3 = object : Migration(2,3){
+        private val MIGRATION_2_3 = object : CustomMigration(2,3){
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL("delete from table_js where id=1")
                 database.execSQL("alter table table_js add column targetSupportVersion integer not null default 4")
             }
         }
 
-        private val MIGRATION_3_4 = object : Migration(3,4){
+        private val MIGRATION_3_4 = object : CustomMigration(3,4){
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL("""create table if not exists table_trans_history(
                     |id integer primary key autoincrement not null,
                     |sourceString text not null,
@@ -82,8 +96,9 @@ abstract class AppDatabase : RoomDatabase(){
             }
         }
 
-        private val MIGRATION_4_5 = object : Migration(4,5){
+        private val MIGRATION_4_5 = object : CustomMigration(4,5){
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL("CREATE TABLE IF NOT EXISTS `table_js_temp` (`id` INTEGER NOT NULL,`fileName` TEXT PRIMARY KEY NOT NULL, `code` TEXT NOT NULL, `author` TEXT NOT NULL, `version` INTEGER NOT NULL, `description` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `minSupportVersion` INTEGER NOT NULL, `maxSupportVersion` INTEGER NOT NULL, `targetSupportVersion` INTEGER NOT NULL, `isOffline` INTEGER NOT NULL, `debugMode` INTEGER NOT NULL, `supportLanguages` TEXT NOT NULL);")
                 database.execSQL("insert into table_js_temp select * from table_js;")
                 database.execSQL("drop table table_js;")
@@ -92,8 +107,9 @@ abstract class AppDatabase : RoomDatabase(){
         }
 
         // create table_trans_favorite
-        private val MIGRATION_5_6 = object : Migration(5, 6){
+        private val MIGRATION_5_6 = object : CustomMigration(5, 6){
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL("""create table if not exists table_trans_favorite(
                     |id integer primary key autoincrement not null,
                     |sourceString text not null,
@@ -106,8 +122,9 @@ abstract class AppDatabase : RoomDatabase(){
         }
 
         // create table_long_text_trans_tasks
-        private val MIGRATION_6_7 = object : Migration(6, 7) {
+        private val MIGRATION_6_7 = object : CustomMigration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL(
                     "CREATE TABLE IF NOT EXISTS `table_long_text_trans_tasks` " +
                             "(`id` TEXT PRIMARY KEY NOT NULL, `chatBotId` INTEGER NOT NULL, `sourceText` TEXT NOT NULL, " +
@@ -119,8 +136,9 @@ abstract class AppDatabase : RoomDatabase(){
         }
 
         // create table_draft
-        private val MIGRATION_7_8 = object : Migration(7, 8) {
+        private val MIGRATION_7_8 = object : CustomMigration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 database.execSQL(
                     "CREATE TABLE IF NOT EXISTS `table_drafts` " +
                             "(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `content` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `remark` TEXT NOT NULL DEFAULT '')"
@@ -131,10 +149,10 @@ abstract class AppDatabase : RoomDatabase(){
         }
 
         // 为 table_long_text_trans_tasks 添加 createTime 和 updateTime
-        private val MIGRATION_8_9 = object : Migration(8, 9) {
+        private val MIGRATION_8_9 = object : CustomMigration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
                 // 由于新增列无法设置默认值，所以先创建列，再更新值，再创建触发器
-                val now = "CAST(strftime('%s', 'now') AS INTEGER) * 1000"
                 database.execSQL(
                     "ALTER TABLE table_long_text_trans_tasks ADD COLUMN `createTime` INTEGER NOT NULL DEFAULT 0"
                 )
