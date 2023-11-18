@@ -17,6 +17,7 @@ encrypt_funny_js.*
 /.git
 
 signing.properties
+ai/src/androidTest/resources/keys.properties
 translate/src/main/assets/secure_data.properties
 log.txt
 english_words.txt

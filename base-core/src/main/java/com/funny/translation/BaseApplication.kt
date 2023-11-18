@@ -55,7 +55,7 @@ open class BaseApplication : Application() {
     }
 
     companion object {
-        var ctx : Application by Delegates.notNull()
+        var ctx : Context by Delegates.notNull()
         val resources: Resources get() = ctx.resources
 
         @Throws(PackageManager.NameNotFoundException::class)

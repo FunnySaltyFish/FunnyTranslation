@@ -1,6 +1,7 @@
 package com.funny.compose.ai.token
 
 import androidx.annotation.IntRange
+import com.funny.compose.ai.chat.ChatMessageReq
 import com.funny.translation.helper.lazyPromise
 import com.knuddels.jtokkit.Encodings
 import com.knuddels.jtokkit.api.EncodingType
@@ -19,11 +20,13 @@ abstract class TokenCounter {
     open suspend fun count(text: String, allowedSpecialTokens: Array<String> = arrayOf()) =
         encode(text, allowedSpecialTokens).size
 
-    open suspend fun countMessages(systemPrompt: String, messages: List<String>) =
-        count(systemPrompt) + messages.sumOf { count(it) }
+    open suspend fun countMessages(systemPrompt: String, messages: List<ChatMessageReq>) =
+        count(systemPrompt) + messages.sumOf { msg ->
+            count(msg.content)
+        }
 }
 
-class OpenAITokenCounter(encodingName: String): TokenCounter() {
+class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
     // getEncoding 是一个非常非常非常耗时的操作，所以用协程懒加载
     private val enc by lazyPromise(CoroutineScope(Dispatchers.IO)) {
         val registry = Encodings.newDefaultEncodingRegistry()
@@ -44,15 +47,23 @@ class OpenAITokenCounter(encodingName: String): TokenCounter() {
         maxTokenLength: Int
     ): List<Int> {
         return enc.await().encodeOrdinary(text, maxTokenLength).tokens
-//        return encoding.await().encode(text, allowedSpecialTokens, maxTokenLength.toLong()).map { it.toInt() }
     }
 
     override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
         return encode(text, allowedSpecialTokens).size
     }
 
-    override suspend fun countMessages(systemPrompt: String, messages: List<String>): Int {
-        return super.countMessages(systemPrompt, messages)
+    // https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
+    override suspend fun countMessages(systemPrompt: String, messages: List<ChatMessageReq>): Int {
+        var numToken = 0
+        val TOKENS_PER_MESSAGE = 3 // here we only use gpt-3.5-turbo and gpt-4, so the value is 3
+        for(msg in messages) {
+            numToken += TOKENS_PER_MESSAGE
+            numToken += count(msg.content)
+            numToken += count(msg.role)
+        }
+        numToken += 3 // every reply is primed with <|start|>assistant<|message|>
+        return numToken
     }
 }
 

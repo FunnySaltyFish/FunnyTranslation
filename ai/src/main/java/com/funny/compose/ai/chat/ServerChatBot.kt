@@ -5,6 +5,7 @@ import com.funny.compose.ai.bean.ChatMemory
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.StreamMessage
 import com.funny.translation.core.BuildConfig
+import com.funny.translation.helper.JsonX
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
@@ -12,10 +13,42 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ChatMessageReq(
+class ChatMessageReq(
     val role: String,
-    val content: String,
-)
+    val content: String
+) {
+    companion object {
+        fun text(content: String, role: String = "user") = ChatMessageReq(role, content)
+        fun vision(content: Vision, role: String = "user") = ChatMessageReq(role, JsonX.toJson(content))
+    }
+
+    /*
+    "content": [
+        {"type": "text", "text": "What’s in this image?"},
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+          },
+        },
+      ],
+     */
+    class Vision(
+        val content: List<Content>,
+    ) {
+        @Serializable
+        class Content(
+            val type: String,
+            val text: String? = null,
+            val image_url: ImageUrl? = null,
+        ) {
+            @Serializable
+            class ImageUrl(
+                val url: String,
+            )
+        }
+    }
+}
 
 abstract class ServerChatBot(
     private val verbose: Boolean = BuildConfig.DEBUG,
@@ -39,7 +72,7 @@ abstract class ServerChatBot(
 //        val text = getFormattedText(systemPrompt, includedMessages)
 //        log("formattedText: \n$text")
         val chatMessageReqList = includedMessages.map {
-            ChatMessageReq(
+            ChatMessageReq.text(
                 role = if (it.sendByMe) "User" else "AI",
                 content = it.content
             )
