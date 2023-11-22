@@ -66,11 +66,7 @@ object UserUtils {
         passwordType: String,
         email: String,
         verifyCode: String
-    ) = api(userService::login, username, password, passwordType, email, "", verifyCode, AppConfig.androidId, rethrowErr = true) {
-        fail {
-            throw SignInException(it.displayErrorMsg)
-        }
-    }
+    ) = api(userService::login, username, password, passwordType, email, "", verifyCode, AppConfig.androidId)
 
     suspend fun register(
         username: String,

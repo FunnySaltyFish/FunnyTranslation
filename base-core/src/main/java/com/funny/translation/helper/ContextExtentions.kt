@@ -62,11 +62,12 @@ fun Context.openUrl(uri: Uri) {
 }
 
 
-fun Context.toastOnUi(message: Int, length: Int = Toast.LENGTH_SHORT) {
+inline fun Context.toastOnUi(message: Int, length: Int = Toast.LENGTH_SHORT) {
     toastOnUi(getString(message), length)
 }
 
-fun Context.toastOnUi(message: CharSequence?, length: Int = Toast.LENGTH_SHORT) {
+// 内联以使得框架能够获取到调用的真正位置
+inline fun Context.toastOnUi(message: CharSequence?, length: Int = Toast.LENGTH_SHORT) {
     runOnUI {
         if (length == Toast.LENGTH_SHORT) {
             ToastUtils.showShort(message)

@@ -28,7 +28,7 @@
     <string name="password_rule">8–16 characters, including uppercase letters, lowercase letters, and numbers</string>
     <string name="password">Password</string>
     <string name="confirm_to_modify">Confirm to Modify</string>
-    <string name="change_username_tip">You can change your username once every 30 days. The next available modification date is</string>
+    <string name="change_username_tip">You can change your username once every 30 days. The next available modification date is: </string>
     <string name="find_account_amount">Found %1$s accounts associated with this email</string>
     <string name="query_related_account">Query Accounts</string>
     <string name="repeat_password">Confirm Password</string>

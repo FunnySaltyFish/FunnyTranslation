@@ -97,11 +97,11 @@ class Api<T>(
             }
             resp.data
         } catch (e: Exception) {
-            if (rethrowErr) throw e
             withContext(Dispatchers.Main) {
                 errorFunc(e)
             }
             e.printStackTrace()
+            if (rethrowErr) throw e
             null
         }
     }
