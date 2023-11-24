@@ -35,6 +35,7 @@ import androidx.navigation.navOptions
 import com.funny.compose.ai.token.TokenCounters
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.TimeUtils
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
@@ -53,22 +54,34 @@ import kotlinx.coroutines.withContext
 import java.net.URLDecoder
 import java.net.URLEncoder
 
-internal const val KEY_EDITED_SOURCE_TEXT = "KEY_EDITED_SOURCE_TEXT"
-sealed class TextEditorAction(val text: String) {
-    class NewDraft(text: String) : TextEditorAction(text) {
+internal const val KEY_EDITED_SOURCE_TEXT_KEY = "KEY_EDITED_SOURCE_TEXT"
+
+// 用于在 TextEditorScreen 中传递数据
+// 由于 text 可能非常长，此处不存储 text，而是存储 textKey
+// 数据从 DataHolder 中取出
+sealed class TextEditorAction(val textKey: String) {
+    class NewDraft(textKey: String) : TextEditorAction(textKey) {
         override fun toString(): String {
-            return "NewDraft$SEPARATOR${URLEncoder.encode(text, "UTF-8")}"
+            return "NewDraft$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}"
         }
     }
-    class UpdateDraft(val draftId: Int, text: String) : TextEditorAction(text) {
+    class UpdateDraft(val draftId: Int, textKey: String) : TextEditorAction(textKey) {
         override fun toString(): String {
-            return "UpdateDraft$SEPARATOR$draftId$SEPARATOR${URLEncoder.encode(text, "UTF-8")}"
+            return "UpdateDraft$SEPARATOR$draftId$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}"
         }
     }
-    class UpdateSourceText(text: String) : TextEditorAction(text) {
+    class UpdateSourceText(textKey: String) : TextEditorAction(textKey) {
         override fun toString(): String {
-            return "UpdateSourceText$SEPARATOR${URLEncoder.encode(text, "UTF-8")}"
+            return "UpdateSourceText$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}"
         }
+    }
+
+    fun putToDataHolder(content: String) {
+        DataHolder.put(textKey, content)
+    }
+
+    fun getFromDataHolder(): String {
+        return DataHolder.get(textKey) ?: ""
     }
 
     companion object {
@@ -109,7 +122,7 @@ fun TextEditorScreen(
     }
     val showDialog = rememberStateOf(value = false)
     val navController = LocalNavController.current
-    val initialText = action.text
+    val initialText = remember(action) { action.getFromDataHolder() }
     var textFieldValue by rememberStateOf(value = TextFieldValue(
         initialText, TextRange(initialText.length)
     ))
@@ -139,7 +152,10 @@ fun TextEditorScreen(
                     }
                 }
                 is TextEditorAction.UpdateSourceText -> {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(KEY_EDITED_SOURCE_TEXT, text)
+                    action.putToDataHolder(text)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        KEY_EDITED_SOURCE_TEXT_KEY, action.textKey
+                    )
                     navController.popBackStack()
                 }
             }

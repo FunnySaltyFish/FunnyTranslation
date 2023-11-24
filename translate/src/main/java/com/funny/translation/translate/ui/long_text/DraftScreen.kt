@@ -21,6 +21,8 @@ import com.funny.translation.translate.ui.widget.CommonPage
 
 private const val TAG = "DraftScreen"
 
+fun draftKey(draftId: Int) = "_draft_$draftId"
+
 @Composable
 fun DraftScreen() {
     CommonPage(title = stringResource(id = R.string.drafts)) {
@@ -32,7 +34,9 @@ fun DraftScreen() {
                 items(list, key = { it.id }) { draft ->
                     DraftItem(task = draft, onClick = {
                          navController.navigateToTextEdit(
-                             TextEditorAction.UpdateDraft(draft.id, draft.content)
+                             TextEditorAction.UpdateDraft(draft.id, draftKey(draft.id)).apply {
+                                 putToDataHolder(content = draft.content)
+                             }
                          )
                     }, deleteTaskAction = vm::deleteDraft)
                 }

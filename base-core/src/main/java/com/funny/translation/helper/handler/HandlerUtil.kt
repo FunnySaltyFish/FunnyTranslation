@@ -31,11 +31,11 @@ val mainHandler: Handler = if (SDK_INT >= 28) Handler.createAsync(mainLooper) el
     Handler(mainLooper) // Hidden constructor absent. Fall back to non-async constructor.
 }
 
-inline fun runOnUI(noinline function: () -> Unit) {
+inline fun runOnUI(crossinline function: () -> Unit) {
     if (isMainThread) {
         function()
     } else {
-        mainHandler.post(function)
+        mainHandler.post { function() }
     }
 }
 

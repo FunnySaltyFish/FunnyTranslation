@@ -32,16 +32,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.ResultEffect
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.Category
-import com.funny.translation.translate.ui.long_text.KEY_EDITED_SOURCE_TEXT
+import com.funny.translation.translate.ui.long_text.KEY_EDITED_SOURCE_TEXT_KEY
 import com.funny.translation.translate.ui.long_text.ScreenState
 import com.funny.translation.translate.ui.long_text.TextEditorAction
 import com.funny.translation.translate.ui.long_text.navigateToTextEdit
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.launch
+
+fun sourceTextKey(text: String) = "__source_text_${text.hashCode()}"
 
 @Composable
 internal fun ColumnScope.SourceTextPart(
@@ -61,16 +64,18 @@ internal fun ColumnScope.SourceTextPart(
         helpText = stringResource(id = R.string.source_text_help),
         extraRowContent = {
             if (screenState == ScreenState.Init) {
-                ResultEffect<String>(navController = navController, resultKey = KEY_EDITED_SOURCE_TEXT) {
+                ResultEffect<String>(navController = navController, resultKey = KEY_EDITED_SOURCE_TEXT_KEY) {
                     if (it.isNotBlank()) {
-                        updateSourceText(it)
+                        updateSourceText(DataHolder.get<String>(it) ?: "")
                     }
                 }
                 FixedSizeIcon(Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier
                     .size(16.dp)
                     .clickable {
                         navController.navigateToTextEdit(
-                            TextEditorAction.UpdateSourceText(text)
+                            TextEditorAction.UpdateSourceText(sourceTextKey(text)).apply {
+                                putToDataHolder(content = text)
+                            }
                         )
                     })
             }
@@ -202,7 +207,8 @@ private fun AutoScrollHighlightedText(
     }
     LongText(
         modifier = Modifier
-            .heightIn(0.dp, heightAnim.value.dp),
+            .heightIn(0.dp, heightAnim.value.dp)
+            .fillMaxWidth(),
         state = longTextState
     )
 }
