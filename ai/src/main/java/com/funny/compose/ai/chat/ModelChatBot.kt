@@ -1,19 +1,15 @@
 package com.funny.compose.ai.chat
 
 import com.funny.compose.ai.bean.Model
-import com.funny.compose.ai.service.AIService
 import com.funny.compose.ai.service.AskStreamRequest
+import com.funny.compose.ai.service.aiService
+import com.funny.compose.ai.service.asFlow
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.compose.ai.token.TokenCounters
-import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONObject
 
-private val aiService by lazy {
-    ServiceCreator.create(AIService::class.java)
-}
-
-class LongTextChatBot(
+class ModelChatBot(
     val model: Model
 ) : ServerChatBot() {
     override val args: HashMap<String, Any?> by lazy { hashMapOf() }
@@ -30,7 +26,7 @@ class LongTextChatBot(
                 prompt = prompt,
                 args = JSONObject(args)
             )
-        )
+        ).asFlow()
     }
 
     override val id: Int
@@ -38,7 +34,7 @@ class LongTextChatBot(
     override val name: String
         get() = model.name
 
-    override val avatar = "THIS DOES NOT USED"
+    override val avatar = model.avatar
     override val maxContextLength: Int
         get() = model.maxContextTokens
 

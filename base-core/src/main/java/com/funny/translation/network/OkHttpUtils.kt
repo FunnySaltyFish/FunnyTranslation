@@ -2,7 +2,6 @@ package com.funny.translation.network
 
 import android.content.Intent
 import android.util.Log
-import android.util.Log.DEBUG
 import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
@@ -12,8 +11,6 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.LocaleUtils
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.sign.SignUtils
-import com.ihsanbal.logging.Level
-import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -144,10 +141,12 @@ object OkHttpUtils {
             response
         }
 
-        addInterceptor(LoggingInterceptor.Builder()
-            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
-            .log(DEBUG)
-            .build())
+        // 如果不是流式请求，才添加日志拦截器
+//        if (!response
+//        addInterceptor(LoggingInterceptor.Builder()
+//            .setLevel(if (BuildConfig.DEBUG) Level.BASIC else Level.NONE)
+//            .log(DEBUG)
+//            .build())
 
     }.build()
 

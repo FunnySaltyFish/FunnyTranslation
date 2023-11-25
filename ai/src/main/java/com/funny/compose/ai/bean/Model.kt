@@ -22,6 +22,7 @@ data class Model (
     val cost1kChars: BigDecimal,
     val name: String,
     val description: String,
+    val avatar: String = "",
     @SerialName("max_context_tokens")
     // 最大上下文长度，单位 token
     val maxContextTokens: Int,

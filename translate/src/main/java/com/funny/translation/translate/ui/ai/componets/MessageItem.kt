@@ -56,7 +56,7 @@ fun MessageItem(
                         bottomStart = 8.dp
                     )
                 )
-                .padding(8.dp)
+                .padding(10.dp)
                 .animateContentSize(),
             horizontalAlignment = if (sendByMe) Alignment.End else Alignment.Start
         ) {

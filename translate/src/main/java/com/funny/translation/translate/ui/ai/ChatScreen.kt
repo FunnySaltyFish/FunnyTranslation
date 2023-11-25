@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.chat.ChatBot
 import com.funny.compose.ai.utils.getColorAtProgress
+import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.ai.componets.ChatInputTextField
 import com.funny.translation.translate.ui.ai.componets.MessageItem
@@ -34,11 +35,12 @@ import com.funny.translation.ui.FixedSizeIcon
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ChatScreen(onUpPressed: () -> Unit) {
+fun ChatScreen() {
     val vm: ChatViewModel = viewModel()
     val inputText by vm.inputText
     val chatBot by vm.chatBot
     val chatMessages by vm.messages
+    val navController = LocalNavController.current
 
     ModalNavigationDrawer(
         modifier = Modifier.fillMaxSize(),
@@ -52,7 +54,9 @@ fun ChatScreen(onUpPressed: () -> Unit) {
                 chatMessages = chatMessages,
                 inputText = inputText,
                 onInputTextChanged = vm::updateInputText,
-                onUpPressed = onUpPressed,
+                onUpPressed = {
+                    navController.navigateUp()
+                },
                 sendAction = { vm.ask(inputText) }
             )
         },

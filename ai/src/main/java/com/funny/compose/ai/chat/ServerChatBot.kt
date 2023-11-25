@@ -73,7 +73,7 @@ abstract class ServerChatBot(
 //        log("formattedText: \n$text")
         val chatMessageReqList = includedMessages.map {
             ChatMessageReq.text(
-                role = if (it.sendByMe) "User" else "AI",
+                role = if (it.sendByMe) "user" else "assistant",
                 content = it.content
             )
         }

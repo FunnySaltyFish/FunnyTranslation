@@ -28,6 +28,7 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.ai.ChatScreen
 import com.funny.translation.translate.ui.long_text.DraftScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransListScreen
@@ -175,6 +176,9 @@ fun AppNavigation(
                     }
                     animateComposable(TranslateScreen.AppRecommendationScreen.route) {
                         AppRecommendationScreen()
+                    }
+                    animateComposable(TranslateScreen.ChatScreen.route) {
+                        ChatScreen()
                     }
                     addLongTextTransNavigation()
                     addSettingsNavigation()

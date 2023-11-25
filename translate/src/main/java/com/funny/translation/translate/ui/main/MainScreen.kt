@@ -11,6 +11,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PictureInPicture
@@ -399,6 +400,7 @@ private fun Drawer(
             }
             divider()
             drawerItem(Icons.Default.Settings, TranslateScreen.SettingScreen)
+            drawerItem(icon = Icons.Default.Chat, TranslateScreen.ChatScreen)
             drawerItem(Icons.Default.Article, TranslateScreen.LongTextTransScreen) {
                 Badge(
                     contentColor = MaterialTheme.colorScheme.onPrimary
