@@ -312,4 +312,5 @@
     <string name="empty_long_text_trans_history">暂无历史任务，先去试试看吧~</string>
     <string name="long_text_trans_list_tip">侧滑删除，长按可以修改备注哦</string>
     <string name="chat">聊天</string>
+    <string name="context_length">上下文长</string>
 </resources>

@@ -29,14 +29,10 @@ class ModelChatBot(
         ).asFlow()
     }
 
-    override val id: Int
-        get() = model.chatBotId
-    override val name: String
-        get() = model.name
-
-    override val avatar = model.avatar
-    override val maxContextLength: Int
-        get() = model.maxContextTokens
+    override val id: Int by model::chatBotId
+    override val name: String by model::name
+    override val avatar by model::avatar
+    override val maxContextLength: Int by model::maxContextTokens
 
     override val tokenCounter: TokenCounter
         get() = TokenCounters.findById(model.tokenCounterId)

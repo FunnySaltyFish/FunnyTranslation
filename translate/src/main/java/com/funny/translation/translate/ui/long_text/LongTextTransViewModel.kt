@@ -34,6 +34,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.UUID
 
 
@@ -56,7 +58,6 @@ internal enum class ScreenState {
 class LongTextTransViewModel: ViewModel() {
     private val dao = appDB.longTextTransDao
     internal var task: LongTextTransTask? = null
-
     internal var screenState by mutableStateOf(ScreenState.Init)
 
     var chatBot: ServerChatBot by mutableStateOf(TestLongTextChatBot())
@@ -96,6 +97,19 @@ class LongTextTransViewModel: ViewModel() {
     // 已经完成的 parts 翻译得到的结果
     private var lastResultText = ""
     // 因各种问题导致的重试
+
+    private val record = true // 仅在调试时使用，记录所有的翻译输入与输出
+    // 包括
+    // {
+    //      "sourceText": "XiaoHong and XiaoMing are studying DB class.",
+    //      “process": [
+    //          { “endIndex": 5, "output": ["{", "{\"text\", ... , ] },
+    //          { “endIndex": 10, "output": ["{", "{\"text\", ... , ] },
+    //       ]
+    // }
+    private val recordObj = JSONObject()
+    private var recordProcess = JSONArray()
+    private var recordOutput = JSONArray()
 
     fun initArgs(id:String) {
         this.transId = id
@@ -140,6 +154,9 @@ class LongTextTransViewModel: ViewModel() {
 
     fun startTranslate() {
         screenState = ScreenState.Translating
+        if (record) {
+            recordObj.put("sourceText", sourceText)
+        }
         translateJob = viewModelScope.launch(Dispatchers.IO) {
             try {
                 while (isActive && translatedLength < totalLength) {
@@ -155,6 +172,10 @@ class LongTextTransViewModel: ViewModel() {
                 }
                 delay(500)
                 screenState = ScreenState.Result
+                if (record) {
+                    recordObj.put("process", recordProcess)
+                    saveRecord()
+                }
                 Log.d(TAG, "finishTranslate, sourceStringSegments: $sourceTextSegments, resultTextSegments: $resultTextSegments")
             } catch (e: Exception) {
                 Log.e(TAG, "startTranslate: ", e)
@@ -222,10 +243,14 @@ class LongTextTransViewModel: ViewModel() {
         chatBot.args["keywords"] = currentCorpus.toList()
         Log.d(TAG, "translatePart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
         currentTransPartLength = part.length
+
         chatBot.chat(transId, part, histories, prompt.toPrompt(), memory).collect { streamMsg ->
             when(streamMsg) {
                 is StreamMessage.Start -> {
 //                    sourceStringSegments.add(translatedLength)
+                    if (record) {
+                        recordOutput = JSONArray()
+                    }
                 }
                 is StreamMessage.Part -> {
                     try {
@@ -237,6 +262,10 @@ class LongTextTransViewModel: ViewModel() {
                             allCorpus.add(it[0] to it[1])
                         }
                         saveAllCorpusToDB()
+
+                        if (record) {
+                            recordOutput.put(streamMsg.part)
+                        }
                     } catch (e: SerializationException) {
                         // JSON 数据解析失败了，重新尝试这一段，如果错误达到三次，则停止
                         appCtx.toastOnUi(string(R.string.attemp_to_retry, retryTimes + 1))
@@ -252,6 +281,13 @@ class LongTextTransViewModel: ViewModel() {
                     resultTextSegments.add(lastResultText.length - 1)
 
                     saveToDB()
+
+                    if (record) {
+                        recordProcess.put(JSONObject().apply {
+                            put("endIndex", translatedLength - 1)
+                            put("output", recordOutput)
+                        })
+                    }
                 }
                 else -> Unit
             }
@@ -332,8 +368,14 @@ class LongTextTransViewModel: ViewModel() {
             }
     }
 
-
-
+    private fun saveRecord() {
+        if (record) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val file = appCtx.externalCacheDir?.resolve("record_${System.currentTimeMillis()}.json")
+                file?.writeText(recordObj.toString(2))
+            }
+        }
+    }
 
     companion object {
         private const val TAG = "LongTextTransViewModel"

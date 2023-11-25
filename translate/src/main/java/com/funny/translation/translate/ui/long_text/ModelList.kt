@@ -15,13 +15,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.chat.ChatBots
+import com.funny.compose.ai.chat.ServerChatBot
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.string
 import com.funny.translation.translate.R
 import com.funny.translation.translate.network.TransNetwork
+import kotlin.math.roundToInt
 
 private val aiService = TransNetwork.aiService
 
@@ -54,7 +58,7 @@ fun ColumnScope.ModelListPart(
                         Text(text = chatBot.name)
                     },
                     supportingContent = {
-                        Text(text = "${string(R.string.currency_symbol)}${it.cost1kChars} / ${string(R.string.kilo_char)} | ${it.description}")
+                        Text(text = chatBot.description(it), fontSize = 12.sp)
                     },
                     trailingContent = {
                         RadioButton(selected = currentSelectBotId == it.chatBotId, onClick = {
@@ -66,3 +70,6 @@ fun ColumnScope.ModelListPart(
         }
     }
 }
+
+fun ServerChatBot.description(model: Model): String
+    = "${string(R.string.context_length)} ${ ((model.maxContextTokens)/1000f).roundToInt() }k | ${string(R.string.currency_symbol)}${model.cost1kChars} / ${string(R.string.kilo_char)} | ${model.description}"
