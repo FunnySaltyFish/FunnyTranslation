@@ -58,6 +58,7 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.helper.writeText
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
+import com.funny.translation.translate.ui.long_text.components.RemarkDialog
 import com.funny.translation.translate.ui.long_text.components.ResultTextPart
 import com.funny.translation.translate.ui.long_text.components.SourceTextPart
 import com.funny.translation.translate.ui.widget.CommonPage
@@ -108,8 +109,23 @@ fun LongTextTransDetailScreen(
             }
         )
 
-        BackHandler(enabled = (vm.screenState == ScreenState.Translating && !vm.isPausing)) {
-            quitAlertDialog.value = true
+        val remarkDialogState = rememberStateOf(value = false)
+        RemarkDialog(
+            showState = remarkDialogState,
+            taskId = vm.transId,
+            initialRemark = vm.task?.remark ?: "",
+            updateRemarkAction = vm::updateRemark
+        )
+
+        BackHandler(enabled =
+            (vm.screenState == ScreenState.Translating && !vm.isPausing)
+            || (vm.screenState == ScreenState.Result && vm.task?.remark?.isEmpty() == true)
+        ) {
+            if (vm.screenState == ScreenState.Translating) {
+                quitAlertDialog.value = true
+            } else {
+                remarkDialogState.value = true
+            }
         }
 
 //        NoticeBar(

@@ -72,6 +72,22 @@ fun SimpleDialog(
 
 @Composable
 fun SimpleDialog(
+    openDialogState: MutableState<Boolean>,
+    title: String? = null,
+    content: (@Composable () -> Unit)? = null,
+    confirmButtonAction: (() -> Unit)? = null,
+    confirmButtonText : String = stringResource(R.string.confirm),
+    dismissButtonAction: (() -> Unit)? = null,
+    dismissButtonText : String = stringResource(R.string.cancel),
+    closeable: Boolean = true
+) {
+    val (openDialog, updateOpenDialog) = openDialogState
+    SimpleDialog(openDialog, updateOpenDialog, title, content, confirmButtonAction, confirmButtonText, dismissButtonAction, dismissButtonText, closeable)
+
+}
+
+@Composable
+fun SimpleDialog(
     openDialog: Boolean,
     updateOpenDialog: (Boolean) -> Unit,
     title: String? = null,

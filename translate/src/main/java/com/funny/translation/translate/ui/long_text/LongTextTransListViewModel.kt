@@ -18,9 +18,9 @@ class LongTextTransListViewModel: ViewModel() {
         }
     }
 
-    fun updateRemark(longTextTransTask: LongTextTransTaskMini, newRemark: String) {
+    fun updateRemark(taskId: String, newRemark: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.updateRemark(longTextTransTask.id, newRemark)
+            dao.updateRemark(taskId, newRemark)
         }
     }
 }

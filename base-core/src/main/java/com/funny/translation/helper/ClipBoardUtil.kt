@@ -3,8 +3,6 @@ package com.funny.translation.helper
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.text.TextUtils
-import java.lang.Exception
 
 
 /**
@@ -19,8 +17,8 @@ object ClipBoardUtil {
         val manager = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return ""
         if (manager.hasPrimaryClip() && manager.primaryClip!!.itemCount > 0) {
             val addedText = manager.primaryClip!!.getItemAt(0).text
-            val addedTextString = addedText.toString()
-            if (!TextUtils.isEmpty(addedTextString)) {
+            val addedTextString = addedText?.toString()
+            if (addedTextString?.isNotEmpty() == true) {
                 return addedTextString
             }
         }

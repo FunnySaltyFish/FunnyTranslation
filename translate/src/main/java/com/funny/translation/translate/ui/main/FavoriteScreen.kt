@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +29,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.database.TransFavoriteBean
 import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.translate.ui.widget.HintText
 import com.funny.translation.ui.FixedSizeIcon
 
 @Composable
@@ -73,18 +73,7 @@ private fun TransFavoriteList(
     ) {
         if (transFavorites.itemCount == 0) {
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.no_favorite),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                HintText(text = stringResource(id = R.string.no_favorite))
             }
         }
         items(transFavorites, key = { it.id }) { transFavorite ->

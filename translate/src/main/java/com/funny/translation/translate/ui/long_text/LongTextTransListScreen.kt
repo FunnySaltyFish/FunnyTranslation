@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.funny.compose.loading.DefaultEmpty
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.DataHolder
@@ -34,8 +33,10 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.database.LongTextTransTaskMini
 import com.funny.translation.translate.extentions.formatBraceStyle
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.long_text.components.RemarkDialog
 import com.funny.translation.translate.ui.main.SwipeToDismissItem
 import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.translate.ui.widget.HintText
 import com.funny.translation.ui.FixedSizeIcon
 import java.util.UUID
 
@@ -78,9 +79,12 @@ fun LongTextTransListScreen() {
                         updateRemarkAction = vm::updateRemark
                     )
                 }
+                item {
+                    HintText(text = stringResource(id = R.string.long_text_trans_list_tip))
+                }
             } else {
                 item {
-                    DefaultEmpty()
+                    HintText(text = stringResource(id = R.string.empty_long_text_trans_history))
                 }
             }
         }
@@ -124,7 +128,7 @@ private fun LongTextTransItem(
     task: LongTextTransTaskMini,
     onClick: SimpleAction,
     deleteTaskAction: (LongTextTransTaskMini) -> Unit,
-    updateRemarkAction: (LongTextTransTaskMini, String) -> Unit = { _, _ -> }
+    updateRemarkAction: (taskId: String, String) -> Unit = { _, _ -> }
 ) {
     val oneLineText = @Composable { text: String ->
         Text(text = text, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -138,25 +142,13 @@ private fun LongTextTransItem(
             deleteTaskAction(task)
         }
     )
-    // 更改备注
-    var showChangeRemarkDialog by rememberStateOf(value = false)
-    var remark by rememberStateOf(value = task.remark)
-    SimpleDialog(
-        openDialog = showChangeRemarkDialog,
-        updateOpenDialog = { showChangeRemarkDialog = it },
-        title = stringResource(id = R.string.change_remark),
-        content = {
-            TextField(
-                value = remark,
-                onValueChange = { remark = it },
-                maxLines = 1,
-                singleLine = true
-            )
-        },
-        confirmButtonAction = {
-            updateRemarkAction(task, remark)
-        },
-        confirmButtonText = stringResource(id = com.funny.trans.login.R.string.confirm_to_modify),
+
+    val showChangeRemarkDialog = rememberStateOf(value = false)
+    RemarkDialog(
+        showState = showChangeRemarkDialog,
+        taskId = task.id,
+        initialRemark = task.remark,
+        updateRemarkAction = updateRemarkAction
     )
     SwipeToDismissItem(
         modifier = modifier.fillMaxWidth(),
@@ -170,7 +162,7 @@ private fun LongTextTransItem(
     ) {
         ListItem(
             modifier = Modifier.combinedClickable(
-                onClick = onClick, onLongClick = { showChangeRemarkDialog = true }
+                onClick = onClick, onLongClick = { showChangeRemarkDialog.value = true }
             ),
             headlineContent = {
                 oneLineText(task.remark.ifEmpty { string(R.string.no_remark) })

@@ -308,4 +308,7 @@
     <string name="token_tip">模型处理文本时以 Token 形式，这里计算的是 Token 数</string>
     <string name="no_remark">暂无备注</string>
     <string name="change_remark">更改备注</string>
+    <string name="remark">备注</string>
+    <string name="empty_long_text_trans_history">暂无历史任务，先去试试看吧~</string>
+    <string name="long_text_trans_list_tip">侧滑删除，长按可以修改备注哦</string>
 </resources>

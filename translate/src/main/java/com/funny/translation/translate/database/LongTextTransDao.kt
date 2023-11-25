@@ -66,7 +66,7 @@ data class LongTextTransTaskMini(
     val sourceTextLength: Int,
 ) {
     val finishTranslating: Boolean
-        get() = translatedLength == sourceTextLength
+        get() = translatedLength >= sourceTextLength
 
     val translatedProgress
         get() = (translatedLength.toFloat() / sourceTextLength.toFloat()).coerceIn(0f, 1f)

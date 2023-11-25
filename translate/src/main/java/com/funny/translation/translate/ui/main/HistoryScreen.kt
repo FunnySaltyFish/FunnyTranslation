@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +27,7 @@ import com.funny.translation.translate.findLanguageById
 import com.funny.translation.translate.ui.extension.items
 import com.funny.translation.translate.ui.widget.CommonNavBackIcon
 import com.funny.translation.translate.ui.widget.CommonTopBar
+import com.funny.translation.translate.ui.widget.HintText
 import com.funny.translation.translate.ui.widget.UpperPartBackground
 import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.touchToScale
@@ -83,11 +83,7 @@ private fun TransFavoriteList(
     ) {
         if (transHistories.itemSnapshotList.isEmpty()) {
             item {
-                Text(
-                    text = stringResource(R.string.no_history), modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp), textAlign = TextAlign.Center
-                )
+                HintText(text = stringResource(R.string.no_history))
             }
         } else {
             items(transHistories, key = { it.id }) { transHistory ->

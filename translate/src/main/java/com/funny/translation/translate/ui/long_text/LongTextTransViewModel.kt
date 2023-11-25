@@ -55,7 +55,7 @@ internal enum class ScreenState {
 
 class LongTextTransViewModel: ViewModel() {
     private val dao = appDB.longTextTransDao
-    private var task: LongTextTransTask? = null
+    internal var task: LongTextTransTask? = null
 
     internal var screenState by mutableStateOf(ScreenState.Init)
 
@@ -314,6 +314,13 @@ class LongTextTransViewModel: ViewModel() {
     fun updateBot(id: Int) {
         ChatBots.findById(id)?.let { this.chatBot = it }
     }
+    fun updateRemark(taskId: String, remark: String) {
+        task ?: return
+        dbAction {
+            task = task!!.copy(remark = remark)
+            dao.updateRemark(taskId, remark)
+        }
+    }
 
     fun toggleIsPausing() {
         isPausing = !isPausing
@@ -324,6 +331,7 @@ class LongTextTransViewModel: ViewModel() {
                 startTranslate()
             }
     }
+
 
 
 
