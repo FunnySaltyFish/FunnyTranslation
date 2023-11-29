@@ -3,6 +3,7 @@ package com.funny.translation.codeeditor.ui.runner
 import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
 import com.funny.translation.debug.Debug
@@ -32,6 +33,11 @@ class CodeRunnerViewModel(application: Application) : BaseViewModel(application)
                             sourceLanguage = activityCodeViewModel.sourceLanguage.value
                             targetLanguage = activityCodeViewModel.targetLanguage.value
                             sourceString = activityCodeViewModel.sourceString.value
+                        }
+                        with(GlobalTranslationConfig) {
+                            sourceString = activityCodeViewModel.sourceString.value
+                            sourceLanguage = activityCodeViewModel.sourceLanguage.value
+                            targetLanguage = activityCodeViewModel.targetLanguage.value
                         }
                         viewModelScope.launch(Dispatchers.IO) { jsTranslateTask.translate() }
                     },

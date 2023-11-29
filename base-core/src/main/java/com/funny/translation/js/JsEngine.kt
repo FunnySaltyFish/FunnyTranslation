@@ -9,6 +9,7 @@ import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.core.JsInterface
 import com.funny.translation.js.extentions.messageWithDetail
 import com.funny.translation.network.OkHttpUtils
+import com.funny.translation.network.ServiceCreator
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.allLanguages
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,7 @@ import kotlin.math.absoluteValue
 @Keep
 class JsEngine(val jsBean: JsBean) : JsInterface {
 
-    private val patternResult = Regex("(\\W)result\\.")
+    private val patternResult = Regex("(\\W)result(\\W)")
 
     lateinit var funnyJS : NativeObject
     @Throws(ScriptException::class)
@@ -30,12 +31,13 @@ class JsEngine(val jsBean: JsBean) : JsInterface {
         with(SCRIPT_ENGINE) {
             put("funny", this@JsEngine)
             put("http", OkHttpUtils)
+            put("BASE_URL", ServiceCreator.BASE_URL)
             Language.values().forEach {
-                put("LANGUAGE_${it.name}",it)
+                put("LANGUAGE_${it.name}", it)
             }
         }
         // 为了实现多引擎同步翻译，替换 result 为 result_${engineName.hashCode()}
-        val code = jsBean.code.replace(patternResult,"\$1result_${jsBean.fileName.hashCode().absoluteValue}.")
+        val code = jsBean.code.replace(patternResult,"\$1result_${jsBean.fileName.hashCode().absoluteValue}\$2")
         SCRIPT_ENGINE.eval(code)
         funnyJS = getProperty("FunnyJS") as NativeObject
     }

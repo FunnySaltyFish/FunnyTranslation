@@ -14,6 +14,8 @@ class PluginDescription : JavaScriptDescription() {
             originKeywords.add("LANGUAGE_${language.name}")
         }
         originKeywords.add("funny")
+        originKeywords.add("http")
+        originKeywords.add("BASE_URL")
         val clazz = JsInterface::class.java
         val set = mutableSetOf<String>()
         clazz.declaredMethods.forEach {

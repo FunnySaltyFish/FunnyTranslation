@@ -145,7 +145,9 @@ fun ComposeCodeEditor(
                 .background(
                     MaterialTheme.colorScheme.primaryContainer,
                     RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-                )) {
+                )
+                .navigationBarsPadding()
+            ) {
                 CodeRunnerText(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -451,7 +453,7 @@ fun Editor(
         symbolChannel?.let { channel ->
             LazyRow(
                 modifier = Modifier
-                    .padding(top = 2.dp),
+                    .padding(top = 2.dp).imePadding(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 itemsIndexed(symbols) { _, item ->

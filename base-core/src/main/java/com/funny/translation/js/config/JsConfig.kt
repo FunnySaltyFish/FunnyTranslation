@@ -1,6 +1,5 @@
 package com.funny.translation.js.config
 
-import java.lang.StringBuilder
 import javax.script.Compilable
 import javax.script.Invocable
 import javax.script.ScriptEngine
@@ -17,7 +16,7 @@ class JsConfig {
             get() = SCRIPT_ENGINE as Invocable
 
         val DEBUG_DIVIDER = "=" * 18
-        const val JS_ENGINE_VERSION = 6
+        const val JS_ENGINE_VERSION = 7
     }
 }
 
