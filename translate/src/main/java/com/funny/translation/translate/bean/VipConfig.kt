@@ -2,7 +2,6 @@ package com.funny.translation.translate.bean
 
 import androidx.compose.runtime.Stable
 import com.funny.translation.helper.DateSerializerType1
-import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Date
 
@@ -20,19 +19,15 @@ import java.util.Date
    }
  */
 data class VipConfig(
-    val id : Int,
+    override val id : Int,
     val level : Int,
-    val price : Double,
-    val discount : Double,
+    override val price : Double,
+    override val discount : Double,
     val duration : Double,
     val name : String,
     @kotlinx.serialization.Serializable(with = DateSerializerType1::class)
     val discount_end_time : Date
-){
-    fun getRealPrice() = BigDecimal(price) * BigDecimal(discount)
-
-    // 保留两位小数，向下取
-    fun getRealPriceStr() = getRealPrice().setScale(2, RoundingMode.HALF_UP).toString()
+): Product {
 
     fun getPricePerDay() : String {
         // 保留三位小数

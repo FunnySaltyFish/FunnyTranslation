@@ -7,24 +7,6 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 import kotlin.time.Duration.Companion.days
 
-/**
- * class User:
-uid: int
-username: str
-password: str
-email: str
-phone: str
-# 密码类型
-# 1 - 指纹
-# 2 - 普通密码
-password_type: int = 2
-avatar_url: str = ""
-# vip相关信息
-vip_level = 0,
-vip_start_time = -1
-# 单位为天
-vip_duration = -1
- */
 @Keep
 @Serializable
 data class UserInfoBean(
@@ -43,6 +25,8 @@ data class UserInfoBean(
     @Serializable(with = DateSerializerType1::class) val lastChangeUsernameTime: Date? = null,
     val invite_code: String = "",
     val inviter_uid: Int = -1,
+    val ai_text_point: Float = 0.0f,
+    val ai_voice_point: Float = 0.0f,
 ) {
     fun isValid() = uid >= 0 && jwt_token != ""
     fun isValidVip() =
