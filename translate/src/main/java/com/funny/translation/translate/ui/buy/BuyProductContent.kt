@@ -1,7 +1,6 @@
-package com.funny.translation.translate.ui.widget
+package com.funny.translation.translate.ui.buy
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,11 +45,14 @@ import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
-import com.funny.translation.translate.bean.BuyProductManager
 import com.funny.translation.translate.bean.Product
-import com.funny.translation.translate.bean.TradeStatusStore.Companion.STATUS_CANCEL_OR_FINISHED
+import com.funny.translation.translate.ui.buy.manager.BuyProductManager
+import com.funny.translation.translate.ui.buy.manager.TradeStatusStore.Companion.STATUS_CANCEL_OR_FINISHED
+import com.funny.translation.translate.ui.widget.NavPaddingItem
+import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -59,14 +60,9 @@ private enum class PayMethod(val iconRes: Int, val titleRes: Int, val code: Stri
     Alipay(R.drawable.ic_alipay, R.string.alipay, "alipay"), Wechat(R.drawable.ic_wechat, R.string.wechat_pay, "wxpay")
 }
 
-private data class VipFeature(
-    val icon: ImageVector,
-    @StringRes val title:  Int,
-    @StringRes val desc: Int,
-)
-
 @Composable
 fun <T: Product> BuyProductContent(
+    contentPadding: PaddingValues = PaddingValues(8.dp),
     buyProductManager: BuyProductManager<T>,
     onBuySuccess: () -> Unit = {},
     productItem: @Composable (product: T, modifier: Modifier, selected: Boolean, updateSelect: (T) -> Unit) -> Unit,
@@ -102,6 +98,7 @@ fun <T: Product> BuyProductContent(
                     })
                 }.onFailure {
                     it.printStackTrace()
+                    if (it is HttpException && it.code() == 401) return@onFailure
                     context.toastOnUi(it.message)
                 }
             }
@@ -112,14 +109,14 @@ fun <T: Product> BuyProductContent(
     }
     LazyColumn(
         Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 8.dp)
+        contentPadding = contentPadding,
     ) {
         leadingItems()
         loadingList(state, retry, { it.id }) { vipConfig ->
             if (selectedVipConfig == null) selectedVipConfig = vipConfig
             productItem(
                 vipConfig,
-                Modifier.padding(vertical = 8.dp),
+                Modifier,
                 vipConfig.id == selectedVipConfig?.id
             ) {
                 selectedVipConfig = vipConfig
@@ -164,6 +161,9 @@ fun <T: Product> BuyProductContent(
             }
         }
         trailingItems()
+        item {
+            NavPaddingItem()
+        }
     }
 }
 
@@ -210,7 +210,7 @@ private fun BuyNumberTile(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(stringResource(id = R.string.buy_number))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = { if (number > 1) updateNumber(number - 1) }) {
                 Text(text = "-")
             }

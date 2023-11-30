@@ -1,4 +1,4 @@
-package com.funny.translation.translate.bean
+package com.funny.translation.translate.ui.buy.manager
 
 import com.funny.translation.helper.string
 import com.funny.translation.network.CommonData
@@ -36,7 +36,7 @@ abstract class TradeStatusStore {
 }
 
 abstract class BuyProductManager<T> : TradeStatusStore(), ProductProvider<T> {
-    private val vipService get() = TransNetwork.vipService
+    private val vipService get() = TransNetwork.payService
     private var job: Job? = null
     // private val orderStatus = mutableMapOf<String, String>()
 

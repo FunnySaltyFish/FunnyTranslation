@@ -1,8 +1,12 @@
 package com.funny.translation.translate.bean
 
 import androidx.compose.runtime.Stable
+import com.funny.translation.bean.Price
+import com.funny.translation.bean.show
 import com.funny.translation.helper.DateSerializerType1
-import java.math.RoundingMode
+import com.funny.translation.helper.PriceSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Stable
@@ -21,7 +25,9 @@ import java.util.Date
 data class VipConfig(
     override val id : Int,
     val level : Int,
-    override val price : Double,
+    @Serializable(with = PriceSerializer::class)
+    @SerialName("price")
+    override val origin_price : Price,
     override val discount : Double,
     val duration : Double,
     val name : String,
@@ -31,6 +37,6 @@ data class VipConfig(
 
     fun getPricePerDay() : String {
         // 保留三位小数
-        return (getRealPrice() / duration.toBigDecimal()).setScale(3, RoundingMode.HALF_UP).toPlainString()
+        return (getRealPrice() / duration.toBigDecimal()).show(3)
     }
 }

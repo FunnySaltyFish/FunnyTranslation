@@ -1,14 +1,15 @@
 package com.funny.translation.translate.bean
 
-import java.math.BigDecimal
-import java.math.RoundingMode
+import com.funny.translation.bean.Price
+import com.funny.translation.bean.show
+import com.funny.translation.bean.times
 
 interface Product {
-    val id: Int
-    val price: Double
+    val id: Any
+    val origin_price: Price
     val discount: Double
-    fun getRealPrice() = BigDecimal(price) * BigDecimal(discount)
+    fun getRealPrice() = origin_price * discount
 
     // 保留两位小数，向下取
-    fun getRealPriceStr() = getRealPrice().setScale(2, RoundingMode.HALF_UP).toString()
+    fun getRealPriceStr() = getRealPrice().show()
 }

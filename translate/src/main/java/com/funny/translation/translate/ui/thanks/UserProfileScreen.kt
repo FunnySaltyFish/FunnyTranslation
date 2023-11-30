@@ -74,6 +74,7 @@ import com.funny.translation.network.api
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
+import com.funny.translation.translate.extentions.formatBraceStyle
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.widget.CommonPage
@@ -194,6 +195,26 @@ fun UserProfileSettings(navHostController: NavHostController) {
             })
             Tile(text = stringResource(R.string.img_remaining_points)) {
                 Text(text = userInfo.img_remain_points.toString())
+            }
+            // 剩余 AI 文字点数
+            Tile(text = stringResource(R.string.ai_remaining_text_points), onClick = {
+                navHostController.navigateSingleTop(
+                    TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
+                        "planName" to "ai_text_point"
+                    )
+                )
+            }) {
+                Text(text = "%.3f".format(userInfo.ai_text_point))
+            }
+            // 剩余 AI 语音点数
+            Tile(text = stringResource(R.string.ai_remaining_voice_points), onClick = {
+                navHostController.navigateSingleTop(
+                    TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
+                        "planName" to "ai_voice_point"
+                    )
+                )
+            }) {
+                Text(text = "%.3f".format(userInfo.ai_voice_point))
             }
             Tile(text = stringResource(R.string.vip_end_time)) {
                 Text(text = userInfo.vipEndTimeStr())

@@ -25,6 +25,7 @@ sealed class TranslateScreen(val titleId: Int, val route: String) {
     object TextEditorScreen: TranslateScreen(R.string.edit_text, "nav_text_editor?action={action}")
     object DraftScreen: TranslateScreen(R.string.drafts, "nav_drafts")
     object ChatScreen: TranslateScreen(R.string.chat, "nav_chat")
+    object BuyAIPointScreen: TranslateScreen(R.string.buy_ai_point, "nav_buy_ai_point?planName={planName}")
     companion object {
 
         val Saver = { screen: TranslateScreen ->

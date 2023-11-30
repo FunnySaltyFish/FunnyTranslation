@@ -1,4 +1,4 @@
-package com.funny.translation.translate.ui.thanks
+package com.funny.translation.translate.ui.buy
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -53,19 +53,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.translation.AppConfig
+import com.funny.translation.bean.Price
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.VipConfig
-import com.funny.translation.translate.ui.widget.BuyProductContent
+import com.funny.translation.translate.ui.buy.manager.BuyVIPManager
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.NoticeBar
 import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.translate.ui.widget.TextFlashCanvas
 import com.funny.translation.translate.ui.widget.TextFlashCanvasState
-import com.funny.translation.translate.utils.VipUtils
 import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.MarkdownText
 import com.funny.translation.ui.touchToScale
@@ -136,7 +136,7 @@ fun TransProContent() {
         val user = activityVM.userInfo
         val context = LocalContext.current
         BuyProductContent(
-            buyProductManager = VipUtils,
+            buyProductManager = BuyVIPManager,
             onBuySuccess = {
                 AppConfig.enableVipFeatures()
                 activityVM.refreshUserInfo()
@@ -144,7 +144,7 @@ fun TransProContent() {
             },
             productItem = { vipConfig, modifier, selected, updateSelect ->
                 VipCard(
-                    modifier = modifier,
+                    modifier = modifier.padding(vertical = 8.dp),
                     vipConfig = vipConfig,
                     selectedProvider = { selected },
                     updateSelected = updateSelect
@@ -259,7 +259,7 @@ private fun VipCard(
                     fontSize = 18.sp, fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "￥${vipConfig.price}",
+                    text = "￥${vipConfig.origin_price}",
                     modifier = Modifier,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
@@ -278,7 +278,7 @@ private fun PreviewVipCard() {
     VipCard(vipConfig = VipConfig(
         id = 1,
         name = "月卡",
-        price = 199.0,
+        origin_price = Price(199.0),
         discount_end_time = Date(),
         duration = 30.0,
         discount = 0.8,

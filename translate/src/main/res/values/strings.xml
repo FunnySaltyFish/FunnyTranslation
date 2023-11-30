@@ -313,4 +313,11 @@
     <string name="long_text_trans_list_tip">侧滑删除，长按可以修改备注哦</string>
     <string name="chat">聊天</string>
     <string name="context_length">上下文长</string>
+    <string name="buy_ai_point">点数购买</string>
+    <string name="vip_only">会员专享</string>
+    <string name="ai_point_hint">Token 数目为预估值，以 0.016/k 计算</string>
+    <string name="ai_remaining_text_points">AI 文字点数：</string>
+    <string name="ai_remaining_voice_points">AI 语音点数：</string>
+    <string name="buy_ai_text_point">购买AI文字点数</string>
+    <string name="buy_ai_voice_point">购买AI语言点数</string>
 </resources>

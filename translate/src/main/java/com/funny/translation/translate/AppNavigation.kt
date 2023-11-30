@@ -1,6 +1,7 @@
 package com.funny.translation.translate
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -29,6 +30,8 @@ import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.ai.ChatScreen
+import com.funny.translation.translate.ui.buy.BuyAIPointScreen
+import com.funny.translation.translate.ui.buy.TransProScreen
 import com.funny.translation.translate.ui.long_text.DraftScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransDetailScreen
 import com.funny.translation.translate.ui.long_text.LongTextTransListScreen
@@ -42,7 +45,6 @@ import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.settings.*
 import com.funny.translation.translate.ui.thanks.AppRecommendationScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
-import com.funny.translation.translate.ui.thanks.TransProScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
 import com.funny.translation.translate.utils.DeepLinkManager
 import com.funny.translation.ui.MarkdownText
@@ -180,6 +182,17 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.ChatScreen.route) {
                         ChatScreen()
                     }
+                    animateComposable(
+                        TranslateScreen.BuyAIPointScreen.route,
+                        arguments = listOf(
+                            navArgument("planName") {
+                                type = NavType.StringType; defaultValue = null; nullable = true
+                            }
+                        )
+                    ) {
+                        val planName = it.arguments?.getString("planName")
+                        BuyAIPointScreen(planName ?: "ai_text_point")
+                    }
                     addLongTextTransNavigation()
                     addSettingsNavigation()
                     addUserProfileRoutes(
@@ -295,8 +308,12 @@ private fun NavGraphBuilder.addSettingsNavigation() {
 }
 
 fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = false) {
+    navigateSingleTop(uri = NavDestination.createRoute(route).toUri(), popUpToMain = popUpToMain)
+}
+
+fun NavHostController.navigateSingleTop(uri: Uri, popUpToMain: Boolean = false) {
     val navController = this
-    navController.navigate(route) {
+    navController.navigate(uri, navOptions {
         // 先清空其他栈，使得返回时能直接回到主界面
         if (popUpToMain) {
             popUpTo(navController.graph.startDestinationId) {
@@ -309,7 +326,7 @@ fun NavHostController.navigateSingleTop(route: String, popUpToMain: Boolean = fa
         launchSingleTop = true
         //切换状态的时候保存页面状态
         restoreState = true
-    }
+    })
 }
 
 // 跳转到翻译页面，并开始翻译
