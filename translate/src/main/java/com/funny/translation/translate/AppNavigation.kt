@@ -28,6 +28,7 @@ import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
+import com.funny.translation.translate.bean.AI_TEXT_POINT
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.ai.ChatScreen
 import com.funny.translation.translate.ui.buy.BuyAIPointScreen
@@ -192,7 +193,7 @@ fun AppNavigation(
                         )
                     ) {
                         val planName = it.arguments?.getString("planName")
-                        BuyAIPointScreen(planName ?: "ai_text_point")
+                        BuyAIPointScreen(planName ?: AI_TEXT_POINT)
                     }
                     animateComposable(TranslateScreen.AnnualReportScreen.route) {
                         AnnualReportScreen()

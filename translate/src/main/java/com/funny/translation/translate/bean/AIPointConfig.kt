@@ -22,3 +22,6 @@ data class AIPointPlan(
         return if( AppConfig.isVip() ) vip_price else this.origin_price
     }
 }
+
+const val AI_TEXT_POINT = "ai_text_point"
+const val AI_VOICE_POINT = "ai_voice_point"

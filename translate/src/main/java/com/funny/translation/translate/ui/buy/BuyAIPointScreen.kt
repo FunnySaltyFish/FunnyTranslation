@@ -40,6 +40,8 @@ import com.funny.translation.bean.Price
 import com.funny.translation.bean.showWithUnit
 import com.funny.translation.translate.R
 import com.funny.translation.translate.bean.AIPointPlan
+import com.funny.translation.translate.bean.AI_TEXT_POINT
+import com.funny.translation.translate.bean.AI_VOICE_POINT
 import com.funny.translation.translate.ui.buy.manager.BuyAIPointManager
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.HintText
@@ -49,13 +51,13 @@ import kotlin.math.roundToInt
 
 @Composable
 fun BuyAIPointScreen(
-    planName: String = "ai_text_point",
+    planName: String = AI_TEXT_POINT,
 ) {
     val manager = BuyAIPointManager.find(planName)
     val user = AppConfig.userInfo.value
     val (titleRes, point) = when (planName) {
-        "ai_text_point" -> R.string.buy_ai_text_point to user.ai_text_point
-        "ai_voice_point" -> R.string.buy_ai_voice_point to user.ai_voice_point
+        AI_TEXT_POINT -> R.string.buy_ai_text_point to user.ai_text_point
+        AI_VOICE_POINT -> R.string.buy_ai_voice_point to user.ai_voice_point
         else -> R.string.buy_ai_point to 0f
     }
     CommonPage(
@@ -69,6 +71,9 @@ fun BuyAIPointScreen(
         BuyProductContent(
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             buyProductManager = manager,
+            onBuySuccess = { plan ->
+                manager.addToUser(plan.count)
+            },
             productItem = { product, modifier, selected, updateSelect ->
                 AIPointCard(modifier.padding(vertical = 4.dp), product, selected, updateSelect)
             },
@@ -179,7 +184,7 @@ fun PreviewAIPointCard() {
         count = 1,
         origin_price = Price(100),
         vip_price = Price(80),
-        plan_name = "ai_text_point",
+        plan_name = AI_TEXT_POINT,
         plan_index = 0,
         discount = 0.8
     ), selected = false, updateSelected = {})

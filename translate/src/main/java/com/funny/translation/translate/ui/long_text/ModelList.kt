@@ -72,4 +72,4 @@ fun ColumnScope.ModelListPart(
 }
 
 fun ServerChatBot.description(model: Model): String
-    = "${string(R.string.context_length)} ${ ((model.maxContextTokens)/1000f).roundToInt() }k | ${string(R.string.currency_symbol)}${model.cost1kChars} / ${string(R.string.kilo_char)} | ${model.description}"
+    = "${string(R.string.context_length)} ${ ((model.maxContextTokens)/1000f).roundToInt() }k | ${string(R.string.currency_symbol)}${model.cost1kTokens} / ${string(R.string.kilo_char)} | ${model.description}"

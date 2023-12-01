@@ -62,7 +62,7 @@ suspend fun ResponseBody.asFlow() = withContext(Dispatchers.IO) {
 //            emit(it.readText().also { txt ->
 //                Log.d(TAG, "readText: $txt")
 //            })
-            val buffer = ByteArray(64)
+            val buffer = ByteArray(256)
             while (true) {
                 val read = inputStream.read(buffer)
                 if (read == -1) {

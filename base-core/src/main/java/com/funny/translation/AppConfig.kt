@@ -13,6 +13,7 @@ import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.Language
+import java.math.BigDecimal
 
 private const val TAG = "AppConfig"
 
@@ -58,6 +59,18 @@ object AppConfig {
 
     fun updateJwtToken(newToken: String) {
         userInfo.value = userInfo.value.copy(jwt_token = newToken)
+    }
+
+    fun subAITextPoint(amount: BigDecimal) {
+        if (amount == BigDecimal.ZERO) return
+        val user = userInfo.value
+        userInfo.value = user.copy(ai_text_point = user.ai_text_point - amount)
+    }
+
+    fun subAIVoicePoint(amount: BigDecimal) {
+        if (amount == BigDecimal.ZERO) return
+        val user = userInfo.value
+        userInfo.value = user.copy(ai_voice_point = user.ai_voice_point - amount)
     }
 
     fun isVip() = userInfo.value.isValidVip()

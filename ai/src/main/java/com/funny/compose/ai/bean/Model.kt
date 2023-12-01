@@ -18,8 +18,8 @@ data class Model (
     @SerialName("chat_bot_id")
     val chatBotId: Int,
     @Serializable(with = BigDecimalSerializer::class)
-    @SerialName("cost_1k_chars")
-    val cost1kChars: BigDecimal,
+    @SerialName("cost_1k_tokens")
+    val cost1kTokens: BigDecimal,
     val name: String,
     val description: String,
     val avatar: String = "",
@@ -28,4 +28,8 @@ data class Model (
     val maxContextTokens: Int,
     @SerialName("token_counter_id")
     val tokenCounterId: Int,
-)
+) {
+    companion object {
+        val Empty = Model(0, BigDecimal.ZERO, "Test", "", "", 0, 0)
+    }
+}

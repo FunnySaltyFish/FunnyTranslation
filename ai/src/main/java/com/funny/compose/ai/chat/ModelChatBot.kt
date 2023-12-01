@@ -36,4 +36,8 @@ class ModelChatBot(
 
     override val tokenCounter: TokenCounter
         get() = TokenCounters.findById(model.tokenCounterId)
+
+    companion object {
+        val Empty = ModelChatBot(Model.Empty)
+    }
 }

@@ -66,7 +66,7 @@ fun NumberChangeAnimatedText(
                 },
                 label = ""
             ) { char ->
-                Text(text = char.toString(), modifier = modifier.padding(textPadding), fontSize = textSize, color = textColor, fontWeight = textWeight)
+                Text(text = char.toString(), modifier = Modifier.padding(textPadding), fontSize = textSize, color = textColor, fontWeight = textWeight)
             }
         }
     }

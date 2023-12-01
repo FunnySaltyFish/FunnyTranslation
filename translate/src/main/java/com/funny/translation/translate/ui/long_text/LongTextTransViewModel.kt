@@ -57,7 +57,7 @@ internal enum class ScreenState {
 
 class LongTextTransViewModel: ViewModel() {
     private val dao = appDB.longTextTransDao
-    internal var task: LongTextTransTask? = null
+    internal var task: LongTextTransTask? by mutableStateOf(null)
     internal var screenState by mutableStateOf(ScreenState.Init)
 
     var chatBot: ServerChatBot by mutableStateOf(TestLongTextChatBot())

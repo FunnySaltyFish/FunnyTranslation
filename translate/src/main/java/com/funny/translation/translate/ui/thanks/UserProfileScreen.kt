@@ -74,6 +74,8 @@ import com.funny.translation.network.api
 import com.funny.translation.translate.LocalActivityVM
 import com.funny.translation.translate.R
 import com.funny.translation.translate.activity.CustomPhotoPickerActivity
+import com.funny.translation.translate.bean.AI_TEXT_POINT
+import com.funny.translation.translate.bean.AI_VOICE_POINT
 import com.funny.translation.translate.extentions.formatBraceStyle
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.TranslateScreen
@@ -200,7 +202,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
             Tile(text = stringResource(R.string.ai_remaining_text_points), onClick = {
                 navHostController.navigateSingleTop(
                     TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
-                        "planName" to "ai_text_point"
+                        "planName" to AI_TEXT_POINT
                     )
                 )
             }) {
@@ -210,7 +212,7 @@ fun UserProfileSettings(navHostController: NavHostController) {
             Tile(text = stringResource(R.string.ai_remaining_voice_points), onClick = {
                 navHostController.navigateSingleTop(
                     TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
-                        "planName" to "ai_voice_point"
+                        "planName" to AI_VOICE_POINT
                     )
                 )
             }) {

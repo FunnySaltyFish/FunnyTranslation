@@ -31,6 +31,6 @@ class TestChatBot: ChatBot() {
             delay(1000)
             emit(StreamMessage.Part("I can't do anything."))
             delay(40)
-            emit(StreamMessage.End)
+            emit(StreamMessage.End())
         }
 }

@@ -1,9 +1,11 @@
 package com.funny.translation.bean
 
 import androidx.annotation.Keep
+import com.funny.translation.helper.BigDecimalSerializer
 import com.funny.translation.helper.DateSerializerType1
 import com.funny.translation.helper.TimeUtils
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 import java.util.Date
 import kotlin.time.Duration.Companion.days
 
@@ -25,8 +27,10 @@ data class UserInfoBean(
     @Serializable(with = DateSerializerType1::class) val lastChangeUsernameTime: Date? = null,
     val invite_code: String = "",
     val inviter_uid: Int = -1,
-    val ai_text_point: Float = 0.0f,
-    val ai_voice_point: Float = 0.0f,
+    @Serializable(with = BigDecimalSerializer::class)
+    val ai_text_point: BigDecimal = BigDecimal.ZERO,
+    @Serializable(with = BigDecimalSerializer::class)
+    val ai_voice_point: BigDecimal = BigDecimal.ZERO,
 ) {
     fun isValid() = uid >= 0 && jwt_token != ""
     fun isValidVip() =

@@ -10,11 +10,10 @@ import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
-import com.funny.compose.ai.chat.ChatBot
 import com.funny.compose.ai.chat.ModelChatBot
-import com.funny.compose.ai.chat.TestChatBot
 import com.funny.compose.ai.service.aiService
 import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.AppConfig
 import com.funny.translation.helper.DataSaverUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,15 +21,21 @@ import java.util.UUID
 
 class ChatViewModel: ViewModel() {
     val inputText = mutableStateOf("")
-    val chatBot: MutableState<ChatBot> = mutableStateOf(TestChatBot())
+    val chatBot: MutableState<ModelChatBot> = mutableStateOf(ModelChatBot.Empty)
     val messages: MutableState<List<ChatMessage>> = mutableStateOf(listOf())
     val currentMessage: MutableState<ChatMessage?> = mutableStateOf(null)
     val convId: MutableState<String?> = mutableStateOf(null)
     val systemPrompt = mutableDataSaverStateOf(DataSaverUtils, "key_chat_base_prompt", BASE_PROMPT)
     val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedMsgLength(2))
     val models = mutableStateOf(listOf<Model>())
+
+    var model: Model?
+        get() = chatBot.value.model
+        set(value) {
+            if (value == null) return
+            chatBot.value = ModelChatBot(value)
+        }
     init {
-        chatBot.value = TestChatBot()
         convId.value = "convId"
 
 //        addMessage(SENDER_ME, "Hello, I'm ${chatBot.value.name}.")
@@ -106,6 +111,7 @@ class ChatViewModel: ViewModel() {
                     is StreamMessage.End -> {
                         addMessage(currentMessage.value!!)
                         currentMessage.value = null
+                        AppConfig.subAITextPoint(it.consumption)
                     }
                     is StreamMessage.Error -> {
                         addErrorMessage(it.error)
@@ -117,6 +123,7 @@ class ChatViewModel: ViewModel() {
     }
     
     fun updateInputText(text: String) { inputText.value = text }
+    fun updateModel(model: Model) { this.model = model }
 
     companion object {
         private const val BASE_PROMPT = "You're ChatGPT, a helpful AI assistant."

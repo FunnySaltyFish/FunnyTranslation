@@ -29,6 +29,8 @@ import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.ai.componets.ChatInputTextField
 import com.funny.translation.translate.ui.ai.componets.MessageItem
+import com.funny.translation.translate.ui.long_text.components.AIPointText
+import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.ui.FixedSizeIcon
 
 // Modified From https://github.com/prafullmishra/JetComposer/tree/master
@@ -77,8 +79,13 @@ fun ChatContent(
     sendAction: () -> Unit,
     onUpPressed: () -> Unit
 ) {
-    Column(modifier) {
-        ChatTopBar(onUpPressed, chatBot.name)
+    CommonPage(
+        modifier = modifier,
+        title = chatBot.name,
+        actions = {
+            AIPointText()
+        }
+    ) {
         ChatMessageList(
             modifier = Modifier.weight(1f),
             currentMessageProvider = currentMessageProvider,

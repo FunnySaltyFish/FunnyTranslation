@@ -84,6 +84,14 @@ abstract class ServerChatBot(
                     StreamMessage.Error(remaining)
                 }
                 it.startsWith("<<start>>") -> StreamMessage.Start
+                it.startsWith("<<end>>") -> {
+                    val remaining = it.removePrefix("<<end>>")
+                    if (remaining != "") {
+                        JsonX.fromJson<StreamMessage.End>(remaining)
+                    } else {
+                        StreamMessage.End()
+                    }
+                }
                 else -> StreamMessage.Part(it)
             }
         }.onStart {
@@ -93,7 +101,6 @@ abstract class ServerChatBot(
                 log("error: $err")
                 emit(StreamMessage.Error(err.message ?: "Unknown error"))
             }
-            emit(StreamMessage.End)
         }
     }
 

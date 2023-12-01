@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.translation.WebViewActivity
+import com.funny.translation.helper.NAV_ANIM_DURATION
 import com.funny.translation.helper.openUrl
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalNavController
@@ -51,6 +52,7 @@ import com.funny.translation.translate.ui.buy.manager.TradeStatusStore.Companion
 import com.funny.translation.translate.ui.widget.NavPaddingItem
 import com.funny.translation.translate.ui.widget.NumberChangeAnimatedText
 import com.funny.translation.ui.FixedSizeIcon
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.math.BigDecimal
@@ -64,12 +66,16 @@ private enum class PayMethod(val iconRes: Int, val titleRes: Int, val code: Stri
 fun <T: Product> BuyProductContent(
     contentPadding: PaddingValues = PaddingValues(8.dp),
     buyProductManager: BuyProductManager<T>,
-    onBuySuccess: () -> Unit = {},
+    onBuySuccess: (T) -> Unit = {},
     productItem: @Composable (product: T, modifier: Modifier, selected: Boolean, updateSelect: (T) -> Unit) -> Unit,
     leadingItems: LazyListScope.() -> Unit = {},
     trailingItems: LazyListScope.() -> Unit = {},
 ) {
-    val (state, retry) = rememberRetryableLoadingState(loader = buyProductManager::getProducts)
+    val (state, retry) = rememberRetryableLoadingState(loader = {
+        // 延迟一段时间，避免影响转场动画
+        delay(NAV_ANIM_DURATION.toLong())
+        buyProductManager.getProducts()
+    })
     val context = LocalContext.current
     var selectedVipConfig: T? by remember { mutableStateOf(null) }
     var buyNumber by remember { mutableIntStateOf(1) }
@@ -90,9 +96,10 @@ fun <T: Product> BuyProductContent(
             selectedVipConfig ?: return@lambda
             scope.launch {
                 kotlin.runCatching {
-                    buyProductManager.buyProduct(selectedVipConfig!!, payMethod.code, buyNumber, startPay, onPayFinished = {
+                    val bought = selectedVipConfig!!
+                    buyProductManager.buyProduct(bought, payMethod.code, buyNumber, startPay, onPayFinished = {
                         if (it == "TRADE_SUCCESS") {
-                            onBuySuccess()
+                            onBuySuccess(bought)
                         }
                         navHostController.popBackStack()
                     })

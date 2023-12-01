@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,8 @@ import com.funny.translation.helper.toastOnUi
 import com.funny.translation.helper.writeText
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
+import com.funny.translation.translate.bean.AI_TEXT_POINT
+import com.funny.translation.translate.ui.long_text.components.AIPointText
 import com.funny.translation.translate.ui.long_text.components.RemarkDialog
 import com.funny.translation.translate.ui.long_text.components.ResultTextPart
 import com.funny.translation.translate.ui.long_text.components.SourceTextPart
@@ -85,14 +88,23 @@ fun LongTextTransDetailScreen(
             }
         )
     }
+
+    // 跳转到其他页面时，暂停翻译
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            if (vm.screenState == ScreenState.Translating && !vm.isPausing)
+                vm.toggleIsPausing()
+        }
+    }
     
     CommonPage(
         title = stringResource(id = R.string.long_text_trans),
         actions = {
+            AIPointText(planName = AI_TEXT_POINT)
             IconButton(onClick = { showHelpDialog = true }) {
                 FixedSizeIcon(Icons.Default.Help, contentDescription = "Help")
             }
-        }
+        },
     ) {
         // 传入参数时，先初始化各类型
         LaunchedEffect(key1 = id){
