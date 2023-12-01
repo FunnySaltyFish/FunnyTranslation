@@ -59,18 +59,20 @@ suspend fun ResponseBody.asFlow() = withContext(Dispatchers.IO) {
     flow {
         val response = this@asFlow
         response.source().use { inputStream ->
-//            emit(it.readText().also { txt ->
-//                Log.d(TAG, "readText: $txt")
-//            })
             val buffer = ByteArray(256)
-            while (true) {
-                val read = inputStream.read(buffer)
-                if (read == -1) {
-                    break
+            try {
+                while (true) {
+                    val read = inputStream.read(buffer)
+                    if (read == -1) {
+                        break
+                    }
+                    emit(String(buffer, 0, read).also {
+                        Log.d(TAG, "readText: $it")
+                    })
                 }
-                emit(String(buffer, 0, read).also {
-                    Log.d(TAG, "readText: $it")
-                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit("<<error>>" + e.message)
             }
         }
     }

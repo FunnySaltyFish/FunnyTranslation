@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.funny.compose.ai.bean.ChatMessage
@@ -28,6 +27,7 @@ import com.funny.compose.ai.bean.ChatMessageTypes
 import com.funny.jetsetting.core.ui.FunnyIcon
 import com.funny.jetsetting.core.ui.IconWidget
 import com.funny.translation.helper.SimpleAction
+import com.funny.translation.ui.MarkdownText
 
 @Composable
 fun MessageItem(
@@ -62,11 +62,24 @@ fun MessageItem(
         ) {
             when (chatMessage.type) {
                 ChatMessageTypes.TEXT ->
-                    Text(
-                        text = chatMessage.content,
-                        modifier = Modifier,
-                        color = if (sendByMe) Color.White else Color.Black
-                    )
+                    if (sendByMe) {
+                        Text(
+                            text = chatMessage.content,
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    } else {
+                        val content = if (chatMessage.error != null) {
+                            chatMessage.content + "\n" + chatMessage.error
+                        } else {
+                            chatMessage.content.ifEmpty { "..." }
+                        }
+                        MarkdownText(
+                            markdown = content,
+                            color = if (chatMessage.error != null)
+                                MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
 
                 ChatMessageTypes.IMAGE ->
                     Image(

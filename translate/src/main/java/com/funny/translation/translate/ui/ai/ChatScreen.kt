@@ -5,7 +5,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.chat.ChatBot
 import com.funny.compose.ai.utils.getColorAtProgress
+import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.ai.componets.ChatInputTextField
@@ -32,6 +37,7 @@ import com.funny.translation.translate.ui.ai.componets.MessageItem
 import com.funny.translation.translate.ui.long_text.components.AIPointText
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.ui.FixedSizeIcon
+import kotlinx.coroutines.launch
 
 // Modified From https://github.com/prafullmishra/JetComposer/tree/master
 
@@ -86,27 +92,27 @@ fun ChatContent(
             AIPointText()
         }
     ) {
+        val lazyListState = rememberLazyListState()
+        val scope = rememberCoroutineScope()
         ChatMessageList(
             modifier = Modifier.weight(1f),
             currentMessageProvider = currentMessageProvider,
-            chats = chatMessages
+            chats = chatMessages,
+            lazyListState = lazyListState
         )
         ChatBottomBar(
             text = inputText,
             onTextChanged = onInputTextChanged,
-            sendAction = sendAction
+            sendAction = {
+                if (chatMessages.size > 1) {
+                    scope.launch {
+                        lazyListState.animateScrollToItem(chatMessages.size - 1)
+                    }
+                }
+                sendAction()
+            }
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ChatTopBar(onUpPressed: () -> Unit, botName: String) {
-    TopAppBar(
-        title = {
-            Text(text = botName)
-        }
-    )
 }
 
 @Composable
@@ -139,14 +145,17 @@ fun ChatBottomBar(
 @Composable
 fun ChatMessageList(
     modifier: Modifier,
+    lazyListState: LazyListState,
     currentMessageProvider: () -> ChatMessage?,
     chats: List<ChatMessage>
 ) {
     val currentMessage = currentMessageProvider()
+    val context = LocalContext.current
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
         verticalArrangement = Arrangement.spacedBy(1.dp),
-        modifier = modifier
+        modifier = modifier,
+        state = lazyListState
     ) {
         items(chats) { message ->
             MessageItem(message, copyAction = {}, deleteAction = {}, refreshAction = {})
@@ -155,7 +164,10 @@ fun ChatMessageList(
             item {
                 MessageItem(
                     currentMessage,
-                    copyAction = {},
+                    copyAction = {
+                        ClipBoardUtil.copy(context, currentMessage.content)
+                        context.toastOnUi(R.string.copied_to_clipboard)
+                    },
                     deleteAction = {},
                     refreshAction = {}
                 )
