@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PictureInPicture
+import androidx.compose.material.icons.filled.Redeem
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -42,7 +43,6 @@ import com.funny.translation.translate.*
 import com.funny.translation.translate.R
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.ui.TranslateScreen
-import com.funny.translation.translate.ui.buy.BuyAIPointScreen
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
@@ -73,8 +73,8 @@ enum class MainScreenState {
 @Composable
 fun MainScreen(
 ) {
-//     TextTransScreen()
-    BuyAIPointScreen()
+     TextTransScreen()
+//    BuyAIPointScreen()
      // LongTextTransDetailScreen(id = "244", sourceTextKey = "")
 //    LongTextTransListScreen()
 //    LongTextTransScreen()
@@ -416,6 +416,7 @@ private fun Drawer(
             drawerItem(Icons.Default.Favorite, TranslateScreen.ThanksScreen)
             divider()
             drawerItem(Icons.Default.Apps, TranslateScreen.AppRecommendationScreen)
+            drawerItem(Icons.Default.Redeem, TranslateScreen.AnnualReportScreen)
         }
         PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }

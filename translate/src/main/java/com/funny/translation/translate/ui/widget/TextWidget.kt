@@ -96,11 +96,11 @@ fun AutoIncreaseAnimatedNumber(
     textWeight: FontWeight = LocalTextStyle.current.fontWeight ?: FontWeight.Normal,
 ) {
     // 动画，Animatable 相关介绍可以见 https://compose.funnysaltyfish.fun/docs/design/animation/animatable?source=trans
-    val animatedNumber = remember {
+    val animatedNumber = remember(number) {
         androidx.compose.animation.core.Animatable(0f)
     }
     // 数字格式化后的长度
-    val l = remember {
+    val l = remember(number) {
         number.toString().length
     }
 

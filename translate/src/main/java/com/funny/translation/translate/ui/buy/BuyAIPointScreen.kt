@@ -35,6 +35,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.funny.translation.AppConfig
 import com.funny.translation.bean.Price
 import com.funny.translation.bean.showWithUnit
 import com.funny.translation.translate.R
@@ -51,12 +52,20 @@ fun BuyAIPointScreen(
     planName: String = "ai_text_point",
 ) {
     val manager = BuyAIPointManager.find(planName)
-    val titleRes = when (planName) {
-        "ai_text_point" -> R.string.buy_ai_text_point
-        "ai_voice_point" -> R.string.buy_ai_voice_point
-        else -> R.string.buy_ai_point
+    val user = AppConfig.userInfo.value
+    val (titleRes, point) = when (planName) {
+        "ai_text_point" -> R.string.buy_ai_text_point to user.ai_text_point
+        "ai_voice_point" -> R.string.buy_ai_voice_point to user.ai_voice_point
+        else -> R.string.buy_ai_point to 0f
     }
-    CommonPage(title = stringResource(id = titleRes)) {
+    CommonPage(
+        title = stringResource(id = titleRes),
+        actions = {
+            Text(
+                text = "%.3f".format(point),
+            )
+        }
+    ) {
         BuyProductContent(
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             buyProductManager = manager,

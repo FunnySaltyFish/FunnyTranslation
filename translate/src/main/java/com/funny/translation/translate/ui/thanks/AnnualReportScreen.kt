@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -23,6 +24,7 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.compose.loading.LoadingContent
 import com.funny.compose.loading.LoadingState
 import com.funny.translation.AppConfig
+import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.*
 import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -51,13 +53,18 @@ fun AnnualReportScreen() {
         initialValue = vm.loadingState,
         retry = { vm.loadingState = LoadingState.Loading },
         failure = { err, _ ->
-            AutoFadeInComposableColumn(modifier = Modifier
-                .fillMaxSize()
-                .animatedGradientBackground(MaterialColors.DeepPurple800, Color.Black)){
-                LabelText(text = "截至目前，你似乎还没有用过译站哦\n快去试试翻译，然后再回来看看吧~", modifier = Modifier
+            AutoFadeInComposableColumn(
+                modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
-                    .padding(24.dp))
+                    .animatedGradientBackground(MaterialColors.DeepPurple800, Color.Black)
+            ) {
+                LabelText(
+                    text = stringResource(R.string.no_annual_report),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                        .padding(24.dp)
+                )
             }
         }
     ) {
@@ -71,7 +78,7 @@ fun AnnualReport(vm : AnnualReportViewModel) {
     val state = rememberPagerState {
         6
     }
-    VerticalPager(state = state, modifier = Modifier
+    VerticalPager(state = state, beyondBoundsPageCount = 0, modifier = Modifier
         .fillMaxSize()
         .animatedGradientBackground(
             MaterialColors.DeepPurple800, Color.Black
@@ -81,7 +88,7 @@ fun AnnualReport(vm : AnnualReportViewModel) {
          * 总共六页
          * 第一页：你的2023年度报告生成完成，耗时 {vm.loadingTime}
          *        点击查看
-         * 第二页：2022年你一共翻译了 ${vm.totalTranslateTimes} 个字
+         * 第二页：2023年你一共翻译了 ${vm.totalTranslateTimes} 个字
          * 第三页：有些时刻，你可能已经遗忘，但我们还记得
          *
          *        ${vm.earliestTime}，你打开译站，开始了翻译
@@ -114,17 +121,18 @@ fun AnnualReport(vm : AnnualReportViewModel) {
          *        译站的未来，我们一起期待
          *        感谢一路支持
          *
-         *        @译站 2022年度报告
+         *        @译站 2023年度报告
          *
          */
-        when(page){
-            0 -> AnnualReportPart1(loadingDuration = vm.loadingDuration, loadLatest = vm.shouldLoadLatest)
-            1 -> AnnualReportPart2(totalTranslateTimes = vm.totalTranslateTimes, totalTranslateWords = vm.totalTranslateWords)
-            2 -> AnnualReportPart3(earliestTime = vm.earliestTime, latestTime = vm.latestTime)
-            3 -> AnnualReportPart4(mostCommonSourceLanguage = vm.mostCommonSourceLanguage, mostCommonSourceLanguageTimes = vm.mostCommonSourceLanguageTimes,
-                mostCommonTargetLanguage = vm.mostCommonTargetLanguage, mostCommonTargetLanguageTimes = vm.mostCommonTargetLanguageTimes)
-            4 -> AnnualReportPart5(engineUsedList = vm.enginesUsesList)
-            5 -> AnnualReportPart6()
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+            when (page) {
+                0 -> AnnualReportPart1(loadingDuration = vm.loadingDuration, loadLatest = vm.shouldLoadLatest)
+                1 -> AnnualReportPart2(totalTranslateTimes = vm.totalTranslateTimes, totalTranslateWords = vm.totalTranslateWords)
+                2 -> AnnualReportPart3(earliestTime = vm.earliestTime, latestTime = vm.latestTime)
+                3 -> AnnualReportPart4(mostCommonSourceLanguage = vm.mostCommonSourceLanguage, mostCommonSourceLanguageTimes = vm.mostCommonSourceLanguageTimes, mostCommonTargetLanguage = vm.mostCommonTargetLanguage, mostCommonTargetLanguageTimes = vm.mostCommonTargetLanguageTimes)
+                4 -> AnnualReportPart5(engineUsedList = vm.enginesUsesList)
+                5 -> AnnualReportPart6()
+            }
         }
     }
 }
@@ -138,12 +146,12 @@ fun AnnualReportPart1(
         Modifier
             .fillMaxWidth()
             .padding(24.dp)) {
-        TitleText("译站 2022\n年度报告")
+        TitleText("译站 2023\n年度报告")
         Spacer(height = 8.dp)
         LabelText(text = "你的年度报告加载完成\n耗时 ${loadingDuration.toString(DurationUnit.MILLISECONDS, decimals = 0)}")
         Spacer(height = 48.dp)
         TipText(text = "下滑开启")
-        TipText(text = if (loadLatest) "*2022你似乎还不认识译站，已自动切换数据到至今" else "*统计数据开始于2022/09/14 v2.4.0，仅本地数据")
+        TipText(text = if (loadLatest) "*2023你似乎还不认识译站，已自动切换数据到至今" else "*统计数据开始于2023/01/01 仅本地数据")
     }
 }
 
@@ -357,7 +365,7 @@ fun AnnualReportPart6() {
         }
 
         Spacer(height = 18.dp)
-        TipText(text = "目前，驿站App代码量超")
+        TipText(text = "目前，译站App代码量超")
         Row(verticalAlignment = Alignment.CenterVertically) {
             AnimatedNumber(number = 17000, startAnim = state.currentFadeIndex == 13, textSize = 36.sp)
             ResultText(text = "行")
@@ -381,7 +389,7 @@ fun AnnualReportPart6() {
         TipText(text = "感谢一路支持")
         Spacer(height = 24.dp)
 
-        TipText(text = "@译站 2022年度报告")
+        TipText(text = "@译站 2023年度报告")
     }
 
 }

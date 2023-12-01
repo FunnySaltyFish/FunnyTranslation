@@ -1,9 +1,11 @@
 package com.funny.translation.translate.ui.thanks
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.funny.compose.loading.LoadingState
 import com.funny.data_saver.core.mutableDataSaverListStateOf
-import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.get
 import com.funny.translation.helper.string
@@ -21,31 +23,31 @@ import kotlin.time.measureTime
 
 class AnnualReportViewModel: ViewModel() {
     companion object{
-        // 2022年全年，开始和结束对应的时间戳
+        const val YEAR = 2023
+        // 2023年全年，开始和结束对应的时间戳
         val START_TIME by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            LocalDateTime(2022, 1, 1, 0, 0).toInstant(TimeZone.currentSystemDefault())
+            LocalDateTime(YEAR, 1, 1, 0, 0).toInstant(TimeZone.currentSystemDefault())
                 .toEpochMilliseconds()
         }
 
         val END_TIME by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            LocalDateTime(2022, 12, 31, 23, 59).toInstant(TimeZone.currentSystemDefault())
+            LocalDateTime(YEAR, 12, 31, 23, 59).toInstant(TimeZone.currentSystemDefault())
                 .toEpochMilliseconds()
         }
     }
-    private var initialized by mutableDataSaverStateOf(DataSaverUtils, "annual_report_2022_initialized", false)
     var shouldLoadLatest = false
 
-    var loadingState: LoadingState<Unit> = if (initialized ) LoadingState.Success(Unit) else LoadingState.Loading
+    var loadingState: LoadingState<Unit> = LoadingState.Loading
     var loadingDuration: Duration = Duration.ZERO
 
-    var totalTranslateTimes by mutableDataSaverStateOf(DataSaverUtils, "annual_report_total_translate_times", 0)
-    var earliestTime by mutableDataSaverStateOf(DataSaverUtils, "annual_report_earliest_time", 0L)
-    var latestTime by mutableDataSaverStateOf(DataSaverUtils, "annual_report_latest_time", 0L)
-    var totalTranslateWords by mutableDataSaverStateOf(DataSaverUtils, "annual_report_total_translate_words", 0)
-    var mostCommonSourceLanguage by mutableDataSaverStateOf(DataSaverUtils, "annual_report_most_common_source_language", "")
-    var mostCommonTargetLanguage by mutableDataSaverStateOf(DataSaverUtils, "annual_report_most_common_target_language", "")
-    var mostCommonSourceLanguageTimes by mutableDataSaverStateOf(DataSaverUtils, "annual_report_most_common_source_language_times", 0)
-    var mostCommonTargetLanguageTimes by mutableDataSaverStateOf(DataSaverUtils, "annual_report_most_common_target_language_times", 0)
+    var totalTranslateTimes by mutableStateOf( 0)
+    var earliestTime by mutableStateOf( 0L)
+    var latestTime by mutableStateOf( 0L)
+    var totalTranslateWords by mutableStateOf( 0)
+    var mostCommonSourceLanguage by mutableStateOf( "")
+    var mostCommonTargetLanguage by mutableStateOf( "")
+    var mostCommonSourceLanguageTimes by mutableStateOf( 0)
+    var mostCommonTargetLanguageTimes by mutableStateOf( 0)
     var enginesUsesList by mutableDataSaverListStateOf(DataSaverUtils, "annual_report_engines_uses_list", listOf<Pair<String, Int>>())
 
     private val transHistoryDao: TransHistoryDao = appDB.transHistoryDao
@@ -100,11 +102,6 @@ class AnnualReportViewModel: ViewModel() {
                 enginesUsesList = engineUsesList
             }
             loadingState = LoadingState.Success(Unit)
-
-            if (!shouldLoadLatest) {
-                // 如果是加载最近的数据，那么之后打开仍然需要再次加载
-                initialized = true
-            }
         }
     }
 }

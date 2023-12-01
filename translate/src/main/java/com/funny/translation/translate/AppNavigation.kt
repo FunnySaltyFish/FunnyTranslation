@@ -43,6 +43,7 @@ import com.funny.translation.translate.ui.main.ImageTransScreen
 import com.funny.translation.translate.ui.main.MainScreen
 import com.funny.translation.translate.ui.plugin.PluginScreen
 import com.funny.translation.translate.ui.settings.*
+import com.funny.translation.translate.ui.thanks.AnnualReportScreen
 import com.funny.translation.translate.ui.thanks.AppRecommendationScreen
 import com.funny.translation.translate.ui.thanks.ThanksScreen
 import com.funny.translation.translate.ui.thanks.addUserProfileRoutes
@@ -192,6 +193,9 @@ fun AppNavigation(
                     ) {
                         val planName = it.arguments?.getString("planName")
                         BuyAIPointScreen(planName ?: "ai_text_point")
+                    }
+                    animateComposable(TranslateScreen.AnnualReportScreen.route) {
+                        AnnualReportScreen()
                     }
                     addLongTextTransNavigation()
                     addSettingsNavigation()
