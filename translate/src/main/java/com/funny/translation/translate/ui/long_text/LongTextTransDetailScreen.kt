@@ -211,7 +211,7 @@ private fun ColumnScope.DetailContent(
                     ) { expanded ->
                         AllCorpusList(vm = vm, expanded = expanded)
                     }
-                    ModelListPart(onBotSelected = vm::updateBot)
+                    ModelListPart(onModelSelected = vm::updateBot)
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(onClick = { vm.startTranslate() }) {
                         FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = null)

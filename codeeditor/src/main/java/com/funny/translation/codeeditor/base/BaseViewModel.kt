@@ -3,19 +3,21 @@ package com.funny.translation.codeeditor.base
 import android.app.Application
 import android.content.Context
 import androidx.annotation.CallSuper
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.funny.translation.helper.coroutine.Coroutine
 import com.funny.translation.helper.toastOnUi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application),
-    CoroutineScope by MainScope() {
+open class BaseViewModel(val application: Application) : ViewModel() {
 
-    val context: Context by lazy { this.getApplication() }
+    val context: Context by lazy { application }
 
     fun <T> execute(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> T
     ): Coroutine<T> {
@@ -23,7 +25,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun <R> submit(
-        scope: CoroutineScope = this,
+        scope: CoroutineScope = viewModelScope,
         context: CoroutineContext = Dispatchers.IO,
         block: suspend CoroutineScope.() -> Deferred<R>
     ): Coroutine<R> {
@@ -33,7 +35,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     @CallSuper
     override fun onCleared() {
         super.onCleared()
-        cancel()
     }
 
     open fun toastOnUi(message: Int) {

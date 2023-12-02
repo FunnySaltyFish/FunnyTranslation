@@ -5,8 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 import com.funny.compose.ai.bean.ChatMessage
@@ -16,66 +16,72 @@ import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
 import com.funny.compose.ai.chat.ChatBot
-import com.funny.compose.ai.chat.ChatBots
 import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.ai.service.AskStreamRequest
 import com.funny.compose.ai.service.aiService
 import com.funny.compose.ai.service.askAndProcess
 import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
+import com.funny.translation.translate.database.appDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.UUID
 
-class ChatViewModel: ViewModel() {
+class ChatViewModel: BaseViewModel(appCtx) {
+    private val dao = appDB.chatHistoryDao
+
     val inputText = mutableStateOf("")
     val chatBot: MutableState<ChatBot> = mutableStateOf(ModelChatBot.Empty)
-    val messages: MutableState<List<ChatMessage>> = mutableStateOf(listOf())
+    val messages: SnapshotStateList<ChatMessage> = mutableStateListOf()
     val currentMessage: MutableState<ChatMessage?> = mutableStateOf(null)
     val convId: MutableState<String?> = mutableStateOf(null)
     var systemPrompt by mutableDataSaverStateOf(DataSaverUtils, "key_chat_base_prompt", string(R.string.chat_system_prompt))
-    val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedMsgLength(2))
+    val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedMsgLength(4))
 
     var modelList = mutableStateListOf<Model>()
 
     var checkingPrompt by mutableStateOf(false)
 
     init {
+        // TODO 更改为多个 ConvId 的支持
         convId.value = "convId"
 
-//        addMessage(SENDER_ME, "Hello, I'm ${chatBot.value.name}.")
-//        addMessage(chatBot.value.name, "I'm a test chat bot.\nSo\nIt is important to see something interesting.")
-
-        viewModelScope.launch {
+        execute {
             modelList = kotlin.runCatching {
                 aiService.getChatModels()
             }.onFailure { it.printStackTrace() }.getOrDefault(listOf()).toMutableStateList()
 
-            if (modelList.isEmpty()) return@launch
+            if (modelList.isEmpty()) return@execute
 
             chatBot.value = ModelChatBot(modelList[0])
+        }
+
+        execute {
+            messages.addAll(dao.getMessagesByConversationId(convId.value!!))
         }
     }
 
     private fun addMessage(chatMessage: ChatMessage) {
-        messages.value = messages.value + chatMessage
+        messages.add(chatMessage)
+        execute {
+            dao.insert(chatMessage)
+        }
     }
 
     private fun addMessage(sender: String, message: String) {
         val convId = convId.value ?: return
         addMessage(
             ChatMessage(
-                UUID.randomUUID().toString(),
-                chatBot.value.id,
-                convId,
-                sender,
-                message,
-                ChatMessageTypes.TEXT
+                botId = chatBot.value.id,
+                conversationId = convId,
+                sender = sender,
+                content = message,
+                type = ChatMessageTypes.TEXT
             )
         )
     }
@@ -84,12 +90,12 @@ class ChatViewModel: ViewModel() {
         val convId = convId.value ?: return
         addMessage(
             ChatMessage(
-                UUID.randomUUID().toString(),
-                chatBot.value.id,
-                convId,
-                chatBot.value.name,
-                error,
-                ChatMessageTypes.ERROR
+                botId = chatBot.value.id,
+                conversationId = convId,
+                sender = chatBot.value.name,
+                content = "",
+                error = error,
+                type = ChatMessageTypes.ERROR
             )
         )
     }
@@ -101,16 +107,15 @@ class ChatViewModel: ViewModel() {
         inputText.value = ""
 
         viewModelScope.launch(Dispatchers.IO) {
-            chatBot.value.chat(convId.value, message, messages.value, systemPrompt, memory.value).collect {
+            chatBot.value.chat(convId.value, message, messages, systemPrompt, memory.value).collect {
                 when (it) {
                     is StreamMessage.Start -> {
                         currentMessage.value = ChatMessage(
-                            it.id,
-                            chatBot.value.id,
-                            convId.value!!,
-                            chatBot.value.name,
-                            "",
-                            it.type
+                            botId = chatBot.value.id,
+                            conversationId = convId.value!!,
+                            sender = chatBot.value.name,
+                            content = "",
+                            type = it.type
                         )
                     }
                     is StreamMessage.Part -> {
@@ -122,7 +127,7 @@ class ChatViewModel: ViewModel() {
                         currentMessage.value = null
                     }
                     is StreamMessage.Error -> {
-                        addErrorMessage(it.error)
+                        addErrorMessage(it.error.removePrefix("<<error>>"))
                         currentMessage.value = null
                     }
                 }
@@ -133,7 +138,7 @@ class ChatViewModel: ViewModel() {
     fun checkPrompt(newPrompt: String) {
         if (checkingPrompt) return
         checkingPrompt = true
-        viewModelScope.launch(Dispatchers.IO) {
+        execute {
             try {
                 val txt = aiService.askAndProcess(
                     AskStreamRequest(
@@ -157,12 +162,27 @@ class ChatViewModel: ViewModel() {
             checkingPrompt = false
         }
     }
+
+    fun clearMessages() {
+        messages.clear()
+        execute {
+            dao.clearMessagesByConversationId(convId.value!!)
+        }
+    }
+
+    fun removeMessage(message: ChatMessage) {
+        messages.remove(message)
+        execute {
+            dao.delete(message)
+        }
+    }
     
     fun updateInputText(text: String) { inputText.value = text }
     fun updateSystemPrompt(prompt: String) { systemPrompt = prompt }
-    fun updateBot(id: Int) {
-        ChatBots.findById(id)?.let { this.chatBot.value = it }
+    fun updateBot(model: Model) {
+        chatBot.value = ModelChatBot(model)
     }
+
 
     companion object {
         private const val BASE_PROMPT = "You're ChatGPT, a helpful AI assistant."

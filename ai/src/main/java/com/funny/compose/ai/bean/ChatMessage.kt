@@ -4,15 +4,16 @@ import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 const val SENDER_ME = "Me"
 
 @Keep
-@Entity(tableName = "table_messages", primaryKeys = ["botId", "conversationId"])
+@Entity(tableName = "table_chat_history")
 data class ChatMessage(
     @ColumnInfo
-    @PrimaryKey(autoGenerate = false)
-    val id: String,
+    @PrimaryKey
+    val id: String = UUID.randomUUID().toString(),
     @ColumnInfo
     val botId: Int,
     @ColumnInfo
@@ -23,15 +24,12 @@ data class ChatMessage(
     var content: String,
     @ColumnInfo
     val type: Int = ChatMessageTypes.TEXT,
+    // 是否在响应过程中出错
+    val error: String? = null,
     @ColumnInfo
     val timestamp: Long = System.currentTimeMillis(),
 ) {
     val sendByMe: Boolean get() = sender == SENDER_ME
-    // 是否正在响应中
-    val responding: Boolean = true
-    // 是否在响应过程中出错
-    var error: String? = null
-
 }
 
 object ChatMessageTypes {

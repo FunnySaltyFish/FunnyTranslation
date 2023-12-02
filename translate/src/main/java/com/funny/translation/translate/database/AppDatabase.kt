@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.funny.compose.ai.bean.ChatMessage
 import com.funny.translation.js.JsDao
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.bean.LanguageListConverter
@@ -17,8 +18,8 @@ val appDB by lazy{
 }
 
 @Database(
-    entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class, LongTextTransTask::class, Draft::class],
-    version = 9,
+    entities = [JsBean::class, TransHistoryBean::class, TransFavoriteBean::class, LongTextTransTask::class, Draft::class, ChatMessage::class],
+    version = 10,
     autoMigrations = []
 )
 @TypeConverters(
@@ -32,6 +33,7 @@ abstract class AppDatabase : RoomDatabase(){
     abstract val transFavoriteDao: TransFavoriteDao
     abstract val longTextTransDao: LongTextTransDao
     abstract val draftDao: DraftDao
+    abstract val chatHistoryDao: ChatHistoryDao
 
     companion object{
         // 获取当前时间，以毫秒为单位
@@ -49,6 +51,7 @@ abstract class AppDatabase : RoomDatabase(){
                 .addMigrations(MIGRATION_6_7)
                 .addMigrations(MIGRATION_7_8)
                 .addMigrations(MIGRATION_8_9)
+                .addMigrations(MIGRATION_9_10)
                 .build()
 
         abstract class CustomMigration(startVersion: Int, endVersion: Int): Migration(startVersion, endVersion) {
@@ -169,6 +172,19 @@ abstract class AppDatabase : RoomDatabase(){
                         UPDATE table_long_text_trans_tasks SET updateTime = $now WHERE id = NEW.id;
                     END;
                 """.trimIndent())
+            }
+        }
+
+        // 创建 table_chat_history
+        private val MIGRATION_9_10 = object : CustomMigration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                super.migrate(database)
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `table_chat_history` " +
+                            "(`id` TEXT PRIMARY KEY NOT NULL, `botId` INTEGER NOT NULL, `conversationId` TEXT NOT NULL, " +
+                            "`sender` TEXT NOT NULL, `content` TEXT NOT NULL, `type` INTEGER NOT NULL, `error` TEXT, " +
+                            "`timestamp` INTEGER NOT NULL)"
+                )
             }
         }
 

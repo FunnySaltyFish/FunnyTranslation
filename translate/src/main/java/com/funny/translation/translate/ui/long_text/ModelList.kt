@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.compose.ai.bean.Model
-import com.funny.compose.ai.chat.ChatBots
 import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
@@ -31,7 +30,7 @@ private val aiService = TransNetwork.aiService
 
 @Composable
 fun ColumnScope.ModelListPart(
-    onBotSelected: (botId: Int) -> Unit
+    onModelSelected: (model: Model) -> Unit
 ) {
     Category(
         title = stringResource(id = R.string.model_select),
@@ -40,20 +39,20 @@ fun ColumnScope.ModelListPart(
         val (state, retry) = rememberRetryableLoadingState(loader = aiService::getChatModels)
         var currentSelectBotId by rememberStateOf(value = 0)
         val height by animateDpAsState(targetValue = if (expanded) 400.dp else 200.dp, label = "height")
-        val onClick = { chatBotId: Int ->
-            currentSelectBotId = chatBotId
-            onBotSelected(chatBotId)
+        val onClick = { model: Model ->
+            currentSelectBotId = model.chatBotId
+            onModelSelected(model)
         }
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
             .heightIn(0.dp, height)) {
             loadingList(state, retry = retry, key = { it.chatBotId }) {
-                val chatBot = ChatBots.findById(it.chatBotId) as? ModelChatBot ?: return@loadingList
+                val chatBot = ModelChatBot(it)
                 if (currentSelectBotId == 0) {
-                    onClick(it.chatBotId)
+                    onClick(it)
                 }
                 ListItem(
-                    modifier = Modifier.clickable { onClick(it.chatBotId) },
+                    modifier = Modifier.clickable { onClick(it) },
                     headlineContent = {
                         Text(text = chatBot.name)
                     },
@@ -62,7 +61,7 @@ fun ColumnScope.ModelListPart(
                     },
                     trailingContent = {
                         RadioButton(selected = currentSelectBotId == it.chatBotId, onClick = {
-                            onClick(it.chatBotId)
+                            onClick(it)
                         })
                     },
                 )

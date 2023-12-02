@@ -10,9 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.compose.ai.bean.ChatMemoryMaxContextSize
 import com.funny.compose.ai.bean.ChatMessage
+import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
-import com.funny.compose.ai.chat.ChatBots
 import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.ai.chat.TestLongTextChatBot
 import com.funny.translation.helper.DataHolder
@@ -341,14 +341,14 @@ class LongTextTransViewModel: ViewModel() {
     }
 
     private fun newChatMessage(msg: String): ChatMessage {
-        return ChatMessage(UUID.randomUUID().toString(), chatBot.id, transId, SENDER_ME, msg)
+        return ChatMessage(botId = chatBot.id, conversationId = transId, sender = SENDER_ME, content = msg)
     }
 
     fun updatePrompt(prefix: String) { prompt.prefix = prefix }
     fun updateEditingTermState(isEditing: Boolean) { isEditingTerm = isEditing }
     fun updateSourceText(text: String) { sourceText = text; totalLength = text.length }
-    fun updateBot(id: Int) {
-        ChatBots.findById(id)?.let { this.chatBot = it }
+    fun updateBot(model: Model) {
+        chatBot = ModelChatBot(model)
     }
     fun updateRemark(taskId: String, remark: String) {
         task ?: return

@@ -52,7 +52,7 @@ data class Conversation(
 
 object ChatBots {
     private val chatBots: Array<ModelChatBot> = arrayOf(
-        TestLongTextChatBot()
+        TestLongTextChatBot(),
     )
 
     private val map = chatBots.associateBy { it.id }

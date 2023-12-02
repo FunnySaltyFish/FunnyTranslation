@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
 @Serializable
-sealed class StreamMessage(val id: String = "", val type: Int = ChatMessageTypes.TEXT) {
+sealed class StreamMessage(val type: Int = ChatMessageTypes.TEXT) {
     object Start: StreamMessage()
     @Serializable
     class End(

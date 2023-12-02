@@ -10,6 +10,7 @@ import com.funny.compose.ai.token.TokenCounter
 import com.funny.compose.ai.token.TokenCounters
 import com.funny.translation.ai.BuildConfig
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.json.JSONObject
 
 open class ModelChatBot(
@@ -23,14 +24,19 @@ open class ModelChatBot(
         messages: List<ChatMessageReq>,
         args: Map<String, Any?>
     ): Flow<String> {
-        return aiService.askStream(
-            AskStreamRequest(
-                modelId = model.chatBotId,
-                messages = messages,
-                prompt = prompt,
-                args = JSONObject(args)
-            )
-        ).asFlow()
+        return try {
+            aiService.askStream(
+                AskStreamRequest(
+                    modelId = model.chatBotId,
+                    messages = messages,
+                    prompt = prompt,
+                    args = JSONObject(args)
+                )
+            ).asFlow()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            flowOf("<<error>>$e")
+        }
     }
 
     fun log(msg: Any?) {

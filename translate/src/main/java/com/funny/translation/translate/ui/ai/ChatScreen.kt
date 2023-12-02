@@ -2,10 +2,12 @@ package com.funny.translation.translate.ui.ai
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -37,13 +39,12 @@ import kotlinx.coroutines.launch
 
 // Modified From https://github.com/prafullmishra/JetComposer/tree/master
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ChatScreen() {
     val vm: ChatViewModel = viewModel()
     val inputText by vm.inputText
     val chatBot by vm.chatBot
-    val chatMessages by vm.messages
+    val chatMessages = vm.messages
     val navController = LocalNavController.current
 
     ModalNavigationDrawer(
@@ -58,10 +59,9 @@ fun ChatScreen() {
                 chatMessages = chatMessages,
                 inputText = inputText,
                 onInputTextChanged = vm::updateInputText,
-                onUpPressed = {
-                    navController.navigateUp()
-                },
-                sendAction = { vm.ask(inputText) }
+                sendAction = { vm.ask(inputText) },
+                clearAction = vm::clearMessages,
+                removeMessageAction = vm::removeMessage
             )
         },
         drawerContent = {
@@ -74,8 +74,8 @@ fun ChatScreen() {
                         RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
                     )
                     .statusBarsPadding()
-                    .padding(12.dp)
-                , vm = vm
+                    .padding(12.dp),
+                vm = vm
             )
         }
     )
@@ -90,7 +90,8 @@ fun ChatContent(
     inputText: String,
     onInputTextChanged: (String) -> Unit,
     sendAction: () -> Unit,
-    onUpPressed: () -> Unit
+    clearAction: () -> Unit,
+    removeMessageAction: (ChatMessage) -> Unit
 ) {
     CommonPage(
         modifier = modifier,
@@ -105,7 +106,8 @@ fun ChatContent(
             modifier = Modifier.weight(1f),
             currentMessageProvider = currentMessageProvider,
             chats = chatMessages,
-            lazyListState = lazyListState
+            lazyListState = lazyListState,
+            removeMessageAction = removeMessageAction
         )
         ChatBottomBar(
             text = inputText,
@@ -117,7 +119,8 @@ fun ChatContent(
                     }
                 }
                 sendAction()
-            }
+            },
+            clearAction = clearAction
         )
     }
 }
@@ -127,13 +130,13 @@ fun ChatContent(
 fun ChatBottomBar(
     text: String = "",
     onTextChanged: (String) -> Unit = {},
-    sendAction: () -> Unit = {}
+    sendAction: () -> Unit = {},
+    clearAction: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize()
             .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(50)
@@ -144,40 +147,50 @@ fun ChatBottomBar(
             modifier = Modifier.weight(1f),
             input = text,
             onValueChange = onTextChanged,
-            sendAction = sendAction
+            sendAction = sendAction,
+            clearAction = clearAction
         )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChatMessageList(
     modifier: Modifier,
     lazyListState: LazyListState,
     currentMessageProvider: () -> ChatMessage?,
-    chats: List<ChatMessage>
+    chats: List<ChatMessage>,
+    removeMessageAction: (ChatMessage) -> Unit
 ) {
     val currentMessage = currentMessageProvider()
     val context = LocalContext.current
+    val msgItem: @Composable LazyItemScope.(msg: ChatMessage) -> Unit = @Composable {  msg ->
+        MessageItem(
+            modifier = Modifier.animateItemPlacement(),
+            chatMessage = msg,
+            copyAction = {
+                ClipBoardUtil.copy(context, msg.content)
+                context.toastOnUi(R.string.copied_to_clipboard)
+            },
+            deleteAction = {
+                removeMessageAction(msg)
+            },
+            refreshAction = {}
+        )
+
+    }
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
         verticalArrangement = Arrangement.spacedBy(1.dp),
         modifier = modifier,
         state = lazyListState
     ) {
-        items(chats) { message ->
-            MessageItem(message, copyAction = {}, deleteAction = {}, refreshAction = {})
+        items(chats, key = { it.id }, contentType = { it.sender }) { message ->
+            msgItem(message)
         }
         if (currentMessage != null) {
             item {
-                MessageItem(
-                    currentMessage,
-                    copyAction = {
-                        ClipBoardUtil.copy(context, currentMessage.content)
-                        context.toastOnUi(R.string.copied_to_clipboard)
-                    },
-                    deleteAction = {},
-                    refreshAction = {}
-                )
+                msgItem(currentMessage)
             }
         }
     }
@@ -190,7 +203,7 @@ private fun Settings(
 ) {
     Column(modifier) {
         // Prompt
-        Category(title = "Prompt") {
+        Category(title = "Prompt", helpText = stringResource(id = R.string.chat_prompt_help)) {
             var text by rememberStateOf(value = vm.systemPrompt)
             TextField(value = text, onValueChange = { text = it })
             val showConfirmButton by remember {
@@ -221,7 +234,7 @@ private fun Settings(
             }
         }
 
-        ModelListPart(onBotSelected = vm::updateBot)
+        ModelListPart(onModelSelected = vm::updateBot)
     }
 }
 

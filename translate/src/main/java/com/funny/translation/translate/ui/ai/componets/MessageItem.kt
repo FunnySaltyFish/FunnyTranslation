@@ -31,6 +31,7 @@ import com.funny.translation.ui.MarkdownText
 
 @Composable
 fun MessageItem(
+    modifier: Modifier = Modifier,
     chatMessage: ChatMessage,
     copyAction: SimpleAction,
     deleteAction: SimpleAction,
@@ -39,7 +40,7 @@ fun MessageItem(
     val sendByMe = chatMessage.sendByMe
 
     Row(
-        Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 8.dp),
         horizontalArrangement = if (sendByMe) Arrangement.End else Arrangement.Start
@@ -95,24 +96,22 @@ fun MessageItem(
                     )
             }
 
-            if (!sendByMe) {
-                Row(Modifier.padding(top = 4.dp)) {
-                    // refresh / copy / delete
-                    if (chatMessage.type == ChatMessageTypes.TEXT) {
-                        MessageItemMenuIcon(
-                            icon = FunnyIcon(imageVector = Icons.Default.ContentCopy),
-                            onClick = copyAction
-                        )
-                    }
+            Row(Modifier.padding(top = 4.dp)) {
+                // refresh / copy / delete
+                if (chatMessage.type == ChatMessageTypes.TEXT) {
                     MessageItemMenuIcon(
-                        icon = FunnyIcon(imageVector = Icons.Default.Refresh),
-                        onClick = refreshAction
-                    )
-                    MessageItemMenuIcon(
-                        icon = FunnyIcon(imageVector = Icons.Default.Delete),
-                        onClick = deleteAction
+                        icon = FunnyIcon(imageVector = Icons.Default.ContentCopy),
+                        onClick = copyAction
                     )
                 }
+                MessageItemMenuIcon(
+                    icon = FunnyIcon(imageVector = Icons.Default.Refresh),
+                    onClick = refreshAction
+                )
+                MessageItemMenuIcon(
+                    icon = FunnyIcon(imageVector = Icons.Default.Delete),
+                    onClick = deleteAction
+                )
             }
         }
     }

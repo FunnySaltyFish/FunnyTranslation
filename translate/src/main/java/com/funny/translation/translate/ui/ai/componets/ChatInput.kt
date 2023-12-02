@@ -5,13 +5,12 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -22,9 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.R
 import com.funny.translation.ui.FixedSizeIcon
 
@@ -34,6 +35,7 @@ fun ChatInputTextField(
     input: String,
     onValueChange: (String) -> Unit,
     sendAction: () -> Unit,
+    clearAction: () -> Unit,
 ) {
     TextField(
         value = input,
@@ -62,36 +64,48 @@ fun ChatInputTextField(
                 label = ""
             ) { visible ->
                 Row {
-                    if (visible) {
-                        IconButton(onClick = { onValueChange("") }) {
+
+                    val context = LocalContext.current
+                    val showComing = {
+                        context.toastOnUi(R.string.comming_soon)
+                    }
+                    val button = @Composable { icon: ImageVector, contentDescription: String?, onClick: () -> Unit ->
+                        IconButton(onClick = onClick) {
                             FixedSizeIcon(
-                                imageVector = Icons.Filled.Clear,
-                                contentDescription = stringResource(id = R.string.clear_content)
+                                modifier = Modifier.size(24.dp),
+                                imageVector = icon,
+                                contentDescription = contentDescription
                             )
                         }
-                        IconButton(onClick = sendAction) {
-                            FixedSizeIcon(
-                                imageVector = Icons.Default.Send,
-                                contentDescription = stringResource(id = R.string.send)
-                            )
+                    }
+                    if (visible) {
+                        button(
+                            Icons.Filled.Clear, stringResource(id = R.string.clear_content)
+                        ) {
+                            onValueChange("")
+                        }
+                        button(
+                            Icons.Default.Send, stringResource(id = R.string.send)
+                        ) {
+                            sendAction()
                         }
                     } else {
-                        FixedSizeIcon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_mic),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(8.dp)
-                        )
-                        FixedSizeIcon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_image),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(8.dp)
-                        )
+                        button(
+                            ImageVector.vectorResource(id = R.drawable.ic_mic), null
+                        ) {
+                            showComing()
+                        }
+                        button(
+                            ImageVector.vectorResource(id = R.drawable.ic_image), null
+                        ) {
+                            showComing()
+                        }
+                        // Clear
+                        button(
+                            Icons.Filled.CleaningServices, stringResource(id = R.string.clear_content)
+                        ) {
+                            clearAction()
+                        }
                     }
                 }
             }

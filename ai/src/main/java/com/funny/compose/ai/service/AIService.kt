@@ -22,6 +22,7 @@ import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Streaming
 
@@ -46,6 +47,8 @@ interface AIService {
      */
     @POST("ai/ask_stream")
     @Streaming
+    // 设置超时时间
+    @Headers("CONNECT_TIMEOUT: 15", "READ_TIMEOUT: 300", "WRITE_TIMEOUT: 10")
     suspend fun askStream(@Body req: AskStreamRequest): ResponseBody
 
     @GET("ai/get_models")
@@ -113,7 +116,7 @@ suspend fun ResponseBody.asFlow() = withContext(Dispatchers.IO) {
 suspend fun Flow<String>.asStreamMessageFlow() = map {
     when {
         it.startsWith("<<error>") -> {
-            val remaining = it.removePrefix("<<error>")
+            val remaining = it.removePrefix("<<error>>")
             StreamMessage.Error(remaining)
         }
         it.startsWith("<<start>>") -> StreamMessage.Start
