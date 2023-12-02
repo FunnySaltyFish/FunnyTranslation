@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.chat.ChatBots
-import com.funny.compose.ai.chat.ServerChatBot
+import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.loading.loadingList
 import com.funny.compose.loading.rememberRetryableLoadingState
 import com.funny.translation.debug.rememberStateOf
@@ -48,7 +48,7 @@ fun ColumnScope.ModelListPart(
             .fillMaxWidth()
             .heightIn(0.dp, height)) {
             loadingList(state, retry = retry, key = { it.chatBotId }) {
-                val chatBot = ChatBots.findById(it.chatBotId) ?: return@loadingList
+                val chatBot = ChatBots.findById(it.chatBotId) as? ModelChatBot ?: return@loadingList
                 if (currentSelectBotId == 0) {
                     onClick(it.chatBotId)
                 }
@@ -71,5 +71,5 @@ fun ColumnScope.ModelListPart(
     }
 }
 
-fun ServerChatBot.description(model: Model): String
+fun ModelChatBot.description(model: Model): String
     = "${string(R.string.context_length)} ${ ((model.maxContextTokens)/1000f).roundToInt() }k | ${string(R.string.currency_symbol)}${model.cost1kTokens} / ${string(R.string.kilo_char)} | ${model.description}"

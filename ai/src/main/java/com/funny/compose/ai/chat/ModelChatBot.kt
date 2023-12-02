@@ -1,17 +1,21 @@
 package com.funny.compose.ai.chat
 
+import android.util.Log
+import com.funny.compose.ai.bean.ChatMessageReq
 import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.service.AskStreamRequest
 import com.funny.compose.ai.service.aiService
 import com.funny.compose.ai.service.asFlow
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.compose.ai.token.TokenCounters
+import com.funny.translation.ai.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONObject
 
-class ModelChatBot(
+open class ModelChatBot(
     val model: Model
-) : ServerChatBot() {
+) : ChatBot() {
+    private val verbose = BuildConfig.DEBUG
     override val args: HashMap<String, Any?> by lazy { hashMapOf() }
 
     override suspend fun sendRequest(
@@ -27,6 +31,12 @@ class ModelChatBot(
                 args = JSONObject(args)
             )
         ).asFlow()
+    }
+
+    fun log(msg: Any?) {
+        if (verbose) {
+            Log.d(name, msg.toString())
+        }
     }
 
     override val id: Int by model::chatBotId

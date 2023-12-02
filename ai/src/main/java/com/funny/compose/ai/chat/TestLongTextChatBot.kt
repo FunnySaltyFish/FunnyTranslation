@@ -1,5 +1,7 @@
 package com.funny.compose.ai.chat
 
+import com.funny.compose.ai.bean.ChatMessageReq
+import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.compose.ai.token.TokenCounters
 import kotlinx.coroutines.delay
@@ -11,7 +13,7 @@ const val LONG_TEXT_TRANS_PROMPT = """"你现在是一名优秀的翻译人员�
 示例输出：{"text":"萧红和晓明正在学习数据库课程","keywords":[["XiaoMing","晓明"]]}。
 你的输出必须为JSON格式"""
 
-class TestLongTextChatBot: ServerChatBot() {
+class TestLongTextChatBot: ModelChatBot(Model.Empty) {
     override var args: HashMap<String, Any?> = hashMapOf()
 
     override suspend fun sendRequest(

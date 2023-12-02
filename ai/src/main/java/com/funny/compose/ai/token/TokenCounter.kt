@@ -1,7 +1,7 @@
 package com.funny.compose.ai.token
 
 import androidx.annotation.IntRange
-import com.funny.compose.ai.chat.ChatMessageReq
+import com.funny.compose.ai.bean.ChatMessageReq
 import com.funny.translation.helper.lazyPromise
 import com.knuddels.jtokkit.Encodings
 import com.knuddels.jtokkit.api.EncodingType

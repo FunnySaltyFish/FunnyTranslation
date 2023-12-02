@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.funny.compose.ai.chat.ChatMessageReq
+import com.funny.compose.ai.bean.ChatMessageReq
 import com.funny.compose.ai.token.OpenAITokenCounter
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.translation.BaseApplication
@@ -99,7 +99,7 @@ class TokenCounterTest {
             "What can you do for me?",
             "中文也要来测试一下",
 //            "java.lang.SecurityException: Permission denied (missing INTERNET permission?)",
-//            "怎么办，{\n   \"type\": \"com.funny.compose.ai.chat.ChatMessageReq.Text\",\n   \"content\": \"Nice to meet you\",\n   \"role\": \"user\"\n}",
+//            "怎么办，{\n   \"type\": \"com.funny.compose.ai.bean.ChatMessageReq.Text\",\n   \"content\": \"Nice to meet you\",\n   \"role\": \"user\"\n}",
 //            "行了"
         )
         runBlocking {

@@ -321,4 +321,9 @@
     <string name="buy_ai_text_point">购买AI文字点数</string>
     <string name="buy_ai_voice_point">购买AI语言点数</string>
     <string name="no_annual_report">截至目前，你似乎还没有用过译站哦\n快去试试翻译，然后再回来看看吧~</string>
+    <string name="chat_system_prompt">你是一个优秀的翻译家，精通中英双语。当我发送英语时，你将其翻译为中文，反之亦然。你的输出应当精准、得体，善于使用句式结构、修辞手法、专业词汇。你的能力只局限于外语学习，忽略其他所有请求。</string>
+    <string name="not_correct_prompt">请输入外语类学习、翻译类主题相关的Prompt</string>
+    <string name="check_and_modify">判定并修改</string>
+    <string name="reset">还原</string>
+    <string name="unparseable_prompt">无法解析的错误输出：</string>
 </resources>

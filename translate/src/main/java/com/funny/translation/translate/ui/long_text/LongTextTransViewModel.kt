@@ -13,7 +13,7 @@ import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
 import com.funny.compose.ai.chat.ChatBots
-import com.funny.compose.ai.chat.ServerChatBot
+import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.ai.chat.TestLongTextChatBot
 import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.JsonX
@@ -60,7 +60,7 @@ class LongTextTransViewModel: ViewModel() {
     internal var task: LongTextTransTask? by mutableStateOf(null)
     internal var screenState by mutableStateOf(ScreenState.Init)
 
-    var chatBot: ServerChatBot by mutableStateOf(TestLongTextChatBot())
+    var chatBot: ModelChatBot by mutableStateOf(TestLongTextChatBot())
     var totalLength = 0
     var translatedLength by mutableIntStateOf(0)
 

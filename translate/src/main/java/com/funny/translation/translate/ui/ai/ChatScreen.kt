@@ -1,42 +1,38 @@
 package com.funny.translation.translate.ui.ai
 
-import android.animation.ArgbEvaluator
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.chat.ChatBot
-import com.funny.compose.ai.utils.getColorAtProgress
+import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.ai.componets.ChatInputTextField
 import com.funny.translation.translate.ui.ai.componets.MessageItem
+import com.funny.translation.translate.ui.long_text.Category
+import com.funny.translation.translate.ui.long_text.ModelListPart
 import com.funny.translation.translate.ui.long_text.components.AIPointText
 import com.funny.translation.translate.ui.widget.CommonPage
-import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.launch
 
 // Modified From https://github.com/prafullmishra/JetComposer/tree/master
@@ -69,7 +65,18 @@ fun ChatScreen() {
             )
         },
         drawerContent = {
-
+            Settings(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .fillMaxHeight()
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
+                    )
+                    .statusBarsPadding()
+                    .padding(12.dp)
+                , vm = vm
+            )
         }
     )
 }
@@ -174,144 +181,80 @@ fun ChatMessageList(
             }
         }
     }
-
-    Recomposer
 }
 
 @Composable
-fun SentMessage(
-    chat: String,
-    isPrevSent: Boolean,
-    isNextSent: Boolean,
-    isEmojiOnly: Boolean,
-    isNextEmojiOnly: Boolean,
-    isPrevEmojiOnly: Boolean,
-    listHeight: Float
+private fun Settings(
+    modifier: Modifier,
+    vm: ChatViewModel,
 ) {
-    val evaluator = remember { ArgbEvaluator() }
-    val topShade = remember { Color(0xFFB500E7) }
-    val bottomShade = remember { Color(0xFF1261FF) }
-    var backgroundColor by remember { mutableStateOf(bottomShade) }
+    Column(modifier) {
+        // Prompt
+        Category(title = "Prompt") {
+            var text by rememberStateOf(value = vm.systemPrompt)
+            TextField(value = text, onValueChange = { text = it })
+            val showConfirmButton by remember {
+                derivedStateOf { text != vm.systemPrompt }
+            }
 
-    Row(
-        horizontalArrangement = Arrangement.End,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = if (!isNextSent) 0.dp else 24.dp)
-            .onGloballyPositioned { coordinates: LayoutCoordinates ->
-                if (listHeight > 0f) {
-                    val topOffset = coordinates.boundsInParent().top
-                    val cleanTopOffset = when {
-                        topOffset < 0 -> 0f
-                        topOffset > listHeight -> listHeight
-                        else -> topOffset
+            AnimatedVisibility(visible = showConfirmButton) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = { text = vm.systemPrompt },
+                    ) {
+                        Text(text = stringResource(id = R.string.reset))
                     }
-                    backgroundColor = getColorAtProgress(
-                        progress = cleanTopOffset / listHeight,
-                        start = topShade,
-                        end = bottomShade,
-                        evaluator = evaluator
-                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    TaskButton(
+                        onClick = { vm.checkPrompt(text) },
+                        loading = vm.checkingPrompt
+                    ) {
+                        Text(text = stringResource(id = R.string.check_and_modify))
+                    }
                 }
             }
-    ) {
-        var fontSize = 15.sp
-        var textModifier = Modifier
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(
-                    topStart = 18.dp,
-                    bottomStart = 18.dp,
-                    topEnd = if (isPrevSent || isPrevEmojiOnly) 18.dp else 3.dp,
-                    bottomEnd = if (isNextSent || isNextEmojiOnly) 18.dp else 3.dp
-                )
-            )
-            .padding(vertical = 8.dp, horizontal = 12.dp)
-
-        if (isEmojiOnly) {
-            fontSize = 36.sp
-            textModifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 12.dp)
         }
 
-        Spacer(Modifier.weight(0.2f))
-        Box(
-            contentAlignment = Alignment.CenterEnd,
-            modifier = Modifier.weight(0.8f)
-        ) {
-            Text(
-                text = chat,
-                color = Color.White,
-                modifier = textModifier,
-                fontSize = fontSize
-            )
-        }
+        ModelListPart(onBotSelected = vm::updateBot)
     }
 }
 
+// 做某项任务的 button，点击后前面加上圈圈，并且不可点击，直至任务完成或者失败
 @Composable
-fun ReceivedMessage(
-    chat: String,
-    isPrevReceived: Boolean,
-    isNextReceived: Boolean,
-    isEmojiOnly: Boolean,
-    isNextEmojiOnly: Boolean,
-    isPrevEmojiOnly: Boolean
+fun TaskButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    loading: Boolean = false,
+    enabled: Boolean = true,
+    loadingColor: Color = MaterialTheme.colorScheme.primary,
+    loadingContent: @Composable () -> Unit = {
+        CircularProgressIndicator(
+            color = loadingColor,
+            strokeWidth = 2.dp,
+            modifier = Modifier.size(16.dp)
+        )
+    },
+    content: @Composable () -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, bottom = if (!isNextReceived) 0.dp else 24.dp)
+    val loadingModifier = Modifier
+        .clickable(enabled = enabled, onClick = onClick)
+        .animateContentSize()
+        .then(modifier)
+
+    Button(
+        onClick = onClick,
+        enabled = enabled and !loading,
+        modifier = loadingModifier
     ) {
-        if (isNextReceived) {
-            Spacer(Modifier.width(10.dp))
-            Surface(
-                modifier = Modifier.size(28.dp),
-                shape = CircleShape,
-            ) {
-                FixedSizeIcon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_round_android_24),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(4.dp)
-                )
-            }
-            Spacer(Modifier.width(10.dp))
-        } else {
-            Spacer(Modifier.width(48.dp))
+        AnimatedVisibility(visible = loading) {
+            loadingContent()
         }
-        var fontSize = 15.sp
-        var textModifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(
-                    topEnd = 18.dp,
-                    bottomEnd = 18.dp,
-                    topStart = if (isPrevReceived || isPrevEmojiOnly) 18.dp else 3.dp,
-                    bottomStart = if (isNextReceived || isNextEmojiOnly) 18.dp else 3.dp
-                )
-            )
-            .padding(vertical = 8.dp, horizontal = 12.dp)
-        if (isEmojiOnly) {
-            fontSize = 36.sp
-            textModifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 12.dp)
-        }
-        Box(
-            contentAlignment = Alignment.CenterStart,
-            modifier = Modifier.weight(0.9f)
-        ) {
-            Text(
-                text = chat,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = textModifier,
-                fontSize = fontSize
-            )
-        }
-        Spacer(Modifier.weight(0.1f))
+        content()
     }
 }
