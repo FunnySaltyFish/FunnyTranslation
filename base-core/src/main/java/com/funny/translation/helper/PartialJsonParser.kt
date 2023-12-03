@@ -74,6 +74,24 @@ object PartialJsonParser {
                                     break
                                 }
                             }
+                            '[' -> {
+                                if (!insideLiteral) {
+                                    // 向左找，看看是先我碰到 : 还是 ,
+                                    // : 例如 {"key":"hhh", "key2": [["急"}
+                                    // , 例如 {"text":"to ignite the fire.","keywords":[["Red Guards","红色联合"],["
+                                    var k = j - 1
+                                    while (k >= 0) {
+                                        if (s[k] == ',') {
+                                            tail.removeAt(tail.lastIndexOf("]"))
+                                            break
+                                        } else if (s[k] == ':') {
+                                            break
+                                        }
+                                        k--
+                                    }
+
+                                }
+                            }
                         }
                         j -= 1
                     }
@@ -84,6 +102,30 @@ object PartialJsonParser {
                     }
                 }
 
+            } else if (tail.last() == "}") {
+                // {"key":"hhh", "key2":
+                s = s.trimEnd()
+                if (s.last() == ':') {
+                    // 从后往前找，如果碰到 "key 这种，把它去掉
+                    // 也就是键都没有生成完成
+                    var j = s.lastIndex
+                    var insideLiteral = false
+                    while (j > 0) {
+                        when (s[j]) {
+                            '"' -> {
+                                insideLiteral = !insideLiteral
+                            }
+
+                            ',' -> {
+                                if (!insideLiteral) {
+                                    s = s.slice(0 until j)
+                                    break
+                                }
+                            }
+                        }
+                        j--
+                    }
+                }
             }
         }
 

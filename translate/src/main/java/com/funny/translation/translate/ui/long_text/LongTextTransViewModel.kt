@@ -42,7 +42,7 @@ import java.util.UUID
 
 
 const val DEFAULT_PROMPT_PREFIX = """你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文"""
-const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语，以JSON的形式返回（如果没有，请返回[]）。
+const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语，以JSON的形式返回（如果没有，请返回[]）。你必须保持原文的格式，对所有换行都正确输出。
 示例输入：{"text":"XiaoHong and XiaoMing are studying DB class.","keywords":[["DB","数据库"],["XiaoHong","萧红"]]}
 示例输出：{"text":"萧红和晓明正在学习数据库课程","keywords":[["XiaoMing","晓明"]]}。
 你的输出必须为JSON格式"""
@@ -222,8 +222,9 @@ class LongTextTransViewModel: ViewModel() {
     private suspend fun getNextPart(prevEnd: String, corpus: List<Term>): Pair<String, ArrayList<ChatMessageReq>> {
         if (translatedLength >= totalLength) return "" to arrayListOf()
 
-        // 最大的输入长度： 模型最大长度 * 0.95 / 2
-        val maxLength = (chatBot.maxContextTokens * 0.95f / 2).toInt()
+        // 最大的输入长度： 模型最大长度 * 0.8
+        // 由于模型的输出长度实际远小于上下文长度（gpt3.5、gpt4都只有4096），这里乘以 0.8 以尽量使得输出能输出万
+        val maxLength = (chatBot.model.maxOutputTokens * 0.8f).toInt()
         val systemPrompt = prompt.toPrompt()
         val tokenCounter = chatBot.tokenCounter
 
@@ -239,12 +240,9 @@ class LongTextTransViewModel: ViewModel() {
             put("text", "")
             put("keywords", JSONArray(corpus))
         }
-        val formatToken = tokenCounter.countMessages(listOf(ChatMessageReq.text(obj.toString(), "user")))
-        // 剩余的 token 数量，为总的 token 数量减去已经使用的 token 数量
-        val remainTokens = maxLength - tokenCounter.countMessages(messages) - formatToken
         val remainText = sourceText.safeSubstring(translatedLength, translatedLength + maxLength)
-        Log.d(TAG, "getNextPart: remainTokens: $remainTokens, remainText: ${remainText.abstract()}")
-        val text = tokenCounter.truncate(remainText, emptyArray(), remainTokens)
+        Log.d(TAG, "getNextPart: remainText: ${remainText.abstract()}")
+        val text = tokenCounter.truncate(remainText, emptyArray(), maxLength)
         Log.d(TAG, "getNextPart: truncated text: ${text.abstract()}")
         val splitText = TextSplitter.splitTextNaturally(
             text, text.length
@@ -254,10 +252,7 @@ class LongTextTransViewModel: ViewModel() {
         return splitText to messages
     }
 
-    private suspend fun translatePart(part: String, messages: List<ChatMessageReq>, retryTimes: Int = 0) {
-        if (retryTimes >= 3) {
-            throw Exception(string(R.string.translate_failed_too_many_retries))
-        }
+    private suspend fun translatePart(part: String, messages: List<ChatMessageReq>) {
         resultJsonPart.clear()
         // 寻找当前的 corpus
         // TODO 改成更合理的方式，比如基于 NLP 的分词
@@ -273,7 +268,7 @@ class LongTextTransViewModel: ViewModel() {
         currentTransPartLength = part.length
 
         val systemPrompt = prompt.toPrompt()
-        val maxOutputTokens = (chatBot.maxContextTokens * 0.95f).toInt() - chatBot.tokenCounter.countMessages(messages) - chatBot.tokenCounter.countMessages(listOf(ChatMessageReq.text(systemPrompt, "system")))
+        val maxOutputTokens = chatBot.model.maxOutputTokens
         val chatMessages = messages.map { newChatMessage(it.role, it.content) }
         val args = mapOf("max_tokens" to maxOutputTokens)
         chatBot.chat(transId, part, chatMessages, systemPrompt, memory, args).collect { streamMsg ->
@@ -298,10 +293,10 @@ class LongTextTransViewModel: ViewModel() {
                             recordOutput.put(streamMsg.part)
                         }
                     } catch (e: SerializationException) {
-                        // JSON 数据解析失败了，重新尝试这一段，如果错误达到三次，则停止
-                        appCtx.toastOnUi(string(R.string.attemp_to_retry, retryTimes + 1))
-                        delay(500)
-                        translatePart(part, messages,retryTimes + 1)
+                        // JSON 数据解析失败了，谈个提示，报个错
+                        // 继续往下走，后面能不能解析出来
+                        appCtx.toastOnUi(string(R.string.attemp_to_retry))
+                        Log.w(TAG, "translatePart: 刚刚那一段解析失败了", )
                     }
                 }
                 is StreamMessage.End -> {
