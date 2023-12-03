@@ -15,7 +15,7 @@ class TestChatBot() : ChatBot() {
     override val name: String = "Test"
     override val avatar: String = "https://c-ssl.duitang.com/uploads/blog/202206/12/20220612164733_72d8b.jpg"
     override val tokenCounter: TokenCounter = TokenCounters.defaultTokenCounter
-    override val maxContextLength = 1000
+    override val maxContextTokens = 1000
     override suspend fun sendRequest(
         prompt: String,
         messages: List<ChatMessageReq>,
@@ -31,7 +31,8 @@ class TestChatBot() : ChatBot() {
         currentMessage: String,
         messages: List<ChatMessage>,
         systemPrompt: String,
-        memory: ChatMemory
+        memory: ChatMemory,
+        args: Map<String, Any?>
     ): Flow<StreamMessage> =
         flow {
             emit(StreamMessage.Start)

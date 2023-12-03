@@ -58,5 +58,5 @@ class TestLongTextChatBot: ModelChatBot(Model.Empty) {
     override val name: String = "Test"
     override val avatar: String = "https://c-ssl.duitang.com/uploads/blog/202206/12/20220612164733_72d8b.jpg"
     override val tokenCounter: TokenCounter = TokenCounters.defaultTokenCounter
-    override val maxContextLength = 1024
+    override val maxContextTokens = 1024
 }

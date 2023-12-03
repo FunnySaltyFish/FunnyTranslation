@@ -4,7 +4,7 @@ import com.funny.translation.helper.JsonX
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ChatMessageReq(
+data class ChatMessageReq(
     val role: String,
     val content: String
 ) {
@@ -40,3 +40,8 @@ class ChatMessageReq(
         }
     }
 }
+
+fun ChatMessage.toChatMessageReq() = ChatMessageReq(
+    role = if (sendByMe) "user" else "assistant",
+    content = content
+)

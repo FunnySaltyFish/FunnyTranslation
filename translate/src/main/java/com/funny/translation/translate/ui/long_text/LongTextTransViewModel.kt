@@ -8,8 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.funny.compose.ai.bean.ChatMemoryMaxContextSize
+import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 import com.funny.compose.ai.bean.ChatMessage
+import com.funny.compose.ai.bean.ChatMessageReq
 import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
@@ -26,6 +27,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.LongTextTransTask
 import com.funny.translation.translate.database.appDB
+import com.funny.translation.translate.extentions.safeSubstring
 import com.funny.translation.translate.ui.long_text.bean.TermList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -75,9 +77,8 @@ class LongTextTransViewModel: ViewModel() {
     var isPausing by mutableStateOf(false)
 
     var transId = UUID.randomUUID().toString()
-    private var histories = mutableListOf<ChatMessage>()
     internal var prompt by mutableStateOf(DEFAULT_PROMPT)
-    private var memory = ChatMemoryMaxContextSize(1024, prompt.toPrompt())
+    private var memory = ChatMemoryFixedMsgLength(2)
 
     val allCorpus = TermList()
     val currentCorpus = TermList()
@@ -160,15 +161,20 @@ class LongTextTransViewModel: ViewModel() {
         translateJob = viewModelScope.launch(Dispatchers.IO) {
             try {
                 while (isActive && translatedLength < totalLength) {
-                    val part = getNextPart()
-                    Log.d(TAG, "startTranslate: nextPart: $part")
-                    if (part == "") break
                     if (isEditingTerm) {
                         isPausing = true
                         appCtx.toastOnUi(string(R.string.paused_due_to_editting))
                     }
                     while (isPausing) { delay(100) }
-                    translatePart(part)
+
+                    // 前文的最后一小点，供上下文衔接
+                    val prevEnd = if (lastResultText.isNotEmpty()) {
+                        "..." + lastResultText.takeLast(30)
+                    } else ""
+                    val (part, messages) = getNextPart(prevEnd, currentCorpus.list)
+                    Log.d(TAG, "startTranslate: nextPart: $part")
+                    if (part == "") break
+                    translatePart(part, messages)
                 }
                 delay(500)
                 screenState = ScreenState.Result
@@ -210,26 +216,49 @@ class LongTextTransViewModel: ViewModel() {
      * 获取下一次要翻译的部分
      * 规则：
      * chatBot.maxContextLength 是一次能接受的最大长度
-     * 它包括 SystemPrompt + 这次输入 format 后的长度
+     * 它包括 SystemPrompt + 这次输入 format 后 + 输出的长度 +
      * @return String
      */
-    private fun getNextPart(): String {
-        val maxLength = chatBot.maxContextLength
+    private suspend fun getNextPart(prevEnd: String, corpus: List<Term>): Pair<String, ArrayList<ChatMessageReq>> {
+        if (translatedLength >= totalLength) return "" to arrayListOf()
+
+        // 最大的输入长度： 模型最大长度 * 0.95 / 2
+        val maxLength = (chatBot.maxContextTokens * 0.95f / 2).toInt()
         val systemPrompt = prompt.toPrompt()
-        val remainLength = maxLength - systemPrompt.length - 1 // 换行符
-        val splitText = TextSplitter.splitTextNaturally(
-            sourceText.substring(translatedLength, minOf(translatedLength + maxLength, totalLength)),
-            remainLength
+        val tokenCounter = chatBot.tokenCounter
+
+        val messages = arrayListOf<ChatMessageReq>(
+            ChatMessageReq.text(systemPrompt, "system"),
         )
-        return splitText
+        // 把上次翻译的最后一点加上
+        if (prevEnd.isNotEmpty()) {
+            messages.add(ChatMessageReq.text(prevEnd, "assistant"))
+        }
+
+        val obj = JSONObject().apply {
+            put("text", "")
+            put("keywords", JSONArray(corpus))
+        }
+        val formatToken = tokenCounter.countMessages(listOf(ChatMessageReq.text(obj.toString(), "user")))
+        // 剩余的 token 数量，为总的 token 数量减去已经使用的 token 数量
+        val remainTokens = maxLength - tokenCounter.countMessages(messages) - formatToken
+        val remainText = sourceText.safeSubstring(translatedLength, translatedLength + maxLength)
+        Log.d(TAG, "getNextPart: remainTokens: $remainTokens, remainText: ${remainText.abstract()}")
+        val text = tokenCounter.truncate(remainText, emptyArray(), remainTokens)
+        Log.d(TAG, "getNextPart: truncated text: ${text.abstract()}")
+        val splitText = TextSplitter.splitTextNaturally(
+            text, text.length
+        )
+        obj.put("text", splitText)
+        messages.add(ChatMessageReq.text(obj.toString(), "user"))
+        return splitText to messages
     }
 
-    private suspend fun translatePart(part: String, retryTimes: Int = 0) {
+    private suspend fun translatePart(part: String, messages: List<ChatMessageReq>, retryTimes: Int = 0) {
         if (retryTimes >= 3) {
             throw Exception(string(R.string.translate_failed_too_many_retries))
         }
         resultJsonPart.clear()
-        histories.add(newChatMessage(part))
         // 寻找当前的 corpus
         // TODO 改成更合理的方式，比如基于 NLP 的分词
         currentCorpus.clear()
@@ -240,14 +269,16 @@ class LongTextTransViewModel: ViewModel() {
             }
         }
         currentCorpus.addAll(needToAddTerms)
-        chatBot.args["keywords"] = currentCorpus.toList()
         Log.d(TAG, "translatePart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
         currentTransPartLength = part.length
 
-        chatBot.chat(transId, part, histories, prompt.toPrompt(), memory).collect { streamMsg ->
+        val systemPrompt = prompt.toPrompt()
+        val maxOutputTokens = (chatBot.maxContextTokens * 0.95f).toInt() - chatBot.tokenCounter.countMessages(messages) - chatBot.tokenCounter.countMessages(listOf(ChatMessageReq.text(systemPrompt, "system")))
+        val chatMessages = messages.map { newChatMessage(it.role, it.content) }
+        val args = mapOf("max_tokens" to maxOutputTokens)
+        chatBot.chat(transId, part, chatMessages, systemPrompt, memory, args).collect { streamMsg ->
             when(streamMsg) {
                 is StreamMessage.Start -> {
-//                    sourceStringSegments.add(translatedLength)
                     if (record) {
                         recordOutput = JSONArray()
                     }
@@ -270,7 +301,7 @@ class LongTextTransViewModel: ViewModel() {
                         // JSON 数据解析失败了，重新尝试这一段，如果错误达到三次，则停止
                         appCtx.toastOnUi(string(R.string.attemp_to_retry, retryTimes + 1))
                         delay(500)
-                        translatePart(part, retryTimes + 1)
+                        translatePart(part, messages,retryTimes + 1)
                     }
                 }
                 is StreamMessage.End -> {
@@ -288,6 +319,10 @@ class LongTextTransViewModel: ViewModel() {
                             put("output", recordOutput)
                         })
                     }
+                }
+                is StreamMessage.Error -> {
+                    appCtx.toastOnUi(streamMsg.error)
+                    delay(1000)
                 }
                 else -> Unit
             }
@@ -340,8 +375,8 @@ class LongTextTransViewModel: ViewModel() {
         return ans
     }
 
-    private fun newChatMessage(msg: String): ChatMessage {
-        return ChatMessage(botId = chatBot.id, conversationId = transId, sender = SENDER_ME, content = msg)
+    private fun newChatMessage(sender: String, msg: String): ChatMessage {
+        return ChatMessage(botId = chatBot.id, conversationId = transId, sender = if (sender == "user") SENDER_ME else sender, content = msg)
     }
 
     fun updatePrompt(prefix: String) { prompt.prefix = prefix }
@@ -381,3 +416,6 @@ class LongTextTransViewModel: ViewModel() {
         private const val TAG = "LongTextTransViewModel"
     }
 }
+
+private fun String.abstract() =
+    if (length > 30) substring(0, 15) + "..." + takeLast(15) else this + "(${length})"

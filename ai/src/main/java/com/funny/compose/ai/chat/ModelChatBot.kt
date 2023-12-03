@@ -48,7 +48,7 @@ open class ModelChatBot(
     override val id: Int by model::chatBotId
     override val name: String by model::name
     override val avatar by model::avatar
-    override val maxContextLength: Int by model::maxContextTokens
+    override val maxContextTokens: Int by model::maxContextTokens
 
     override val tokenCounter: TokenCounter
         get() = TokenCounters.findById(model.tokenCounterId)

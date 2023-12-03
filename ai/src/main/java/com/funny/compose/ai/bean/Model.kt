@@ -26,10 +26,12 @@ data class Model (
     @SerialName("max_context_tokens")
     // 最大上下文长度，单位 token
     val maxContextTokens: Int,
+    @SerialName("max_output_tokens")
+    val maxOutputTokens: Int,
     @SerialName("token_counter_id")
     val tokenCounterId: Int,
 ) {
     companion object {
-        val Empty = Model(0, BigDecimal.ZERO, "Test", "", "", 0, 0)
+        val Empty = Model(0, BigDecimal.ZERO, "Test", "", "", 0, 0, 0)
     }
 }

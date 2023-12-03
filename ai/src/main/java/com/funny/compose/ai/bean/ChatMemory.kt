@@ -1,5 +1,6 @@
 package com.funny.compose.ai.bean
 
+import com.funny.compose.ai.token.TokenCounters
 import java.util.Date
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -10,7 +11,7 @@ abstract class ChatMemory {
      * @param list List<ChatMessage>
      * @return List<ChatMessage>
      */
-    abstract fun getIncludedMessages(list: List<ChatMessage>) : List<ChatMessage>
+    abstract suspend fun getIncludedMessages(list: List<ChatMessage>) : List<ChatMessage>
 
     companion object {
         val Saver = { chatMemory: ChatMemory ->
@@ -36,13 +37,13 @@ abstract class ChatMemory {
 }
 
 class ChatMemoryFixedMsgLength(val length: Int) : ChatMemory() {
-    override fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
+    override suspend fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
         return list.takeLast(length)
     }
 }
 
 class ChatMemoryFixedDuration(val duration: Duration) : ChatMemory() {
-    override fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
+    override suspend fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
         val now = Date()
         val last = list.lastOrNull { it.timestamp > now.time - duration.inWholeMilliseconds }
         return if (last == null) {
@@ -54,7 +55,7 @@ class ChatMemoryFixedDuration(val duration: Duration) : ChatMemory() {
 }
 
 class ChatMemoryMaxContextSize(var maxContextSize: Int, var systemPrompt: String): ChatMemory() {
-    override fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
+    override suspend fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
         var idx = list.size - 1
         var curLength = systemPrompt.length
         while (curLength < maxContextSize && idx >= 0) {
@@ -63,7 +64,25 @@ class ChatMemoryMaxContextSize(var maxContextSize: Int, var systemPrompt: String
         }
         return list.subList(idx + 1, list.size)
     }
+}
 
+class ChatMemoryMaxToken(val model: Model, var systemPrompt: String): ChatMemory() {
+    private val tokenCounter = TokenCounters.findById(model.tokenCounterId)
+    private val maxAllTokens = (model.maxContextTokens * 0.95).toInt()
+    private val maxInputToken = maxAllTokens / 2
+
+    override suspend fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
+        val remainingInputTokens = maxInputToken - tokenCounter.countMessages(listOf(
+            ChatMessageReq.text(systemPrompt, "system")
+        ))
+        var idx = list.size - 1
+        var curInputTokens = 0
+        while (curInputTokens < remainingInputTokens && idx >= 0) {
+            curInputTokens += tokenCounter.countMessages(listOf(list[idx].toChatMessageReq()))
+            idx--
+        }
+        return list.subList(idx + 1, list.size)
+    }
 }
 
 private val DEFAULT_CHAT_MEMORY = ChatMemoryFixedMsgLength(2)

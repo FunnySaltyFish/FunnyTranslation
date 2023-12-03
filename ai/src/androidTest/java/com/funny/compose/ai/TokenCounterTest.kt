@@ -37,7 +37,6 @@ class TokenCounterTest {
         }
 
         override suspend fun countMessages(
-            systemPrompt: String,
             messages: List<ChatMessageReq>
         ): Int {
             // https://api.openai.com/v1/chat/completions   -H "Content-Type: application/json"   -H "Authorization: Bearer $OPENAI_API_KEY
@@ -61,6 +60,10 @@ class TokenCounterTest {
             val usage = jsonObj.getJSONObject("usage")
             val tokens = usage.getInt("prompt_tokens")
             return tokens
+        }
+
+        override suspend fun decode(tokens: List<Int>): String {
+            return ""
         }
     }
 
@@ -116,12 +119,15 @@ class TokenCounterTest {
     }
 
     private suspend fun count(counter1: TokenCounter, counter2: TokenCounter, systemPrompt: String, message: String) = coroutineScope {
-        val messages = listOf( ChatMessageReq.text(message, "user") )
+        val messages = listOf(
+            ChatMessageReq.text(systemPrompt, "system"),
+            ChatMessageReq.text(message, "user")
+        )
         val count1 = async {
-            counter1.countMessages(systemPrompt, messages)
+            counter1.countMessages(messages)
         }
         val count2 = async {
-            counter2.countMessages(systemPrompt, messages )
+            counter2.countMessages(messages )
         }
         println("-- msg: $messages")
         val num1 = count1.await()

@@ -19,7 +19,7 @@ abstract class ChatBot {
     /**
      * 单次接收文本的最大长度
      */
-    abstract val maxContextLength: Int
+    abstract val maxContextTokens: Int
 
     abstract suspend fun sendRequest(
         prompt: String,
@@ -33,6 +33,7 @@ abstract class ChatBot {
         messages: List<ChatMessage>,
         systemPrompt: String,
         memory: ChatMemory,
+        args: Map<String, Any?> = emptyMap(),
     ): Flow<StreamMessage> {
         val includedMessages = memory.getIncludedMessages(messages)
         val chatMessageReqList = includedMessages.map {

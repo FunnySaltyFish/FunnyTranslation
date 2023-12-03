@@ -17,13 +17,24 @@ abstract class TokenCounter {
         @IntRange(from = 0) maxTokenLength: Int = Int.MAX_VALUE
     ): List<Int>
 
+    abstract suspend fun decode(tokens: List<Int>): String
+
     open suspend fun count(text: String, allowedSpecialTokens: Array<String> = arrayOf()) =
         encode(text, allowedSpecialTokens).size
 
-    open suspend fun countMessages(systemPrompt: String, messages: List<ChatMessageReq>) =
-        count(systemPrompt) + messages.sumOf { msg ->
+    open suspend fun countMessages(messages: List<ChatMessageReq>) =
+        messages.sumOf { msg ->
             count(msg.content)
         }
+
+    open suspend fun truncate(
+        text: String,
+        allowedSpecialTokens: Array<String>,
+        @IntRange(from = 0) maxTokenLength: Int = Int.MAX_VALUE
+    ): String {
+        val tokens = encode(text, allowedSpecialTokens, maxTokenLength)
+        return decode(tokens)
+    }
 }
 
 class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
@@ -49,14 +60,18 @@ class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
         return enc.await().encodeOrdinary(text, maxTokenLength).tokens
     }
 
+    override suspend fun decode(tokens: List<Int>): String {
+        return enc.await().decode(tokens)
+    }
+
     override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
         return encode(text, allowedSpecialTokens).size
     }
 
     // https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
-    override suspend fun countMessages(systemPrompt: String, messages: List<ChatMessageReq>): Int {
-        var numToken = 0
+    override suspend fun countMessages(messages: List<ChatMessageReq>): Int {
         val TOKENS_PER_MESSAGE = 3 // here we only use gpt-3.5-turbo and gpt-4, so the value is 3
+        var numToken = 0
         for(msg in messages) {
             numToken += TOKENS_PER_MESSAGE
             numToken += count(msg.content)
@@ -64,6 +79,19 @@ class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
         }
         numToken += 3 // every reply is primed with <|start|>assistant<|message|>
         return numToken
+    }
+
+    override suspend fun truncate(
+        text: String,
+        allowedSpecialTokens: Array<String>,
+        maxTokenLength: Int
+    ): String {
+        val result = enc.await().encodeOrdinary(text, maxTokenLength)
+        return if (result.isTruncated) {
+            decode(result.tokens)
+        } else {
+            text
+        }
     }
 }
 
@@ -81,6 +109,10 @@ class DefaultTokenCounter: TokenCounter() {
 
     override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
         return text.length
+    }
+
+    override suspend fun decode(tokens: List<Int>): String {
+        return ""
     }
 }
 
