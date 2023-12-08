@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,6 +54,7 @@ import com.funny.compose.ai.bean.ChatMessage
 import com.funny.compose.ai.chat.ChatBot
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.ClipBoardUtil
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
@@ -91,20 +92,21 @@ fun ChatScreen() {
                     .fillMaxSize()
                     .imePadding(),
                 chatBot = chatBot,
-                currentMessageProvider = { vm.currentMessage.value },
+                currentMessageProvider = { vm.currentMessage },
                 chatMessages = chatMessages,
                 inputText = inputText,
                 onInputTextChanged = vm::updateInputText,
                 expandDrawerAction = { scope.launch { drawerState.open() } },
                 sendAction = { vm.ask(inputText) },
                 clearAction = vm::clearMessages,
-                removeMessageAction = vm::removeMessage
+                removeMessageAction = vm::removeMessage,
+                doRefreshAction = vm::doRefresh
             )
         },
         drawerContent = {
             Settings(
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
+                    .width(360.dp)
                     .fillMaxHeight()
                     .background(
                         MaterialTheme.colorScheme.primaryContainer,
@@ -129,7 +131,8 @@ fun ChatContent(
     expandDrawerAction: () -> Unit,
     sendAction: () -> Unit,
     clearAction: () -> Unit,
-    removeMessageAction: (ChatMessage) -> Unit
+    removeMessageAction: (ChatMessage) -> Unit,
+    doRefreshAction: SimpleAction
 ) {
     CommonPage(
         modifier = modifier,
@@ -150,7 +153,8 @@ fun ChatContent(
             currentMessageProvider = currentMessageProvider,
             chats = chatMessages,
             lazyListState = lazyListState,
-            removeMessageAction = removeMessageAction
+            removeMessageAction = removeMessageAction,
+            doRefreshAction = doRefreshAction
         )
         ChatBottomBar(
             text = inputText,
@@ -203,11 +207,12 @@ fun ChatMessageList(
     lazyListState: LazyListState,
     currentMessageProvider: () -> ChatMessage?,
     chats: List<ChatMessage>,
-    removeMessageAction: (ChatMessage) -> Unit
+    removeMessageAction: (ChatMessage) -> Unit,
+    doRefreshAction: SimpleAction
 ) {
     val currentMessage = currentMessageProvider()
     val context = LocalContext.current
-    val msgItem: @Composable LazyItemScope.(msg: ChatMessage) -> Unit = @Composable {  msg ->
+    val msgItem: @Composable LazyItemScope.(msg: ChatMessage, refreshAction: SimpleAction?) -> Unit = @Composable {  msg, refreshAction ->
         MessageItem(
             modifier = Modifier.animateItemPlacement(),
             chatMessage = msg,
@@ -218,22 +223,22 @@ fun ChatMessageList(
             deleteAction = {
                 removeMessageAction(msg)
             },
-            refreshAction = {}
+            refreshAction = refreshAction
         )
-
     }
+
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
         verticalArrangement = Arrangement.spacedBy(1.dp),
         modifier = modifier,
         state = lazyListState
     ) {
-        items(chats, key = { it.id }, contentType = { it.sender }) { message ->
-            msgItem(message)
+        itemsIndexed(chats, key = { _, msg -> msg.id }, contentType = { _ , msg -> msg.type }) { i, message ->
+            msgItem(message, if (!message.sendByMe && i == chats.lastIndex) doRefreshAction else null)
         }
         if (currentMessage != null) {
             item {
-                msgItem(currentMessage)
+                msgItem(currentMessage, doRefreshAction)
             }
         }
     }

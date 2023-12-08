@@ -30,6 +30,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.appDB
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -39,7 +40,7 @@ class ChatViewModel: BaseViewModel(appCtx) {
     val inputText = mutableStateOf("")
     val chatBot: MutableState<ChatBot> = mutableStateOf(ModelChatBot.Empty)
     val messages: SnapshotStateList<ChatMessage> = mutableStateListOf()
-    val currentMessage: MutableState<ChatMessage?> = mutableStateOf(null)
+    var currentMessage: ChatMessage? by mutableStateOf(null)
     val convId: MutableState<String?> = mutableStateOf(null)
     var systemPrompt by mutableDataSaverStateOf(DataSaverUtils, "key_chat_base_prompt", string(R.string.chat_system_prompt))
     val memory = ChatMemoryFixedMsgLength(3)
@@ -48,6 +49,8 @@ class ChatViewModel: BaseViewModel(appCtx) {
 
     var modelList = mutableStateListOf<Model>()
     var selectedModelId by mutableDataSaverStateOf(DataSaverUtils,"selected_chat_model_id", 0)
+
+    private var job: Job? = null
 
     init {
         // TODO 更改为多个 ConvId 的支持
@@ -110,12 +113,15 @@ class ChatViewModel: BaseViewModel(appCtx) {
         convId.value ?: return
         addMessage(SENDER_ME, message)
         inputText.value = ""
+        startAsk(message)
+    }
 
-        viewModelScope.launch(Dispatchers.IO) {
+    private fun startAsk(message: String) {
+        job = viewModelScope.launch(Dispatchers.IO) {
             chatBot.value.chat(convId.value, message, messages, systemPrompt, memory).collect {
                 when (it) {
                     is StreamMessage.Start -> {
-                        currentMessage.value = ChatMessage(
+                        currentMessage = ChatMessage(
                             botId = chatBot.value.id,
                             conversationId = convId.value!!,
                             sender = chatBot.value.name,
@@ -124,16 +130,16 @@ class ChatViewModel: BaseViewModel(appCtx) {
                         )
                     }
                     is StreamMessage.Part -> {
-                        val msg = currentMessage.value
-                        currentMessage.value = msg?.copy(content = msg.content + it.part)
+                        val msg = currentMessage
+                        currentMessage = msg?.copy(content = msg.content + it.part)
                     }
                     is StreamMessage.End -> {
-                        addMessage(currentMessage.value!!)
-                        currentMessage.value = null
+                        addMessage(currentMessage!!)
+                        currentMessage = null
                     }
                     is StreamMessage.Error -> {
                         addErrorMessage(it.error.removePrefix("<<error>>"))
-                        currentMessage.value = null
+                        currentMessage = null
                     }
                 }
             }
@@ -153,12 +159,10 @@ class ChatViewModel: BaseViewModel(appCtx) {
                     )
                 ).lowercase()
 
-                if (txt == "true") {
-                    systemPrompt = newPrompt
-                } else if (txt == "false") {
-                    appCtx.toastOnUi(R.string.not_correct_prompt)
-                } else {
-                    appCtx.toastOnUi(string(R.string.unparseable_prompt, txt))
+                when (txt) {
+                    "true" -> systemPrompt = newPrompt
+                    "false" -> appCtx.toastOnUi(R.string.not_correct_prompt)
+                    else -> appCtx.toastOnUi(string(R.string.unparseable_prompt, txt))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -181,6 +185,17 @@ class ChatViewModel: BaseViewModel(appCtx) {
             dao.delete(message)
         }
     }
+
+    fun doRefresh() {
+        job?.cancel()
+        if (currentMessage == null) {
+            removeMessage(messages.last())
+        } else {
+            currentMessage = null
+        }
+        val lastMyMsg = messages.last()
+        startAsk(lastMyMsg.content)
+    }
     
     fun updateInputText(text: String) { inputText.value = text }
     fun updateSystemPrompt(prompt: String) { systemPrompt = prompt }
@@ -188,6 +203,8 @@ class ChatViewModel: BaseViewModel(appCtx) {
         chatBot.value = ModelChatBot(model)
         selectedModelId = model.chatBotId
     }
+
+
 
 
     companion object {

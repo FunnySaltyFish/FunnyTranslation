@@ -39,7 +39,7 @@ fun MessageItem(
     chatMessage: ChatMessage,
     copyAction: SimpleAction,
     deleteAction: SimpleAction,
-    refreshAction: SimpleAction
+    refreshAction: SimpleAction? = null
 ) {
     val sendByMe = chatMessage.sendByMe
 
@@ -80,7 +80,8 @@ fun MessageItem(
                             MarkdownText(
                                 markdown = content,
                                 color = if (chatMessage.error != null)
-                                    MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer
+                                    MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer,
+                                selectable = true
                             )
                         }
 
@@ -106,7 +107,7 @@ fun MessageItem(
                         MaterialTheme.colorScheme.tertiaryContainer,
                         RoundedCornerShape(8.dp)
                     )
-                    .padding(8.dp)
+                    .padding(4.dp)
             ) {
                 // refresh / copy / delete
                 if (chatMessage.type == ChatMessageTypes.TEXT) {
@@ -115,10 +116,12 @@ fun MessageItem(
                         onClick = copyAction
                     )
                 }
-                MessageItemMenuIcon(
-                    icon = FunnyIcon(imageVector = Icons.Default.Refresh),
-                    onClick = refreshAction
-                )
+                if (refreshAction != null) {
+                    MessageItemMenuIcon(
+                        icon = FunnyIcon(imageVector = Icons.Default.Refresh),
+                        onClick = refreshAction
+                    )
+                }
                 MessageItemMenuIcon(
                     icon = FunnyIcon(imageVector = Icons.Default.Delete),
                     onClick = deleteAction
