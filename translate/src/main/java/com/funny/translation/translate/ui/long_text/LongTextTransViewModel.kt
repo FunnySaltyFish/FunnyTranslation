@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 import com.funny.compose.ai.bean.ChatMessage
@@ -16,9 +16,11 @@ import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
 import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.ai.chat.TestLongTextChatBot
+import com.funny.compose.ai.service.aiService
+import com.funny.data_saver.core.mutableDataSaverStateOf
+import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataHolder
-import com.funny.translation.helper.JsonX
-import com.funny.translation.helper.PartialJsonParser
+import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.TextSplitter
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
@@ -29,13 +31,14 @@ import com.funny.translation.translate.database.LongTextTransTask
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.extentions.safeSubstring
 import com.funny.translation.translate.ui.long_text.bean.TermList
+import com.funnysaltyfish.partialjsonparser.JsonParseException
+import com.funnysaltyfish.partialjsonparser.PartialJsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
@@ -57,12 +60,15 @@ internal enum class ScreenState {
     Init, Translating, Result
 }
 
-class LongTextTransViewModel: ViewModel() {
+class LongTextTransViewModel: BaseViewModel(appCtx) {
     private val dao = appDB.longTextTransDao
     internal var task: LongTextTransTask? by mutableStateOf(null)
     internal var screenState by mutableStateOf(ScreenState.Init)
 
     var chatBot: ModelChatBot by mutableStateOf(TestLongTextChatBot())
+    var modelList = mutableStateListOf<Model>()
+    var selectedModelId by mutableDataSaverStateOf(DataSaverUtils,"selected_chat_model_id", 0)
+
     var totalLength = 0
     var translatedLength by mutableIntStateOf(0)
 
@@ -111,6 +117,20 @@ class LongTextTransViewModel: ViewModel() {
     private val recordObj = JSONObject()
     private var recordProcess = JSONArray()
     private var recordOutput = JSONArray()
+
+    init {
+        execute {
+            modelList.addAll(kotlin.runCatching {
+                aiService.getChatModels()
+            }.onFailure { it.printStackTrace() }.getOrDefault(listOf()))
+
+            if (modelList.isEmpty()) return@execute
+
+            chatBot = (modelList.find { it.chatBotId == selectedModelId } ?: modelList[0]).let {
+                ModelChatBot(it)
+            }
+        }
+    }
 
     fun initArgs(id:String) {
         this.transId = id
@@ -282,7 +302,7 @@ class LongTextTransViewModel: ViewModel() {
                     try {
                         resultJsonPart.append(streamMsg.part)
                         val ans = parseStreamedJson(resultJsonPart.toString())
-                        Log.d(TAG, "translatePart: ans: $ans")
+//                        Log.d(TAG, "translatePart: ans: $ans")
                         resultText = lastResultText + (ans.text ?: "")
                         ans.keywords?.forEach {
                             allCorpus.add(it[0] to it[1])
@@ -292,11 +312,11 @@ class LongTextTransViewModel: ViewModel() {
                         if (record) {
                             recordOutput.put(streamMsg.part)
                         }
-                    } catch (e: SerializationException) {
+                    } catch (e: JsonParseException) {
                         // JSON 数据解析失败了，谈个提示，报个错
                         // 继续往下走，后面能不能解析出来
                         appCtx.toastOnUi(string(R.string.attemp_to_retry))
-                        Log.w(TAG, "translatePart: 刚刚那一段解析失败了", )
+                        Log.w(TAG, "translatePart: 刚刚那一段解析失败了:\n$resultJsonPart", )
                     }
                 }
                 is StreamMessage.End -> {
@@ -360,14 +380,13 @@ class LongTextTransViewModel: ViewModel() {
      * @param part String
      */
     private fun parseStreamedJson(text: String): Answer {
-        val completeJson = PartialJsonParser.completePartialJson(text)
-        Log.d(TAG, "parseStreamedJson: --- origin: $text\n--- parsed: $completeJson")
-        val ans: Answer = JsonX.fromJson(completeJson)
-        // 由于解析得到的 keywords 不一定满足要求（比如每一项长度为 2），这里处理一下
-        if (ans.keywords != null) {
-            ans.keywords = ans.keywords!!.filter { it.size == 2 }
-        }
-        return ans
+        val obj = PartialJsonParser.parse(text) as? Map<String, Any?>
+//        Log.d(TAG, "parseStreamedJson: --- origin: $text\n--- parsed: $completeJson")
+        return Answer(
+            obj?.get("text") as String?,
+            // 由于解析得到的 keywords 不一定满足要求（比如每一项长度为 2），这里处理一下
+            (obj?.get("keywords") as? List<List<String>>)?.filter { it.size == 2 }
+        )
     }
 
     private fun newChatMessage(sender: String, msg: String): ChatMessage {

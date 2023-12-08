@@ -160,6 +160,8 @@ dependencies {
     // 图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
 
+    implementation("io.github.funnysaltyfish:partial-json-parser:1.0.0")
+
     // import Kotlin API client BOM
 //    implementation platform('com.aallam.openai:openai-client-bom:3.2.5')
 //

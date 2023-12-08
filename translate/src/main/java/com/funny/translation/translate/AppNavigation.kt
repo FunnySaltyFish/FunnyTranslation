@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
@@ -26,6 +28,7 @@ import com.funny.translation.Consts
 import com.funny.translation.NeedToTransConfig
 import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.NAV_ANIM_DURATION
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme
 import com.funny.translation.translate.bean.AI_TEXT_POINT
@@ -181,7 +184,34 @@ fun AppNavigation(
                     animateComposable(TranslateScreen.AppRecommendationScreen.route) {
                         AppRecommendationScreen()
                     }
-                    animateComposable(TranslateScreen.ChatScreen.route) {
+                    val animDuration = NAV_ANIM_DURATION
+                    composable(
+                        TranslateScreen.ChatScreen.route,
+                        enterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(animDuration)
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(animDuration)
+                            )
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(animDuration)
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(animDuration)
+                            )
+                        }
+                    ) {
                         ChatScreen()
                     }
                     animateComposable(

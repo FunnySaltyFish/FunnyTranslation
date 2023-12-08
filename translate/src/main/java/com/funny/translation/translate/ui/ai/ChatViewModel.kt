@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.viewModelScope
 import com.funny.compose.ai.bean.ChatMemoryFixedMsgLength
 import com.funny.compose.ai.bean.ChatMessage
@@ -23,6 +22,7 @@ import com.funny.compose.ai.service.askAndProcess
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.NAV_ANIM_DURATION
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
@@ -30,6 +30,7 @@ import com.funny.translation.translate.R
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.appDB
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ChatViewModel: BaseViewModel(appCtx) {
@@ -41,24 +42,28 @@ class ChatViewModel: BaseViewModel(appCtx) {
     val currentMessage: MutableState<ChatMessage?> = mutableStateOf(null)
     val convId: MutableState<String?> = mutableStateOf(null)
     var systemPrompt by mutableDataSaverStateOf(DataSaverUtils, "key_chat_base_prompt", string(R.string.chat_system_prompt))
-    val memory = mutableDataSaverStateOf(DataSaverUtils, "key_chat_memory", ChatMemoryFixedMsgLength(4))
-
-    var modelList = mutableStateListOf<Model>()
+    val memory = ChatMemoryFixedMsgLength(3)
 
     var checkingPrompt by mutableStateOf(false)
+
+    var modelList = mutableStateListOf<Model>()
+    var selectedModelId by mutableDataSaverStateOf(DataSaverUtils,"selected_chat_model_id", 0)
 
     init {
         // TODO 更改为多个 ConvId 的支持
         convId.value = "convId"
 
         execute {
-            modelList = kotlin.runCatching {
+            delay(NAV_ANIM_DURATION.toLong())
+            modelList.addAll(kotlin.runCatching {
                 aiService.getChatModels()
-            }.onFailure { it.printStackTrace() }.getOrDefault(listOf()).toMutableStateList()
+            }.onFailure { it.printStackTrace() }.getOrDefault(listOf()))
 
             if (modelList.isEmpty()) return@execute
 
-            chatBot.value = ModelChatBot(modelList[0])
+            chatBot.value = (modelList.find { it.chatBotId == selectedModelId } ?: modelList[0]).let {
+                ModelChatBot(it)
+            }
         }
 
         execute {
@@ -107,7 +112,7 @@ class ChatViewModel: BaseViewModel(appCtx) {
         inputText.value = ""
 
         viewModelScope.launch(Dispatchers.IO) {
-            chatBot.value.chat(convId.value, message, messages, systemPrompt, memory.value).collect {
+            chatBot.value.chat(convId.value, message, messages, systemPrompt, memory).collect {
                 when (it) {
                     is StreamMessage.Start -> {
                         currentMessage.value = ChatMessage(
@@ -181,6 +186,7 @@ class ChatViewModel: BaseViewModel(appCtx) {
     fun updateSystemPrompt(prompt: String) { systemPrompt = prompt }
     fun updateBot(model: Model) {
         chatBot.value = ModelChatBot(model)
+        selectedModelId = model.chatBotId
     }
 
 

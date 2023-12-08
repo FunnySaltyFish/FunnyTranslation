@@ -2,6 +2,7 @@ package com.funny.compose.ai.bean
 
 import com.funny.compose.ai.token.TokenCounters
 import java.util.Date
+import java.util.LinkedList
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -38,7 +39,25 @@ abstract class ChatMemory {
 
 class ChatMemoryFixedMsgLength(val length: Int) : ChatMemory() {
     override suspend fun getIncludedMessages(list: List<ChatMessage>): List<ChatMessage> {
-        return list.takeLast(length)
+        val linkedList = LinkedList<ChatMessage>()
+        // 反向遍历 list
+        var i = list.lastIndex
+        while (i >= 0) {
+            val item = list[i]
+            // 如果这是错误消息，且前面有我发的消息，那么就跳过这条消息和我的那一条
+            if (item.error != null) {
+                if (i > 0 && list[i-1].sendByMe) {
+                    i -= 2;
+                    continue
+                }
+            }
+            linkedList.addFirst(item)
+            if (linkedList.size >= length) {
+                break
+            }
+            i--
+        }
+        return linkedList
     }
 }
 

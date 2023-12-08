@@ -5,11 +5,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
@@ -47,56 +51,63 @@ fun MessageItem(
     ) {
         Column(
             modifier = Modifier
-                .requiredWidthIn(0.dp, 300.dp)
-                .background(
-                    if (sendByMe) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer, //Color(247,249,253),
-                    RoundedCornerShape(
-                        topStart = if (sendByMe) 8.dp else 0.dp,
-                        topEnd = if (sendByMe) 0.dp else 8.dp,
-                        bottomEnd = 8.dp,
-                        bottomStart = 8.dp
-                    )
-                )
-                .padding(10.dp)
-                .animateContentSize(),
+                .requiredWidthIn(0.dp, 300.dp),
             horizontalAlignment = if (sendByMe) Alignment.End else Alignment.Start
         ) {
-            when (chatMessage.type) {
-                ChatMessageTypes.TEXT ->
-                    if (sendByMe) {
-                        Text(
-                            text = chatMessage.content,
-                            modifier = Modifier,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    } else {
-                        val content = if (chatMessage.error != null) {
-                            chatMessage.content + "\n" + chatMessage.error
+            Box(
+                modifier = Modifier
+                    .background(
+                        if (sendByMe) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer, //Color(247,249,253),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(10.dp)
+                    .animateContentSize()
+            ) {
+                when (chatMessage.type) {
+                    ChatMessageTypes.TEXT ->
+                        if (sendByMe) {
+                            Text(
+                                text = chatMessage.content,
+                                modifier = Modifier,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         } else {
-                            chatMessage.content.ifEmpty { "..." }
+                            val content = if (chatMessage.error != null) {
+                                chatMessage.content + "\n" + chatMessage.error
+                            } else {
+                                chatMessage.content.ifEmpty { "..." }
+                            }
+                            MarkdownText(
+                                markdown = content,
+                                color = if (chatMessage.error != null)
+                                    MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer
+                            )
                         }
-                        MarkdownText(
-                            markdown = content,
-                            color = if (chatMessage.error != null)
-                                MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer
+
+                    ChatMessageTypes.IMAGE ->
+                        Image(
+                            painter = rememberAsyncImagePainter(model = chatMessage.content),
+                            contentDescription = "generated image"
                         )
-                    }
 
-                ChatMessageTypes.IMAGE ->
-                    Image(
-                        painter = rememberAsyncImagePainter(model = chatMessage.content),
-                        contentDescription = "generated image"
-                    )
-
-                ChatMessageTypes.ERROR ->
-                    Text(
-                        text = chatMessage.error ?: "Unknown Error",
-                        modifier = Modifier,
-                        color = MaterialTheme.colorScheme.error
-                    )
+                    ChatMessageTypes.ERROR ->
+                        Text(
+                            text = chatMessage.error ?: "Unknown Error",
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                }
             }
 
-            Row(Modifier.padding(top = 4.dp)) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                Modifier
+                    .background(
+                        MaterialTheme.colorScheme.tertiaryContainer,
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp)
+            ) {
                 // refresh / copy / delete
                 if (chatMessage.type == ChatMessageTypes.TEXT) {
                     MessageItemMenuIcon(
@@ -123,5 +134,5 @@ private fun MessageItemMenuIcon(
     icon: FunnyIcon,
     onClick: SimpleAction
 ) {
-    IconWidget(funnyIcon = icon, modifier = modifier.clickable(onClick = onClick))
+    IconWidget(funnyIcon = icon, modifier = modifier.clickable(onClick = onClick).padding(4.dp).size(20.dp))
 }

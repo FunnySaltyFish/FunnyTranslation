@@ -46,10 +46,11 @@ internal fun ColumnScope.Category(
     title: String,
     helpText: String = "helpText",
     expandable: Boolean = true,
+    defaultExpand: Boolean = false,
     extraRowContent: (@Composable RowScope.() -> Unit)? = null,
     content: @Composable (expanded: Boolean) -> Unit,
 ) {
-    var expand by rememberStateOf(value = false)
+    var expand by rememberStateOf(value = defaultExpand)
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
