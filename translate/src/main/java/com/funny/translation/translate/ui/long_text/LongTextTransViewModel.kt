@@ -380,7 +380,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
      * @param part String
      */
     private fun parseStreamedJson(text: String): Answer {
-        val obj = PartialJsonParser.parse(text) as? Map<String, Any?>
+        val obj = PartialJsonParser.parse(text) as? Map<*, *>
 //        Log.d(TAG, "parseStreamedJson: --- origin: $text\n--- parsed: $completeJson")
         return Answer(
             obj?.get("text") as String?,
