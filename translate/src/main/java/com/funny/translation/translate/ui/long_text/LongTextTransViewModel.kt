@@ -191,7 +191,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                     val prevEnd = if (lastResultText.isNotEmpty()) {
                         "..." + lastResultText.takeLast(30)
                     } else ""
-                    val (part, messages) = getNextPart(prevEnd, currentCorpus.list)
+                    val (part, messages) = getNextPart(prevEnd)
                     Log.d(TAG, "startTranslate: nextPart: $part")
                     if (part == "") break
                     translatePart(part, messages)
@@ -239,16 +239,16 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
      * 它包括 SystemPrompt + 这次输入 format 后 + 输出的长度 +
      * @return String
      */
-    private suspend fun getNextPart(prevEnd: String, corpus: List<Term>): Pair<String, ArrayList<ChatMessageReq>> {
+    private suspend fun getNextPart(prevEnd: String): Pair<String, ArrayList<ChatMessageReq>> {
         if (translatedLength >= totalLength) return "" to arrayListOf()
 
         // 最大的输入长度： 模型最大长度 * 0.8
-        // 由于模型的输出长度实际远小于上下文长度（gpt3.5、gpt4都只有4096），这里乘以 0.8 以尽量使得输出能输出万
+        // 由于模型的输出长度实际远小于上下文长度（gpt3.5、gpt4都只有4096），这里乘以 0.8 以尽量使得输出能输出完
         val maxLength = (chatBot.model.maxOutputTokens * 0.8f).toInt()
         val systemPrompt = prompt.toPrompt()
         val tokenCounter = chatBot.tokenCounter
 
-        val messages = arrayListOf<ChatMessageReq>(
+        val messages = arrayListOf(
             ChatMessageReq.text(systemPrompt, "system"),
         )
         // 把上次翻译的最后一点加上
@@ -256,10 +256,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
             messages.add(ChatMessageReq.text(prevEnd, "assistant"))
         }
 
-        val obj = JSONObject().apply {
-            put("text", "")
-            put("keywords", JSONArray(corpus))
-        }
+        val obj = JSONObject()
         val remainText = sourceText.safeSubstring(translatedLength, translatedLength + maxLength)
         Log.d(TAG, "getNextPart: remainText: ${remainText.abstract()}")
         val text = tokenCounter.truncate(remainText, emptyArray(), maxLength)
@@ -268,23 +265,25 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
             text, text.length
         )
         obj.put("text", splitText)
+
+        // 寻找当前的 corpus
+        // TODO 改成更合理的方式，比如基于 NLP 的分词
+        currentCorpus.clear()
+        val needToAddTerms = mutableSetOf<Term>()
+        allCorpus.list.forEach {
+            if (splitText.contains(it.first)) {
+                needToAddTerms.add(it)
+            }
+        }
+        currentCorpus.addAll(needToAddTerms)
+        Log.d(TAG, "getNextPart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
+        obj.put("keywords", JSONArray(currentCorpus.list))
         messages.add(ChatMessageReq.text(obj.toString(), "user"))
         return splitText to messages
     }
 
     private suspend fun translatePart(part: String, messages: List<ChatMessageReq>) {
         resultJsonPart.clear()
-        // 寻找当前的 corpus
-        // TODO 改成更合理的方式，比如基于 NLP 的分词
-        currentCorpus.clear()
-        val needToAddTerms = mutableSetOf<Term>()
-        allCorpus.list.forEach {
-            if (part.contains(it.first)) {
-                needToAddTerms.add(it)
-            }
-        }
-        currentCorpus.addAll(needToAddTerms)
-        Log.d(TAG, "translatePart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
         currentTransPartLength = part.length
 
         val systemPrompt = prompt.toPrompt()

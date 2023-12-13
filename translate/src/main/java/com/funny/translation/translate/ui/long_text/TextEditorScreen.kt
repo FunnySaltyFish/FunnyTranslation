@@ -59,7 +59,7 @@ internal const val KEY_EDITED_SOURCE_TEXT_KEY = "KEY_EDITED_SOURCE_TEXT"
 // 用于在 TextEditorScreen 中传递数据
 // 由于 text 可能非常长，此处不存储 text，而是存储 textKey
 // 数据从 DataHolder 中取出
-sealed class TextEditorAction(val textKey: String) {
+sealed class TextEditorAction(val textKey: String, val tokenCounterId: String = "default") {
     class NewDraft(textKey: String) : TextEditorAction(textKey) {
         override fun toString(): String {
             return "NewDraft$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}"
@@ -70,9 +70,9 @@ sealed class TextEditorAction(val textKey: String) {
             return "UpdateDraft$SEPARATOR$draftId$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}"
         }
     }
-    class UpdateSourceText(textKey: String) : TextEditorAction(textKey) {
+    class UpdateSourceText(textKey: String, tokenCounterId: String) : TextEditorAction(textKey, tokenCounterId) {
         override fun toString(): String {
-            return "UpdateSourceText$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}"
+            return "UpdateSourceText$SEPARATOR${URLEncoder.encode(textKey, "UTF-8")}$SEPARATOR$tokenCounterId"
         }
     }
 
@@ -98,7 +98,7 @@ sealed class TextEditorAction(val textKey: String) {
                 }
                 string.startsWith("UpdateSourceText") -> {
                     val split = string.split(SEPARATOR)
-                    UpdateSourceText(split[1].let { URLDecoder.decode(it, "UTF-8") })
+                    UpdateSourceText(split[1].let { URLDecoder.decode(it, "UTF-8") }, split[3])
                 }
                 else -> throw IllegalArgumentException("Unknown TextEditorAction: $string")
             }
@@ -128,6 +128,7 @@ fun TextEditorScreen(
     ))
     val text by remember { derivedStateOf { textFieldValue.text } }
     val textEmpty by remember { derivedStateOf { textFieldValue.text == "" } }
+    val tokenCounter = remember(action) { TokenCounters.findById(action.tokenCounterId) }
 
     SimpleDialog(
         openDialogState = showDialog,
@@ -175,7 +176,7 @@ fun TextEditorScreen(
     }
     CommonPage(
         actions = {
-            TokenNumRow(tokenCounter = TokenCounters.findById(1), text = text)
+            TokenNumRow(tokenCounter = tokenCounter, text = text)
             if (action is TextEditorAction.NewDraft || action is TextEditorAction.UpdateDraft) {
                 AnimatedVisibility(visible = !textEmpty) {
                     IconButton(onClick = {

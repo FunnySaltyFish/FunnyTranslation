@@ -34,7 +34,7 @@ fun DraftScreen() {
                 items(list, key = { it.id }) { draft ->
                     DraftItem(task = draft, onClick = {
                          navController.navigateToTextEdit(
-                             TextEditorAction.UpdateDraft(draft.id, draftKey(draft.id)).apply {
+                             TextEditorAction.UpdateDraft(draft.id, draftKey(draft.id), ).apply {
                                  putToDataHolder(content = draft.content)
                              }
                          )

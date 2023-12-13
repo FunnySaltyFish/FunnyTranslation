@@ -73,7 +73,7 @@ internal fun ColumnScope.SourceTextPart(
                     .size(16.dp)
                     .clickable {
                         navController.navigateToTextEdit(
-                            TextEditorAction.UpdateSourceText(sourceTextKey(text)).apply {
+                            TextEditorAction.UpdateSourceText(sourceTextKey(text), tokenCounter.id).apply {
                                 putToDataHolder(content = text)
                             }
                         )
@@ -99,7 +99,7 @@ internal fun ColumnScope.SourceTextPart(
             AutoScrollHighlightedText(
                 textProvider = {
                     buildAnnotatedString {
-                        if (currentTransStartOffset >= 0 && currentTransLength > 0) {
+                        if (currentTransStartOffset >= 0 && currentTransStartOffset < text.length && currentTransLength > 0) {
                             append(text.substring(0, currentTransStartOffset))
                             val end = currentTransStartOffset + currentTransLength
                             if (end < text.length) {

@@ -14,7 +14,7 @@ import java.math.BigDecimal
 @Serializable
 @Stable
 @Keep
-data class Model (
+data class Model(
     @SerialName("chat_bot_id")
     val chatBotId: Int,
     @Serializable(with = BigDecimalSerializer::class)
@@ -29,9 +29,9 @@ data class Model (
     @SerialName("max_output_tokens")
     val maxOutputTokens: Int,
     @SerialName("token_counter_id")
-    val tokenCounterId: Int,
+    val tokenCounterId: String,
 ) {
     companion object {
-        val Empty = Model(0, BigDecimal.ZERO, "Test", "", "", 0, 0, 0)
+        val Empty = Model(0, BigDecimal.ZERO, "Test", "", "", 0, 0, "default")
     }
 }

@@ -9,6 +9,7 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.helper.JSONObjectSerializer
 import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.toastOnUi
+import com.funny.translation.network.CommonData
 import com.funny.translation.network.ServiceCreator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +23,12 @@ import kotlinx.serialization.Serializable
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Query
 import retrofit2.http.Streaming
 
 private const val TAG = "AIService"
@@ -38,6 +42,12 @@ data class AskStreamRequest(
     // args
     @Serializable(with = JSONObjectSerializer::class)
     @SerialName("args") val args: JSONObject = EmptyJsonObject,
+)
+
+@Serializable
+data class CountTokenMessagesRequest(
+    @SerialName("token_counter_id") val tokenCounterId: String,
+    @SerialName("messages") val messages: List<ChatMessageReq>,
 )
 
 interface AIService {
@@ -55,6 +65,25 @@ interface AIService {
     @GET("ai/get_models")
     suspend fun getChatModels() : List<Model>
 
+    @POST("ai/count_tokens_text")
+    @FormUrlEncoded
+    suspend fun countTokensText(
+        @Field("token_counter_id") tokenCounterId: String,
+        @Field("text") text: String,
+        @Field("max_length") maxLength: Int? = null,
+    ): CommonData<Int>
+
+    @POST("ai/count_tokens_messages")
+    suspend fun countTokensMessages(
+        @Body req: CountTokenMessagesRequest
+    ): CommonData<Int>
+
+    @GET("ai/truncate_text")
+    suspend fun truncateText(
+        @Query("token_counter_id") tokenCounterId: String,
+        @Query("text") text: String,
+        @Query("max_length") maxLength: Int,
+    ): CommonData<String>
 
 }
 

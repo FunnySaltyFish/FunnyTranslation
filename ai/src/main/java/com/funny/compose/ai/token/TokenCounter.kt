@@ -2,7 +2,10 @@ package com.funny.compose.ai.token
 
 import androidx.annotation.IntRange
 import com.funny.compose.ai.bean.ChatMessageReq
+import com.funny.compose.ai.service.CountTokenMessagesRequest
+import com.funny.compose.ai.service.aiService
 import com.funny.translation.helper.lazyPromise
+import com.funny.translation.network.api
 import com.knuddels.jtokkit.Encodings
 import com.knuddels.jtokkit.api.EncodingType
 import kotlinx.coroutines.CoroutineScope
@@ -11,33 +14,30 @@ import kotlin.jvm.optionals.getOrNull
 
 
 abstract class TokenCounter {
-    abstract suspend fun encode(
+    /**
+     * count 的操作是否是在服务端完成的
+     */
+    abstract val online: Boolean
+    abstract val id: String
+
+    abstract suspend fun count(text: String, allowedSpecialTokens: Array<String> = arrayOf()): Int
+
+    abstract suspend fun truncate(
         text: String,
         allowedSpecialTokens: Array<String>,
         @IntRange(from = 0) maxTokenLength: Int = Int.MAX_VALUE
-    ): List<Int>
-
-    abstract suspend fun decode(tokens: List<Int>): String
-
-    open suspend fun count(text: String, allowedSpecialTokens: Array<String> = arrayOf()) =
-        encode(text, allowedSpecialTokens).size
+    ): String
 
     open suspend fun countMessages(messages: List<ChatMessageReq>) =
-        messages.sumOf { msg ->
-            count(msg.content)
+        messages.sumOf {
+            count(it.content) + count(it.role)
         }
-
-    open suspend fun truncate(
-        text: String,
-        allowedSpecialTokens: Array<String>,
-        @IntRange(from = 0) maxTokenLength: Int = Int.MAX_VALUE
-    ): String {
-        val tokens = encode(text, allowedSpecialTokens, maxTokenLength)
-        return decode(tokens)
-    }
 }
 
 class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
+    override val online: Boolean = false
+    override val id: String = "openai"
+
     // getEncoding 是一个非常非常非常耗时的操作，所以用协程懒加载
     private val enc by lazyPromise(CoroutineScope(Dispatchers.IO)) {
         val registry = Encodings.newDefaultEncodingRegistry()
@@ -45,27 +45,8 @@ class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
         registry.getEncoding(type)
     }
 
-    /**
-     * Encode text 至 token 数组，allowedSpecialTokens 暂不支持
-     * @param text String
-     * @param allowedSpecialTokens Array<String>
-     * @param maxTokenLength Int
-     * @return List<Int>
-     */
-    override suspend fun encode(
-        text: String,
-        allowedSpecialTokens: Array<String>,
-        maxTokenLength: Int
-    ): List<Int> {
-        return enc.await().encodeOrdinary(text, maxTokenLength).tokens
-    }
-
-    override suspend fun decode(tokens: List<Int>): String {
-        return enc.await().decode(tokens)
-    }
-
     override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
-        return encode(text, allowedSpecialTokens).size
+        return enc.await().encodeOrdinary(text).size
     }
 
     // https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
@@ -88,10 +69,35 @@ class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
     ): String {
         val result = enc.await().encodeOrdinary(text, maxTokenLength)
         return if (result.isTruncated) {
-            decode(result.tokens)
+            enc.await().decode(result.tokens)
         } else {
             text
         }
+    }
+}
+
+class ServerTokenCounter(override val id: String): TokenCounter() {
+    override val online: Boolean = true
+    override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
+        return api(aiService::countTokensText, id, text, null) {
+            success {  }
+        } ?: 0
+    }
+
+    override suspend fun countMessages(messages: List<ChatMessageReq>): Int {
+        return api(aiService::countTokensMessages, CountTokenMessagesRequest(id, messages)) {
+            success {  }
+        } ?: 0
+    }
+
+    override suspend fun truncate(
+        text: String,
+        allowedSpecialTokens: Array<String>,
+        maxTokenLength: Int
+    ): String {
+        return api(aiService::truncateText, id, text, maxTokenLength) {
+            success {  }
+        } ?: text
     }
 }
 
@@ -99,31 +105,30 @@ class OpenAITokenCounter(encodingName: String = "cl100k_base"): TokenCounter() {
  * 默认的 TokenCounter，直接用文本长度作为 token 数量
  */
 class DefaultTokenCounter: TokenCounter() {
-    override suspend fun encode(
-        text: String,
-        allowedSpecialTokens: Array<String>,
-        maxTokenLength: Int
-    ): List<Int> {
-        return emptyList()
-    }
+    override val online: Boolean = false
+    override val id: String = "default"
 
     override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
         return text.length
     }
 
-    override suspend fun decode(tokens: List<Int>): String {
-        return ""
+    override suspend fun truncate(
+        text: String,
+        allowedSpecialTokens: Array<String>,
+        maxTokenLength: Int
+    ): String {
+        return text.substring(0, maxTokenLength.coerceAtMost(text.length))
     }
 }
 
 object TokenCounters {
-    private val tokenCounters = hashMapOf<Int, TokenCounter>(
-         1 to OpenAITokenCounter("cl100k_base"),
-//        1 to OpenAITokenCounter(encodingName = "gpt-3.5-turbo"),
-        2 to OpenAITokenCounter("gpt4"),
+    val defaultTokenCounter = DefaultTokenCounter()
+    private val tokenCounters = hashMapOf<String, TokenCounter>(
+        "openai" to OpenAITokenCounter("cl100k_base"),
+        "default" to defaultTokenCounter,
     )
 
-    val defaultTokenCounter = DefaultTokenCounter()
-
-    fun findById(id: Int) = tokenCounters[id] ?: defaultTokenCounter
+    fun findById(id: String) = tokenCounters[id] ?: ServerTokenCounter(id).also {
+        tokenCounters[id] = it
+    }
 }
