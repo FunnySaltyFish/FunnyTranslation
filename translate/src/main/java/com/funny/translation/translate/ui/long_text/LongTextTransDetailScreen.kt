@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -35,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -171,15 +174,33 @@ fun LongTextTransDetailScreen(
         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
         exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
     ) {
-        FloatingActionButton(
+        Row(
             modifier = Modifier.floatingActionBarModifier(),
-            onClick = vm::toggleIsPausing
         ) {
-            AnimatedContent(targetState = vm.isPausing, label = "TogglePause") { pausing ->
-                if (pausing) {
-                    FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = "Click To Play")
-                } else {
-                    FixedSizeIcon(Icons.Default.Pause, contentDescription = "Click To Pause")
+            FloatingActionButton(
+                modifier = Modifier,
+                onClick = vm::retryCurrentPart
+            ) {
+                AnimatedContent(targetState = vm.isPausing, label = "TogglePause") { pausing ->
+                    if (pausing) {
+                        FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = "Click To Play")
+                    } else {
+                        FixedSizeIcon(Icons.Default.Pause, contentDescription = "Click To Pause")
+                    }
+                }
+            }
+            val showRetryBtn by remember {
+                derivedStateOf {
+                    vm.isPausing && vm.errorTimes >= 3
+                }
+            }
+            if (showRetryBtn) {
+                Spacer(modifier = Modifier.width(8.dp))
+                FloatingActionButton(
+                    modifier = Modifier,
+                    onClick = vm::retryCurrentPart
+                ) {
+                    FixedSizeIcon(Icons.Default.RestartAlt, contentDescription = "Retry")
                 }
             }
         }

@@ -45,10 +45,12 @@ import java.util.UUID
 
 
 const val DEFAULT_PROMPT_PREFIX = """你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文"""
-const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语，以JSON的形式返回（如果没有，请返回[]）。你必须保持原文的格式，对所有换行都正确输出。
+const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语。
 示例输入：{"text":"XiaoHong and XiaoMing are studying DB class.","keywords":[["DB","数据库"],["XiaoHong","萧红"]]}
 示例输出：{"text":"萧红和晓明正在学习数据库课程","keywords":[["XiaoMing","晓明"]]}。
-你的输出必须为JSON格式"""
+示例输入：{"text":"它说：“你好\n世界”“}
+示例输出：{"text":"It says: \"Hello\nWorld\""}
+你的输出必须为可解析的JSON格式"""
 
 private val DEFAULT_PROMPT = EditablePrompt(DEFAULT_PROMPT_PREFIX, DEFAULT_PROMPT_SUFFIX)
 
@@ -69,7 +71,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     var modelList = mutableStateListOf<Model>()
     var selectedModelId by mutableDataSaverStateOf(DataSaverUtils,"selected_chat_model_id", 0)
 
-    var totalLength = 0
+    private var totalLength = 0
     var translatedLength by mutableIntStateOf(0)
 
     val progress by derivedStateOf {  if (translatedLength == 0) 0f else (translatedLength.toFloat() / totalLength).coerceIn(0f, 1f) }
@@ -103,7 +105,8 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     private var resultJsonPart = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
     private var lastResultText = ""
-    // 因各种问题导致的重试
+    // 因各种问题导致的失败次数
+    var errorTimes by mutableIntStateOf(0)
 
     private val record = true // 仅在调试时使用，记录所有的翻译输入与输出
     // 包括
@@ -248,9 +251,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
         val systemPrompt = prompt.toPrompt()
         val tokenCounter = chatBot.tokenCounter
 
-        val messages = arrayListOf(
-            ChatMessageReq.text(systemPrompt, "system"),
-        )
+        val messages = arrayListOf<ChatMessageReq>()
         // 把上次翻译的最后一点加上
         if (prevEnd.isNotEmpty()) {
             messages.add(ChatMessageReq.text(prevEnd, "assistant"))
@@ -261,9 +262,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
         Log.d(TAG, "getNextPart: remainText: ${remainText.abstract()}")
         val text = tokenCounter.truncate(remainText, emptyArray(), maxLength)
         Log.d(TAG, "getNextPart: truncated text: ${text.abstract()}")
-        val splitText = TextSplitter.splitTextNaturally(
-            text, text.length
-        )
+        val splitText = TextSplitter.splitTextNaturally(text, text.length)
         obj.put("text", splitText)
 
         // 寻找当前的 corpus
@@ -283,6 +282,22 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     }
 
     private suspend fun translatePart(part: String, messages: List<ChatMessageReq>) {
+        /**
+         * 处理错误相关的逻辑，返回值为是否达到了最大值而弹出 toast
+         * @return Boolean
+         */
+        fun onError(): Boolean {
+            errorTimes++
+            if (errorTimes == 3) {
+                isPausing = true
+                context.toastOnUi(R.string.translate_paused_too_many_retries)
+                translateJob?.cancel()
+                translateJob = null
+                return true
+            }
+            return false
+        }
+
         resultJsonPart.clear()
         currentTransPartLength = part.length
 
@@ -314,7 +329,9 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                     } catch (e: JsonParseException) {
                         // JSON 数据解析失败了，谈个提示，报个错
                         // 继续往下走，后面能不能解析出来
-                        appCtx.toastOnUi(string(R.string.attemp_to_retry))
+                        if (!onError()) { // 如果已经暂停了，就不弹出这一段了
+                            appCtx.toastOnUi(string(R.string.attemp_to_retry))
+                        }
                         Log.w(TAG, "translatePart: 刚刚那一段解析失败了:\n$resultJsonPart", )
                     }
                 }
@@ -335,8 +352,10 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                     }
                 }
                 is StreamMessage.Error -> {
-                    appCtx.toastOnUi(streamMsg.error)
-                    delay(1000)
+                    if (!onError()) {
+                        appCtx.toastOnUi(streamMsg.error)
+                        delay(1000)
+                    }
                 }
                 else -> Unit
             }
@@ -409,11 +428,19 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     fun toggleIsPausing() {
         isPausing = !isPausing
         if (isPausing) appCtx.toastOnUi(string(R.string.paused_tip))
-        else
+        else {
             if (translateJob == null) {
                 // 如果没有开始翻译（从外部加载进来的状态），那么开始翻译
                 startTranslate()
             }
+            errorTimes = 0
+        }
+    }
+
+    fun retryCurrentPart() {
+        isPausing = false
+        errorTimes = 0
+        startTranslate()
     }
 
     private fun saveRecord() {

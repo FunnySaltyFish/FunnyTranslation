@@ -303,7 +303,7 @@
     <string name="model_select_help">不同的模型拥有不同的上下文长度，且有着不同的单价，越好的模型单价越高，请按需选择。</string>
     <string name="currency_symbol">¥</string>
     <string name="kilo_char">千字符</string>
-    <string name="translate_failed_too_many_retries">重试次数已达上限，翻译失败</string>
+    <string name="translate_paused_too_many_retries">重试次数已达上限，自动暂停</string>
     <string name="attemp_to_retry">这一小段结果解析失败了，正在等待更长的输出</string>
     <string name="token_tip">模型处理文本时以 Token 形式，这里计算的是 Token 数</string>
     <string name="no_remark">暂无备注</string>
