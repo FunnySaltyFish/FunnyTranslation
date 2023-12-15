@@ -21,7 +21,6 @@ import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.DataSaverUtils
-import com.funny.translation.helper.TextSplitter
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
@@ -45,14 +44,13 @@ import java.util.UUID
 
 
 const val DEFAULT_PROMPT_PREFIX = """你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文"""
-const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语。
-示例输入：{"text":"XiaoHong and XiaoMing are studying DB class.","keywords":[["DB","数据库"],["XiaoHong","萧红"]]}
-示例输出：{"text":"萧红和晓明正在学习数据库课程","keywords":[["XiaoMing","晓明"]]}。
-示例输入：{"text":"它说：“你好\n世界”“}
-示例输出：{"text":"It says: \"Hello\nWorld\""}
-你的输出必须为可解析的JSON格式"""
+const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语。你的输出分为两部分，以||sep||分割，前半部分是翻译结果，后半部分是关键词，以JSON数组的形式，无则为[]
+示例输入：XiaoHong and XiaoMing are studying DB class.||sep||[["DB","数据库"],["XiaoHong","萧红"]]
+示例输出：萧红和晓明正在学习数据库课程||sep||[["XiaoMing","晓明"]]"""
 
 private val DEFAULT_PROMPT = EditablePrompt(DEFAULT_PROMPT_PREFIX, DEFAULT_PROMPT_SUFFIX)
+
+private const val SEP = "||sep||"
 
 
 @Serializable
@@ -102,7 +100,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     val resultTextSegments = mutableListOf<Int>()
 
     // 当前 part 翻译得到的结果
-    private var resultJsonPart = StringBuilder()
+    private var currentOutput = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
     private var lastResultText = ""
     // 因各种问题导致的失败次数
@@ -166,8 +164,6 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                     }
                 }
             }
-//            this.sourceText = List(100) { "(${it}) XiaoMing told XiaoHong, the best student in this class is XiaoZhang." }.joinToString(separator = " ")
-//            this.allCorpus.addAll(arrayOf("XiaoHong" to "萧红", "XiaoMing" to "晓明"))
         } else {
             this.sourceText = v
             this.totalLength = this.sourceText.length
@@ -192,7 +188,10 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
 
                     // 前文的最后一小点，供上下文衔接
                     val prevEnd = if (lastResultText.isNotEmpty()) {
-                        "..." + lastResultText.takeLast(30)
+                        val lastLine = lastResultText.lastIndexOf('\n')
+                        if (lastLine == -1 || lastLine == lastResultText.lastIndex)
+                            lastResultText.takeLast(50)
+                        else lastResultText.substring(lastLine + 1)
                     } else ""
                     val (part, messages) = getNextPart(prevEnd)
                     Log.d(TAG, "startTranslate: nextPart: $part")
@@ -248,7 +247,6 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
         // 最大的输入长度： 模型最大长度 * 0.8
         // 由于模型的输出长度实际远小于上下文长度（gpt3.5、gpt4都只有4096），这里乘以 0.8 以尽量使得输出能输出完
         val maxLength = (chatBot.model.maxOutputTokens * 0.8f).toInt()
-        val systemPrompt = prompt.toPrompt()
         val tokenCounter = chatBot.tokenCounter
 
         val messages = arrayListOf<ChatMessageReq>()
@@ -257,28 +255,31 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
             messages.add(ChatMessageReq.text(prevEnd, "assistant"))
         }
 
-        val obj = JSONObject()
         val remainText = sourceText.safeSubstring(translatedLength, translatedLength + maxLength)
         Log.d(TAG, "getNextPart: remainText: ${remainText.abstract()}")
         val text = tokenCounter.truncate(remainText, emptyArray(), maxLength)
         Log.d(TAG, "getNextPart: truncated text: ${text.abstract()}")
-        val splitText = TextSplitter.splitTextNaturally(text, text.length)
-        obj.put("text", splitText)
+
+        val sb = StringBuilder(text)
 
         // 寻找当前的 corpus
         // TODO 改成更合理的方式，比如基于 NLP 的分词
         currentCorpus.clear()
         val needToAddTerms = mutableSetOf<Term>()
         allCorpus.list.forEach {
-            if (splitText.contains(it.first)) {
+            if (text.contains(it.first)) {
                 needToAddTerms.add(it)
             }
         }
         currentCorpus.addAll(needToAddTerms)
         Log.d(TAG, "getNextPart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
-        obj.put("keywords", JSONArray(currentCorpus.list))
-        messages.add(ChatMessageReq.text(obj.toString(), "user"))
-        return splitText to messages
+
+        if (needToAddTerms.isNotEmpty()) {
+            sb.append(SEP)
+            sb.append(JSONArray(needToAddTerms).toString())
+        }
+        messages.add(ChatMessageReq.text(sb.toString(), "user"))
+        return text to messages
     }
 
     private suspend fun translatePart(part: String, messages: List<ChatMessageReq>) {
@@ -298,7 +299,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
             return false
         }
 
-        resultJsonPart.clear()
+        currentOutput.clear()
         currentTransPartLength = part.length
 
         val systemPrompt = prompt.toPrompt()
@@ -314,9 +315,8 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                 }
                 is StreamMessage.Part -> {
                     try {
-                        resultJsonPart.append(streamMsg.part)
-                        val ans = parseStreamedJson(resultJsonPart.toString())
-//                        Log.d(TAG, "translatePart: ans: $ans")
+                        currentOutput.append(streamMsg.part)
+                        val ans = parseStreamedOutput(currentOutput.toString())
                         resultText = lastResultText + (ans.text ?: "")
                         ans.keywords?.forEach {
                             allCorpus.add(it[0] to it[1])
@@ -332,7 +332,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                         if (!onError()) { // 如果已经暂停了，就不弹出这一段了
                             appCtx.toastOnUi(string(R.string.attemp_to_retry))
                         }
-                        Log.w(TAG, "translatePart: 刚刚那一段解析失败了:\n$resultJsonPart", )
+                        Log.w(TAG, "translatePart: 刚刚那一段解析失败了:\n$currentOutput", )
                     }
                 }
                 is StreamMessage.End -> {
@@ -397,13 +397,19 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
      * 尝试解析流式的 JSON 数据
      * @param part String
      */
-    private fun parseStreamedJson(text: String): Answer {
-        val obj = PartialJsonParser.parse(text) as? Map<*, *>
-//        Log.d(TAG, "parseStreamedJson: --- origin: $text\n--- parsed: $completeJson")
+    private fun parseStreamedOutput(text: String): Answer {
+        val idx = text.lastIndexOf(SEP)
+        if (idx == -1 || idx == text.length - SEP.length) {
+            return Answer(text)
+        }
+
+        val list = PartialJsonParser.parse(text.substring(idx + SEP.length)) as? List<*>
+        val keywords = list?.filter { it is List<*> && it.size == 2 } as? List<List<String>>
+
         return Answer(
-            obj?.get("text") as String?,
+            text = text.substring(0, idx),
             // 由于解析得到的 keywords 不一定满足要求（比如每一项长度为 2），这里处理一下
-            (obj?.get("keywords") as? List<List<String>>)?.filter { it.size == 2 }
+            keywords = keywords ?: arrayListOf()
         )
     }
 
@@ -411,7 +417,8 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
         return ChatMessage(botId = chatBot.id, conversationId = transId, sender = if (sender == "user") SENDER_ME else sender, content = msg)
     }
 
-    fun updatePrompt(prefix: String) { prompt.prefix = prefix }
+    fun updatePrompt(prefix: String) { prompt = prompt.copy(prefix = prefix) }
+    fun resetPrompt() { prompt = DEFAULT_PROMPT }
     fun updateEditingTermState(isEditing: Boolean) { isEditingTerm = isEditing }
     fun updateSourceText(text: String) { sourceText = text; totalLength = text.length }
     fun updateBot(model: Model) {

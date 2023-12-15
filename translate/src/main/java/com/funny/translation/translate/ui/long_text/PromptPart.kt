@@ -2,15 +2,20 @@ package com.funny.translation.translate.ui.long_text
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -22,12 +27,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.long_text.components.TokenNum
+import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.serialization.Serializable
 
 @Serializable
-class EditablePrompt(var prefix: String, val suffix: String) {
+data class EditablePrompt(val prefix: String, val suffix: String) {
     fun toPrompt(): String {
         return prefix + suffix
     }
@@ -37,14 +44,23 @@ class EditablePrompt(var prefix: String, val suffix: String) {
 internal fun ColumnScope.PromptPart(
     initialPrompt: EditablePrompt,
     tokenCounter: TokenCounter,
-    onPrefixUpdate: (String) -> Unit
+    onPrefixUpdate: (String) -> Unit,
+    resetPromptAction: SimpleAction
 ) {
     var prefix by rememberStateOf(initialPrompt.prefix)
+    LaunchedEffect(key1 = initialPrompt) {
+        if (initialPrompt.prefix != prefix) prefix = initialPrompt.prefix
+    }
     Category(
         title = stringResource(id = R.string.task_prompt),
         helpText = stringResource(id = R.string.task_prompt_help),
         extraRowContent = {
-            TokenNum(modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.End), tokenCounter = tokenCounter, text = prefix + initialPrompt.suffix)
+            FixedSizeIcon(Icons.Filled.Replay, contentDescription = "reset", modifier = Modifier
+                .size(16.dp)
+                .clickable(onClick = resetPromptAction))
+            TokenNum(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End), tokenCounter = tokenCounter, text = prefix + initialPrompt.suffix)
         }
     ) { expanded: Boolean ->
         Column {

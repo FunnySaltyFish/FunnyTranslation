@@ -73,9 +73,11 @@ internal fun ColumnScope.SourceTextPart(
                     .size(16.dp)
                     .clickable {
                         navController.navigateToTextEdit(
-                            TextEditorAction.UpdateSourceText(sourceTextKey(text), tokenCounter.id).apply {
-                                putToDataHolder(content = text)
-                            }
+                            TextEditorAction
+                                .UpdateSourceText(sourceTextKey(text), tokenCounter.id)
+                                .apply {
+                                    putToDataHolder(content = text)
+                                }
                         )
                     })
             }
@@ -96,7 +98,7 @@ internal fun ColumnScope.SourceTextPart(
         val translatingStyle = remember(textStyle) { textStyle.copy(color = translatingTextColor, fontWeight = FontWeight.Bold).toSpanStyle() }
 
         CompositionLocalProvider(LocalTextStyle provides textStyle) {
-            AutoScrollHighlightedText(
+            AutoScrollLongText(
                 textProvider = {
                     buildAnnotatedString {
                         if (currentTransStartOffset >= 0 && currentTransStartOffset < text.length && currentTransLength > 0) {
@@ -121,7 +123,8 @@ internal fun ColumnScope.SourceTextPart(
                         }
                     }
                 },
-                highlightStartOffsetProvider = { currentTransStartOffset },
+                // 自动跳到目前翻译这一段的第一行
+                autoScrollOffsetProvider = { currentTransStartOffset },
                 maxLines = if (expanded) 2 * maxLines else maxLines
             )
         }
@@ -141,9 +144,13 @@ internal fun ColumnScope.ResultTextPart(
         title = stringResource(id = R.string.translate_result),
         helpText = stringResource(id = R.string.translate_result_help),
         extraRowContent = {
-            TokenNum(modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(Alignment.End), tokenCounter = tokenCounter, text = text)
+            if (screenState != ScreenState.Translating) {
+                TokenNum(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentWidth(Alignment.End), tokenCounter = tokenCounter, text = text
+                )
+            }
         }
     ) { expanded ->
         var maxLines by rememberStateOf(value = 8)
@@ -151,13 +158,13 @@ internal fun ColumnScope.ResultTextPart(
             maxLines = when (screenState) {
                 ScreenState.Init -> 8
                 ScreenState.Translating -> 16
-                ScreenState.Result -> 30
+                ScreenState.Result -> 20
             }
         }
         val textStyle = LocalTextStyle.current.copy(fontSize = 12.sp, lineHeight = (14).sp)
         val highlightStyle = remember(textStyle) { textStyle.copy(color = translatingTextColor, fontWeight = FontWeight.Bold).toSpanStyle() }
         CompositionLocalProvider(LocalTextStyle provides textStyle) {
-            AutoScrollHighlightedText(
+            AutoScrollLongText(
                 textProvider = {
                     buildAnnotatedString {
                         if (currentResultStartOffset >= 0) {
@@ -172,7 +179,8 @@ internal fun ColumnScope.ResultTextPart(
                         }
                     }
                 },
-                highlightStartOffsetProvider = { currentResultStartOffset },
+                // 自动跳到最新的一行
+                autoScrollOffsetProvider = { text.lastIndexOf('\n') },
                 maxLines = if (expanded) 2 * maxLines else maxLines
             )
         }
@@ -180,9 +188,9 @@ internal fun ColumnScope.ResultTextPart(
 }
 
 @Composable
-private fun AutoScrollHighlightedText(
+private fun AutoScrollLongText(
     textProvider: () -> AnnotatedString,
-    highlightStartOffsetProvider: () -> Int,
+    autoScrollOffsetProvider: () -> Int,
     maxLines: Int,
 ) {
     val scope = rememberCoroutineScope()
@@ -191,17 +199,17 @@ private fun AutoScrollHighlightedText(
     val lineHeightInDp = remember(density) { with(density) { lineHeight.toDp()  } }
     val text = textProvider()
     val longTextState = rememberLongTextState(text = text, lazyListState = rememberLazyListState())
-    val highlightStartOffset = highlightStartOffsetProvider()
+    val autoScrollOffset = autoScrollOffsetProvider()
     val heightAnim = remember {
         Animatable(maxLines * lineHeightInDp.value)
     }
     LaunchedEffect(key1 = maxLines) {
         heightAnim.animateTo(maxLines * lineHeightInDp.value)
     }
-    LaunchedEffect(key1 = highlightStartOffset) {
-        if (highlightStartOffset >= 0) {
+    LaunchedEffect(key1 = autoScrollOffset) {
+        if (autoScrollOffset >= 0) {
             scope.launch {
-                longTextState.scrollToIndex(highlightStartOffset)
+                longTextState.scrollToIndex(autoScrollOffset)
             }
         }
     }

@@ -19,6 +19,7 @@ import com.funny.translation.helper.JsonX
 import com.funny.translation.sign.SignUtils
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.long_text.EditablePrompt
 import com.funny.translation.translate.ui.thanks.SponsorSortType
 import com.funny.translation.translate.utils.FunnyUncaughtExceptionHandler
 import com.funny.translation.translate.utils.SortResultUtils
@@ -108,6 +109,8 @@ class FunnyApplication : BaseApplication() {
         registerTypeConverters<ThemeType>(save = ThemeType.Saver, restore = ThemeType.Restorer)
         registerTypeConverters<TranslateScreen>(save = TranslateScreen.Saver, restore = TranslateScreen.Restorer)
         registerTypeConverters<ChatMemory>(save = ChatMemory.Saver, restore = ChatMemory.Restorer)
+
+        registerTypeConverters<EditablePrompt>(save = { JsonX.toJson(it) }, restore = { JsonX.fromJson(it) })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

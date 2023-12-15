@@ -225,7 +225,7 @@ private fun ColumnScope.DetailContent(
                         screenState = vm.screenState,
                         tokenCounter = vm.chatBot.tokenCounter
                     )
-                    PromptPart(vm.prompt, vm.chatBot.tokenCounter, vm::updatePrompt)
+                    PromptPart(vm.prompt, vm.chatBot.tokenCounter, vm::updatePrompt, vm::resetPrompt)
                     Category(
                         title = stringResource(id = R.string.all_corpus),
                         helpText = string(R.string.corpus_help),
@@ -259,6 +259,12 @@ private fun ColumnScope.DetailContent(
                 ScreenState.Result -> {
                     SourceTextPart(text = vm.sourceText, screenState = vm.screenState, tokenCounter = vm.chatBot.tokenCounter)
                     ResultTextPart(text = vm.resultText, screenState = vm.screenState, tokenCounter = vm.chatBot.tokenCounter)
+                    Category(
+                        title = stringResource(id = R.string.all_corpus),
+                        helpText = string(R.string.corpus_help),
+                    ) { expanded ->
+                        AllCorpusList(vm = vm, expanded = expanded)
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                     ExportButton(
                         exportOnlyResultProvider = vm::resultText,
