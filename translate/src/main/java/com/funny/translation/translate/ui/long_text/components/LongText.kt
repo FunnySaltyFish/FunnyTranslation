@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.long_text.components
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -64,13 +63,13 @@ class LongTextState(
      */
     suspend fun scrollToIndex(index: Int) {
         val itemIndex = textArray.binarySearchIndex { it.first.compareTo(index) }
-        Log.d(TAG, "scrollToIndex: index: $index, itemIndex: $itemIndex")
+//        Log.d(TAG, "scrollToIndex: index: $index, itemIndex: $itemIndex")
         if (itemIndex >= 0) {
             val layoutResult = textLayoutResults[itemIndex]
             // 如果没有 layoutResult，就直接跳转到对应的 item（因为没法计算出对应的 offset）
             // 事实上这是绝大部分情况，因为只有在 item 可见的时候才会有 layoutResult
             if (layoutResult == null) {
-                Log.d(TAG, "scrollToIndex: layoutResult == null")
+//                Log.d(TAG, "scrollToIndex: layoutResult == null")
                 lazyListState.animateScrollToItem(itemIndex)
                 return
             }
@@ -79,7 +78,7 @@ class LongTextState(
             val scrollOffset = layoutResult.getLineForOffset(itemTextOffset).let {
                 layoutResult.getLineTop(it)
             }
-            Log.d(TAG, "scrollToIndex: itemTextOffset: $itemTextOffset, scrollOffset: $scrollOffset")
+//            Log.d(TAG, "scrollToIndex: itemTextOffset: $itemTextOffset, scrollOffset: $scrollOffset")
             lazyListState.animateScrollToItem(itemIndex, scrollOffset.toInt())
         }
     }

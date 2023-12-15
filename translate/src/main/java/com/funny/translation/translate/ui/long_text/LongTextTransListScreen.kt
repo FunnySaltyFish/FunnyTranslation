@@ -37,6 +37,7 @@ import com.funny.translation.translate.ui.long_text.components.RemarkDialog
 import com.funny.translation.translate.ui.main.SwipeToDismissItem
 import com.funny.translation.translate.ui.widget.CommonPage
 import com.funny.translation.translate.ui.widget.HintText
+import com.funny.translation.translate.ui.widget.NavPaddingItem
 import com.funny.translation.ui.FixedSizeIcon
 import java.util.UUID
 
@@ -81,6 +82,9 @@ fun LongTextTransListScreen() {
                 }
                 item {
                     HintText(text = stringResource(id = R.string.long_text_trans_list_tip))
+                }
+                item {
+                    NavPaddingItem()
                 }
             } else {
                 item {

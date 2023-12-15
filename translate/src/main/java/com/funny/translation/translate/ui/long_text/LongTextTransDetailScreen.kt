@@ -179,7 +179,7 @@ fun LongTextTransDetailScreen(
         ) {
             FloatingActionButton(
                 modifier = Modifier,
-                onClick = vm::retryCurrentPart
+                onClick = vm::toggleIsPausing
             ) {
                 AnimatedContent(targetState = vm.isPausing, label = "TogglePause") { pausing ->
                     if (pausing) {

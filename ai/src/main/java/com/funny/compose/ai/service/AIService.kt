@@ -58,7 +58,7 @@ interface AIService {
      */
     @POST("ai/ask_stream")
     // 设置超时时间
-    @Headers("Cache-Control: no-cache", "CONNECT_TIMEOUT: 15", "READ_TIMEOUT: 300", "WRITE_TIMEOUT: 10")
+    @Headers("Cache-Control: no-cache", "CONNECT_TIMEOUT: 15", "READ_TIMEOUT: 3000", "WRITE_TIMEOUT: 10")
     @Streaming
     suspend fun askStream(@Body req: AskStreamRequest): ResponseBody
 

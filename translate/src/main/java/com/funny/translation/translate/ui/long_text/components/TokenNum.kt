@@ -31,8 +31,8 @@ fun TokenNum(
     LoadingContent(
         modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         loader = {
-            // delay 500 以做 debounce
-            delay(500)
+            // delay 以做 debounce
+            delay(if (tokenCounter.online) 800 else 500)
             tokenCounter.count(text)
         },
         retryKey = tokenCounter to text,
