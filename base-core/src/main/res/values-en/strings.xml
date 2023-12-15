@@ -37,4 +37,7 @@
     <string name="cancel">Cancel</string>
     <string name="unsupported_language">This language is currently not supported</string>
     <string name="not_registered">It appears that you haven\'t registered before. Please register an account first~</string>
+    <string name="err_write_text">An error occurred while writing the file</string>
+    <string name="always_light">Always Light</string>
+    <string name="always_dark">Always Dark</string>
 </resources>

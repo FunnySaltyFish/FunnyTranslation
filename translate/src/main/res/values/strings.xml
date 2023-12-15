@@ -326,6 +326,6 @@
     <string name="check_and_modify">判定并修改</string>
     <string name="reset">还原</string>
     <string name="unparseable_prompt">无法解析的错误输出：</string>
-    <string name="chat_prompt_help">Prompt指定了模型的任务，它能很大程度上影响翻译质量。如果有特殊的需求（比如语种、表达方式、专业领域等），建议指定、\n\n必须和外语类学习、翻译相关，修改时会进行判定。无论判定是否通过，均会扣除判定所用的点数，谨慎修改，</string>
+    <string name="chat_prompt_help">Prompt指定了模型的任务，它能很大程度上影响翻译质量。如果有特殊的需求（比如语种、表达方式、专业领域等），建议指定、\n\n必须和外语类学习、翻译相关，修改时会进行判定。无论判定是否通过，均会扣除判定所用的点数，谨慎修改</string>
     <string name="app_light_dark_mode">深色模式</string>
 </resources>
