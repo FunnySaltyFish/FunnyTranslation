@@ -35,11 +35,10 @@ fun assetsString(name: String): String {
 fun assetsStringLocalized(name: String): String {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locale
-    val assetsKey = PREFIX_ASSETS_KEY + name
-    val localedAssetsKey = assetsKey.addBeforeFileEx("_" + locale.language)
-    Log.d(TAG, "assetsStringLocalized: try to find $localedAssetsKey")
-    return if (context.assets.list("")?.contains(localedAssetsKey) == true) {
-        assetsString(localedAssetsKey)
+    val localedAssetsName = name.addBeforeFileEx("_" + locale.language)
+    Log.d(TAG, "assetsStringLocalized: try to find $localedAssetsName")
+    return if (context.assets.list("")?.contains(localedAssetsName) == true) {
+        assetsString(localedAssetsName)
     } else {
         assetsString(name)
     }

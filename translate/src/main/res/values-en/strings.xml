@@ -314,7 +314,7 @@
     <string name="chat">Chat Translation</string>
     <string name="context_length">Context Length</string>
     <string name="buy_ai_point">Buy Points</string>
-    <string name="vip_only">VIP Exclusive</string>
+    <string name="vip_only">VIP Only</string>
     <string name="ai_point_hint">The token count is an estimated value, calculated at 0.016/k</string>
     <string name="ai_remaining_text_points">AI Text Points:</string>
     <string name="ai_remaining_voice_points">AI Voice Points:</string>
