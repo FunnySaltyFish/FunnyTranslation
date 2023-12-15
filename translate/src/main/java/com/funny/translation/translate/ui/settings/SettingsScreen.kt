@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Checkbox
@@ -63,6 +64,8 @@ import com.funny.translation.helper.LocaleUtils
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.ServiceCreator
+import com.funny.translation.theme.LightDarkMode
+import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.translate.Language
 import com.funny.translation.translate.LocalNavController
 import com.funny.translation.translate.R
@@ -84,6 +87,9 @@ import org.burnoutcrew.reorderable.rememberReorderState
 import org.burnoutcrew.reorderable.reorderable
 
 private const val TAG = "SettingScreen"
+private val languages = AppLanguage.values().toList().toImmutableList()
+private val lightDarkModes = LightDarkMode.values().toList().toImmutableList()
+
 
 @Composable
 fun SettingsScreen() {
@@ -113,6 +119,8 @@ fun SettingsScreen() {
             // 设置应用显示的语言
             // 跟随系统、简体中文、英语
             SelectAppLanguage()
+            // 设置应用的深浅色模式
+            SelectLightDarkMode()
         }
         SettingItemCategory(
             title = {
@@ -234,13 +242,13 @@ fun SettingsScreen() {
 
 @Composable
 private fun SelectAppLanguage() {
-    val languages = AppLanguage.values().toList().toImmutableList()
     val context = LocalContext.current
     var tempLanguage by remember { mutableStateOf(LocaleUtils.getAppLanguage()) }
 
     JetSettingListDialog(
         list = languages,
         text = stringResource(id = R.string.app_language),
+        description = tempLanguage.description,
         resourceId = R.drawable.ic_language_select,
         selected = tempLanguage,
         updateSelected = {
@@ -253,6 +261,22 @@ private fun SelectAppLanguage() {
             val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
             intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+        }
+    )
+}
+
+@Composable
+private fun SelectLightDarkMode() {
+    var lightDarkMode by ThemeConfig.lightDarkMode
+
+    JetSettingListDialog(
+        list = lightDarkModes,
+        text = stringResource(id = R.string.app_light_dark_mode),
+        description = stringResource(id = lightDarkMode.descId),
+        imageVector = Icons.Default.DarkMode,
+        selected = lightDarkMode,
+        updateSelected = {
+            lightDarkMode = it
         }
     )
 }

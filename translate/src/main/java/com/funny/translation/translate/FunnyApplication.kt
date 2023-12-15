@@ -17,6 +17,7 @@ import com.funny.translation.codeeditor.ui.editor.EditorSchemes
 import com.funny.translation.helper.DeviceUtils
 import com.funny.translation.helper.JsonX
 import com.funny.translation.sign.SignUtils
+import com.funny.translation.theme.LightDarkMode
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.ui.TranslateScreen
 import com.funny.translation.translate.ui.long_text.EditablePrompt
@@ -110,6 +111,7 @@ class FunnyApplication : BaseApplication() {
         registerTypeConverters<TranslateScreen>(save = TranslateScreen.Saver, restore = TranslateScreen.Restorer)
         registerTypeConverters<ChatMemory>(save = ChatMemory.Saver, restore = ChatMemory.Restorer)
         registerTypeConverters<EditablePrompt>(save = { JsonX.toJson(it) }, restore = { JsonX.fromJson(it) })
+        registerTypeConverters<LightDarkMode>(save = { it.name }, restore = { LightDarkMode.valueOf(it) })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -24,9 +26,11 @@ import com.funny.cmaterialcolors.MaterialColors
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
+import com.funny.translation.core.R
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.DeviceUtils
+import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.kyant.monet.LocalTonalPalettes
 import com.kyant.monet.PaletteStyle
@@ -150,9 +154,18 @@ sealed class ThemeType(val id: Int) {
     }
 }
 
+enum class LightDarkMode(@StringRes val descId: Int) {
+    Light(R.string.always_light), Dark(R.string.always_dark), System(R.string.follow_system);
+
+    override fun toString(): String {
+        return string(descId)
+    }
+}
+
 object ThemeConfig {
     private const val TAG = "ThemeConfig"
-    var sThemeType: MutableState<ThemeType> = mutableDataSaverStateOf(DataSaverUtils, "theme_type", ThemeType.Default)
+    val sThemeType: MutableState<ThemeType> = mutableDataSaverStateOf(DataSaverUtils, "theme_type", ThemeType.Default)
+    val lightDarkMode: MutableState<LightDarkMode> = mutableDataSaverStateOf(DataSaverUtils, "light_dark_mode", LightDarkMode.System)
 
     fun updateThemeType(new: ThemeType){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && new == ThemeType.DynamicNative) {
@@ -172,11 +185,27 @@ object ThemeConfig {
         sThemeType.value = new
         Log.d(TAG, "updateThemeType: $new")
     }
+
+    fun updateLightDarkMode(new: LightDarkMode){
+        lightDarkMode.value = new
+//        Log.d(TAG, "updateLightDarkMode: $new")
+    }
+}
+
+@Composable
+@ReadOnlyComposable
+private fun calcDark(): Boolean {
+    val lightDarkMode by ThemeConfig.lightDarkMode
+    return when(lightDarkMode) {
+        LightDarkMode.Light -> false
+        LightDarkMode.Dark -> true
+        LightDarkMode.System -> isSystemInDarkTheme()
+    }
 }
 
 @Composable
 fun TransTheme(
-    dark: Boolean = isSystemInDarkTheme(),
+    dark: Boolean = calcDark(),
     hideStatusBar: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -196,18 +225,17 @@ fun TransTheme(
 
     val mContent = @Composable {
         // SystemBarSettings(hideStatusBar)
-        val darkTheme = isSystemInDarkTheme()
         val context = LocalContext.current as ComponentActivity
         val c = MaterialTheme.colorScheme.primaryContainer.toArgb()
-        DisposableEffect(darkTheme) {
+        DisposableEffect(dark) {
             context.enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.auto(
                     android.graphics.Color.TRANSPARENT,
                     android.graphics.Color.TRANSPARENT,
-                ) { darkTheme },
+                ) { dark },
                 navigationBarStyle =
-                    if (darkTheme) SystemBarStyle.dark(transparent)
-                    else SystemBarStyle.light(transparent, c),
+                if (dark) SystemBarStyle.dark(transparent)
+                else SystemBarStyle.light(transparent, c),
             )
             onDispose {}
         }
@@ -239,7 +267,7 @@ fun TransTheme(
 val ColorScheme.isLight: Boolean
     @Composable
     @ReadOnlyComposable
-    get() = !isSystemInDarkTheme()
+    get() = !calcDark()
 
 @Composable
 fun MonetTheme(color: Color, content: @Composable () -> Unit) {
@@ -252,7 +280,7 @@ fun MonetTheme(color: Color, content: @Composable () -> Unit) {
         )
     ) {
         MaterialTheme(
-            colorScheme = dynamicColorScheme(isDark = isSystemInDarkTheme()),
+            colorScheme = dynamicColorScheme(isDark = calcDark()),
             content = content
         )
     }

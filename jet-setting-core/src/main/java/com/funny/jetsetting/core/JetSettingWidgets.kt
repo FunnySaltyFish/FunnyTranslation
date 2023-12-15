@@ -1,10 +1,12 @@
 package com.funny.jetsetting.core
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -138,6 +140,7 @@ fun JetSettingDialog(
     imageVector: ImageVector? = null,
     resourceId: Int? = null,
     text: String,
+    description: String? = null,
     dialogTitle: String = stringResource(id = R.string.hint),
     confirmButtonAction: (() -> Unit)? = EmptyAction,
     confirmButtonText: String = stringResource(id = R.string.confirm),
@@ -182,6 +185,7 @@ fun JetSettingDialog(
     JetSettingTile(
         modifier = modifier,
         text = text,
+        description = description,
         imageVector = imageVector,
         resourceId = resourceId,
         onClick =  {
@@ -195,6 +199,7 @@ fun <E> JetSettingListDialog(
     modifier: Modifier = Modifier,
     list: ImmutableList<E>,
     text: String,
+    description: String? = null,
     imageVector: ImageVector? = null,
     resourceId: Int? = null,
     selected: E,
@@ -207,6 +212,7 @@ fun <E> JetSettingListDialog(
     JetSettingDialog(
         modifier = modifier,
         text = text,
+        description = description,
         resourceId = resourceId,
         imageVector = imageVector,
         confirmButtonAction = confirmButtonAction,
@@ -218,17 +224,14 @@ fun <E> JetSettingListDialog(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             itemsIndexed(list) { i, item ->
-                SettingBaseItem(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    title = {
+                ListItem(
+                    modifier = Modifier.clickable { updateSelected(item) },
+                    headlineContent = {
                         Text(text = item.toString())
                     },
-                    action = {
+                    trailingContent = {
                         RadioButton(selected = selected == item, onClick = { updateSelected(item) })
                     },
-                    onClick = {
-                        updateSelected(item)
-                    }
                 )
             }
         }
