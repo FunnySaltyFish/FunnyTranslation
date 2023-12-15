@@ -13,6 +13,8 @@ object TextSplitter {
         listOf(" ", "\t", "\r")
     )
 
+    private val allPunctuations = hierarchyPunctuations.flatten()
+
     /**
      * 尝试按自然语言的规范，分割长度不大于 maxLength 的文本。多余的部分舍弃
      * @param text String
@@ -42,6 +44,22 @@ object TextSplitter {
         if (j == 0)
             return text.substring(0, maxLength)
         return text.substring(0, minOf(j + 1, textLength))
+    }
+
+    /**
+     * 尝试按自然语言的规范，对文本的最后进行裁剪，尽量保证裁剪后的文本是完整的句子
+     * @param text String
+     * @return String
+     */
+    fun cutTextNaturally(text: String): String {
+        for(puncs in hierarchyPunctuations) {
+            val idx = text.rfind(puncs, 0, text.length - 1)
+            if (idx != -1) {
+                // 由于大多数情况下，这个分隔符是换行符，所以这里直接返回 idx，换行符留给下一次作为输入，尽量保持格式
+                return text.substring(0, idx)
+            }
+        }
+        return text
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.funny.compose.ai.service
 
-import android.util.Log
 import com.funny.compose.ai.bean.ChatMessageReq
 import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.bean.StreamMessage
@@ -128,7 +127,7 @@ suspend fun ResponseBody.asFlow() = withContext(Dispatchers.IO) {
                     if (read == -1) {
                         break
                     }
-                    emit(String(buffer, 0, read).also { Log.d(TAG, "asFlow: $it") })
+                    emit(String(buffer, 0, read))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

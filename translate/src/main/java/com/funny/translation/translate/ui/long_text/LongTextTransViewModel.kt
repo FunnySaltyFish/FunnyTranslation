@@ -21,6 +21,7 @@ import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.TextSplitter
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
@@ -93,7 +94,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     var sourceText by mutableStateOf("")
     var resultText by mutableStateOf("")
 
-    var currentTransPartLength = 0 // 当前翻译的长度
+    var currentTransPartLength by mutableStateOf(0) // 当前翻译的长度
     val currentResultStartOffset get() = lastResultText.length
 
     // 源文本翻译时的每一段结束位置，每一个值为该段的最后一个字符的索引
@@ -147,6 +148,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                 task?.let {
                     sourceText = it.sourceText
                     resultText = it.resultText
+                    lastResultText = resultText
                     translatedLength = it.translatedLength
                     prompt = it.prompt
                     totalLength = it.sourceText.length
@@ -156,7 +158,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                     resultTextSegments.addAll(it.resultTextSegments)
 
                     if (translatedLength > 0) {
-                        if (translatedLength == totalLength) {
+                        if (translatedLength >= totalLength) {
                             screenState = ScreenState.Result
                         } else {
                             screenState = ScreenState.Translating
@@ -259,7 +261,9 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
 
         val remainText = sourceText.safeSubstring(translatedLength, translatedLength + maxLength)
         Log.d(TAG, "getNextPart: remainText: ${remainText.abstract()}")
-        val text = tokenCounter.truncate(remainText, emptyArray(), maxLength)
+        val text = tokenCounter.truncate(remainText, emptyArray(), maxLength).let {
+            TextSplitter.cutTextNaturally(it)
+        }
         Log.d(TAG, "getNextPart: truncated text: ${text.abstract()}")
 
         val sb = StringBuilder(text)
