@@ -6,7 +6,18 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -21,9 +32,19 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,10 +62,19 @@ import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.toastOnUi
-import com.funny.translation.translate.*
+import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.Language
 import com.funny.translation.translate.R
+import com.funny.translation.translate.TranslationResult
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.appDB
-import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.translate.ui.widget.CommonNavBackIcon
+import com.funny.translation.translate.ui.widget.CommonPage
+import com.funny.translation.translate.ui.widget.ExpandMoreButton
+import com.funny.translation.translate.ui.widget.FrameAnimationIcon
+import com.funny.translation.translate.ui.widget.NavPaddingItem
+import com.funny.translation.translate.ui.widget.TwoProgressIndicator
+import com.funny.translation.translate.ui.widget.rememberFrameAnimIconState
 import com.funny.translation.translate.utils.AudioPlayer
 import com.funny.translation.ui.FixedSizeIcon
 import com.funny.translation.ui.MarkdownText
@@ -92,8 +122,7 @@ fun MainPartTranslating(vm: MainViewModel) {
         Spacer(modifier = Modifier.height(8.dp))
         ResultList(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxSize(),
             resultList = vm.resultList,
             doFavorite = vm::doFavorite
         )
@@ -262,6 +291,7 @@ private fun ResultList(
 ) {
     LazyColumn(
         modifier = modifier,
+        contentPadding = PaddingValues(start = 16.dp, top = 4.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         itemsIndexed(resultList, key = { _, r -> r.engineName }) { _, result ->
@@ -270,6 +300,9 @@ private fun ResultList(
                 result = result,
                 doFavorite = doFavorite
             )
+        }
+        item {
+            NavPaddingItem()
         }
     }
 }
