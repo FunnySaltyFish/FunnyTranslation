@@ -165,7 +165,7 @@ fun LongTextTransDetailScreen(
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 16.dp)) {
-            DetailContent(screenState = vm.screenState, vm = vm)
+            DetailContent(screenState = vm.screenState, vm = vm, showUpdateRemarkDialog = { remarkDialogState.value = true })
         }
     }
 
@@ -210,7 +210,8 @@ fun LongTextTransDetailScreen(
 @Composable
 private fun ColumnScope.DetailContent(
     screenState: ScreenState,
-    vm: LongTextTransViewModel
+    vm: LongTextTransViewModel,
+    showUpdateRemarkDialog: () -> Unit
 ) {
     AnimatedContent(targetState = screenState, label = "DetailContent") {
         Column(
@@ -267,6 +268,8 @@ private fun ColumnScope.DetailContent(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     ExportButton(
+                        remark = vm.task?.remark ?: "",
+                        showUpdateRemarkDialog = showUpdateRemarkDialog,
                         exportOnlyResultProvider = vm::resultText,
                         exportBothSourceAndResultProvider = vm::generateBothExportedText
                     )
@@ -284,6 +287,8 @@ private fun ColumnScope.DetailContent(
  */
 @Composable
 private fun ExportButton(
+    remark: String = "",
+    showUpdateRemarkDialog: () -> Unit,
     exportOnlyResultProvider: () -> String,
     exportBothSourceAndResultProvider: () -> String,
 ) {
@@ -312,15 +317,23 @@ private fun ExportButton(
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.export_only_result)) },
                 onClick = {
+                    if (remark.isEmpty()) {
+                        showUpdateRemarkDialog()
+                        return@DropdownMenuItem
+                    }
                     needToExportTextProvider = exportOnlyResultProvider
-                    exportFileLauncher.launch("result_${System.currentTimeMillis()}.txt")
+                    exportFileLauncher.launch("result_${remark}.txt")
                 }
             )
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.export_both_source_and_result)) },
                 onClick = {
+                    if (remark.isEmpty()) {
+                        showUpdateRemarkDialog()
+                        return@DropdownMenuItem
+                    }
                     needToExportTextProvider = exportBothSourceAndResultProvider
-                    exportFileLauncher.launch("source_and_result_${System.currentTimeMillis()}.txt")
+                    exportFileLauncher.launch("source_and_result_${remark}.txt")
                 }
             )
         }
