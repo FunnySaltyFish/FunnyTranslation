@@ -1,15 +1,25 @@
 package com.funny.translation.translate.ui.thanks
 
 import android.util.Log
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +35,10 @@ import com.funny.compose.loading.LoadingContent
 import com.funny.compose.loading.LoadingState
 import com.funny.translation.AppConfig
 import com.funny.translation.translate.R
-import com.funny.translation.translate.ui.widget.*
+import com.funny.translation.translate.ui.widget.AutoFadeInComposableColumn
+import com.funny.translation.translate.ui.widget.AutoIncreaseAnimatedNumber
+import com.funny.translation.translate.ui.widget.FadeInColumnScope
+import com.funny.translation.translate.ui.widget.rememberAutoFadeInColumnState
 import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.datetime.Instant
@@ -348,38 +361,38 @@ fun AnnualReportPart6() {
         TipText(text = "到今天，已经过了")
         Spacer(height = 2.dp)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = ((System.currentTimeMillis() - 1577808000000) / 86400000).toInt(), startAnim = state.currentFadeIndex == 4, textSize = 36.sp)
+            AnimatedNumber(number = ((System.currentTimeMillis() - 1577808000000) / 86400000).toInt(), startAnim = state.currentFadeIndex == 4, textSize = 32.sp)
             ResultText(text = "天")
         }
         Spacer(height = 18.dp)
         TipText(text = "在这期间，译站提交了代码达")
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = 110, startAnim = state.currentFadeIndex == 7, textSize = 36.sp)
+            AnimatedNumber(number = 317, startAnim = state.currentFadeIndex == 7, textSize = 32.sp)
             ResultText(text = "次")
         }
         Spacer(height = 18.dp)
         TipText(text = "发布了")
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = 40, startAnim = state.currentFadeIndex == 10, textSize = 36.sp)
+            AnimatedNumber(number = 61, startAnim = state.currentFadeIndex == 10, textSize = 32.sp)
             ResultText(text = "个版本")
         }
 
         Spacer(height = 18.dp)
         TipText(text = "目前，译站App代码量超")
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = 17000, startAnim = state.currentFadeIndex == 13, textSize = 36.sp)
+            AnimatedNumber(number = 31000, startAnim = state.currentFadeIndex == 13, textSize = 32.sp)
             ResultText(text = "行")
         }
         Spacer(height = 8.dp)
         TipText(text = "应用下载量约")
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = 9000, startAnim = state.currentFadeIndex == 16, textSize = 36.sp)
+            AnimatedNumber(number = 20000, startAnim = state.currentFadeIndex == 16, textSize = 32.sp)
             ResultText(text = "次")
         }
         Spacer(height = 8.dp)
-        TipText(text = "赞助者")
+        TipText(text = "注册用户")
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AnimatedNumber(number = 30, startAnim = state.currentFadeIndex == 19, textSize = 36.sp)
+            AnimatedNumber(number = 1000, startAnim = state.currentFadeIndex == 19, textSize = 32.sp)
             ResultText(text = "+人")
         }
 
@@ -391,7 +404,6 @@ fun AnnualReportPart6() {
 
         TipText(text = "@译站 2023年度报告")
     }
-
 }
 
 @Composable
@@ -401,7 +413,7 @@ private fun LabelText(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 private fun ResultText(text: String, modifier: Modifier = Modifier) {
-    Text(text = text, fontSize = 36.sp, fontWeight = FontWeight.ExtraBold, modifier = modifier, color = Color.White)
+    Text(text = text, fontSize = 32.sp, fontWeight = FontWeight.ExtraBold, modifier = modifier, color = Color.White)
 }
 
 
@@ -412,7 +424,7 @@ private fun TipText(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 private fun TitleText(text: String, modifier: Modifier = Modifier) {
-    Text(text = text, fontSize = 36.sp, fontWeight = FontWeight.Bold, modifier = modifier, color = Color.White)
+    Text(text = text, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = modifier, color = Color.White)
 }
 
 @Composable
