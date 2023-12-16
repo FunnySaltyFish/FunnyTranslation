@@ -328,4 +328,6 @@
     <string name="unparseable_prompt">无法解析的错误输出：</string>
     <string name="chat_prompt_help">Prompt指定了模型的任务，它能很大程度上影响翻译质量。如果有特殊的需求（比如语种、表达方式、专业领域等），建议指定、\n\n必须和外语类学习、翻译相关，修改时会进行判定。无论判定是否通过，均会扣除判定所用的点数，谨慎修改</string>
     <string name="app_light_dark_mode">深色模式</string>
+    <string name="default_long_text_trans_prompt_prefix">你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文</string>
+    <string name="default_long_text_prompt_suffix">，并找出可能存在的新术语。你的输出分为两部分，以||sep||分割，前半部分是翻译结果，后半部分是关键词，以JSON数组的形式，无则为[]\n示例输入：XiaoHong and XiaoMing are studying DB class.||sep||[[\"DB\",\"数据库\"],[\"XiaoHong\",\"萧红\"]]\n示例输出：萧红和晓明正在学习数据库课程||sep||[[\"XiaoMing\",\"晓明\"]]\n\n保持译文和原文格式一致，正确输出换行</string>
 </resources>

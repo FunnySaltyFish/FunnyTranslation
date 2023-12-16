@@ -44,12 +44,8 @@ import org.json.JSONObject
 import java.util.UUID
 
 
-const val DEFAULT_PROMPT_PREFIX = """你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文"""
-const val DEFAULT_PROMPT_SUFFIX = """，并找出可能存在的新术语。你的输出分为两部分，以||sep||分割，前半部分是翻译结果，后半部分是关键词，以JSON数组的形式，无则为[]
-示例输入：XiaoHong and XiaoMing are studying DB class.||sep||[["DB","数据库"],["XiaoHong","萧红"]]
-示例输出：萧红和晓明正在学习数据库课程||sep||[["XiaoMing","晓明"]]
-
-保持译文和原文格式一致，正确输出换行"""
+val DEFAULT_PROMPT_PREFIX = string(R.string.default_long_text_trans_prompt_prefix)
+val DEFAULT_PROMPT_SUFFIX = string(R.string.default_long_text_prompt_suffix)
 
 private val DEFAULT_PROMPT = EditablePrompt(DEFAULT_PROMPT_PREFIX, DEFAULT_PROMPT_SUFFIX)
 

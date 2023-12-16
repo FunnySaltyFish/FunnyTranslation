@@ -55,8 +55,7 @@ object TextSplitter {
         for(puncs in hierarchyPunctuations) {
             val idx = text.rfind(puncs, 0, text.length - 1)
             if (idx != -1) {
-                // 由于大多数情况下，这个分隔符是换行符，所以这里直接返回 idx，换行符留给下一次作为输入，尽量保持格式
-                return text.substring(0, idx)
+                return text.substring(0, idx + 1)
             }
         }
         return text
