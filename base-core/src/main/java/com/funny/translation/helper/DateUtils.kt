@@ -27,6 +27,15 @@ object DateUtils {
                 2 -> time.day in 9..16
                 else -> false
             }
+            2025 -> when (time.month) {
+                1 -> time.day in 28..31
+                2 -> time.day in 1..4
+                else -> false
+            }
+            2026 -> when (time.month) {
+                2 -> time.day in 16..23
+                else -> false
+            }
             else -> false
         }
     }

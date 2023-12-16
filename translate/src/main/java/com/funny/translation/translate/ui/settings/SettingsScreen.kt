@@ -111,6 +111,27 @@ fun SettingsScreen() {
                 DevSetBaseUrl()
             }
         }
+        if (DateUtils.isSpringFestival) {
+            SettingItemCategory(title = {
+                ItemHeading(text = stringResource(id = R.string.setting_time_limited))
+            }) {
+                JetSettingSwitch(
+                    state = AppConfig.sSpringFestivalTheme,
+                    resourceId = R.drawable.ic_theme,
+                    text = stringResource(R.string.setting_spring_theme),
+                ) {
+                    Toast.makeText(
+                        context, "已${
+                            if (it) {
+                                "设置"
+                            } else {
+                                "取消"
+                            }
+                        }春节限定主题", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
         SettingItemCategory(
             title = {
                 ItemHeading(text = stringResource(id = R.string.setting_app_preference))
@@ -181,28 +202,6 @@ fun SettingsScreen() {
                 text = stringResource(R.string.clear_trans_history),
             ) {
                 openConfirmDeleteDialogState.value = true
-            }
-        }
-
-        if (DateUtils.isSpringFestival) {
-            SettingItemCategory(title = {
-                ItemHeading(text = stringResource(id = R.string.setting_time_limited))
-            }) {
-                JetSettingSwitch(
-                    state = AppConfig.sSpringFestivalTheme,
-                    resourceId = R.drawable.ic_theme,
-                    text = stringResource(R.string.setting_spring_theme),
-                ) {
-                    Toast.makeText(
-                        context, "已${
-                            if (it) {
-                                "设置"
-                            } else {
-                                "取消"
-                            }
-                        }春节限定主题", Toast.LENGTH_SHORT
-                    ).show()
-                }
             }
         }
 
