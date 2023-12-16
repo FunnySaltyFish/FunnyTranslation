@@ -47,14 +47,14 @@ object TextSplitter {
     }
 
     /**
-     * 尝试按自然语言的规范，对文本的最后进行裁剪，尽量保证裁剪后的文本是完整的句子
+     * 尝试按自然语言的规范，对文本的最后进行裁剪，尽量保证裁剪后的文本是完整的句子，且长度大于等于 ratio * length
      * @param text String
      * @return String
      */
-    fun cutTextNaturally(text: String): String {
+    fun cutTextNaturally(text: String, ratio: Float = 0.9f): String {
         for(puncs in hierarchyPunctuations) {
             val idx = text.rfind(puncs, 0, text.length - 1)
-            if (idx != -1) {
+            if (idx >= text.length * ratio) {
                 return text.substring(0, idx + 1)
             }
         }
