@@ -3,7 +3,13 @@ package com.funny.translation.translate.ui.widget
 import android.graphics.Path
 import android.graphics.PathMeasure
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -109,6 +115,7 @@ fun TextFlashCanvas(
             }
             delay(showTextDuration)
 
+            while (canvasSize == null) delay(100)
             resetParticleTargets(state.particleList!!, canvasSize = canvasSize!!)
             // 退出动画
             startTime = System.currentTimeMillis()
