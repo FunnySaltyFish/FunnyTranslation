@@ -1,8 +1,8 @@
 package com.funny.translation.codeeditor.ui.runner
 
-import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.BaseApplication
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.codeeditor.vm.ActivityCodeViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CodeRunnerViewModel(application: Application) : BaseViewModel(application),
+class CodeRunnerViewModel() : BaseViewModel(BaseApplication.ctx),
     Debug.DebugTarget {
     private var jsEngine: JsEngine? = null
 

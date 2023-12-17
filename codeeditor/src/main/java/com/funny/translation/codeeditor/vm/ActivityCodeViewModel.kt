@@ -1,9 +1,9 @@
 package com.funny.translation.codeeditor.vm
 
-import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.funny.translation.BaseApplication
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.lazyPromise
 import com.funny.translation.helper.readAssets
@@ -11,7 +11,7 @@ import com.funny.translation.translate.Language
 import io.github.rosemoe.editor.text.Content
 import kotlinx.coroutines.launch
 
-class ActivityCodeViewModel(application: Application) : BaseViewModel(application) {
+class ActivityCodeViewModel : BaseViewModel(BaseApplication.ctx) {
     private val TAG = "ActivityCodeVM"
 
     val codeState by lazy {

@@ -1,14 +1,16 @@
 package com.funny.translation.codeeditor.ui.editor
 
-import android.app.Application
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import com.funny.data_saver.core.mutableDataSaverStateOf
-import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.translation.BaseApplication
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataSaverUtils
 import io.github.rosemoe.editor.widget.EditorColorScheme
-import io.github.rosemoe.editor.widget.schemes.*
+import io.github.rosemoe.editor.widget.schemes.SchemeDarcula
+import io.github.rosemoe.editor.widget.schemes.SchemeEclipse
+import io.github.rosemoe.editor.widget.schemes.SchemeGitHub
+import io.github.rosemoe.editor.widget.schemes.SchemeNotepadXX
+import io.github.rosemoe.editor.widget.schemes.SchemeVS2019
 
 enum class EditorSchemes(val displayName:String,val scheme: EditorColorScheme){
     LIGHT("Light",EditorColorScheme()),
@@ -19,7 +21,7 @@ enum class EditorSchemes(val displayName:String,val scheme: EditorColorScheme){
     VS2019("VS2019",SchemeVS2019())
 }
 
-class CodeEditorViewModel(application: Application) : BaseViewModel(application) {
+class CodeEditorViewModel() : BaseViewModel(BaseApplication.ctx) {
     val symbolsData by lazy {
         val shows =
             arrayOf("->", "=", "{", "}", "(", ")", ",", ".", ";", "\"", "?", "+", "-", "*", "/")
