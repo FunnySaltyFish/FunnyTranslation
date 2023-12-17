@@ -12,7 +12,6 @@ import com.funny.translation.BaseApplication
 import com.funny.translation.core.R
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.awaitDialog
-import com.funny.translation.helper.biomertic.*
 import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
@@ -170,7 +169,7 @@ object BiometricUtils {
                         string(
                             R.string.tip_reset_fingerprint,
                             username,
-                            anonymousEmail(email)
+                            UserUtils.anonymousEmail(email)
                         ),
                         string(R.string.confirm),
                         string(R.string.cancel),
@@ -195,41 +194,36 @@ object BiometricUtils {
         } else {
             val secretKeyName = SECRET_KEY
             try {
-
-
                 val cipher = cryptographyManager.getInitializedCipherForDecryption(
                     secretKeyName, ciphertextWrapper.initializationVector
                 )
-                val biometricPrompt =
-                    BiometricPromptUtils.createBiometricPrompt(
-                        activity,
-                        authSuccess = { authResult ->
-                            ciphertextWrapper.let { textWrapper ->
-                                authResult.cryptoObject?.cipher?.let {
-                                    val plaintext =
-                                        cryptographyManager.decryptData(textWrapper.ciphertext, it)
-                                    Log.d(TAG, "validateFingerPrint: plainText: $plaintext")
-                                    //                                    SampleAppUser.fakeToken = plaintext
-                                    // Now that you have the token, you can query server for everything else
-                                    // the only reason we call this fakeToken is because we didn't really get it from
-                                    // the server. In your case, you will have gotten it from the server the first time
-                                    // and therefore, it's a real token.
-                                    onSuccess(
-                                        textWrapper.ciphertext.joinToString(","),
-                                        textWrapper.initializationVector.joinToString(",")
-                                    )
-                                }
-                            }
-                        },
-                        authError = { errorCode, errString ->
-                            if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                                onUsePassword()
-                            } else {
-                                onError(errorCode, errString)
-                            }
-                        },
-                        onFail
-                    )
+                val biometricPrompt = BiometricPromptUtils.createBiometricPrompt(
+                    activity,
+                    authSuccess = { authResult ->
+                        authResult.cryptoObject?.cipher?.let {
+                            val plaintext =
+                                cryptographyManager.decryptData(ciphertextWrapper.ciphertext, it)
+                            Log.d(TAG, "validateFingerPrint: plainText: $plaintext")
+                            //                                    SampleAppUser.fakeToken = plaintext
+                            // Now that you have the token, you can query server for everything else
+                            // the only reason we call this fakeToken is because we didn't really get it from
+                            // the server. In your case, you will have gotten it from the server the first time
+                            // and therefore, it's a real token.
+                            onSuccess(
+                                ciphertextWrapper.ciphertext.joinToString(","),
+                                ciphertextWrapper.initializationVector.joinToString(",")
+                            )
+                        }
+                    },
+                    authError = { errorCode, errString ->
+                        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                            onUsePassword()
+                        } else {
+                            onError(errorCode, errString)
+                        }
+                    },
+                    onFail
+                )
                 val promptInfo = BiometricPromptUtils.createPromptInfo()
                 runOnUI {
                     biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
@@ -239,6 +233,17 @@ object BiometricUtils {
                 onFail()
             }
         }
+    }
+
+    fun clearFingerPrintInfo(username: String){
+        tempSetFingerPrintInfo = FingerPrintInfo()
+        tempSetUserName = ""
+        cryptographyManager.clearCiphertextWrapperFromSharedPrefs(
+            BaseApplication.ctx,
+            SHARED_PREFS_FILENAME,
+            Context.MODE_PRIVATE,
+            username
+        )
     }
 
 
@@ -252,19 +257,5 @@ object BiometricUtils {
             return byteArray
         }
         return null
-    }
-
-    private fun anonymousEmail(email: String): String {
-        val arr = email.split("@")
-        if (arr.size == 2){
-            val prefix = arr[0]
-            val suffix = arr[1]
-            return if (prefix.length > 3){
-                prefix.take(3) + "***" + prefix.takeLast(3) + "@" + suffix
-            } else {
-                "$prefix***@$suffix"
-            }
-        }
-        return ""
     }
 }

@@ -6,19 +6,47 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.contentColorFor
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +63,7 @@ import androidx.navigation.NavController
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.biomertic.BiometricUtils
@@ -215,7 +244,9 @@ private fun LoginForm(
                                     scope.launch {
                                         vm.shouldVerifyEmailWhenLogin = true
                                         vm.email = email
-                                        BiometricUtils.uploadFingerPrint(username = vm.username)
+                                        vm.secureEmail = true
+                                        // BiometricUtils.uploadFingerPrint(username = vm.username)
+
                                         api(UserUtils.userService::sendVerifyEmail, vm.username, email)
                                     }
                                 } catch (e: Exception) {
@@ -243,8 +274,11 @@ private fun LoginForm(
             Text(stringResource(R.string.validate_fingerprint))
         }
         ExchangePasswordType(
-            passwordType = vm.passwordType
-        ) { vm.passwordType = it }
+            passwordType = vm.passwordType,
+            resetFingerprintAction = vm::resetFingerprint
+        ) {
+            vm.passwordType = it
+        }
         Spacer(modifier = Modifier.height(12.dp))
 
         // 因为下面的表达式变化速度快过UI的变化速度，为了减少重组次数，此处使用 derivedStateOf
@@ -432,7 +466,8 @@ private fun RegisterForm(
 @Composable
 private fun ExchangePasswordType(
     passwordType: String,
-    updatePasswordType: (String) -> Unit
+    resetFingerprintAction: SimpleAction? = null,
+    updatePasswordType: (String) -> Unit,
 ) {
     if (passwordType == PASSWORD_TYPE_PASSWORD && !AppConfig.lowerThanM) {
         Spacer(modifier = Modifier.height(4.dp))
@@ -443,11 +478,22 @@ private fun ExchangePasswordType(
         )
     } else if (passwordType == PASSWORD_TYPE_FINGERPRINT) {
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            modifier = Modifier.clickable { updatePasswordType(PASSWORD_TYPE_PASSWORD) },
-            text = stringResource(R.string.change_to_password),
-            style = MaterialTheme.typography.labelSmall
-        )
+        Row(Modifier.height(IntrinsicSize.Min), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                modifier = Modifier.clickable { updatePasswordType(PASSWORD_TYPE_PASSWORD) },
+                text = stringResource(R.string.change_to_password),
+                style = MaterialTheme.typography.labelSmall
+            )
+            if (resetFingerprintAction != null) {
+                Text(text = " | ")
+                // 重设指纹
+                Text(
+                    modifier = Modifier.clickable(onClick = resetFingerprintAction),
+                    text = stringResource(R.string.reset_fingerprint),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
     }
 }
 
@@ -467,12 +513,14 @@ private fun InputUsernameWrapper(
 
 @Composable
 private fun InputEmailWrapper(
-    modifier: Modifier, vm: LoginViewModel, initialSent: Boolean = false
+    modifier: Modifier,
+    vm: LoginViewModel,
+    initialSent: Boolean = false,
 ) {
     val context = LocalContext.current
     InputEmail(
         modifier = modifier,
-        value = vm.email,
+        value = vm.displayEmail,
         onValueChange = { vm.email = it },
         isError = vm.email != "" && !vm.isValidEmail,
         verifyCode = vm.verifyCode,

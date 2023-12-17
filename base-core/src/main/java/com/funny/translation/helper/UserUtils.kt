@@ -50,6 +50,24 @@ object UserUtils {
         return "^[a-zA-Z0-9]{8}\$".toRegex().matches(inviteCode)
     }
 
+    fun anonymousEmail(email: String): String {
+        val arr = email.split("@")
+        if (arr.size == 2){
+            val prefix = arr[0]
+            val suffix = arr[1]
+            return anonymousString(prefix) + "@" + suffix
+        }
+        return anonymousString(email)
+    }
+
+    private fun anonymousString(str: String): String {
+        return if (str.length > 3){
+            str.take(3) + "***" + str.takeLast(3)
+        } else {
+            "$str***"
+        }
+    }
+
 
     /**
      * 注册

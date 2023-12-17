@@ -52,4 +52,6 @@
     <string name="click_to_hide_password">Click to hide password</string>
     <string name="validate_fingerprint_success">Fingerprint validated success</string>
     <string name="new_password">New Password</string>
+    <string name="reset_fingerprint">Reset Fingerprint</string>
+    <string name="reset_fingerprint_success">Local fingerprint data has been cleared, please reset later.</string>
 </resources>

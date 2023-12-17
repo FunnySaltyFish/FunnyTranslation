@@ -74,6 +74,13 @@ interface CryptographyManager {
         prefKey: String
     ): CiphertextWrapper?
 
+    fun clearCiphertextWrapperFromSharedPrefs(
+        ctx: Context,
+        filename: String,
+        modePrivate: Int,
+        username: String
+    )
+
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -197,6 +204,15 @@ private class CryptographyManagerImpl : CryptographyManager {
         // 处理 kotlinx.serialization.Json 和 Gson 的差异
         json = json.replace("ciphertext", "a").replace("initializationVector", "b")
         return JsonX.fromJson(json, CiphertextWrapper::class.java)
+    }
+
+    override fun clearCiphertextWrapperFromSharedPrefs(
+        ctx: Context,
+        filename: String,
+        modePrivate: Int,
+        username: String
+    ) {
+        ctx.getSharedPreferences(filename, modePrivate).edit().remove(username).apply()
     }
 }
 

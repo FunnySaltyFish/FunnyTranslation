@@ -52,4 +52,6 @@
     <string name="click_to_hide_password">点击隐藏密码</string>
     <string name="validate_fingerprint_success">指纹认证成功</string>
     <string name="new_password">新密码</string>
+    <string name="reset_fingerprint">重设指纹</string>
+    <string name="reset_fingerprint_success">已清空本地指纹数据，请重新录入</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
+import com.funny.translation.BaseApplication.Companion.ctx
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.SignUpException
 import com.funny.translation.helper.UserUtils
@@ -27,6 +28,14 @@ class LoginViewModel : ViewModel() {
     var username by mutableStateOf("")
     var password by mutableStateOf("")
     var email by mutableStateOf("")
+
+    // 为了保护隐私，当从远程获取到邮箱时，需要隐藏邮箱
+    var secureEmail by mutableStateOf(false)
+    val displayEmail by derivedStateOf {
+        if (secureEmail) {
+            UserUtils.anonymousEmail(email)
+        } else email
+    }
     var verifyCode by mutableStateOf("")
     var inviteCode by mutableStateOf("")
 
@@ -156,6 +165,17 @@ class LoginViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    fun resetFingerprint() {
+        finishSetFingerPrint = false
+        finishValidateFingerPrint = false
+        encryptedInfo = ""
+        iv = ""
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BiometricUtils.clearFingerPrintInfo(username)
+        }
+        ctx.toastOnUi(string(R.string.reset_fingerprint_success))
     }
 
     fun findUsername(onSuccess: (List<String>) -> Unit){
