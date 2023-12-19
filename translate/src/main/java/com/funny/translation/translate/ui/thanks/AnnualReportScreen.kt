@@ -33,7 +33,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.compose.loading.LoadingContent
 import com.funny.compose.loading.LoadingState
-import com.funny.translation.AppConfig
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.AutoFadeInComposableColumn
 import com.funny.translation.translate.ui.widget.AutoIncreaseAnimatedNumber
@@ -54,9 +53,9 @@ fun AnnualReportScreen() {
     val systemUiController = rememberSystemUiController()
 
     DisposableEffect(key1 = systemUiController){
-        systemUiController.isNavigationBarVisible = false
+        systemUiController.isSystemBarsVisible = false
         onDispose {
-            systemUiController.isNavigationBarVisible = !AppConfig.sHideBottomNavBar.value
+            systemUiController.isSystemBarsVisible = true
         }
     }
 

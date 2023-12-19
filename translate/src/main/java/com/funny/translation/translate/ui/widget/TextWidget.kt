@@ -171,6 +171,7 @@ fun HintText(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
     fontSize: TextUnit = MaterialTheme.typography.bodySmall.fontSize,
+    textAlign: TextAlign = TextAlign.Center
 ) {
     Text(
         text = text,
@@ -179,7 +180,7 @@ fun HintText(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        textAlign = TextAlign.Center
+        textAlign = textAlign
     )
 }
 

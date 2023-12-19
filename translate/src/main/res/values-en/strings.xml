@@ -330,4 +330,6 @@
     <string name="app_light_dark_mode">Dark Mode</string>
     <string name="default_long_text_trans_prompt_prefix">You are now an excellent translator, working on translating a fragment of a long text. Please translate the input text into English according to the given terminology list.</string>
     <string name="default_long_text_prompt_suffix">Also, identify any potential new terminology. Your output consists of two parts, separated by ||sep||. The first part is the translation result, and the second part is the keywords in the form of a JSON array. If there are no keywords, it should be [].\nExample input: XiaoHong and XiaoMing are studying DB class.||sep||[[\"DB\",\"数据库\"],[\"XiaoHong\",\"萧红\"]]\nExample output: 萧红和晓明正在学习数据库课程||sep||[[\"XiaoMing\",\"晓明\"]]\n\nPlease maintain the format of the translated text consistent with the original text and correctly output all line breaks.</string>
+    <string name="model_engine">LLM</string>
+    <string name="llm_engine_tip">Using LLM to translate will cost AI text points, goto long-text-translation page to check the detail.</string>
 </resources>

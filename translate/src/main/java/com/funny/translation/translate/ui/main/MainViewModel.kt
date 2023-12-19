@@ -13,25 +13,49 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.funny.compose.ai.utils.ModelManager
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.displayMsg
+import com.funny.translation.helper.string
+import com.funny.translation.helper.toastOnUi
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.core.JsTranslateTaskText
-import com.funny.translation.translate.*
+import com.funny.translation.translate.FunnyApplication
+import com.funny.translation.translate.Language
+import com.funny.translation.translate.R
+import com.funny.translation.translate.TranslationEngine
+import com.funny.translation.translate.TranslationException
+import com.funny.translation.translate.TranslationResult
+import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.database.DefaultData
 import com.funny.translation.translate.database.TransFavoriteBean
 import com.funny.translation.translate.database.TransHistoryBean
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.engine.TextTranslationEngines
 import com.funny.translation.translate.engine.selectKey
+import com.funny.translation.translate.task.ModelTranslationTask
 import com.funny.translation.translate.utils.SortResultUtils
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     // 全局UI状态
@@ -52,8 +76,11 @@ class MainViewModel : ViewModel() {
     private var translateJob: Job? = null
     private var jsEngineInitialized = false
     private var initialSelected = 0
-    private val mutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
+    private val updateProgressMutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
+    private val evalJsMutex by lazy(LazyThreadSafetyMode.PUBLICATION) { Mutex() }
     private val totalProgress: Int get() = selectedEngines.size
+
+    var modelEngines by mutableStateOf(listOf<TranslationEngine>())
 
     // 下面是一些需要计算的变量，比如流和列表
     val jsEnginesFlow : Flow<List<JsTranslateTaskText>> = appDB.jsDao.getEnabledJs().distinctUntilChanged().mapLatest { list ->
@@ -81,6 +108,8 @@ class MainViewModel : ViewModel() {
         MutableStateFlow(it)
     }
 
+
+
     val transHistories by lazy {
         Pager(PagingConfig(pageSize = 10)) {
             appDB.transHistoryDao.queryAllPaging()
@@ -94,6 +123,22 @@ class MainViewModel : ViewModel() {
                 if(DefaultData.isPluginBound(jsBean)) {
                     appDB.jsDao.deleteJs(jsBean)
                 }
+            }
+
+            try {
+                ModelManager.models.await().map {
+                    ModelTranslationTask(model = it).apply {
+                        this.selected = DataSaverUtils.readData(this.selectKey, false)
+                        if(this.selected) {
+                            addSelectedEngines(this)
+                            initialSelected++
+                        }
+                    }
+                }.let { engines ->
+                    modelEngines = engines
+                }
+            } catch (e: Exception) {
+                appCtx.toastOnUi(e.displayMsg(string(R.string.load_llm_models)))
             }
 
             // 延时，等待插件加载完
@@ -250,7 +295,7 @@ class MainViewModel : ViewModel() {
         createFlow(true).buffer().collect { task ->
             tasks.add(viewModelScope.async {
                 try {
-                    mutex.withLock {
+                    updateProgressMutex.withLock {
                         task.result.targetLanguage = targetLanguage
                         startedProgress += 1f / totalProgress
                     }
@@ -261,7 +306,7 @@ class MainViewModel : ViewModel() {
                     Log.d(TAG, "translate : $finishedProgress ${task.result}")
                 } catch (e: TranslationException) {
                     e.printStackTrace()
-                    mutex.withLock {
+                    updateProgressMutex.withLock {
                         with(task.result) {
                             setBasicResult(
                                 "${FunnyApplication.resources.getString(R.string.error_result)}\n${e.message}"
@@ -271,7 +316,7 @@ class MainViewModel : ViewModel() {
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    mutex.withLock {
+                    updateProgressMutex.withLock {
                         with(task.result) {
                             setBasicResult(FunnyApplication.resources.getString(R.string.error_result))
                             updateTranslateResult(this)
@@ -289,25 +334,38 @@ class MainViewModel : ViewModel() {
             selectedEngines.forEach {
                 if (support(it.supportLanguages)) {
                     val lambda = {
-                        val task = if (it is TextTranslationEngines) {
-                            it.createTask(
-                                actualTransText,
-                                sourceLanguage,
-                                targetLanguage
-                            )
-                        } else {
-                            val jsTask = it as JsTranslateTaskText
-                            jsTask.result.engineName = jsTask.name
-                            jsTask.sourceString = actualTransText
-                            jsTask.sourceLanguage = sourceLanguage
-                            jsTask.targetLanguage = targetLanguage
-                            jsTask
+                        val task = when (it) {
+                            is TextTranslationEngines -> {
+                                it.createTask(
+                                    actualTransText,
+                                    sourceLanguage,
+                                    targetLanguage
+                                )
+                            }
+
+                            is ModelTranslationTask -> {
+                                val modelTask = ModelTranslationTask(it.model)
+                                modelTask.result.engineName = modelTask.name
+                                modelTask.sourceString = actualTransText
+                                modelTask.sourceLanguage = sourceLanguage
+                                modelTask.targetLanguage = targetLanguage
+                                modelTask
+                            }
+
+                            else -> {
+                                val jsTask = it as JsTranslateTaskText
+                                jsTask.result.engineName = jsTask.name
+                                jsTask.sourceString = actualTransText
+                                jsTask.sourceLanguage = sourceLanguage
+                                jsTask.targetLanguage = targetLanguage
+                                jsTask
+                            }
                         }
-                        if (withMutex) task.mutex = mutex
+                        if (withMutex) task.mutex = evalJsMutex
                         task
                     }
                     if (withMutex) {
-                        mutex.withLock {
+                        updateProgressMutex.withLock {
                             emit(lambda())
                         }
                     } else {
@@ -321,7 +379,7 @@ class MainViewModel : ViewModel() {
                         updateTranslateResult(result)
                     }
                     if (withMutex) {
-                        mutex.withLock {
+                        updateProgressMutex.withLock {
                             lambda()
                         }
                     } else {
@@ -344,7 +402,7 @@ class MainViewModel : ViewModel() {
     }
 
     private suspend fun updateTranslateResultWithMutex(result: TranslationResult) {
-        mutex.withLock {
+        updateProgressMutex.withLock {
             updateTranslateResult(result)
         }
     }

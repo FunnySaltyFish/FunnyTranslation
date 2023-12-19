@@ -1,14 +1,14 @@
 package com.funny.translation.js.core
 
-import android.util.Log
 import com.funny.translation.debug.Debug
 import com.funny.translation.js.JsEngine
 import com.funny.translation.js.config.JsConfig.Companion.INVOCABLE
 import com.funny.translation.js.config.JsConfig.Companion.SCRIPT_ENGINE
 import com.funny.translation.js.extentions.messageWithDetail
-import com.funny.translation.translate.*
-import kotlinx.coroutines.sync.Mutex
-import java.lang.Exception
+import com.funny.translation.translate.CoreTextTranslationTask
+import com.funny.translation.translate.Language
+import com.funny.translation.translate.TranslationException
+import com.funny.translation.translate.allLanguages
 import javax.script.ScriptException
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
@@ -63,10 +63,9 @@ class JsTranslateTaskText(
 
     override suspend fun translate() {
         fun String.emptyString() = this.ifEmpty { " [空字符串]" }
-        doWithMutex {
-            result.engineName = name
-            result.sourceString = sourceString
-        }
+        result.engineName = name
+        result.sourceString = sourceString
+
         try {
             doWithMutex { eval() }
             Debug.log("sourceString:$sourceString $sourceLanguage -> $targetLanguage ")
@@ -77,10 +76,8 @@ class JsTranslateTaskText(
             val basicText = getBasicText(url)
             Debug.log("成功！basicText：${basicText.emptyString()}")
             Debug.log("开始执行 getFormattedResult 方法……")
-            doWithMutex {
-                getFormattedResult(basicText)
-                Debug.log("成功！result:$result")
-            }
+            getFormattedResult(basicText)
+            Debug.log("成功！result:$result")
             Debug.log("插件执行完毕！")
         } catch (exception: ScriptException) {
             Debug.log(exception.messageWithDetail)

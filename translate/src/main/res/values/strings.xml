@@ -330,4 +330,7 @@
     <string name="app_light_dark_mode">深色模式</string>
     <string name="default_long_text_trans_prompt_prefix">你现在是一名优秀的翻译人员，现在在翻译长文中的某个片段。请根据给定的术语表，将输入文本翻译成中文</string>
     <string name="default_long_text_prompt_suffix">，并找出可能存在的新术语。你的输出分为两部分，以||sep||分割，前半部分是翻译结果，后半部分是关键词，以JSON数组的形式，无则为[]\n示例输入：XiaoHong and XiaoMing are studying DB class.||sep||[[\"DB\",\"数据库\"],[\"XiaoHong\",\"萧红\"]]\n示例输出：萧红和晓明正在学习数据库课程||sep||[[\"XiaoMing\",\"晓明\"]]\n\n保持译文和原文格式一致，正确输出换行</string>
+    <string name="model_engine">大模型</string>
+    <string name="llm_engine_tip">使用大模型翻译需消耗AI文字点数，具体细则请前往“长文翻译”查看</string>
+    <string name="load_llm_models">加载大模型列表</string>
 </resources>

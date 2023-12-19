@@ -16,7 +16,7 @@ import com.funny.compose.ai.bean.SENDER_ME
 import com.funny.compose.ai.bean.StreamMessage
 import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.ai.chat.TestLongTextChatBot
-import com.funny.compose.ai.service.aiService
+import com.funny.compose.ai.utils.ModelManager
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataHolder
@@ -120,9 +120,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
 
     init {
         execute {
-            modelList.addAll(kotlin.runCatching {
-                aiService.getChatModels()
-            }.onFailure { it.printStackTrace() }.getOrDefault(listOf()))
+            modelList.addAll(ModelManager.models.await())
 
             if (modelList.isEmpty()) return@execute
 

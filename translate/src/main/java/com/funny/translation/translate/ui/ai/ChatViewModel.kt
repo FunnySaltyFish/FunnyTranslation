@@ -19,6 +19,7 @@ import com.funny.compose.ai.chat.ModelChatBot
 import com.funny.compose.ai.service.AskStreamRequest
 import com.funny.compose.ai.service.aiService
 import com.funny.compose.ai.service.askAndProcess
+import com.funny.compose.ai.utils.ModelManager
 import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataSaverUtils
@@ -58,9 +59,7 @@ class ChatViewModel: BaseViewModel(appCtx) {
 
         execute {
             delay(NAV_ANIM_DURATION.toLong())
-            modelList.addAll(kotlin.runCatching {
-                aiService.getChatModels()
-            }.onFailure { it.printStackTrace() }.getOrDefault(listOf()))
+            modelList.addAll(ModelManager.models.await())
 
             if (modelList.isEmpty()) return@execute
 

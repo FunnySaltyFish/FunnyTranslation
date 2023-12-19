@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -38,7 +39,6 @@ import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
@@ -49,7 +49,6 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -70,10 +69,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.translation.AppConfig
 import com.funny.translation.NeedToTransConfig
+import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.network.api
@@ -84,7 +85,9 @@ import com.funny.translation.translate.TranslationEngine
 import com.funny.translation.translate.engine.selectKey
 import com.funny.translation.translate.navigateSingleTop
 import com.funny.translation.translate.ui.TranslateScreen
+import com.funny.translation.translate.ui.widget.HintText
 import com.funny.translation.translate.ui.widget.SimpleNavigation
+import com.funny.translation.ui.AnyPopDialog
 import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -180,20 +183,27 @@ fun TextTransScreen() {
         }
     }
 
-    var showEngineSelect by remember { mutableStateOf(false) }
+    var showEngineSelect by rememberStateOf(value = false)
     if (showEngineSelect) {
-        AlertDialog(onDismissRequest = { showEngineSelect = false }, text = {
+        AnyPopDialog(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+                )
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            onDismissRequest = { showEngineSelect = false },
+            isActiveClose = false
+        ) {
             EngineSelect(
                 modifier = Modifier,
                 bindEngines,
                 jsEngines,
+                vm.modelEngines,
                 updateSelectedEngine
             )
-        }, confirmButton = {
-            TextButton(onClick = { showEngineSelect = false }) {
-                Text(text = stringResource(id = R.string.message_confirm))
-            }
-        })
+        }
     }
 
     val showEngineSelectAction = remember {
@@ -292,65 +302,70 @@ private fun EngineSelect(
     modifier: Modifier,
     bindEngines: List<TranslationEngine> = arrayListOf(),
     jsEngines: List<TranslationEngine> = arrayListOf(),
+    modelEngines: List<TranslationEngine> = arrayListOf(),
     updateSelectEngine: UpdateSelectedEngine
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.Start,
     ) {
-        Text(
-            text = stringResource(id = R.string.bind_engine),
-            fontWeight = W600
+        EnginePart(
+            title = stringResource(id = R.string.bind_engine),
+            engines = bindEngines,
+            updateSelectEngine = updateSelectEngine
         )
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = spacedBy(8.dp),
-        ) {
-            bindEngines.forEach { task ->
-                var taskSelected by rememberDataSaverState(
-                    key = task.selectKey,
-                    default = task.selected
-                )
-                FilterChip(selected = taskSelected, onClick = {
-                    if (!taskSelected) { // 选中了
-                        updateSelectEngine.add(task)
-                    } else updateSelectEngine.remove(task)
-                    taskSelected = !taskSelected
-                }, label = {
-                    Text(text = task.name)
-                })
-            }
-        }
 
         if (jsEngines.isNotEmpty()) {
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(id = R.string.plugin_engine),
-                fontWeight = W600
+            EnginePart(
+                title = stringResource(id = R.string.plugin_engine),
+                engines = jsEngines,
+                updateSelectEngine = updateSelectEngine
             )
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = spacedBy(8.dp)
-            ) {
-                jsEngines.forEach { task ->
-                    var taskSelected by rememberDataSaverState(
-                        key = task.selectKey,
-                        default = task.selected
-                    )
-                    FilterChip(selected = taskSelected, onClick = {
-                        if (!taskSelected) { // 选中了
-                            updateSelectEngine.add(task)
-                        } else updateSelectEngine.remove(task)
-                        taskSelected = !taskSelected
-                    }, label = {
-                        Text(text = task.name)
-                    })
-                }
-            }
+        }
+
+        if (modelEngines.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            EnginePart(
+                title = stringResource(id = R.string.model_engine),
+                engines = modelEngines,
+                updateSelectEngine = updateSelectEngine
+            )
+            HintText(text = stringResource(R.string.llm_engine_tip), fontSize = 8.sp)
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun EnginePart(
+    title: String,
+    engines: List<TranslationEngine>,
+    updateSelectEngine: UpdateSelectedEngine
+) {
+    Text(
+        text = title,
+        fontWeight = W600
+    )
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 4.dp),
+        horizontalArrangement = spacedBy(8.dp),
+    ) {
+        engines.forEach { task ->
+            var taskSelected by rememberDataSaverState(
+                key = task.selectKey,
+                default = task.selected
+            )
+            FilterChip(selected = taskSelected, onClick = {
+                if (!taskSelected) { // 选中了
+                    updateSelectEngine.add(task)
+                } else updateSelectEngine.remove(task)
+                taskSelected = !taskSelected
+            }, label = {
+                Text(text = task.name)
+            })
         }
     }
 }
