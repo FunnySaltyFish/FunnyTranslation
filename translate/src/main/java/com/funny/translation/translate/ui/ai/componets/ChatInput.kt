@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -37,15 +38,16 @@ fun ChatInputTextField(
     sendAction: () -> Unit,
     clearAction: () -> Unit,
 ) {
+    val color = MaterialTheme.colorScheme.surface
     TextField(
         value = input,
         onValueChange = onValueChange,
         modifier = modifier,
         placeholder = { Text(stringResource(id = R.string.chat_input_hint)) },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            disabledContainerColor = Color.White,
+            focusedContainerColor = color,
+            unfocusedContainerColor = color,
+            disabledContainerColor = color,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
