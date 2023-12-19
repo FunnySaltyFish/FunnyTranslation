@@ -16,23 +16,31 @@ import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.findLanguageById
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.*
+import java.util.Calendar
+import java.util.Date
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 class AnnualReportViewModel: ViewModel() {
     companion object{
-        const val YEAR = 2023
+        private const val YEAR = 2023
+        private val calendar by lazy {
+            Calendar.getInstance()
+        }
         // 2023年全年，开始和结束对应的时间戳
         val START_TIME by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            LocalDateTime(YEAR, 1, 1, 0, 0).toInstant(TimeZone.currentSystemDefault())
-                .toEpochMilliseconds()
+            // 1月1日 0点
+            calendar.apply {
+                set(YEAR, 0, 1, 0, 0, 0)
+            }.timeInMillis
         }
 
         val END_TIME by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            LocalDateTime(YEAR, 12, 31, 23, 59).toInstant(TimeZone.currentSystemDefault())
-                .toEpochMilliseconds()
+            // 12月31日 23点59分59秒
+            calendar.apply {
+                set(YEAR, 11, 31, 23, 59, 59)
+            }.timeInMillis
         }
     }
     var shouldLoadLatest = false
@@ -114,8 +122,17 @@ private fun List<TransHistoryBean>.findSpecialTimes(): Pair<Long, Long> {
     var latestTimeOfDay: Int = Int.MIN_VALUE
     var latestTimeIndex = -1
     this.forEachIndexed { index, transHistoryBean ->
-        val localDateTime = Instant.fromEpochMilliseconds(transHistoryBean.time).toLocalDateTime(TimeZone.currentSystemDefault())
-        val t = localDateTime.hour * 60 * 60 + localDateTime.minute * 60 + localDateTime.second
+        val calendar = Calendar.getInstance().apply {
+            time = Date(transHistoryBean.time)
+        }
+        var hour = calendar.get(Calendar.HOUR_OF_DAY)
+        // 凌晨 5 点前被当做晚上
+        if (hour <= 5) hour += 24
+
+        val t = hour * 3600 +
+                calendar.get(Calendar.MINUTE) * 60 +
+                calendar.get(Calendar.SECOND)
+
         if (t < earliestTimeOfDay) {
             earliestTimeOfDay = t
             earliestTimeIndex = index

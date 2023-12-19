@@ -41,9 +41,8 @@ import com.funny.translation.translate.ui.widget.FadeInColumnScope
 import com.funny.translation.translate.ui.widget.rememberAutoFadeInColumnState
 import com.funny.translation.ui.animatedGradientBackground
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import java.util.Date
+import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -210,14 +209,8 @@ fun AnnualReportPart3(
 ) {
     // 时间戳转化为 xx年xx月xx日 xx:xx:xx
     fun formatTime(time: Long): String {
-        val localDateTime = Instant.fromEpochMilliseconds(time).toLocalDateTime(TimeZone.currentSystemDefault())
-        val year = localDateTime.year
-        val month = localDateTime.monthNumber
-        val day = localDateTime.dayOfMonth
-        val hour = localDateTime.hour
-        val minute = localDateTime.minute
-        val second = localDateTime.second
-        return "${year}年${month}月${day}日 %02d:%02d:%02d".format(hour, minute, second)
+        val formatter = java.text.SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss", Locale.CHINESE)
+        return formatter.format(Date(time))
     }
 
     AutoFadeInComposableColumn(
