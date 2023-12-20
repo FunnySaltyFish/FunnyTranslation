@@ -9,36 +9,39 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.SaveAlt
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,15 +49,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.data_saver.core.rememberDataSaverState
 import com.funny.jetsetting.core.ui.SimpleDialog
 import com.funny.translation.debug.rememberStateOf
+import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.assetsStringLocalized
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
@@ -107,13 +114,14 @@ fun LongTextTransDetailScreen(
                 FixedSizeIcon(Icons.Default.Help, contentDescription = "Help")
             }
         },
+        addNavPadding = false
     ) {
         // 传入参数时，先初始化各类型
         LaunchedEffect(key1 = id){
             vm.initArgs(id)
         }
 
-        val quitAlertDialog = remember { mutableStateOf(false) }
+        val quitAlertDialog = rememberStateOf(value = false)
         SimpleDialog(
             openDialogState = quitAlertDialog,
             title = stringResource(id = R.string.tip),
@@ -131,6 +139,21 @@ fun LongTextTransDetailScreen(
             updateRemarkAction = vm::updateRemark
         )
 
+        val modelSelectDialog = rememberStateOf(value = false)
+        SimpleDialog(
+            openDialogState = modelSelectDialog,
+            title = stringResource(id = R.string.model_select),
+            content = {
+                ModelListPart(
+                    modelList = vm.modelList,
+                    initialSelectId = vm.selectedModelId,
+                    onModelSelected = vm::updateBot
+                )
+            },
+            confirmButtonText = "",
+            dismissButtonText = ""
+        )
+
         BackHandler(enabled =
             (vm.screenState == ScreenState.Translating && !vm.isPausing)
             || (vm.screenState == ScreenState.Result && vm.task?.remark?.isEmpty() == true)
@@ -142,30 +165,31 @@ fun LongTextTransDetailScreen(
             }
         }
 
-//        NoticeBar(
-//            modifier = Modifier
-//                .fillMaxWidth(0.95f)
-//                .background(
-//                    MaterialTheme.colorScheme.primaryContainer,
-//                    RoundedCornerShape(8.dp)
-//                )
-//                .padding(8.dp),
-//            text = stringResource(R.string.early_preview_tip),
-//            singleLine = false,
-//            showClose = false,
-//        )
-//        Spacer(modifier = Modifier.height(4.dp))
         AnimatedVisibility (vm.screenState == ScreenState.Translating) {
             TwoProgressIndicator(startedProgress = vm.startedProgress, finishedProgress = vm.progress)
         }
 
-        Column(
-            Modifier
+        DetailContent(
+            modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(horizontal = 16.dp)) {
-            DetailContent(screenState = vm.screenState, vm = vm, showUpdateRemarkDialog = { remarkDialogState.value = true })
-        }
+                .padding(horizontal = 16.dp),
+            screenState = vm.screenState,
+            vm = vm
+        )
+
+
+        FunctionRow(
+            modifier = Modifier.fillMaxWidth(),
+            screenState = vm.screenState,
+            showModelAction = { modelSelectDialog.value = true },
+            remark = vm.task?.remark ?: "",
+            startTranslateAction = vm::startTranslate,
+            showUpdateRemarkDialog = { remarkDialogState.value = true },
+            exportOnlyResultProvider = vm::resultText,
+            exportBothSourceAndResultProvider = vm::generateBothExportedText
+        )
+
     }
 
     AnimatedVisibility(
@@ -176,6 +200,17 @@ fun LongTextTransDetailScreen(
         Row(
             modifier = Modifier.floatingActionBarModifier(),
         ) {
+            val showRetryBtn = vm.isPausing
+            if (showRetryBtn) {
+                FloatingActionButton(
+                    modifier = Modifier,
+                    onClick = vm::retryCurrentPart
+                ) {
+                    FixedSizeIcon(Icons.Default.RestartAlt, contentDescription = "Retry")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+
             FloatingActionButton(
                 modifier = Modifier,
                 onClick = vm::toggleIsPausing
@@ -188,27 +223,17 @@ fun LongTextTransDetailScreen(
                     }
                 }
             }
-            val showRetryBtn = vm.isPausing
-            if (showRetryBtn) {
-                Spacer(modifier = Modifier.width(8.dp))
-                FloatingActionButton(
-                    modifier = Modifier,
-                    onClick = vm::retryCurrentPart
-                ) {
-                    FixedSizeIcon(Icons.Default.RestartAlt, contentDescription = "Retry")
-                }
-            }
         }
     }
 }
 
 @Composable
 private fun ColumnScope.DetailContent(
+    modifier: Modifier = Modifier,
     screenState: ScreenState,
-    vm: LongTextTransViewModel,
-    showUpdateRemarkDialog: () -> Unit
+    vm: LongTextTransViewModel
 ) {
-    AnimatedContent(targetState = screenState, label = "DetailContent") {
+    AnimatedContent(modifier = modifier, targetState = screenState, label = "DetailContent") {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -229,12 +254,6 @@ private fun ColumnScope.DetailContent(
                         AllCorpusList(vm = vm, expanded = expanded)
                     }
                     ModelListPart(modelList = vm.modelList, vm.selectedModelId, onModelSelected = vm::updateBot)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = { vm.startTranslate() }) {
-                        FixedSizeIcon(Icons.Default.PlayArrow, contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = stringResource(id = R.string.start_translate))
-                    }
                 }
                 ScreenState.Translating -> {
                     SourceTextPart(
@@ -256,18 +275,65 @@ private fun ColumnScope.DetailContent(
                     SourceTextPart(text = vm.sourceText, screenState = vm.screenState, tokenCounter = vm.chatBot.tokenCounter)
                     ResultTextPart(text = vm.resultText, screenState = vm.screenState, tokenCounter = vm.chatBot.tokenCounter)
                     Category(
+                        title = stringResource(id = R.string.task_prompt),
+                        helpText = stringResource(id = R.string.task_prompt_help),
+                    ) { expanded ->
+                        SelectionContainer {
+                            Text(
+                                text = vm.prompt.toPrompt(),
+                                maxLines = if (expanded) Int.MAX_VALUE else 4,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp
+                            )
+                        }
+                    }
+                    Category(
                         title = stringResource(id = R.string.all_corpus),
                         helpText = string(R.string.corpus_help),
                     ) { expanded ->
                         AllCorpusList(vm = vm, expanded = expanded)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    ExportButton(
-                        remark = vm.task?.remark ?: "",
-                        showUpdateRemarkDialog = showUpdateRemarkDialog,
-                        exportOnlyResultProvider = vm::resultText,
-                        exportBothSourceAndResultProvider = vm::generateBothExportedText
-                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FunctionRow(
+    modifier: Modifier = Modifier,
+    screenState: ScreenState,
+    startTranslateAction: SimpleAction,
+    showModelAction: SimpleAction,
+    remark: String = "",
+    showUpdateRemarkDialog: () -> Unit,
+    exportOnlyResultProvider: () -> String,
+    exportBothSourceAndResultProvider: () -> String,
+) {
+    Surface(modifier, tonalElevation = 4.dp, shadowElevation = 4.dp) {
+        Row(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .navigationBarsPadding(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            AnimatedContent(targetState = screenState, label = "") { screenState ->
+                when (screenState) {
+                    ScreenState.Init -> {
+                        TintIconButton(icon =Icons.Default.PlayArrow, onClick = startTranslateAction)
+                    }
+                    ScreenState.Translating -> {
+                        TintIconButton(icon = Icons.Default.Dashboard, onClick = showModelAction)
+                    }
+                    ScreenState.Result -> {
+                        ExportButton(
+                            remark = remark,
+                            showUpdateRemarkDialog = showUpdateRemarkDialog,
+                            exportOnlyResultProvider = exportOnlyResultProvider,
+                            exportBothSourceAndResultProvider = exportBothSourceAndResultProvider
+                        )
+                    }
                 }
             }
         }
@@ -304,10 +370,7 @@ private fun ExportButton(
         context.toastOnUi(string(id = R.string.export_success))
     }
     var expand by rememberStateOf(value = false)
-    Button(onClick = { expand = true }) {
-        FixedSizeIcon(Icons.Default.SaveAlt, contentDescription = null)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = stringResource(id = R.string.export_result))
+    TintIconButton(icon = Icons.Default.SaveAlt, onClick = { expand = true }) {
         DropdownMenu(expanded = expand, onDismissRequest = { expand = false }) {
             DropdownMenuItem(
                 text = { Text(text = stringResource(id = R.string.export_only_result)) },
@@ -333,7 +396,14 @@ private fun ExportButton(
             )
         }
     }
+}
 
+@Composable
+private fun TintIconButton(icon: ImageVector, contentDescription: String? = null, onClick: SimpleAction, extraContent: (@Composable () -> Unit)? = null) {
+    IconButton(onClick = onClick) {
+        FixedSizeIcon(icon, contentDescription = contentDescription, tint = MaterialTheme.colorScheme.primary)
+        extraContent?.invoke()
+    }
 }
 
 

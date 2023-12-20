@@ -21,6 +21,7 @@ import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.JsonX
 import com.funny.translation.helper.TextSplitter
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
@@ -31,14 +32,13 @@ import com.funny.translation.translate.database.LongTextTransTask
 import com.funny.translation.translate.database.appDB
 import com.funny.translation.translate.extentions.safeSubstring
 import com.funny.translation.translate.ui.long_text.bean.TermList
-import com.funnysaltyfish.partialjsonparser.JsonParseException
-import com.funnysaltyfish.partialjsonparser.PartialJsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
@@ -98,6 +98,8 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
     // 翻译结果的每一段结束位置，每一个值为该段的最后一个字符的索引
     val resultTextSegments = mutableListOf<Int>()
 
+    // 当前翻译的这一段源文本
+    private var currentPart = ""
     // 当前 part 翻译得到的结果
     private var currentOutput = StringBuilder()
     // 已经完成的 parts 翻译得到的结果
@@ -274,11 +276,10 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
         currentCorpus.addAll(needToAddTerms)
         Log.d(TAG, "getNextPart: allCorpus: $allCorpus, currentCorpus: $currentCorpus")
 
-        if (needToAddTerms.isNotEmpty()) {
-            sb.append(SEP)
-            val list = currentCorpus.list.toList().map { it.toList() }
-            sb.append(JSONArray(list).toString())
-        }
+        sb.append(SEP)
+        val list = currentCorpus.list.toList().map { it.toList() }
+        sb.append(JSONArray(list).toString())
+
         messages.add(ChatMessageReq.text(sb.toString(), "user"))
         return text to messages
     }
@@ -300,7 +301,9 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
             return false
         }
 
+
         currentOutput.clear()
+        currentPart = part
         currentTransPartLength = part.length
 
         val systemPrompt = prompt.toPrompt()
@@ -315,31 +318,44 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                     }
                 }
                 is StreamMessage.Part -> {
-                    try {
-                        currentOutput.append(streamMsg.part)
-                        val ans = parseStreamedOutput(currentOutput.toString())
-                        resultText = lastResultText + (ans.text ?: "")
-                        ans.keywords?.forEach {
-                            allCorpus.upsert(it[0] to it[1])
-                        }
-                        saveAllCorpusToDB()
+                    currentOutput.append(streamMsg.part)
+                    val ans = parseStreamedOutput(currentOutput.toString())
+                    resultText = lastResultText + ans
 
-                        if (record) {
-                            recordOutput.put(streamMsg.part)
-                        }
-                    } catch (e: JsonParseException) {
-                        // JSON 数据解析失败了，谈个提示，报个错
-                        // 继续往下走，后面能不能解析出来
-                        if (!onError()) { // 如果已经暂停了，就不弹出这一段了
-                            appCtx.toastOnUi(string(R.string.attemp_to_retry))
-                        }
-                        Log.w(TAG, "translatePart: 刚刚那一段解析失败了:\n$currentOutput", )
-                    } catch (e: Exception) {
-                        onError()
-                        Log.e(TAG, "translatePart: ", e)
+                    if (record) {
+                        recordOutput.put(streamMsg.part)
                     }
                 }
                 is StreamMessage.End -> {
+                    // 解析 keywords
+                    var idx = currentOutput.lastIndexOf(SEP)
+                    if (idx != -1) {
+                        try {
+                            val json = currentOutput.substring(idx+SEP.length).removeSuffix("}")
+                            val list = try {
+                                JsonX.fromJson<List<List<String>>>(json)
+                            } catch (e: SerializationException) {
+                                // ChatGLM 会生成 {"aaa", "bbb"] 这种东西
+                                JsonX.fromJson<List<List<String>>>(json.replace('{', '['))
+                            }
+                            val keywords =
+                                (list.filter { it.size == 2 } as? List<List<String>>)?.map { lst ->
+                                    lst.map { it.trim() }
+                                }
+                            keywords?.forEach {
+                                // 判定一下，一定是源文本 to 翻译后文本，有时候大模型会把他们反过来
+                                if (it[0] in currentPart) {
+                                    allCorpus.upsert(it[0] to it[1])
+                                } else if (it[1] in currentPart) {
+                                    allCorpus.upsert(it[1] to it[0])
+                                }
+                            }
+                        } catch (e: Exception) {
+                            onError()
+                            Log.e(TAG, "translatePart: ", e)
+                        }
+                    }
+
                     translatedLength += part.length
                     lastResultText = resultText
 
@@ -401,28 +417,13 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
      * 尝试解析流式的输出，返回前 ||sep|| 前面的
      * @param part String
      */
-    private fun parseStreamedOutput(text: String): Answer {
+    private fun parseStreamedOutput(text: String): String {
         val idx = text.lastIndexOf(SEP)
         if (idx == -1 || idx == text.length - SEP.length) {
-            return Answer(text)
+            return text
         }
 
-        val json = text.substring(idx + SEP.length)
-        val list = try {
-            PartialJsonParser.parse(json) as? List<*>
-        } catch (e: JsonParseException) {
-            // ChatGLM 会生成 {"aaa", "bbb"] 这种东西
-            PartialJsonParser.parse(json.replace('{', '[')) as? List<*>
-        }
-        val keywords = (list?.filter { it is List<*> && it.size == 2 } as? List<List<String>>)?.map { lst ->
-            lst.map { it.trim() }
-        }
-
-        return Answer(
-            text = text.substring(0, idx),
-            // 由于解析得到的 keywords 不一定满足要求（比如每一项长度为 2），这里处理一下
-            keywords = keywords ?: arrayListOf()
-        )
+        return text.substring(0, idx)
     }
 
     private fun newChatMessage(sender: String, msg: String): ChatMessage {
