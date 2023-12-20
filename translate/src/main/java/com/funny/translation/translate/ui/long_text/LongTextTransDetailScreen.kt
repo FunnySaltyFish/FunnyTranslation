@@ -37,7 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -189,11 +188,7 @@ fun LongTextTransDetailScreen(
                     }
                 }
             }
-            val showRetryBtn by remember {
-                derivedStateOf {
-                    vm.isPausing && vm.errorTimes >= 3
-                }
-            }
+            val showRetryBtn = vm.isPausing
             if (showRetryBtn) {
                 Spacer(modifier = Modifier.width(8.dp))
                 FloatingActionButton(

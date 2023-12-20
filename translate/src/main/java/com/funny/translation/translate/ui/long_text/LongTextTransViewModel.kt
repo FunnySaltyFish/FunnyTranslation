@@ -276,7 +276,8 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
 
         if (needToAddTerms.isNotEmpty()) {
             sb.append(SEP)
-            sb.append(JSONArray(needToAddTerms).toString())
+            val list = currentCorpus.list.toList().map { it.toList() }
+            sb.append(JSONArray(list).toString())
         }
         messages.add(ChatMessageReq.text(sb.toString(), "user"))
         return text to messages
@@ -319,7 +320,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
                         val ans = parseStreamedOutput(currentOutput.toString())
                         resultText = lastResultText + (ans.text ?: "")
                         ans.keywords?.forEach {
-                            allCorpus.add(it[0] to it[1])
+                            allCorpus.upsert(it[0] to it[1])
                         }
                         saveAllCorpusToDB()
 
@@ -397,7 +398,7 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
 
 
     /**
-     * 尝试解析流式的 JSON 数据
+     * 尝试解析流式的输出，返回前 ||sep|| 前面的
      * @param part String
      */
     private fun parseStreamedOutput(text: String): Answer {
@@ -406,8 +407,16 @@ class LongTextTransViewModel: BaseViewModel(appCtx) {
             return Answer(text)
         }
 
-        val list = PartialJsonParser.parse(text.substring(idx + SEP.length)) as? List<*>
-        val keywords = list?.filter { it is List<*> && it.size == 2 } as? List<List<String>>
+        val json = text.substring(idx + SEP.length)
+        val list = try {
+            PartialJsonParser.parse(json) as? List<*>
+        } catch (e: JsonParseException) {
+            // ChatGLM 会生成 {"aaa", "bbb"] 这种东西
+            PartialJsonParser.parse(json.replace('{', '[')) as? List<*>
+        }
+        val keywords = (list?.filter { it is List<*> && it.size == 2 } as? List<List<String>>)?.map { lst ->
+            lst.map { it.trim() }
+        }
 
         return Answer(
             text = text.substring(0, idx),

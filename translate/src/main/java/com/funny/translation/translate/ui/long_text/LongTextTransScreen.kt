@@ -67,6 +67,9 @@ import com.funny.translation.ui.FixedSizeIcon
 import kotlinx.coroutines.delay
 import java.util.UUID
 
+// TODO Reading a state that was created after the snapshot was taken or in a snapshot that has not yet been applied
+// 长文翻译翻译着翻译着就寄了
+
 private const val TAG = "LongTextTransScreen"
 
 @Composable

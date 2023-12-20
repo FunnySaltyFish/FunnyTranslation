@@ -30,17 +30,28 @@ class TermList {
     }
 
     fun modify(origin: Term, target: Term, alert: Boolean = false) {
-        // if (origin.first != target.first) return
-//        Log.d(TAG, "modify: $origin -> $target")
-//        Log.d(TAG, "before: $this")
-        if (target.first in map) {
-            if (alert) appCtx.toastOnUi(string(R.string.existed_term_tip, target.first))
-            return
+        if (target.first !in map) { // 不在就删掉原本的，新增一个
+            map.remove(origin.first)
+            map[target.first] = target.second
+            list.remove(origin)
+            list.add(target)
+        } else { // 在的话就更新
+            map[target.first] = target.second
+            list.remove(origin)
+            list.add(target)
         }
-        map[origin.first] = target.second
-        list.remove(origin)
-        list.add(target)
-//        Log.d(TAG, "after: $this")
+    }
+
+    fun upsert(term: Term) {
+        val old = map[term.first]
+        if (old == null) { // 不在，则新增
+            map[term.first] = term.second
+            list.add(term)
+        } else { // 更新
+            map[term.first] = term.second
+            list.remove(term.first to old)
+            list.add(term)
+        }
     }
 
     fun remove(term: Term) {
