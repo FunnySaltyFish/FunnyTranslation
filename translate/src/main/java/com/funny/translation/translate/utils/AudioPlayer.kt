@@ -2,11 +2,11 @@ package com.funny.translation.translate.utils
 
 import android.media.MediaPlayer
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.funny.translation.helper.DeviceUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication

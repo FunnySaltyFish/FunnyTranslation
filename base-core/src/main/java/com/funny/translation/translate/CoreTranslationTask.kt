@@ -1,6 +1,5 @@
 package com.funny.translation.translate
 
-import android.util.Log
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 

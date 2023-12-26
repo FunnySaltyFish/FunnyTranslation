@@ -2,7 +2,6 @@ package com.funny.translation.translate.activity
 
 import android.os.Bundle
 import android.os.Process
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.funny.translation.AppConfig
 import com.funny.translation.helper.ApplicationUtil
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.OkHttpUtils
 import com.funny.translation.network.ServiceCreator

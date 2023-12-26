@@ -1,7 +1,6 @@
 package com.funny.jetsetting.core.ui
 
 import android.os.SystemClock
-import android.util.Log
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable

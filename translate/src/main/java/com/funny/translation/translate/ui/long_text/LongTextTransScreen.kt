@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.long_text
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -52,6 +51,7 @@ import androidx.navigation.NavOptions
 import com.funny.translation.debug.rememberStateOf
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.DataHolder
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.readText
 import com.funny.translation.helper.string

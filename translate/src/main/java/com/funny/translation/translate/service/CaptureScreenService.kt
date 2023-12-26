@@ -15,10 +15,10 @@ import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.*
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import com.funny.translation.helper.BitmapUtil
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.handler.runOnUI
 import com.funny.translation.helper.toastOnUi

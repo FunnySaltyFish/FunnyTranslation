@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.long_text
 
-import android.util.Log
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -22,6 +21,7 @@ import com.funny.translation.codeeditor.base.BaseViewModel
 import com.funny.translation.helper.DataHolder
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.JsonX
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.TextSplitter
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string

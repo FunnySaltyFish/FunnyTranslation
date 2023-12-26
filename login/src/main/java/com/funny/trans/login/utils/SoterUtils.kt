@@ -1,7 +1,7 @@
 package com.funny.trans.login.utils
 //
 //import android.content.Context
-//import android.util.Log
+//import com.funny.translation.helper.Log
 //import com.funny.translation.BaseApplication
 //import com.tencent.soter.core.model.ConstantsSoter
 //import com.tencent.soter.wrapper.SoterWrapperApi

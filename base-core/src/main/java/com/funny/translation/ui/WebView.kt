@@ -19,7 +19,6 @@ package com.funny.translation.ui
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import android.webkit.*
 import androidx.activity.compose.BackHandler
@@ -30,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.viewinterop.AndroidView
 import com.funny.translation.helper.LocaleUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.openUrl
 import com.funny.translation.network.ServiceCreator
 import com.funny.translation.ui.WebViewLoadingState.Finished

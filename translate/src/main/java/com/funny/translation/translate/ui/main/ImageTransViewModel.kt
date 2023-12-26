@@ -1,7 +1,6 @@
 package com.funny.translation.translate.ui.main
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +12,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.BitmapUtil
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.ImageTranslationResult

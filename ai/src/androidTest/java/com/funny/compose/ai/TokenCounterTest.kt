@@ -1,7 +1,6 @@
 package com.funny.compose.ai
 
 import android.app.Application
-import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -28,12 +27,19 @@ class TokenCounterTest {
     private var openaiApiKey = ""
 
     class RemoteOpenAITokenCounter(val apiKey: String): TokenCounter() {
-        override suspend fun encode(
+        override val online: Boolean = true
+        override val id: String = "openai"
+
+        override suspend fun count(text: String, allowedSpecialTokens: Array<String>): Int {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun truncate(
             text: String,
             allowedSpecialTokens: Array<String>,
             maxTokenLength: Int
-        ): List<Int> {
-            return emptyList()
+        ): String {
+            TODO("Not yet implemented")
         }
 
         override suspend fun countMessages(
@@ -61,10 +67,6 @@ class TokenCounterTest {
             val tokens = usage.getInt("prompt_tokens")
             return tokens
         }
-
-        override suspend fun decode(tokens: List<Int>): String {
-            return ""
-        }
     }
 
     @Before
@@ -83,7 +85,7 @@ class TokenCounterTest {
             throw Exception("openaiApiKey is empty, please create keys.properties file in androidTest/resources and add OPENAI_API_KEY=sk-xxx to it")
         }
 
-        val appContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as Application
         assertNotNull(appContext)
         BaseApplication.ctx = appContext
 

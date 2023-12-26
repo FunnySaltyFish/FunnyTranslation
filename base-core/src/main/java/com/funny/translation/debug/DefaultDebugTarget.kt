@@ -1,6 +1,6 @@
 package com.funny.translation.debug
 
-import android.util.Log
+import com.funny.translation.helper.Log
 
 object DefaultDebugTarget : Debug.DebugTarget {
     override val source: String

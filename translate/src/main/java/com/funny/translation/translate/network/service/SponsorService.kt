@@ -1,7 +1,7 @@
 package com.funny.translation.translate.network.service
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.ui.thanks.Sponsor
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,7 +1,6 @@
 package com.funny.translation.helper
 
 import android.os.Build
-import android.util.Log
 import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date

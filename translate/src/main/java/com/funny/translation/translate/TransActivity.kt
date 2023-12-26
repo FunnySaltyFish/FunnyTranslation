@@ -9,7 +9,6 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -24,6 +23,7 @@ import com.funny.translation.BaseActivity
 import com.funny.translation.Consts
 import com.funny.translation.debug.Debug
 import com.funny.translation.debug.DefaultDebugTarget
+import com.funny.translation.helper.Log
 import com.funny.translation.network.NetworkReceiver
 import com.funny.translation.translate.utils.DeepLinkManager
 import com.funny.translation.translate.utils.EasyFloatUtils

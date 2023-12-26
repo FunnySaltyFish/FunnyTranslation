@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.thanks
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +46,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.funny.compose.loading.DefaultFailure
 import com.funny.compose.loading.DefaultLoading
 import com.funny.data_saver.core.rememberDataSaverState
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.string
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.extension.items

@@ -2,7 +2,6 @@ package com.funny.translation.translate
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -28,6 +27,7 @@ import com.funny.translation.Consts
 import com.funny.translation.NeedToTransConfig
 import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.NAV_ANIM_DURATION
 import com.funny.translation.helper.animateComposable
 import com.funny.translation.theme.TransTheme

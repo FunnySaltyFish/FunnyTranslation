@@ -1,12 +1,12 @@
 package com.funny.translation.translate.utils
 
 import android.graphics.Rect
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.ScreenUtils
 import com.funny.translation.helper.VibratorUtils
 import com.funny.translation.helper.handler.runOnUI

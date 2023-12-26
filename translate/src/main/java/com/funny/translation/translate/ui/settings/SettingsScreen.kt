@@ -1,7 +1,6 @@
 package com.funny.translation.translate.ui.settings
 
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -61,6 +60,7 @@ import com.funny.translation.bean.AppLanguage
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.LocaleUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.network.ServiceCreator
@@ -120,15 +120,15 @@ fun SettingsScreen() {
                     resourceId = R.drawable.ic_theme,
                     text = stringResource(R.string.setting_spring_theme),
                 ) {
-                    Toast.makeText(
-                        context, "已${
+                    context.toastOnUi(
+                        "已${
                             if (it) {
                                 "设置"
                             } else {
                                 "取消"
                             }
                         }春节限定主题", Toast.LENGTH_SHORT
-                    ).show()
+                    )
                 }
             }
         }

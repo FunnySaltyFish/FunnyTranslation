@@ -2,7 +2,6 @@ package com.funny.translation.translate.activity
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
@@ -18,6 +17,7 @@ import cn.qhplus.emo.photo.ui.picker.*
 import cn.qhplus.emo.photo.vm.PhotoPickerViewModel
 import cn.qhplus.emo.ui.core.ex.setNavTransparent
 import cn.qhplus.emo.ui.core.ex.setNormalDisplayCutoutMode
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import kotlinx.coroutines.flow.collectLatest

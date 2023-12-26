@@ -1,6 +1,5 @@
 package com.funny.translation.helper
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration

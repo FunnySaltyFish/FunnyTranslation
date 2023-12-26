@@ -1,18 +1,14 @@
 package com.funny.translation.js.core
 
-import android.util.Log
 import com.funny.translation.debug.Debug
-import com.funny.translation.debug.DefaultDebugTarget
 import com.funny.translation.js.extentions.show
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
-import org.mozilla.javascript.*
-import org.mozilla.javascript.Function
+import org.mozilla.javascript.NativeArray
+import org.mozilla.javascript.NativeObject
 import javax.script.Invocable
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
-import javax.script.SimpleBindings
 
 /**
  * Example local unit test, which will execute on the development machine (host).

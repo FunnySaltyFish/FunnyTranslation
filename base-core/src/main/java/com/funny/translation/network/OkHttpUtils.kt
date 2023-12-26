@@ -1,7 +1,6 @@
 package com.funny.translation.network
 
 import android.content.Intent
-import android.util.Log
 import androidx.annotation.Keep
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
@@ -9,6 +8,7 @@ import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.core.BuildConfig
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.LocaleUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.toastOnUi
 import com.funny.translation.sign.SignUtils
 import okhttp3.*

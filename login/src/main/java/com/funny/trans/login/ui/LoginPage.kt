@@ -1,7 +1,6 @@
 package com.funny.trans.login.ui
 
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -63,6 +62,7 @@ import androidx.navigation.NavController
 import com.funny.trans.login.R
 import com.funny.translation.AppConfig
 import com.funny.translation.bean.UserInfoBean
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.SimpleAction
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.VibratorUtils

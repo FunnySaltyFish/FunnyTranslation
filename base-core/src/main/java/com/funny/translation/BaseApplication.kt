@@ -7,8 +7,8 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import com.funny.translation.helper.LocaleUtils
+import com.funny.translation.helper.Log
 import com.tencent.mmkv.MMKV
 import java.util.*
 import kotlin.properties.Delegates

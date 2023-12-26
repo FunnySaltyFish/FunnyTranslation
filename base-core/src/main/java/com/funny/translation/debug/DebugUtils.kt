@@ -1,6 +1,6 @@
 package com.funny.translation.debug
 
-import android.util.Log
+import com.funny.translation.helper.Log
 
 object DebugUtils {
     private const val TAG = "DebugUtils"

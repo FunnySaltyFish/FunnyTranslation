@@ -25,9 +25,9 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.funny.translation.helper.JsonX
+import com.funny.translation.helper.Log
 import kotlinx.serialization.SerialName
 import java.nio.charset.Charset
 import java.security.KeyStore

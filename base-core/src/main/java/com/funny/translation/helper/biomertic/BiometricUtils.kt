@@ -2,7 +2,6 @@ package com.funny.translation.helper.biomertic
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -10,6 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseApplication
 import com.funny.translation.core.R
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.UserUtils
 import com.funny.translation.helper.awaitDialog
 import com.funny.translation.helper.handler.runOnUI

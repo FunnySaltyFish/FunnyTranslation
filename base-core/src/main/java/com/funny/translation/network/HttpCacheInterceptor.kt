@@ -1,7 +1,7 @@
 package com.funny.translation.network
 
-import android.util.Log
 import com.funny.translation.BaseApplication
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.toastOnUi
 import okhttp3.CacheControl
 import okhttp3.Interceptor

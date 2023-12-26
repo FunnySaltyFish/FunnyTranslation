@@ -3,7 +3,6 @@ package com.funny.trans.login
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import com.funny.data_saver.core.LocalDataSaver
@@ -11,6 +10,7 @@ import com.funny.trans.login.ui.LoginNavigation
 import com.funny.translation.AppConfig
 import com.funny.translation.BaseActivity
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.biomertic.BiometricUtils
 import com.funny.translation.theme.TransTheme
 

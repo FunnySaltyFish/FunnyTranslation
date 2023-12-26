@@ -2,7 +2,6 @@
 
 package com.funny.translation.translate.ui.main
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -19,6 +18,7 @@ import com.funny.translation.AppConfig
 import com.funny.translation.GlobalTranslationConfig
 import com.funny.translation.helper.ClipBoardUtil
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.displayMsg
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi

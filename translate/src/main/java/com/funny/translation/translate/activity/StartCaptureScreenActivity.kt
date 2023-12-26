@@ -8,11 +8,11 @@ import android.graphics.Rect
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.funny.translation.BaseApplication
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.appCtx
 import com.funny.translation.translate.service.CaptureScreenService
 

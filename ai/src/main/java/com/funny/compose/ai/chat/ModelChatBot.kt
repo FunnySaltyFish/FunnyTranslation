@@ -1,6 +1,5 @@
 package com.funny.compose.ai.chat
 
-import android.util.Log
 import com.funny.compose.ai.bean.ChatMessageReq
 import com.funny.compose.ai.bean.Model
 import com.funny.compose.ai.service.AskStreamRequest
@@ -9,6 +8,7 @@ import com.funny.compose.ai.service.asFlow
 import com.funny.compose.ai.token.TokenCounter
 import com.funny.compose.ai.token.TokenCounters
 import com.funny.translation.ai.BuildConfig
+import com.funny.translation.helper.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.json.JSONObject

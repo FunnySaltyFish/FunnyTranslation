@@ -1,7 +1,6 @@
 package com.funny.translation.theme
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
@@ -30,6 +29,7 @@ import com.funny.translation.core.R
 import com.funny.translation.helper.DataSaverUtils
 import com.funny.translation.helper.DateUtils
 import com.funny.translation.helper.DeviceUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.string
 import com.funny.translation.helper.toastOnUi
 import com.kyant.monet.LocalTonalPalettes

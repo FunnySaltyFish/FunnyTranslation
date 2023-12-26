@@ -1,6 +1,5 @@
 package com.funny.translation.translate.ui.thanks
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.funny.cmaterialcolors.MaterialColors
 import com.funny.compose.loading.LoadingContent
 import com.funny.compose.loading.LoadingState
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.R
 import com.funny.translation.translate.ui.widget.AutoFadeInComposableColumn
 import com.funny.translation.translate.ui.widget.AutoIncreaseAnimatedNumber

@@ -5,7 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
+import com.funny.translation.helper.Log
 import android.view.MotionEvent
 import android.view.View
 import com.funny.bottomnavigation.bean.IconButton

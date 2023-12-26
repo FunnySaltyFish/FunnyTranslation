@@ -6,7 +6,6 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraManager.TorchCallback
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.view.OrientationEventListener
 import android.view.Surface
 import androidx.camera.core.Camera
@@ -48,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import com.funny.translation.translate.utils.executor

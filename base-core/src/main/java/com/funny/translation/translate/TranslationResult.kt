@@ -1,7 +1,7 @@
 package com.funny.translation.translate
 
-import android.util.Log
 import androidx.annotation.Keep
+import com.funny.translation.helper.Log
 
 /**
  *

@@ -1,12 +1,12 @@
 package com.funny.translation.translate.utils
 
 import android.content.Context
-import android.util.Log
 import com.azhon.appupdate.config.UpdateConfiguration
 import com.azhon.appupdate.manager.DownloadManager
 import com.funny.translation.Consts
 import com.funny.translation.helper.ApplicationUtil
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.externalCache
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R

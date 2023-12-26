@@ -16,11 +16,11 @@
 
 package com.funny.translation.helper.biomertic
 
-import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.funny.translation.core.R
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.string
 
 // Since we are using the same methods in more than one Activity, better give them their own file.

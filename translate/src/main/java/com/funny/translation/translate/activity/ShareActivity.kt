@@ -4,11 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.funny.translation.AppConfig
 import com.funny.translation.Consts
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.TransActivity
 import com.funny.translation.translate.TransActivityIntent
 import com.funny.translation.translate.utils.EasyFloatUtils

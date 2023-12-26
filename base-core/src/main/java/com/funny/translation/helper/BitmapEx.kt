@@ -1,10 +1,8 @@
 package com.funny.translation.helper
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.toArgb
 import androidx.palette.graphics.Palette
 import com.kyant.monet.getKeyColors
 

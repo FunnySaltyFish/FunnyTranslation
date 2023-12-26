@@ -1,8 +1,6 @@
 package com.funny.trans.login
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +14,7 @@ import com.funny.data_saver.core.LocalDataSaver
 import com.funny.trans.login.ui.GameScreen
 import com.funny.trans.login.ui.GameViewModel
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.theme.TransTheme
 import com.smarx.notchlib.NotchScreenManager
 

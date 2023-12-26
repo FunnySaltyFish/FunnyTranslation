@@ -1,11 +1,5 @@
 package com.funny.translation.translate.database
 
-import android.util.Log
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
 //class TransHistoryPagingSource(private val transHistoryDao: TransHistoryDao) : PagingSource<Int, TransHistoryBean>() {
 //    companion object {
 //        private const val TAG = "TransHisPagingSource"

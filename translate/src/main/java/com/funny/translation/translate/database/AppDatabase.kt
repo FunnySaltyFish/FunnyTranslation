@@ -1,6 +1,5 @@
 package com.funny.translation.translate.database
 
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -8,6 +7,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.funny.compose.ai.bean.ChatMessage
+import com.funny.translation.helper.Log
 import com.funny.translation.js.JsDao
 import com.funny.translation.js.bean.JsBean
 import com.funny.translation.js.bean.LanguageListConverter

@@ -1,7 +1,6 @@
 package com.funny.translation.translate.ui.widget
 
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -17,6 +16,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.doOnTextChanged
 import com.funny.translation.AppConfig
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.FunnyApplication
 import com.funny.translation.translate.R
 import kotlin.math.roundToInt

@@ -1,7 +1,6 @@
 package com.funny.translation.translate.ui.main
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.*
 import androidx.camera.core.*
 import androidx.camera.view.PreviewView
@@ -16,10 +15,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import com.funny.cmaterialcolors.MaterialColors
+import com.funny.translation.helper.Log
 import com.funny.translation.translate.utils.getCameraProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.sqrt
 
 private const val TAG = "CameraPreview"
 

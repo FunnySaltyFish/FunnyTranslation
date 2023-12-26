@@ -1,13 +1,17 @@
 package com.funny.trans.login.bean
 
-import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.VibratorUtils
+import com.funny.translation.helper.choice
+import com.funny.translation.helper.randInt
+import java.util.LinkedList
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
-import com.funny.translation.helper.randInt
-import com.funny.translation.helper.choice
-import java.util.LinkedList
 import kotlin.random.Random
 
 

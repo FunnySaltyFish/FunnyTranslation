@@ -1,9 +1,9 @@
 package com.funny.translation.ui
 
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import com.funny.translation.helper.Log
 import com.funny.translation.helper.SimpleAction
 
 private const val TAG = "SnackbarHostEx"

@@ -2,7 +2,6 @@ package com.funny.translation
 
 import android.annotation.SuppressLint
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -10,6 +9,7 @@ import com.funny.data_saver.core.mutableDataSaverStateOf
 import com.funny.translation.bean.TranslationConfig
 import com.funny.translation.bean.UserInfoBean
 import com.funny.translation.helper.DataSaverUtils
+import com.funny.translation.helper.Log
 import com.funny.translation.theme.ThemeConfig
 import com.funny.translation.theme.ThemeType
 import com.funny.translation.translate.Language
@@ -54,7 +54,7 @@ object AppConfig {
     val sShowDetailResult = mutableDataSaverStateOf(DataSaverUtils, "KEY_SHOW_DETAIL_RESULT", false)
     val sExpandDetailByDefault = mutableDataSaverStateOf(DataSaverUtils, "KEY_EXPAND_DETAIL_BY_DEFAULT", false)
 
-    //
+    // 以下为开发者专享
     val developerMode = mutableDataSaverStateOf(DataSaverUtils, "KEY_DEVELOPER_MODE", false)
 
     fun updateJwtToken(newToken: String) {
