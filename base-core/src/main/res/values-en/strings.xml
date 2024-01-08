@@ -20,7 +20,6 @@
     <string name="follow_system">Follow System</string>
     <string name="unknown_error">Unknown error</string>
     <string name="failed_unknown_err"> failed, unknown error!</string>
-    <string name="retry">Retry</string>
     <string name="err_no_fingerprint_device">No fingerprint recognition device detected</string>
     <string name="err_fingerprint_not_enabled">Fingerprint recognition device not enabled</string>
     <string name="err_no_fingerprint">No fingerprint registered on the device</string>

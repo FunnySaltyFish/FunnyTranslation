@@ -20,7 +20,6 @@
     <string name="follow_system">跟随系统</string>
     <string name="unknown_error">未知错误</string>
     <string name="failed_unknown_err">失败，未知错误！</string>
-    <string name="retry">重试</string>
     <string name="err_no_fingerprint_device">未检测到指纹识别设备</string>
     <string name="err_fingerprint_not_enabled">指纹识别设备未启用</string>
     <string name="err_no_fingerprint">设备未录入指纹</string>

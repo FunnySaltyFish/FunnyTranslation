@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="copy_complete">Copy succeed!</string>
-    <string name="share">Share</string>
-    <string name="debug">Debug</string>
     <string name="edit_code">Edit Code</string>
-    <string name="run_code">Run Code</string>
-    <string name="layout_tv_last">Previous</string>
-    <string name="layout_tv_next">Back</string>
-    <string name="layout_tv_replace">Replace</string>
-    <string name="layout_tv_replaceAll">Replace All</string>
     <string name="code_run">Excuting Result</string>
     <string name="change_editor_theme">Change Editor Theme</string>
     <string name="open_file">Open File</string>
@@ -16,7 +8,6 @@
     <string name="redo">Redo</string>
     <string name="set_debug_arguments">Set Arguments</string>
     <string name="open_plugin_document">Open Plugin Document</string>
-    <string name="format_code">Format Code</string>
     <string name="change_debug_args">Set Arguments</string>
     <string name="trans_text">Translating Text</string>
     <string name="source_language">Source Language</string>

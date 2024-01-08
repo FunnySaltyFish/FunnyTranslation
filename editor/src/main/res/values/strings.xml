@@ -20,7 +20,6 @@
     <item name="paste" type="string">Paste</item>
     <item name="copy" type="string">Copy</item>
     <item name="selectAll" type="string" formatted="true">Select All</item>
-    <item name="saveToProject" type="string" translatable="false" >Project</item>
     <item name="cut" type="string">Cut</item>
     <item name="last" type="string">Last</item>
     <item name="next" type="string">Next</item>

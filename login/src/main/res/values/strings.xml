@@ -3,7 +3,6 @@
     <string name="finished">已完成</string>
     <string name="login">登录</string>
     <string name="register">注册</string>
-    <string name="confirm_disable_account">确认注销</string>
     <string name="confirm">确认继续操作</string>
     <string name="cancel">取消</string>
     <string name="warning">警告</string>
@@ -13,15 +12,12 @@
     <string name="error_sending_email">邮件发送失败，请稍后再试！</string>
     <string name="fingerprint_not_support">您的安卓版本过低，不支持指纹认证！将使用密码认证~</string>
     <string name="validate_fingerprint">验证指纹</string>
-    <string name="login_success">登录成功！</string>
-    <string name="login_failed">登录失败！（%1$s）</string>
     <string name="forgot_username">忘记用户名？</string>
     <string name="forgot_password">忘记密码？</string>
     <string name="validate_fingerprint_failed_unknown_reason">设置指纹时失败，原因未知，请换用密码！</string>
     <string name="add_fingerprint_success">添加指纹成功！</string>
     <string name="validate_fingerprint_failed_with_msg">认证失败！（%1$s: %2$s）</string>
     <string name="add_fingerprint">添加指纹</string>
-    <string name="register_success">注册成功！</string>
     <string name="register_failed_with_msg">注册失败！（%1$s）</string>
     <string name="username">用户名</string>
     <string name="username_rule">3–16位，无特殊符号</string>
@@ -38,11 +34,9 @@
     <string name="verify_code">验证码</string>
     <string name="please_input_verify_code">请输入收到的验证码</string>
     <string name="get_verify_code">获取验证码</string>
-    <string name="error_verify_email">发送验证码失败，未知错误！</string>
     <string name="change_to_fingerprint">切换为指纹</string>
     <string name="change_to_password">切换为密码</string>
     <string name="login_failed_empty_result">登录失败，返回的用户信息为空！</string>
-    <string name="login_failed_unknown_err">登录失败，未知错误！</string>
     <string name="different_fingerprint">当前用户名与设置指纹时用户名不同，请重新设置指纹</string>
     <string name="reset_password_failed">重置密码失败，未知错误！</string>
     <string name="invite_code">邀请码</string>

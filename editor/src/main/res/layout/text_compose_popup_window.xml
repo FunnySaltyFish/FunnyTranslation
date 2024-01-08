@@ -16,7 +16,6 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/text_compose_panel"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -91,7 +90,6 @@
         android:layout_gravity="center" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/tcpw_material_button_save_to_project"
         style="@style/TextButton.IconOnly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

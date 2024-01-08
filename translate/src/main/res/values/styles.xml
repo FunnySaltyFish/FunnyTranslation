@@ -17,12 +17,6 @@
 <!--        <item name="android:windowFullscreen">true</item>-->
     </style>
 
-    <style name="AppTheme.Immerse" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
-
     <style name="AppTheme.Dialog" parent="Theme.AppCompat.DayNight.Dialog"/>
 
     <style name="AppTheme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">

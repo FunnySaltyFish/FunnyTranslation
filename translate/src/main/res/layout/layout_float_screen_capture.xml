@@ -8,7 +8,6 @@
 
     <!-- 这里添加其他子 View -->
     <View
-        android:id="@+id/float_screen_capture_border"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_float_screen_capture_border"

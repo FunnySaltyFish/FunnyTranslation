@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:icon="@drawable/ic_refresh" android:id="@+id/menu_webview_refresh"
-        android:title="@string/refresh" app:showAsAction="ifRoom"/>
-    <item android:icon="@drawable/ic_jump_out" android:id="@+id/menu_webview_jump_out"
-        android:title="@string/open_with_browser" app:showAsAction="ifRoom" />
-</menu>
