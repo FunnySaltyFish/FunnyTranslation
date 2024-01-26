@@ -4,16 +4,16 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.funny.translation.tmp",
-  "variantName": "commonRelease",
+  "applicationId": "com.funny.translation.google",
+  "variantName": "googleRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 62,
-      "versionName": "2.7.1",
-      "outputFile": "commonRelease.apk"
+      "versionCode": 57,
+      "versionName": "2.6.7-google",
+      "outputFile": "translate-google-release.apk"
     }
   ],
   "elementType": "File"

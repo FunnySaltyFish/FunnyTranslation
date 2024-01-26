@@ -46,10 +46,10 @@ UI v4：
 <details>
 <summary>Old UI v3</summary>
 
-| Screenshot                                                       |Screenshot                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| <img src="./screenshot/1.png" alt="Screenshot_2021-11-07-22-37-33-814_com.funny.tran" style="zoom:33%;" /> | <img src="./screenshot/2.png" alt="Screenshot_2021-11-07-22-39-18-201_com.funny.tran" style="zoom:33%;" /> |
-| <img src="./screenshot/3.png" alt="Screenshot_2021-11-07-22-40-16-339_com.funny.tran" style="zoom:33%;" /> | <img src="./screenshot/4.png" alt="IMG_20211107_223720" style="zoom:33%;" /> |
+| Screenshot                                                                                                  |Screenshot                                                         |
+|-------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------ |
+| <img src="./screenshots/1.png" alt="Screenshot_2021-11-07-22-37-33-814_com.funny.tran" style="zoom:33%;" /> | <img src="./screenshot/2.png" alt="Screenshot_2021-11-07-22-39-18-201_com.funny.tran" style="zoom:33%;" /> |
+| <img src="./screenshots/3.png" alt="Screenshot_2021-11-07-22-40-16-339_com.funny.tran" style="zoom:33%;" /> | <img src="./screenshot/4.png" alt="IMG_20211107_223720" style="zoom:33%;" /> |
 </details>
 
 

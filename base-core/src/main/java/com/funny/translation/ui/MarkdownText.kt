@@ -125,7 +125,7 @@ private fun createTextView(
         TextStyle(
             color = textColor,
             fontSize = if (fontSize != TextUnit.Unspecified) fontSize else style.fontSize,
-            textAlign = textAlign,
+            textAlign = textAlign ?: style.textAlign,
         )
     )
     return TextView(context).apply {

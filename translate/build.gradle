@@ -38,7 +38,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.funny.translation"
+        applicationId "com.funny.translation.tmp"
         minSdkVersion Versions.minSdkVersion
         targetSdk Versions.targetSdkVersion
         versionCode Versions.versionCode

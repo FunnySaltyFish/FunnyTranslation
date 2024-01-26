@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -89,15 +88,15 @@ private const val TAG = "UserProfileScreen"
 enum class UserProfileScreenRoutes {
     Settings;
 
-    val route:String get() = "user_profile_route_${name.lowercase()}"
+    val route: String get() = "user_profile_route_${name.lowercase()}"
 }
 
 fun NavGraphBuilder.addUserProfileRoutes(
     navHostController: NavHostController,
     onLoginSuccess: (UserInfoBean) -> Unit
 ) {
-    navigation(UserProfileScreenRoutes.Settings.route, TranslateScreen.UserProfileScreen.route){
-        animateComposable(UserProfileScreenRoutes.Settings.route){
+    navigation(UserProfileScreenRoutes.Settings.route, TranslateScreen.UserProfileScreen.route) {
+        animateComposable(UserProfileScreenRoutes.Settings.route) {
             UserProfileSettings(navHostController = navHostController)
         }
         addLoginRoutes(navHostController, onLoginSuccess)
@@ -117,23 +116,31 @@ fun UserProfileSettings(navHostController: NavHostController) {
         mutableStateOf("")
     }
 
-    val clipperLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == RESULT_OK) {
-            it.data?.getPhotoClipperResult()?.let { img ->
-                if (photoName == "") return@rememberLauncherForActivityResult
-                scope.launch {
-                    val avatarUrl = UserUtils.uploadUserAvatar(context, img.uri, photoName, img.width, img.height, activityVM.uid)
-                    if (avatarUrl != ""){
-                        activityVM.userInfo = activityVM.userInfo.copy(avatar_url = avatarUrl)
-                        context.toastOnUi(R.string.upload_avatar_success)
-                        avatarPickResult.value = null
-                    } else {
-                        context.toastOnUi(R.string.upload_avatar_failed)
+    val clipperLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                it.data?.getPhotoClipperResult()?.let { img ->
+                    if (photoName == "") return@rememberLauncherForActivityResult
+                    scope.launch {
+                        val avatarUrl = UserUtils.uploadUserAvatar(
+                            context,
+                            img.uri,
+                            photoName,
+                            img.width,
+                            img.height,
+                            activityVM.uid
+                        )
+                        if (avatarUrl != "") {
+                            activityVM.userInfo = activityVM.userInfo.copy(avatar_url = avatarUrl)
+                            context.toastOnUi(R.string.upload_avatar_success)
+                            avatarPickResult.value = null
+                        } else {
+                            context.toastOnUi(R.string.upload_avatar_failed)
+                        }
                     }
                 }
             }
         }
-    }
 
     val pickLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -154,144 +161,142 @@ fun UserProfileSettings(navHostController: NavHostController) {
 
     val userInfo = AppConfig.userInfo.value
     CommonPage(
+        Modifier
+            .padding(horizontal = 8.dp)
+            .verticalScroll(rememberScrollState()),
         title = stringResource(id = R.string.user_profile) + "(${userInfo.username})"
     ) {
-        Column(
-            Modifier
-                .padding(horizontal = 8.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = CenterHorizontally
+
+        Tile(
+            text = stringResource(id = R.string.avatar),
+            onClick = {
+                pickLauncher.launch(
+                    PhotoPickerActivity.intentOf(
+                        context,
+                        CoilMediaPhotoProviderFactory::class.java,
+                        CustomPhotoPickerActivity::class.java,
+                        pickedItems = arrayListOf<Uri>().apply {
+                            avatarPickResult.value?.list?.mapTo(
+                                this
+                            ) { it.uri }
+                        },
+                        pickLimitCount = 1,
+                    )
+                )
+            }
         ) {
-            Tile(
-                text = stringResource(id = R.string.avatar),
-                onClick = {
-                    pickLauncher.launch(
-                        PhotoPickerActivity.intentOf(
-                            context,
-                            CoilMediaPhotoProviderFactory::class.java,
-                            CustomPhotoPickerActivity::class.java,
-                            pickedItems = arrayListOf<Uri>().apply {
-                                avatarPickResult.value?.list?.mapTo(
-                                    this
-                                ) { it.uri }
-                            },
-                            pickLimitCount = 1,
-                        )
-                    )
-                }
-            ) {
-                AsyncImage(
-                    model = userInfo.avatar_url,
-                    contentDescription = stringResource(id = R.string.avatar),
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
-                    placeholder = painterResource(R.drawable.ic_loading)
+            AsyncImage(
+                model = userInfo.avatar_url,
+                contentDescription = stringResource(id = R.string.avatar),
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape),
+                placeholder = painterResource(R.drawable.ic_loading)
+            )
+        }
+        Tile(text = stringResource(R.string.change_username), onClick = {
+            navHostController.navigateSingleTop(LoginRoute.ChangeUsernamePage.route)
+        })
+        Tile(text = stringResource(R.string.modify_password), onClick = {
+            navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
+        })
+        Tile(text = stringResource(R.string.img_remaining_points)) {
+            Text(text = userInfo.img_remain_points.toString())
+        }
+        // 剩余 AI 文字点数
+        Tile(text = stringResource(R.string.ai_remaining_text_points), onClick = {
+            navHostController.navigateSingleTop(
+                TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
+                    "planName" to AI_TEXT_POINT
                 )
-            }
-            Tile(text = stringResource(R.string.change_username), onClick = {
-                navHostController.navigateSingleTop(LoginRoute.ChangeUsernamePage.route)
-            })
-            Tile(text = stringResource(R.string.modify_password), onClick = {
-                navHostController.navigateSingleTop(LoginRoute.ResetPasswordPage.route)
-            })
-            Tile(text = stringResource(R.string.img_remaining_points)) {
-                Text(text = userInfo.img_remain_points.toString())
-            }
-            // 剩余 AI 文字点数
-            Tile(text = stringResource(R.string.ai_remaining_text_points), onClick = {
-                navHostController.navigateSingleTop(
-                    TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
-                        "planName" to AI_TEXT_POINT
-                    )
+            )
+        }) {
+            Text(text = "%.3f".format(userInfo.ai_text_point))
+        }
+        // 剩余 AI 语音点数
+        Tile(text = stringResource(R.string.ai_remaining_voice_points), onClick = {
+            navHostController.navigateSingleTop(
+                TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
+                    "planName" to AI_VOICE_POINT
                 )
-            }) {
-                Text(text = "%.3f".format(userInfo.ai_text_point))
-            }
-            // 剩余 AI 语音点数
-            Tile(text = stringResource(R.string.ai_remaining_voice_points), onClick = {
-                navHostController.navigateSingleTop(
-                    TranslateScreen.BuyAIPointScreen.route.formatBraceStyle(
-                        "planName" to AI_VOICE_POINT
-                    )
-                )
-            }) {
-                Text(text = "%.3f".format(userInfo.ai_voice_point))
-            }
-            Tile(text = stringResource(R.string.vip_end_time)) {
-                Text(text = userInfo.vipEndTimeStr())
-            }
-            Divider()
-            // 生成邀请码
-            Tile(text = stringResource(R.string.invite_code), onClick = {
-                if (userInfo.invite_code.isBlank()) {
-                    scope.launch {
-                        api(UserUtils.userService::generateInviteCode) {
-                            addSuccess {
-                                AppConfig.userInfo.value =
-                                    userInfo.copy(invite_code = it.data ?: "")
-                            }
+            )
+        }) {
+            Text(text = "%.3f".format(userInfo.ai_voice_point))
+        }
+        Tile(text = stringResource(R.string.vip_end_time)) {
+            Text(text = userInfo.vipEndTimeStr())
+        }
+        Divider()
+        // 生成邀请码
+        Tile(text = stringResource(R.string.invite_code), onClick = {
+            if (userInfo.invite_code.isBlank()) {
+                scope.launch {
+                    api(UserUtils.userService::generateInviteCode) {
+                        addSuccess {
+                            AppConfig.userInfo.value =
+                                userInfo.copy(invite_code = it.data ?: "")
                         }
                     }
-                } else {
-                    val txt = string(R.string.invite_user_content, userInfo.invite_code)
-                    ClipBoardUtil.copy(context, txt)
-                    context.toastOnUi(R.string.copied_to_clipboard)
                 }
-            }) {
-                Text(userInfo.invite_code.ifEmpty { stringResource(R.string.click_to_generate) })
+            } else {
+                val txt = string(R.string.invite_user_content, userInfo.invite_code)
+                ClipBoardUtil.copy(context, txt)
+                context.toastOnUi(R.string.copied_to_clipboard)
             }
-            // 查询被邀请人
-            val (showInviteUserDialog, update) = remember { mutableStateOf(false) }
-            Tile(text = stringResource(R.string.invited_users), onClick = {
-                update(true)
-            }) {
-                InvitedUserAlertDialog(show = showInviteUserDialog, updateShow = update)
-            }
-            Divider()
-            Tile(text = stringResource(R.string.disable_account), onClick = {
-                navHostController.navigateSingleTop(LoginRoute.CancelAccountPage.route)
-            })
-            Divider()
-            Spacer(modifier = Modifier.height(64.dp))
-            Button(modifier = Modifier.align(CenterHorizontally), onClick = {
-                AppConfig.logout()
-                navHostController.popBackStack()
-            }) {
-                Text(text = stringResource(R.string.logout))
-            }
+        }) {
+            Text(userInfo.invite_code.ifEmpty { stringResource(R.string.click_to_generate) })
+        }
+        // 查询被邀请人
+        val (showInviteUserDialog, update) = remember { mutableStateOf(false) }
+        Tile(text = stringResource(R.string.invited_users), onClick = {
+            update(true)
+        }) {
+            InvitedUserAlertDialog(show = showInviteUserDialog, updateShow = update)
+        }
+        Divider()
+        Tile(text = stringResource(R.string.disable_account), onClick = {
+            navHostController.navigateSingleTop(LoginRoute.CancelAccountPage.route)
+        })
+        Divider()
+        Spacer(modifier = Modifier.height(40.dp))
+        Button(modifier = Modifier.align(CenterHorizontally), onClick = {
+            AppConfig.logout()
+            navHostController.popBackStack()
+        }) {
+            Text(text = stringResource(R.string.logout))
+        }
 
-            val text = remember {
-                buildAnnotatedString {
-                    append(string(R.string.join_group_tip_p1))
-                    pushStringAnnotation(
-                        tag = "url",
-                        annotation = "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D"
-                    )
-                    withStyle(style = SpanStyle(color = MaterialColors.BlueA700)) {
-                        append(" 857362450 ")
-                    }
-                    pop()
-                    append(string(R.string.join_group_tip_p2))
-                }
-            }
-            ClickableText(
-                text = text,
-                modifier = Modifier.fillMaxWidth(0.9f),
-                style = TextStyle(
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp
+        val text = remember {
+            buildAnnotatedString {
+                append(string(R.string.join_group_tip_p1))
+                pushStringAnnotation(
+                    tag = "url",
+                    annotation = "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D"
                 )
-            ) { index ->
-                // 根据tag取出annotation并打印
-                text.getStringAnnotations(tag = "url", start = index, end = index).firstOrNull()
-                    ?.let {
-                        QQUtils.joinQQGroup(context, "mlEwPbkeUQMuwoyp44lROPeD938exo56")
-                    }
+                withStyle(style = SpanStyle(color = MaterialColors.BlueA700)) {
+                    append(" 857362450 ")
+                }
+                pop()
+                append(string(R.string.join_group_tip_p2))
             }
         }
+        ClickableText(
+            text = text,
+            modifier = Modifier.fillMaxWidth(0.9f),
+            style = TextStyle(
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp
+            )
+        ) { index ->
+            // 根据tag取出annotation并打印
+            text.getStringAnnotations(tag = "url", start = index, end = index).firstOrNull()
+                ?.let {
+                    QQUtils.joinQQGroup(context, "mlEwPbkeUQMuwoyp44lROPeD938exo56")
+                }
+        }
     }
+
 }
 
 @Composable
