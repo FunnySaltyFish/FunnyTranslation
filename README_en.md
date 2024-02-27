@@ -4,6 +4,8 @@ The English version is translated with the help of **ChatGPT**, thanks for it!
 
 ### Introduction
 
+**Since version 2.8.0, it has been migrated to Kotlin Multiplatform (JVM + Android). If you are interested in the code after v2.6.9 or KMP + CMP cross-platform, please move to [Transtation-KMP](https://github.com/FunnySaltyFish/Transtation-KMP), and all subsequent code will be updated here**
+
 **This software is a translation software which mainly serves for Chinese users right now. It is also a open-source project which can be referred to when learning Jetpack Compose.** The old version is based on Java language and developed under the traditional View system. Since version 2.0.0, it gradually switched to Kotlin, and since version 2.1.0, the software architecture has been rewritten and most of the code is written in Kotlin, and the pages are completely changed to Jetpack Compose. The software has been open source since version 2.1.0.
 
 The following are the features of this application:

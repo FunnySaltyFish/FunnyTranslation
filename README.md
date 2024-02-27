@@ -4,6 +4,8 @@
 
 ### 介绍
 
+**此项自 2.8.0 起迁移至 Kotlin 跨平台 （JVM + Android），对 v2.6.9 之后代码或 KMP + CMP 跨平台感兴趣的欢迎移步 [Transtation-KMP](https://github.com/FunnySaltyFish/Transtation-KMP)，后续所有代码将在此处更新**
+
 本软件是一款翻译软件，旧版基于Java语言，在传统View体系下开发；自2.0.0起逐步改用Kotlin开发，自2.1.0起软件架构重写，大部分代码均用Kotlin编写，页面完全改用Jetpack Compose。软件自2.1.0起决定开源、自2.6.0起因成本原因引入付费机制。**出于对开源精神的追求，到目前仍然继续保持开源**。如有帮助， **欢迎star** ！
 
 本应用有以下特点：
